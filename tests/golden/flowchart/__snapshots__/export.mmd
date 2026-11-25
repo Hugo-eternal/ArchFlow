@@ -1,0 +1,33 @@
+flowchart TD
+  nn1(["上電開始"])
+  nn2[/"收到 IGN / ACC ON"/]
+  nn3["開啟面板 VDD（3.3 V）"]
+  nn4["等待 VDD 穩定 ≥ 10 ms"]
+  nn5["釋放 RESET"]
+  nn6[/"讀取面板 ID（I²C）"/]
+  nn7{"ID 正確？"}
+  nn8[["載入初始化參數"]]
+  nn9["送出 LVDS 影像"]
+  nn10["等待 2 幀（約 35 ms）"]
+  nn11["開啟背光（PWM 漸亮）"]
+  nn12(["顯示正常"])
+  nn13{"重試次數 < 3？"}
+  nn14["關閉 VDD，等待 100 ms"]
+  nn15["記錄 DTC 並通知主機"]
+  nn16(["顯示異常"])
+  nn1 --> nn2
+  nn2 --> nn3
+  nn3 --> nn4
+  nn4 --> nn5
+  nn5 --> nn6
+  nn6 --> nn7
+  nn7 -->|"Y"| nn8
+  nn8 --> nn9
+  nn9 --> nn10
+  nn10 --> nn11
+  nn11 --> nn12
+  nn7 -->|"N"| nn13
+  nn13 -->|"Y"| nn14
+  nn14 --> nn3
+  nn13 -->|"N"| nn15
+  nn15 --> nn16

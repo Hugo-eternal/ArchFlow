@@ -31,7 +31,7 @@
 - [x] 2.9 Golden：`tests/golden/power`
 - [x] 2.10 Golden：`tests/golden/schedule`
 - [x] 2.11 Golden：`tests/golden/sequence`（電源時序）
-- [ ] 2.12 Golden：`tests/golden/flowchart`
+- [x] 2.12 Golden：`tests/golden/flowchart`
 - [ ] 2.13 E2E（Playwright, chromium, `--trace off`）：建立專案、新增方塊與連線
 - [ ] 2.14 E2E：切換設計、存檔後重開
 - [ ] 2.15 E2E：匯出 PNG / SVG、切換語系
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.12 Golden：`tests/golden/flowchart`（流程圖 vendor 編輯器在 iframe 內，`afFlowApi`；寫法參考 `tests/golden/sequence.test.js` 的 `inEditor`；匯出用 `afFlowApi.openExport()` 後取對話框中的 SVG，另外鎖 `.flow.json` 匯出內容）
+- **下一步**：2.13 E2E（Playwright, chromium, `--trace off`）：從 `index.html` 建立專案、新增方塊與連線（經 V2 殼層的真實按鈕，例如「新增方塊（A）」；參考 `tests/e2e/smoke.spec.js`）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -122,7 +122,8 @@
 - 覆寫掃描已修正（2.6 後）：現為 96 個目標 / 327 層，`*` 整個取代 43 層、`↶` 回退 3 層（audit §1.2、§1.5 已更新）。
 - **黃金測試做法**（2.8 建立）：`tests/golden/golden.js` 提供 `loadGolden`（第一次執行時由 bootstrap 產生 `tests/golden/<type>/project.json` 並提交，之後一律經 `#file` 載入此固定檔）、`diagramSummary`（方塊 / 接腳 / 線路座標，取 0.5 px）、`svgStructure`（SVG 結構化比對）。快照在 `tests/golden/<type>/__snapshots__/`，以 Vitest `toMatchFileSnapshot` 比對；只有刻意的行為修正才可用 `npx vitest run tests/golden -u` 更新並記入 CHANGELOG。
 - **測試輔助已改為注入內嵌字型**（與 `index.html` 相同的 Source Han Sans TC），並從空白 `file://` 頁面以 `setContent` 載入（與正式版 iframe srcdoc 相同；`about:blank` 會讓流程圖編輯器讀不到 localStorage）。
+- vendor 編輯器（時序 / 流程圖）的匯出在 iframe 內攔截：Playwright 的 download 事件抓不到 srcdoc iframe 的錨點下載，改為暫時掛勾 iframe 的 `URL.createObjectURL` 與 `HTMLAnchorElement.prototype.click`（見 `tests/golden/flowchart.test.js` 的 `runExport`）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2（2.11：`npm test` 11 檔 61 項通過；golden sequence 連跑 3 次一致，含時序表（純文字 + HTML）、畫面圖表與匯出預覽 SVG）
+- **最後通過的驗證層級**：L2（2.12：`npm test` 12 檔 67 項通過；golden flowchart 連跑 3 次一致，含畫布、SVG、`.flow.json`、Mermaid 匯出）

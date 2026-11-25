@@ -1,0 +1,1040 @@
+[
+  {
+    "depth": 0,
+    "tag": "svg"
+  },
+  {
+    "depth": 1,
+    "tag": "defs"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#536B8C"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#2F7A66"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#A86F12"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#B3402E"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#14202C"
+  },
+  {
+    "depth": 2,
+    "tag": "marker",
+    "viewBox": "0 0 10 10"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 1L10 5L0 9z",
+    "fill": "#2563EB"
+  },
+  {
+    "depth": 1,
+    "tag": "g",
+    "transform": "translate(296 16) scale(0.5)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 80L130 140",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 80L130 140",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 200L130 260",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 200L130 260",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 320L130 380",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 320L130 380",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 440L130 500",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 440L130 500",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 560L130 620",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 560L130 620",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 680L130 740",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 680L130 740",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 840L130 920",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 840L130 920",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "132",
+    "y": "860",
+    "rx": "10",
+    "width": "23",
+    "height": "20",
+    "fill": "#E6F3EF",
+    "stroke": "#A9D5C6"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "Y",
+    "x": "143.5",
+    "y": "870",
+    "fill": "#1F6B57",
+    "font-size": "12",
+    "font-weight": "700",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 980L130 1060",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 980L130 1060",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1120L130 1180",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1120L130 1180",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1240L130 1300",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1240L130 1300",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1360L130 1420",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M130 1360L130 1420",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M210 790L255 790A5 5 0 0 1 265 790L360 790L360 900",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M210 790L255 790A5 5 0 0 1 265 790L360 790L360 900",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "228.5",
+    "y": "768",
+    "rx": "10",
+    "width": "23",
+    "height": "20",
+    "fill": "#FBEBEE",
+    "stroke": "#EBB9C2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "N",
+    "x": "240",
+    "y": "778",
+    "fill": "#9B3344",
+    "font-size": "12",
+    "font-weight": "700",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M360 1000L360 1060",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M360 1000L360 1060",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "362",
+    "y": "1020",
+    "rx": "10",
+    "width": "23",
+    "height": "20",
+    "fill": "#E6F3EF",
+    "stroke": "#A9D5C6"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "Y",
+    "x": "373.5",
+    "y": "1030",
+    "fill": "#1F6B57",
+    "font-size": "12",
+    "font-weight": "700",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M280 1090L260 1090L260 290L210 290",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M280 1090L260 1090L260 290L210 290",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M440 950L590 950L590 1060",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M440 950L590 950L590 1060",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "458.5",
+    "y": "928",
+    "rx": "10",
+    "width": "23",
+    "height": "20",
+    "fill": "#FBEBEE",
+    "stroke": "#EBB9C2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "N",
+    "x": "470",
+    "y": "938",
+    "fill": "#9B3344",
+    "font-size": "12",
+    "font-weight": "700",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 2,
+    "tag": "g"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M590 1120L590 1190",
+    "fill": "none",
+    "stroke": "transparent",
+    "stroke-width": "25.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M590 1120L590 1190",
+    "fill": "none",
+    "stroke": "#536B8C",
+    "stroke-width": "1.5",
+    "marker-end": "url(#fl-arrow-slate)"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(60 40)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M20 0H120A20 20 0 0 1 120 40H20A20 20 0 0 1 20 0Z",
+    "fill": "#E6F3EF",
+    "stroke": "#2F7A66",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "70",
+    "y": "20",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "600",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "上電開始",
+    "x": "70",
+    "y": "20"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(40 140)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M18 0H180L162 60H0Z",
+    "fill": "#E8F0FA",
+    "stroke": "#2B5C8A",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "90",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "收到 IGN / ACC ON",
+    "x": "90",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(50 260)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "開啟面板 VDD（3.3 V）",
+    "x": "80",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(60 380)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 0H110A30 30 0 0 1 110 60H0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "63",
+    "y": "21",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "等待 VDD 穩定 ≥",
+    "x": "63",
+    "y": "21"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "10 ms",
+    "x": "63",
+    "y": "39"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(50 500)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "釋放 RESET",
+    "x": "80",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(40 620)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M18 0H180L162 60H0Z",
+    "fill": "#E8F0FA",
+    "stroke": "#2B5C8A",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "90",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "讀取面板 ID（I²C）",
+    "x": "90",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(50 740)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M80 0L160 50L80 100L0 50Z",
+    "fill": "#FFF4",
+    "stroke": "#A86F12",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "50",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "ID 正確？",
+    "x": "80",
+    "y": "50"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(40 920)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H176Q180 0 180 4V56Q180 60 176 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M12 0V60M168 0V60",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "90",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "載入初始化參數",
+    "x": "90",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(50 1060)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "送出 LVDS 影像",
+    "x": "80",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(60 1180)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M0 0H110A30 30 0 0 1 110 60H0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "63",
+    "y": "21",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "等待 2 幀（約 35",
+    "x": "63",
+    "y": "21"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "ms）",
+    "x": "63",
+    "y": "39"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(50 1300)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "開啟背光（PWM 漸亮）",
+    "x": "80",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(60 1420)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M20 0H120A20 20 0 0 1 120 40H20A20 20 0 0 1 20 0Z",
+    "fill": "#E6F3EF",
+    "stroke": "#2F7A66",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "70",
+    "y": "20",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "600",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "顯示正常",
+    "x": "70",
+    "y": "20"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(280 900)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M80 0L160 50L80 100L0 50Z",
+    "fill": "#FFF4",
+    "stroke": "#A86F12",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "50",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "重試次數 < 3？",
+    "x": "80",
+    "y": "50"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(280 1060)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "21",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "關閉 VDD，等待 100",
+    "x": "80",
+    "y": "21"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "ms",
+    "x": "80",
+    "y": "39"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(510 1060)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M4 0H156Q160 0 160 4V56Q160 60 156 60H4Q0 60 0 56V4Q0 0 4 0Z",
+    "fill": "#FFFFFF",
+    "stroke": "#3D5873",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "80",
+    "y": "30",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "記錄 DTC 並通知主機",
+    "x": "80",
+    "y": "30"
+  },
+  {
+    "depth": 2,
+    "tag": "g",
+    "transform": "translate(520 1190)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M20 0H120A20 20 0 0 1 120 40H20A20 20 0 0 1 20 0Z",
+    "fill": "#E6F3EF",
+    "stroke": "#2F7A66",
+    "stroke-width": "1.5"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "x": "70",
+    "y": "20",
+    "fill": "#14202C",
+    "font-size": "13",
+    "font-weight": "600",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "tspan",
+    "text": "顯示異常",
+    "x": "70",
+    "y": "20"
+  }
+]
