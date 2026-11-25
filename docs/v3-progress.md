@@ -54,7 +54,7 @@
 - [x] 3.10 `core/store`、`core/history`（含 `history.batch`）（L3）
 - [x] 3.11 `core/commands`、`core/camera`、`core/grid`（L3）
 - [x] 3.12 `model/types` + `model/diagram` 純函式（L3）
-- [ ] 3.13 `io/schema`（V3 schema，plan §2）+ 驗證測試（L4）
+- [x] 3.13 `io/schema`（V3 schema，plan §2）+ 驗證測試（L4）
 - [ ] 3.14 `io/project-file`：存開檔、非 V3 顯示「不支援舊版格式」、`io/migrate.ts` 框架（L3）
 ### 3D 繞線
 - [ ] 3.15 `router/find-path`（A* + 成本）（L3）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.13 `src/io/schema.ts`：依 plan §2 與 `src/io/schema-types.ts` 寫執行期驗證（不引入外部套件；回傳 `{ ok, errors[] }`，錯誤帶路徑）。涵蓋：`schemaVersion` 必須為 3、id 格式（`core/ids.isValidId`）、數值有限、文字長度上限（`LIMITS.text`）、方塊 / 線 / 接腳上限（`model/types.LIMITS`）、線的兩端存在、8 MB 檔案上限；sequence / flowchart 只驗外層。測試：五份 `tests/golden/<type>/__snapshots__/project.v3.json` 都要通過，並逐項建構非法輸入。L4。
+- **下一步**：3.14 `src/io/project-file.ts`：開檔（`File` / 文字 → `parseProject`；非 V3 回傳 `legacy-format` 結果，由殼層顯示「不支援舊版格式」，不得當機；驗證失敗保留目前專案）、存檔（`store.toFile()` → JSON 文字 → 下載檔名 `<專案名>.archflow.json`，檔名去除非法字元）、`src/io/migrate.ts` 框架（`migrations: Record<number, (f) => f>`，目前為空；`migrate(raw)` 只接受 `schemaVersion` 3，未來 3.x 升級在此加入）。i18n 訊息 key：`file.legacyFormat`、`file.invalid`、`file.tooLarge`、`file.saved`。測試：golden V3 存開檔往返一致（含 2.5 記錄的文字框 `align` / `background` 與時程文字框不再遺失）、V2 檔回傳 legacy、壞 JSON / 超過 8 MB。L3。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -142,8 +142,12 @@
   - 與 V2 比對：刪除方塊 / 接腳後留下的線與 V2 `removeSelection` 相同；連續新增 5 個接腳再經格線正規化，名稱、位置、方塊尺寸與 V2 `afAddFunctionPort` + `commit` 完全相同。
   - 已釐清的 V2 行為：格線開啟時，新增接腳**不會移動既有接腳**（V2 的 `afGridOffset` 蓋過重新平均分布），新接腳放在該側 n/(n+1)，再由正規化推開；方塊因接腳數加高時保持接腳絕對位置。格線關閉時才整側平均分布。V3 照此實作（`addPort` 依 `grid.snap` 分支）。
   - V2 在 render 中依接腳數加大方塊（L1257），V3 改為 model 規則 `growForPorts`，由 `addPort` 呼叫；之後 3.18 / 3.20 其他會增加接腳的操作也要呼叫它。
+- schema（3.13）：`src/io/schema.ts`，無外部套件，以小型組合子（`obj` / `arr` / `str` / `num` / `oneOf` / `tagged` / `union` / `opt`）寫成。**未知欄位一律報錯**（vendor 文件 sequence / flowchart 除外，只驗外層與 4 MB 上限）。錯誤為 `{ path, code, detail }`，最多 50 筆。入口：`validateProject(raw)`、`parseProject(text)`（先檢查 8 MB）、`validateData(type, data)`、`isV3(raw)`、`DATA_SCHEMAS`（給 3.24 起的 `DesignModule.schema`）。另外檢查：id 唯一（每張圖共用一個命名空間）、線兩端 / 時程連線兩端存在、`activeDesignId` 存在、日期格式。上限集中在 `FILE_LIMITS`。
+  - 五份 golden 的 V3 轉換檔與 store 輸出的檔案都通過；V2 檔回傳 `version` 錯誤（3.14 用它顯示「不支援舊版格式」）。
+  - `scheduleSchema.appearance` 目前只驗為 JSON 物件（≤ 200 KB），形狀在 3.29 補上。
+  - **人工驗收**（L4 項目）：這一步沒有使用者可見的介面，留到 3.14 開檔流程與 3.45 發版時一併驗收。遷移測試：`io/migrate.ts` 在 3.14 才建立，屆時補上。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.12：型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L4 自動項目（3.13：型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。

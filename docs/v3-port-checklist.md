@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 291　☑ 6　✂ 9　⤳ 21
+合計 327 層：☐ 267　☑ 26　✂ 13　⤳ 21
 
 ## core / interaction
 
@@ -194,34 +194,34 @@
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `validateDiagram` | 605 |  | script#1 | **時程**：整份時程資料另寫一套驗證（不呼叫 base） | ☐ |  |
-| `validateDiagram` | 633 |  | script#1 | 時程：`side`、`note` | ☐ |  |
-| `validateDiagram` | 675 |  | script#1 | 時程：`scheduleGraph`、`graphVersion=1` | ☐ |  |
-| `validateDiagram` | 694 |  | script#1 | 時程：`cardDx/cardDy`、`graphVersion=2` | ☐ |  |
-| `validateDiagram` | 737 |  | script#1 | 時程：`axisDx/axisDy`、`graphVersion=3` | ☐ |  |
-| `validateDiagram` | 798 |  | script#1 | 時程：`engineeringStyle` | ☐ |  |
-| `validateDiagram` | 817 |  | script#1 | 時程：`savedEngineeringStyle` | ☐ |  |
-| `validateDiagram` | 850 |  | script#1 | 時程：兩種 style 的 `lineWidth` | ☐ |  |
-| `validateDiagram` | 1125 |  | script#2 | 清理孤立接點 | ☐ |  |
-| `validateDiagram` | 1199 |  | script#2 | `afCleanRoute`；heading 停用但仍讀得進來 | ☐ |  |
-| `validateDiagram` | 1297 |  | script#2 | `afLocked`（方塊 / 接腳） | ☐ |  |
-| `validateDiagram` | 1332 |  | script#2 | 舊圖轉 direct-ports 接線（afDirectConnections） | ☐ |  |
-| `validateDiagram` | 1403 |  | script#2 | `afLineDefaults`、`afLinePresets` | ☐ |  |
-| `validateDiagram` | 1443 |  | script#2 | `afPresentation`、連線電流單位等 | ☐ |  |
-| `validateDiagram` | 1539 |  | script#2 | `afGrid` | ☐ |  |
-| `validateDiagram` | 1623 |  | script#2 | `afRouteOnly`、`afGridLocked` / `locked` | ☐ |  |
-| `validateDiagram` | 1739 |  | script#2 | `afUnifiedLabel` | ☐ |  |
-| `validateDiagram` | 1815 |  | script#2 | `afLabelMark` | ☐ |  |
-| `validateDiagram` | 2059 |  | script#5 | `afCurrentUnit` | ☐ |  |
-| `validateDiagram` | 2349 |  | schedule-snap-compact-js | 時程磁吸 `scheduleSnapEnabled/Range` | ☐ |  |
-| `validateDiagram` | 3062 |  | af15-ux2 | 方塊標題版面 | ☐ |  |
-| `validateDiagram` | 3139 |  | af15-ux2 | V1.5 新欄位（接腳標籤、線條標籤…） | ☐ |  |
-| `validateDiagram` | 3387 |  | af15-ux2 | V1.6 時程任務欄位（狀態、工期…） | ☐ |  |
-| `validateDiagram` | 4116 |  | af15-ux2 | V2.3.0 零件 / 電壓徽章欄位 | ☐ |  |
-| `validateDiagram` | 4431 |  | af15-ux2 | `afFrames`（區域外框） | ☐ |  |
-| `validateDiagram` | 4579 |  | af15-ux2 | 連接器資料 | ☐ |  |
-| `validateDiagram` | 10467 |  | af-v280-ux | `afFont`、接腳名稱位置 | ☐ |  |
-| `validateDiagram` | 10557 |  | af-v290-free | 自由尺寸、無名稱、空副標 | ☐ |  |
+| `validateDiagram` | 605 |  | script#1 | **時程**：整份時程資料另寫一套驗證（不呼叫 base） | ☑ | `io/schema`（3.13）：`scheduleSchema` 單一驗證 |
+| `validateDiagram` | 633 |  | script#1 | 時程：`side`、`note` | ☑ | `io/schema`（3.13）：`task.side` / `note` |
+| `validateDiagram` | 675 |  | script#1 | 時程：`scheduleGraph`、`graphVersion=1` | ✂ | `scheduleGraph` / `graphVersion` 是版面快取，V3 刪除（plan §2.3） |
+| `validateDiagram` | 694 |  | script#1 | 時程：`cardDx/cardDy`、`graphVersion=2` | ☑ | `io/schema`（3.13）：`task.offset.card` |
+| `validateDiagram` | 737 |  | script#1 | 時程：`axisDx/axisDy`、`graphVersion=3` | ☑ | `io/schema`（3.13）：`task.offset.axis` |
+| `validateDiagram` | 798 |  | script#1 | 時程：`engineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
+| `validateDiagram` | 817 |  | script#1 | 時程：`savedEngineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
+| `validateDiagram` | 850 |  | script#1 | 時程：兩種 style 的 `lineWidth` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
+| `validateDiagram` | 1125 |  | script#2 | 清理孤立接點 | ☐ | 清理孤立接點 → router/junctions（3.17）；schema 只檢查線的兩端存在 |
+| `validateDiagram` | 1199 |  | script#2 | `afCleanRoute`；heading 停用但仍讀得進來 | ✂ | `afCleanRoute` 與 heading 刪除（audit §4.2） |
+| `validateDiagram` | 1297 |  | script#2 | `afLocked`（方塊 / 接腳） | ☑ | `io/schema`（3.13）：方塊 / 接腳 `locked` |
+| `validateDiagram` | 1332 |  | script#2 | 舊圖轉 direct-ports 接線（afDirectConnections） | ✂ | 舊圖轉換，V3 不相容舊檔 |
+| `validateDiagram` | 1403 |  | script#2 | `afLineDefaults`、`afLinePresets` | ☑ | `io/schema`（3.13）：`wireDefaults` / `wirePresets` |
+| `validateDiagram` | 1443 |  | script#2 | `afPresentation`、連線電流單位等 | ☑ | `io/schema`（3.13）：`presentationClean`、`electrical.unit` |
+| `validateDiagram` | 1539 |  | script#2 | `afGrid` | ☑ | `io/schema`（3.13）：`grid` |
+| `validateDiagram` | 1623 |  | script#2 | `afRouteOnly`、`afGridLocked` / `locked` | ☑ | `io/schema`（3.13）：`route`、`wire.locked` |
+| `validateDiagram` | 1739 |  | script#2 | `afUnifiedLabel` | ✂ | `afUnifiedLabel` 刪除（plan §2.2） |
+| `validateDiagram` | 1815 |  | script#2 | `afLabelMark` | ☑ | `io/schema`（3.13）：`wire.label.mark` |
+| `validateDiagram` | 2059 |  | script#5 | `afCurrentUnit` | ☑ | `io/schema`（3.13）：`metric.unit` |
+| `validateDiagram` | 2349 |  | schedule-snap-compact-js | 時程磁吸 `scheduleSnapEnabled/Range` | ☑ | `io/schema`（3.13）：`snap` |
+| `validateDiagram` | 3062 |  | af15-ux2 | 方塊標題版面 | ☑ | `io/schema`（3.13）：`titleAlign` |
+| `validateDiagram` | 3139 |  | af15-ux2 | V1.5 新欄位（接腳標籤、線條標籤…） | ☑ | `io/schema`（3.13）：`port.label`、`wire.label` |
+| `validateDiagram` | 3387 |  | af15-ux2 | V1.6 時程任務欄位（狀態、工期…） | ☑ | `io/schema`（3.13）：`task.status` / `milestone` / `time` |
+| `validateDiagram` | 4116 |  | af15-ux2 | V2.3.0 零件 / 電壓徽章欄位 | ☑ | `io/schema`（3.13）：`part`（含 `rails`） |
+| `validateDiagram` | 4431 |  | af15-ux2 | `afFrames`（區域外框） | ☑ | `io/schema`（3.13）：`frames` |
+| `validateDiagram` | 4579 |  | af15-ux2 | 連接器資料 | ☑ | `io/schema`（3.13）：`connector` |
+| `validateDiagram` | 10467 |  | af-v280-ux | `afFont`、接腳名稱位置 | ☑ | `io/schema`（3.13）：`font`、`port.label` |
+| `validateDiagram` | 10557 |  | af-v290-free | 自由尺寸、無名稱、空副標 | ☑ | `io/schema`（3.13）：`sizing` / `showTitle` / `subtitle` |
 | `projectData` | 520 |  | script#1 | 加 `customStyles` | ⤳ |  |
 | `projectData` | 555 | `*` 取代 | script#1 | 多設計格式 `version:5`：**整個取代**（內含 customStyles，所以 520 失效但不影響結果） | ☐ |  |
 | `projectData` | 1008 |  | script#2 | `archflowLocalization`（語系、綁定、範本目錄） | ☐ |  |
