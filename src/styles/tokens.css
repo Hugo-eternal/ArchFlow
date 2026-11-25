@@ -68,6 +68,10 @@
   --port-radius: 3.5px;
   --port-label-size: 11px;
   --selection-stroke: #1D5C99;
+  --wire-label: #345D70;
+  --wire-label-halo: #FFFFFF;
+  --wire-label-size: 14px;
+  --junction-fill: #334E70;
 
   /* typography */
   --font-ui: "Source Han Sans TC", "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
@@ -136,6 +140,9 @@
     --port-stroke: #8FB0C4;
     --port-label: #B9CCE0;
     --selection-stroke: #6FA8E0;
+    --wire-label: #B9CCE0;
+    --wire-label-halo: #10171E;
+    --junction-fill: #B9CCE0;
     --color-surface: #18222C;
     --color-surface-2: #1E2933;
     --color-hover: #233040;
@@ -175,6 +182,9 @@
   --port-stroke: #8FB0C4;
   --port-label: #B9CCE0;
   --selection-stroke: #6FA8E0;
+  --wire-label: #B9CCE0;
+  --wire-label-halo: #10171E;
+  --junction-fill: #B9CCE0;
   --color-surface: #18222C;
   --color-surface-2: #1E2933;
   --color-hover: #233040;

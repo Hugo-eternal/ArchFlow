@@ -62,7 +62,7 @@
 - [x] 3.17 `router/junctions`（分支、T 型正規化）（L3）
 ### 3E 畫面
 - [x] 3.18 `render`：方塊、接腳（L3）
-- [ ] 3.19 `render`：連線、接點、文字框（L3）
+- [x] 3.19 `render`：連線、接點、文字框（L3）
 - [ ] 3.20 `interaction`：選取、拖曳、拉線、框選、鍵盤（L3）
 - [ ] 3.21 `inspector` 框架與欄位元件（L3）
 - [ ] 3.22 `export`：SVG / PNG / 頁面 / 可讀性（L3）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.19 `render`：連線、接點、文字框（外框 frames 若簡單也一起）。`src/render/wires.ts`：用 `router/full-path.routeAll` 的結果畫 `path`（`core/geometry.toPathData`），線型來自 `wire.line`（顏色空字串 → 依 `kind` 用 `--wire-<kind>` token；虛線 / 箭頭 marker / 線寬），無效路線加 `is-invalid` 樣式；線名 / 電壓標籤（V2 drawEdges 的標籤位置 p13 L1465、去重 L3099——先讀再決定這一步做多少，其餘留到 3.25）。接點畫實心圓；文字框用 `text` + 背景 `rect`（對齊、粗斜體、背景色）。測試：golden function / power 每條線的 path 點與 3.16 一致、與 V2 匯出 SVG 用 `tests/tools/svg-compare.ts` 比對 `path.wire` 的數量與幾何。L3。
+- **下一步**：3.20 `interaction`：選取、拖曳、拉線、框選、鍵盤。建議拆法：`src/interaction/hit.ts`（純函式：世界座標 → 命中的方塊 / 接腳 / 線段 / 接點 / 文字框，用 3.18–3.19 的幾何，不靠 DOM 事件目標）、`src/interaction/gestures.ts`（指標狀態機：pan、移動選取項（`model/diagram.moveItems` + 格線吸附 `core/grid.snapIfOn`）、從接腳拉線（`connect`）、框選、縮放滾輪 `core/camera`），每個手勢結束時以**一次** `store.update`（或 `history.batch`）提交，提交流程固定執行 `core/grid.normalize` + `protect`（格線開啟時）與 `router/junctions.cleanJunctions`——這就是 V2 commit L1123 / L1535 的位置。鍵盤透過 `CommandRegistry.handleKey`。測試：在 jsdom 或 Chromium 中以合成指標事件跑完整手勢，檢查 store 的 data 與 undo 一步回到原狀；V2 對照：拖曳後座標吸附、拉線建立的線與 V2 相同。L3。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -158,8 +158,12 @@
   - V2 的轉角分支（`splitAtCorner`）沒有任何呼叫者，自動共用接點也已停用，都標 ✂ 不移植。目前使用者無法自行新增接點（V2 也一樣，接點只來自範本 / 檔案）。若之後要提供「從線上分支」，屬於新功能，需另外規劃。
 - render 方塊（3.18）：**決定：畫布整個用 SVG**（V2 方塊是 HTML、線是 SVG，匯出時再從 DOM 重建 SVG）。`src/render/vnode.ts`：與 DOM 無關的節點樹 `h(tag, attrs, children|text)`，`mount()` 產生 SVG 元素（文字一律 `textContent`）、`toMarkup()` 產生 SVG 字串（3.22 匯出直接用）、`find()`。`src/render/blocks.ts`：`blocksLayer(diagram, { selected, theme, decorate })` / `blockNode`——方塊外框 = model 的 x/y/w/h、接腳點 = `core/grid.portPoint`；文字行 = 標題（料號優先）/ 第二行 / 副標 / 量測值；`titleAlign` 九宮格；接腳名稱 inside / outside / hidden。零件（`part`）不畫外框，符號由 `decorate`（3.25）補上。樣式在 `src/styles/canvas.css`，方塊自訂顏色以 CSS 自訂屬性 `--block-fill` 等寫在 `style`；每塊字級用 inline style（SVG 屬性會被 CSS class 蓋掉）。新增 token：`--block-*`、`--port-*`、`--selection-stroke`（亮 / 暗，`check:tokens` 新增 7 組對比）。
   - 與 V2 比對：golden function / power 的方塊外框、每個接腳中心、標題文字完全相同（V2 對無名方塊顯示「未命名 IC」，V3 不顯示）。
+- render 連線 / 文字（3.19）：`src/render/wires.ts`——`wiresLayer(diagram, routes, { selected })`（routes 由呼叫端用 `routeAll` 算一次傳入）：每條線一個 `g[data-wire]`，路徑 class `af-wire af-wire-<kind>`（顏色寬度由 token，`line.color` / `line.width` 以 inline style 覆蓋），虛線 `8 5` / 點線 `2 4`，箭頭 marker 依顏色與大小共用 `<defs>`（接到接點的一端不畫箭頭、無效路線不畫箭頭並加 `is-invalid`），標籤在最長線段中點（`label.mark` 優先）、`wireLabel`（名稱 · 電壓 · 電流，µA 照 V2）；接點 r=5 畫在所有線之上；`invalidCount`。`src/render/texts.ts`——文字框 SVG：字級存的是 **pt**（`ptToPx`），自行斷行 `wrapText`（空白 / 每個中日韓字元之間 / 過長單字逐字切），量寬函式可注入（`canvasMeasure` 給瀏覽器，`estimateWidth` 給 Node），背景 rect、對齊、粗斜體。
+  - 與 V2 比對：golden function / power 每條線的點、箭頭有無、標籤文字與座標都與 V2 `drawEdges` 相同。
+  - src/ 不能出現中日韓字元：正規式的字元範圍要寫成 `\uXXXX` 跳脫（見 `render/texts.ts` 的 `CJK`）。注意：用工具寫檔時 `\u` 可能被先轉成實際字元，寫完用 `npm run check:i18n` 確認。
+  - 標籤去重（V2 L3099）、外框 frames（3.26）尚未做。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.18：型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L3（3.19：型別、i18n、token（95 個、54 組對比）、vendor、建置、產物檢查、Vitest 28 檔 194 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 47、✂ 34）。前一步 3.18：L3（型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。

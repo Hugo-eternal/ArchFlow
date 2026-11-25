@@ -49,6 +49,8 @@ const PAIRS = [
   ['--block-text', '--block-fill', 4.5], ['--block-subtitle', '--block-fill', 4.5], ['--port-label', '--block-fill', 4.5],
   ['--port-label', '--color-board', 4.5], ['--block-border', '--block-fill', 1.5], ['--port-stroke', '--port-fill', 3],
   ['--selection-stroke', '--color-board', 3],
+  // wires (3.19)
+  ['--wire-label', '--wire-label-halo', 4.5], ['--junction-fill', '--color-board', 3],
 ];
 const rows = [];
 for (const [theme, t] of [['light', light], ['dark', dark]]) for (const [fg, bg, min] of PAIRS) {

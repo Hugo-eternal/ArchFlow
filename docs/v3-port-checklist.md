@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 232　☑ 41　✂ 33　⤳ 21
+合計 327 層：☐ 225　☑ 47　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -44,7 +44,7 @@
 | `updateExplorer` | 763 |  | script#1 | Export uses the same palette and typography as the editor, including moved axis points. | ☐ |  |
 | `updateExplorer` | 775 |  | script#1 | Rebind the toolbar too: older handlers retained a previous remove function. | ☐ |  |
 | `addPin` | 1256 |  | script#2 |  | ☐ | 點擊位置 → `core/grid.portAt` + `model/diagram.addPort`（已完成）；指標事件 → interaction（3.20） |
-| `newFreeText` | 2285 |  | text-design-v22-js |  | ☐ |  |
+| `newFreeText` | 2285 |  | text-design-v22-js |  | ☑ | 預設寬 180 → `model/diagram.TEXT_DEFAULT`（3.12） |
 | `openHeading` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `preview` | 1566 |  | script#2 |  | ☐ |  |
 | `redo` | 2322 |  | archflow-known-fixes-v3 |  | ☑ | src/core/history.ts：undo / redo 都標 dirty |
@@ -318,9 +318,9 @@
 | `applyCamera` | 1510 |  | script#2 |  | ☐ | 格線背景 → render（3.18）；位移 / 尺寸由 `core/camera.backgroundOf` |
 | `applyCamera` | 3100 |  | af15-ux2 |  | ☐ |  |
 | `applyCamera` | 4425 |  | af15-ux2 | ---------- engine hooks ---------- | ☐ |  |
-| `drawJunctions` | 1081 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ☐ |  |
-| `drawJunctions` | 1173 |  | script#2 | Keep real junction dots above all wire paths, in both editor and SVG export. | ☐ |  |
-| `drawJunctions` | 1298 |  | script#2 | Keep the original schema version; restore only validated boolean lock flags. | ☐ |  |
+| `drawJunctions` | 1081 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ☑ | 接點外觀 r=5、白色外圈 → `render/wires` + canvas.css（3.19） |
+| `drawJunctions` | 1173 |  | script#2 | Keep real junction dots above all wire paths, in both editor and SVG export. | ☑ | 接點畫在所有線之上（`af-junctions` 群組最後畫，3.19）；匯出沿用同一棵樹 |
+| `drawJunctions` | 1298 |  | script#2 | Keep the original schema version; restore only validated boolean lock flags. | ✂ | 接點鎖定標示：V3 接點沒有自己的鎖（3.11） |
 | `afAlignTemplatePorts` | 1508 |  | script#2 |  | ☐ |  |
 | `afAlignTemplatePorts` | 1680 |  | script#2 | Selection highlights belong to the editor, never to SVG/PNG output. | ☐ |  |
 | `applyBlockAppearance` | 1432 |  | script#2 | V2.5.12: electrical information belongs to the connection, not detached text. | ☐ |  |
@@ -330,7 +330,7 @@
 | `afSpreadPorts` | 1275 | `*` 取代 | script#2 |  | ☐ |  |
 | `appendMetrics` | 2053 |  | script#5 |  | ☐ |  |
 | `drawBranchCorners` | 1305 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
-| `edgeLabel` | 1442 | `*` 取代 | script#2 | Keep the editing row; advanced formatting starts closed. | ☐ |  |
+| `edgeLabel` | 1442 | `*` 取代 | script#2 | Keep the editing row; advanced formatting starts closed. | ☑ | `render/wires.wireLabel`（3.19）；µA 顯示照 V2；已帶單位的值不再重複加單位 |
 | `ensureBlockWidth` | 1506 |  | script#2 |  | ☐ |  |
 | `normalizeSlots` | 1507 |  | script#2 |  | ☐ |  |
 | `placePorts` | 1299 |  | script#2 | Keep the original schema version; restore only validated boolean lock flags. | ☐ |  |
@@ -352,8 +352,8 @@
 | `drawEdges` | 1171 |  | script#2 | 共用線段合併（afNormalizeSharedBranches） | ✂ | 共用線段合併（afNormalizeSharedBranches）已在 V2 停用 |
 | `drawEdges` | 1187 |  | script#2 | 範本依實際接腳位置對齊 | ☐ |  |
 | `drawEdges` | 1212 |  | script#2 | 成本式最短正交繞線的快取重置 | ☐ |  |
-| `drawEdges` | 1400 |  | script#2 | 新連線套用預設線條格式 | ☐ |  |
-| `drawEdges` | 1465 |  | script#2 | p13：連線標籤位置 | ☐ |  |
+| `drawEdges` | 1400 |  | script#2 | 新連線套用預設線條格式 | ☑ | 線條格式（顏色 / 寬 / 虛線 8 5、點線 2 4）→ `render/wires`（3.19） |
+| `drawEdges` | 1465 |  | script#2 | p13：連線標籤位置 | ☑ | `render/wires.labelPosition` + `.af-wire-label` 樣式（字級 14、粗 500、白色描邊，3.19） |
 | `drawEdges` | 1562 |  | script#2 | 格線：同步幾何、選取線段把手 | ☐ |  |
 | `drawEdges` | 1656 |  | script#2 | RC：同步多選狀態 | ☐ |  |
 | `drawEdges` | 1738 |  | script#2 | 統一標籤的引線 | ☐ |  |

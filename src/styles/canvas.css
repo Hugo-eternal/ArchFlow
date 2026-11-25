@@ -43,3 +43,33 @@
   pointer-events: none;
 }
 .af-block.is-locked .af-block-body { stroke-dasharray: 6 3; }
+
+/* wires, junctions, labels (render/wires.ts) */
+.af-wire { fill: none; stroke-linejoin: round; stroke-linecap: square; }
+.af-wire-signal { stroke: var(--wire-signal); stroke-width: var(--wire-width-signal); }
+.af-wire-power { stroke: var(--wire-power); stroke-width: var(--wire-width-power); }
+.af-wire-clock { stroke: var(--wire-clock); stroke-width: var(--wire-width-clock); }
+.af-wire-bus { stroke: var(--wire-bus); stroke-width: var(--wire-width-bus); }
+.af-arrow.af-wire-signal { fill: var(--wire-signal); }
+.af-arrow.af-wire-power { fill: var(--wire-power); }
+.af-arrow.af-wire-clock { fill: var(--wire-clock); }
+.af-arrow.af-wire-bus { fill: var(--wire-bus); }
+.af-arrow { stroke: none; }
+.af-wire-group.is-invalid .af-wire { stroke: var(--color-danger); stroke-dasharray: 6 4; }
+.af-wire-selected { fill: none; stroke: var(--color-selection); stroke-width: 9px; stroke-linejoin: round; }
+.af-wire-label {
+  fill: var(--wire-label);
+  font-family: var(--font-ui);
+  font-size: var(--wire-label-size);
+  font-weight: var(--weight-medium);
+  stroke: var(--wire-label-halo);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.af-junction { fill: var(--junction-fill); stroke: var(--color-surface); stroke-width: 1.4px; }
+.af-junction.is-selected { stroke: var(--selection-stroke); stroke-width: 3px; }
+
+/* free text (render/texts.ts) */
+.af-text-body { font-family: var(--font-ui); white-space: pre; }
+.af-text-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
