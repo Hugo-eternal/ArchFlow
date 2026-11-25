@@ -42,7 +42,7 @@
 ### 3A 骨架
 - [x] 3.1 TypeScript + Vite 骨架：`package.json` scripts、`tsconfig`、單檔輸出 `dist/ArchFlow.html`（L4）
 - [x] 3.2 建置產物檢查：無外部 URL、大小記錄（L4）
-- [ ] 3.3 i18n 框架 `core/i18n.ts` + `i18n/zh-Hant.json`、`i18n/en.json` + 檢查腳本（key 對齊、src 無中日韓字元）（L1）
+- [x] 3.3 i18n 框架 `core/i18n.ts` + `i18n/zh-Hant.json`、`i18n/en.json` + 檢查腳本（key 對齊、src 無中日韓字元）（L1）
 - [ ] 3.4 `styles/tokens.css` design token 骨架（L1）
 - [ ] 3.5 `scripts/extract-vendor.mjs`：從 V2.10.1 逐字抽出 vendor 檔、產生 `VENDOR.md` 與 SHA-256；CI 驗證雜湊（L4）
 ### 3B 測試轉接
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.3 i18n 框架：`src/core/i18n.ts`（`t(key, vars)`、目前語系、切換不重新載入、訂閱變更）+ `i18n/zh-Hant.json`、`i18n/en.json` + `scripts/check-i18n.mjs`（兩語系 key 一致；`src/` 中除 `vendor/` 外不得出現中日韓字元）+ 單元測試（Vitest，在 Node 中直接 import TS，不需瀏覽器）。
+- **下一步**：3.4 `src/styles/tokens.css` design token 骨架：以 V2 的 af20-shell-css（legacy L4654 起，`--ink`、`--trace` 等）與 af15-theme（L2361）為來源，定義顏色、字級、間距、圓角、陰影、動態 token，含深色模式；用 `ui-ux-pro-max` 檢查對比（文字 ≥ 4.5:1）；加 `scripts/check-tokens.mjs`（src 的 CSS 只能用 `var(--…)`，不得出現裸色碼，tokens.css 本身除外）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -127,7 +127,8 @@
 - E2E 寫法（2.13 建立）：`tests/e2e/helpers.js`。啟動畫面的設計類型、「範本 / 空白設計」都是 **radio**（不是 button）；`engine(page)` = `page.frame({ name: 'app' })`，只用來讀 model 驗證，操作一律走介面。
 - 2.14：設計切換鈕的名稱就是目前設計的名稱（例如「入門方塊圖」），選單有「新增設計…」等項目；新增設計對話框用 V1 隱藏欄位 id（`#managedDesignName`、`#managedDesignType`、`#managedDesignExample`）。殼層「儲存」可用 Playwright `download` 事件攔截；啟動畫面要用「開啟 JSON 專案」按鈕（filechooser 事件可用）。
 - 指令：`npm run build`（`dist/ArchFlow.html`）、`npm run check:dist`（外部請求檢查 + 大小與 V2.10.1 比較）、`npm run typecheck`；`npm run test:all` 依序跑模組標註 → 型別 → 建置 → 產物檢查 → Vitest → Playwright。
+- i18n（3.3）：`src/core/i18n.ts` 的 `t(key, vars)`，key 為扁平字串（`area.item`），型別由 `i18n/zh-Hant.json` 推導；文字一律放 `i18n/*.json`，`npm run check:i18n` 會擋 `src/` 中的中日韓字元與兩語系 key / 佔位符不一致。localStorage 鍵為 `archflow:locale`（plan：統一 `archflow:` 前綴）。V3 原始碼的單元測試直接 import TS，不需要瀏覽器。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4（3.2：`npm run test:all` 全數通過；`scripts/check-dist.mjs` 以含外部字型 / 腳本 / CSS / fetch 的反例檔確認會失敗（6 項））
+- **最後通過的驗證層級**：L1（3.3：`npm run test:all` 全數通過，Vitest 13 檔 73 項；`check:i18n` 以缺 key、佔位符不符、src 中文三種反例確認會失敗）

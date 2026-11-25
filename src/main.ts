@@ -1,8 +1,13 @@
-// V3 entry point. Step 3.1 only proves the build pipeline; modules are added from step 3.3 on.
-import { APP_NAME, APP_VERSION } from './version';
+// V3 entry point. Modules are added step by step (docs/v3-progress.md, stage 3).
+import { APP_VERSION } from './version';
+import { initLocale, onLocaleChange, t } from './core/i18n';
 
 const root = document.getElementById('root');
-if (root) {
-  root.textContent = `${APP_NAME} ${APP_VERSION}`;
+function paint(): void {
+  if (!root) return;
+  root.textContent = `${t('app.name')} — ${t('app.version', { version: APP_VERSION })}`;
   root.dataset.ready = 'true';
 }
+initLocale();
+onLocaleChange(paint);
+paint();

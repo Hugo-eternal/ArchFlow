@@ -1,0 +1,9 @@
+{
+  "app.name": "ArchFlow",
+  "app.tagline": "Architecture design and project planning",
+  "app.version": "Version {version}",
+  "app.loading": "Loading…",
+  "locale.zh-Hant": "繁體中文",
+  "locale.en": "English",
+  "locale.switch": "Interface language"
+}

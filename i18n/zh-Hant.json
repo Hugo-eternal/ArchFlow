@@ -1,0 +1,9 @@
+{
+  "app.name": "ArchFlow",
+  "app.tagline": "架構設計與專案規劃",
+  "app.version": "版本 {version}",
+  "app.loading": "載入中…",
+  "locale.zh-Hant": "繁體中文",
+  "locale.en": "English",
+  "locale.switch": "介面語言"
+}
