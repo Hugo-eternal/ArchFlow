@@ -1,0 +1,174 @@
+{
+  "blocks": [
+    {
+      "id": "x0w2ye1gr1",
+      "title": "DC 12 V",
+      "x": 40,
+      "y": 200,
+      "w": 240,
+      "h": 120,
+      "ports": [
+        "r:0.5:OUT"
+      ]
+    },
+    {
+      "id": "xhrr3p7ua8",
+      "title": "主電源",
+      "x": 360,
+      "y": 200,
+      "w": 240,
+      "h": 120,
+      "ports": [
+        "l:0.5:VIN",
+        "r:0.5:OUT"
+      ]
+    },
+    {
+      "id": "x01m6zgzxb",
+      "title": "低雜訊",
+      "x": 700,
+      "y": 60,
+      "w": 240,
+      "h": 120,
+      "ports": [
+        "l:0.5:VIN",
+        "r:0.5:OUT"
+      ]
+    },
+    {
+      "id": "xy9sousa6s",
+      "title": "5 V",
+      "x": 700,
+      "y": 340,
+      "w": 240,
+      "h": 120,
+      "ports": [
+        "l:0.5:VDD"
+      ]
+    },
+    {
+      "id": "xceec8vswb",
+      "title": "3.3 V",
+      "x": 1020,
+      "y": 60,
+      "w": 240,
+      "h": 120,
+      "ports": [
+        "l:0.5:VDD"
+      ]
+    }
+  ],
+  "wires": [
+    {
+      "id": "xnw6egk6q2",
+      "route": "280,260 280,260 360,260 360,260"
+    },
+    {
+      "id": "xk57at25gb",
+      "route": "600,260 600,260 610,260 610,120 700,120 700,120"
+    },
+    {
+      "id": "xg5djsrz30",
+      "route": "600,260 600,260 610,260 610,400 700,400 700,400"
+    },
+    {
+      "id": "x70y200ou4",
+      "route": "940,120 940,120 1020,120 1020,120"
+    }
+  ],
+  "junctions": [],
+  "texts": [
+    {
+      "id": "xkk990xxyz",
+      "text": "入門電源樹",
+      "x": 40,
+      "y": -70
+    },
+    {
+      "id": "x6p6ivijk9",
+      "text": "一路輸入、一級降壓、兩個負載；點方塊可改電壓、電流與效率標註。",
+      "x": 40,
+      "y": -34
+    }
+  ],
+  "metrics": [
+    {
+      "id": "x0w2ye1gr1",
+      "role": "source",
+      "voltage": "12",
+      "current": "3",
+      "power": "",
+      "efficiency": ""
+    },
+    {
+      "id": "xhrr3p7ua8",
+      "role": "converter",
+      "voltage": "5",
+      "current": "2",
+      "power": "",
+      "efficiency": "90"
+    },
+    {
+      "id": "x01m6zgzxb",
+      "role": "converter",
+      "voltage": "3.3",
+      "current": "0.5",
+      "power": "",
+      "efficiency": ""
+    },
+    {
+      "id": "xy9sousa6s",
+      "role": "load",
+      "voltage": "5",
+      "current": "0.4",
+      "power": "",
+      "efficiency": ""
+    },
+    {
+      "id": "xceec8vswb",
+      "role": "load",
+      "voltage": "-12",
+      "current": "0.7",
+      "power": "",
+      "efficiency": ""
+    }
+  ],
+  "wireLabels": [
+    {
+      "id": "xnw6egk6q2",
+      "label": "12 V · 12 V · 1 A"
+    },
+    {
+      "id": "xk57at25gb",
+      "label": "5V0 · 5 V · 0.9 A"
+    },
+    {
+      "id": "xg5djsrz30",
+      "label": "5V0"
+    },
+    {
+      "id": "x70y200ou4",
+      "label": "3V3"
+    }
+  ],
+  "demand": [
+    {
+      "id": "x0w2ye1gr1",
+      "readout": [
+        "下游需求≈ 926 mA / 額定 3 A31%"
+      ]
+    },
+    {
+      "id": "xhrr3p7ua8",
+      "readout": [
+        "下游需求≈ 900 mA / 額定 2 A45%"
+      ]
+    },
+    {
+      "id": "x01m6zgzxb",
+      "readout": [
+        "下游需求≈ 700 mA / 額定 500 mA140%"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,854 @@
+{
+  "width": 1316,
+  "height": 620,
+  "elements": [
+    {
+      "depth": 0,
+      "tag": "svg",
+      "width": "1316",
+      "height": "620",
+      "viewBox": "-8 -112 1316 620"
+    },
+    {
+      "depth": 1,
+      "tag": "defs"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#536b8c"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#3.34e+72"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#6d28d9"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "-8",
+      "y": "-112",
+      "width": "1316",
+      "height": "620",
+      "fill": "#ffffff"
+    },
+    {
+      "depth": 1,
+      "tag": "g"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M280,260 L280,260 L360,260 L360,260",
+      "fill": "none",
+      "stroke": "#3.34e+72",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "12 V · 12 V · 1 A",
+      "x": "320",
+      "y": "253",
+      "fill": "#3d5574",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M600,260 L600,260 L610,260 L610,120 L700,120 L700,120",
+      "fill": "none",
+      "stroke": "#3.34e+72",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5V0 · 5 V · 0.9 A",
+      "x": "618",
+      "y": "183",
+      "fill": "#3d5574",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "text-anchor": "start"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M600,260 L600,260 L610,260 L610,400 L700,400 L700,400",
+      "fill": "none",
+      "stroke": "#3.34e+72",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5V0",
+      "x": "618",
+      "y": "323",
+      "fill": "#3d5574",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "text-anchor": "start"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M940,120 L940,120 L1020,120 L1020,120",
+      "fill": "none",
+      "stroke": "#3.34e+72",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "3V3",
+      "x": "980",
+      "y": "113",
+      "fill": "#3d5574",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "40",
+      "y": "200",
+      "rx": "7",
+      "width": "240",
+      "height": "120",
+      "fill": "rgb(244, 245, 247)",
+      "stroke": "#BCC4CD",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M45,202H275",
+      "stroke": "#5B6876",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "41",
+      "y": "292",
+      "width": "238",
+      "height": "27",
+      "fill": "#f0f5fc"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M40,292H280",
+      "stroke": "#e6edf5",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電源輸入",
+      "x": "120",
+      "y": "245",
+      "fill": "rgb(42, 53, 66)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "DC 12 V",
+      "x": "137.5",
+      "y": "284",
+      "fill": "rgb(64, 87, 117)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電壓",
+      "x": "53",
+      "y": "314.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "V",
+      "x": "98.5",
+      "y": "314.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "12",
+      "x": "80",
+      "y": "315",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "360",
+      "y": "200",
+      "rx": "7",
+      "width": "240",
+      "height": "120",
+      "fill": "rgb(249, 246, 240)",
+      "stroke": "#D3C19F",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M365,202H595",
+      "stroke": "#9A6A26",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "361",
+      "y": "292",
+      "width": "238",
+      "height": "27",
+      "fill": "#f0f5fc"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M360,292H600",
+      "stroke": "#e6edf5",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "降壓 5 V",
+      "x": "443.5",
+      "y": "245",
+      "fill": "rgb(28, 39, 51)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "主電源",
+      "x": "460.5",
+      "y": "284",
+      "fill": "rgb(64, 87, 117)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電壓",
+      "x": "373",
+      "y": "314.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電流",
+      "x": "427.5",
+      "y": "314.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "效率",
+      "x": "482.5",
+      "y": "314.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "V",
+      "x": "411",
+      "y": "314.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "A",
+      "x": "466",
+      "y": "314.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "%",
+      "x": "528",
+      "y": "314.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5",
+      "x": "400",
+      "y": "315",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "2",
+      "x": "454.5",
+      "y": "315",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "90",
+      "x": "509.5",
+      "y": "315",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "700",
+      "y": "60",
+      "rx": "7",
+      "width": "240",
+      "height": "120",
+      "fill": "rgb(249, 246, 240)",
+      "stroke": "#D3C19F",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M705,62H935",
+      "stroke": "#9A6A26",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "701",
+      "y": "152",
+      "width": "238",
+      "height": "27",
+      "fill": "#f0f5fc"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M700,152H940",
+      "stroke": "#e6edf5",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "LDO 3.3 V",
+      "x": "773.5",
+      "y": "105",
+      "fill": "rgb(28, 39, 51)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "低雜訊",
+      "x": "800.5",
+      "y": "144",
+      "fill": "rgb(64, 87, 117)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電壓",
+      "x": "713",
+      "y": "174.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電流",
+      "x": "778.5",
+      "y": "174.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "V",
+      "x": "762",
+      "y": "174.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "A",
+      "x": "827.5",
+      "y": "174.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "3.3",
+      "x": "740",
+      "y": "175",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "0.5",
+      "x": "805.5",
+      "y": "175",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "700",
+      "y": "340",
+      "rx": "7",
+      "width": "240",
+      "height": "120",
+      "fill": "rgb(243, 247, 245)",
+      "stroke": "#AFC7BE",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M705,342H935",
+      "stroke": "#2000000E62",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "701",
+      "y": "432",
+      "width": "238",
+      "height": "27",
+      "fill": "#f0f5fc"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M700,432H940",
+      "stroke": "#e6edf5",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "周邊負載",
+      "x": "780",
+      "y": "385",
+      "fill": "rgb(28, 39, 51)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5 V",
+      "x": "811",
+      "y": "424",
+      "fill": "rgb(64, 87, 117)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電壓",
+      "x": "713",
+      "y": "454.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電流",
+      "x": "767.5",
+      "y": "454.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "V",
+      "x": "751",
+      "y": "454.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "A",
+      "x": "816.5",
+      "y": "454.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5",
+      "x": "740",
+      "y": "455",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "0.4",
+      "x": "794.5",
+      "y": "455",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "1020",
+      "y": "60",
+      "rx": "7",
+      "width": "240",
+      "height": "120",
+      "fill": "rgb(243, 246, 250)",
+      "stroke": "#B4C3D3",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M1025,62H1255",
+      "stroke": "#2B5C8A",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "1021",
+      "y": "152",
+      "width": "238",
+      "height": "27",
+      "fill": "#f0f5fc"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M1020,152H1260",
+      "stroke": "#e6edf5",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "微控制器",
+      "x": "1100",
+      "y": "105",
+      "fill": "rgb(28, 39, 51)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "3.3 V",
+      "x": "1126",
+      "y": "144",
+      "fill": "rgb(64, 87, 117)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電壓",
+      "x": "1033",
+      "y": "174.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "電流",
+      "x": "1099.5",
+      "y": "174.5",
+      "fill": "rgb(83, 110, 145)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "V",
+      "x": "1083",
+      "y": "174.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "A",
+      "x": "1148.5",
+      "y": "174.5",
+      "fill": "rgb(111, 132, 160)",
+      "font-size": "11",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "-12",
+      "x": "1060",
+      "y": "175",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "0.7",
+      "x": "1126.5",
+      "y": "175",
+      "fill": "rgb(23, 59, 101)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "入門電源樹",
+      "x": "48",
+      "y": "-35.5",
+      "fill": "rgb(20, 32, 44)",
+      "font-size": "24",
+      "font-weight": "700"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "一路輸入、一級降壓、兩個負載；點方塊可改電壓、電流與效率標註。",
+      "x": "48",
+      "y": "-10.5",
+      "fill": "rgb(95, 108, 119)",
+      "font-size": "14.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "g"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "OUT",
+      "x": "239.5",
+      "y": "265",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "VIN",
+      "x": "373.5",
+      "y": "265",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "OUT",
+      "x": "559.5",
+      "y": "265",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "VIN",
+      "x": "713.5",
+      "y": "125",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "OUT",
+      "x": "899.5",
+      "y": "125",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "VDD",
+      "x": "713.5",
+      "y": "405",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "VDD",
+      "x": "1033.5",
+      "y": "125",
+      "fill": "rgb(64, 87, 117)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "13",
+      "font-weight": "500"
+    }
+  ]
+}

@@ -1,0 +1,539 @@
+{
+  "version": 5,
+  "project": {
+    "name": "Test"
+  },
+  "activeDesignId": "xqhsio5t5b",
+  "designs": [
+    {
+      "id": "xqhsio5t5b",
+      "name": "分散式電源架構",
+      "type": "power",
+      "diagram": {
+        "nodes": [
+          {
+            "id": "x0w2ye1gr1",
+            "x": 40,
+            "y": 200,
+            "w": 240,
+            "title": "DC 12 V",
+            "partNumber": "電源輸入",
+            "ref": "",
+            "text": "",
+            "ports": [
+              {
+                "id": "xzpr7ppf04",
+                "name": "OUT",
+                "side": "r",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              }
+            ],
+            "role": "source",
+            "color": "#5B6876",
+            "voltage": "12",
+            "current": "3",
+            "power": "",
+            "efficiency": "",
+            "showMetrics": {
+              "voltage": true,
+              "current": false,
+              "power": false,
+              "efficiency": false
+            },
+            "appearance": {
+              "fill": "#F4F5F7",
+              "border": "#BCC4CD",
+              "accent": "#5B6876",
+              "text": "#2A3542",
+              "titleSize": 20
+            },
+            "h": 120,
+            "afLayout": "center-center"
+          },
+          {
+            "id": "xhrr3p7ua8",
+            "x": 360,
+            "y": 200,
+            "w": 240,
+            "title": "主電源",
+            "partNumber": "降壓 5 V",
+            "ref": "",
+            "text": "",
+            "ports": [
+              {
+                "id": "x229cegks2",
+                "name": "VIN",
+                "side": "l",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              },
+              {
+                "id": "xf3x8xwz8p",
+                "name": "OUT",
+                "side": "r",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              }
+            ],
+            "role": "converter",
+            "color": "#9A6A26",
+            "voltage": "5",
+            "current": "2",
+            "power": "",
+            "efficiency": "90",
+            "showMetrics": {
+              "voltage": true,
+              "current": true,
+              "power": false,
+              "efficiency": true
+            },
+            "appearance": {
+              "fill": "#F9F6F0",
+              "border": "#D3C19F",
+              "accent": "#9A6A26",
+              "text": "#1C2733",
+              "titleSize": 20
+            },
+            "h": 120,
+            "afLayout": "center-center"
+          },
+          {
+            "id": "x01m6zgzxb",
+            "x": 700,
+            "y": 60,
+            "w": 240,
+            "title": "低雜訊",
+            "partNumber": "LDO 3.3 V",
+            "ref": "",
+            "text": "",
+            "ports": [
+              {
+                "id": "x7ph2lsn9o",
+                "name": "VIN",
+                "side": "l",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              },
+              {
+                "id": "x2znxv4ut8",
+                "name": "OUT",
+                "side": "r",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              }
+            ],
+            "role": "converter",
+            "color": "#9A6A26",
+            "voltage": "3.3",
+            "current": "0.5",
+            "power": "",
+            "efficiency": "",
+            "showMetrics": {
+              "voltage": true,
+              "current": true,
+              "power": false,
+              "efficiency": false
+            },
+            "appearance": {
+              "fill": "#F9F6F0",
+              "border": "#D3C19F",
+              "accent": "#9A6A26",
+              "text": "#1C2733",
+              "titleSize": 20
+            },
+            "h": 120,
+            "afLayout": "center-center"
+          },
+          {
+            "id": "xy9sousa6s",
+            "x": 700,
+            "y": 340,
+            "w": 240,
+            "title": "5 V",
+            "partNumber": "周邊負載",
+            "ref": "",
+            "text": "",
+            "ports": [
+              {
+                "id": "xfk35l2rmf",
+                "name": "VDD",
+                "side": "l",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              }
+            ],
+            "role": "load",
+            "color": "#2E6E62",
+            "voltage": "5",
+            "current": "0.4",
+            "power": "",
+            "efficiency": "",
+            "showMetrics": {
+              "voltage": true,
+              "current": true,
+              "power": false,
+              "efficiency": false
+            },
+            "appearance": {
+              "fill": "#F3F7F5",
+              "border": "#AFC7BE",
+              "accent": "#2E6E62",
+              "text": "#1C2733",
+              "titleSize": 20
+            },
+            "h": 120,
+            "afLayout": "center-center"
+          },
+          {
+            "id": "xceec8vswb",
+            "x": 1020,
+            "y": 60,
+            "w": 240,
+            "title": "3.3 V",
+            "partNumber": "微控制器",
+            "ref": "",
+            "text": "",
+            "ports": [
+              {
+                "id": "xl8o08kb4l",
+                "name": "VDD",
+                "side": "l",
+                "t": 0.5,
+                "type": "power",
+                "showLabel": true,
+                "afGridOffset": 60
+              }
+            ],
+            "role": "load",
+            "color": "#2B5C8A",
+            "voltage": "-12",
+            "current": "0.7",
+            "power": "",
+            "efficiency": "",
+            "showMetrics": {
+              "voltage": true,
+              "current": true,
+              "power": false,
+              "efficiency": false
+            },
+            "appearance": {
+              "fill": "#F3F6FA",
+              "border": "#B4C3D3",
+              "accent": "#2B5C8A",
+              "text": "#1C2733",
+              "titleSize": 20
+            },
+            "h": 120,
+            "afLayout": "center-center"
+          }
+        ],
+        "edges": [
+          {
+            "id": "xnw6egk6q2",
+            "a": {
+              "node": "x0w2ye1gr1",
+              "port": "xzpr7ppf04"
+            },
+            "b": {
+              "node": "xhrr3p7ua8",
+              "port": "x229cegks2"
+            },
+            "name": "12 V",
+            "kind": "power",
+            "arrow": false,
+            "manual": null,
+            "color": "#334e70",
+            "voltage": "12",
+            "current": "1",
+            "afLineFormat": {
+              "color": "#334e70",
+              "width": 2.2,
+              "dash": "solid",
+              "arrow": false
+            }
+          },
+          {
+            "id": "xk57at25gb",
+            "a": {
+              "node": "xhrr3p7ua8",
+              "port": "xf3x8xwz8p"
+            },
+            "b": {
+              "node": "x01m6zgzxb",
+              "port": "x7ph2lsn9o"
+            },
+            "name": "5V0",
+            "kind": "power",
+            "arrow": false,
+            "manual": null,
+            "color": "#334e70",
+            "voltage": "5",
+            "current": "0.9",
+            "afLineFormat": {
+              "color": "#334e70",
+              "width": 2.2,
+              "dash": "solid",
+              "arrow": false
+            }
+          },
+          {
+            "id": "xg5djsrz30",
+            "a": {
+              "node": "xhrr3p7ua8",
+              "port": "xf3x8xwz8p"
+            },
+            "b": {
+              "node": "xy9sousa6s",
+              "port": "xfk35l2rmf"
+            },
+            "name": "5V0",
+            "kind": "power",
+            "arrow": false,
+            "manual": null,
+            "color": "#334e70",
+            "voltage": "",
+            "current": "",
+            "afLineFormat": {
+              "color": "#334e70",
+              "width": 2.2,
+              "dash": "solid",
+              "arrow": false
+            }
+          },
+          {
+            "id": "x70y200ou4",
+            "a": {
+              "node": "x01m6zgzxb",
+              "port": "x2znxv4ut8"
+            },
+            "b": {
+              "node": "xceec8vswb",
+              "port": "xl8o08kb4l"
+            },
+            "name": "3V3",
+            "kind": "power",
+            "arrow": false,
+            "manual": null,
+            "color": "#334e70",
+            "voltage": "",
+            "current": "",
+            "afLineFormat": {
+              "color": "#334e70",
+              "width": 2.2,
+              "dash": "solid",
+              "arrow": false
+            }
+          }
+        ],
+        "junctions": [],
+        "texts": [
+          {
+            "id": "xkk990xxyz",
+            "text": "入門電源樹",
+            "x": 40,
+            "y": -70,
+            "w": 520,
+            "size": 18,
+            "color": "#14202C",
+            "bold": true,
+            "italic": false,
+            "align": "left",
+            "background": "transparent"
+          },
+          {
+            "id": "x6p6ivijk9",
+            "text": "一路輸入、一級降壓、兩個負載；點方塊可改電壓、電流與效率標註。",
+            "x": 40,
+            "y": -34,
+            "w": 760,
+            "size": 11,
+            "color": "#5F6C77",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "background": "transparent"
+          }
+        ],
+        "afGrid": {
+          "version": 1,
+          "size": 10,
+          "show": true,
+          "enabled": true
+        },
+        "afPinLabels": "inside",
+        "theme": {
+          "english": "Source Han Sans TC",
+          "chinese": "Source Han Sans TC",
+          "title": 20,
+          "subtitle": 13,
+          "label": 13,
+          "metric": 13
+        }
+      },
+      "camera": {
+        "x": 26.737704918032787,
+        "y": 276.22131147540983,
+        "z": 0.7065573770491803
+      }
+    }
+  ],
+  "customStyles": [
+    null
+  ],
+  "archflowLocalization": {
+    "locale": "zh-Hant",
+    "bindings": {
+      "nodes": {
+        "x7k0t1arnj": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 0
+        },
+        "xogd6t6ueu": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 1
+        },
+        "x5kv43195w": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 2
+        },
+        "xneye9heku": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 3
+        },
+        "x9hs2dmzkj": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 4
+        },
+        "x1eql3928z": {
+          "field": "partNumber",
+          "key": "powerNodes",
+          "index": 5
+        }
+      },
+      "designs": {
+        "xqhsio5t5b": {
+          "type": "power",
+          "index": 0
+        }
+      }
+    },
+    "catalog": {
+      "new": "建立新專案",
+      "lang": "介面語言",
+      "variant": "內建範本",
+      "variants": [
+        "01 / 系統平台架構",
+        "02 / 聯網感測平台"
+      ],
+      "power": [
+        "01 / 分散式電源架構",
+        "02 / 獨立電源區域"
+      ],
+      "schedule": [
+        "01 / 產品開發流程",
+        "02 / 工程變更流程"
+      ],
+      "note": "可編輯的架構參考範本。日期與電氣數值預設留白，不代表電路模擬或元件規格。",
+      "templates": "專業範本",
+      "function": [
+        "系統控制器",
+        "主機介面",
+        "資料擷取",
+        "通訊模組",
+        "系統監測",
+        "參考時脈"
+      ],
+      "function2": [
+        "閘道控制器",
+        "感測前端",
+        "訊號處理",
+        "網路介面",
+        "本機儲存",
+        "參考時脈"
+      ],
+      "powerNodes": [
+        "輸入保護",
+        "主電源轉換",
+        "運算電源區",
+        "介面電源區",
+        "類比電源區",
+        "監控模組"
+      ],
+      "powerNodes2": [
+        "輸入保護",
+        "區域電源分配",
+        "主電源區",
+        "隔離電源區",
+        "輔助電源區",
+        "電源監控"
+      ],
+      "tasks": [
+        "需求基準確認",
+        "架構審查",
+        "細部設計",
+        "整合準備",
+        "驗證審查",
+        "發行準備",
+        "文件建置",
+        "文件審查",
+        "交付準備"
+      ],
+      "tasks2": [
+        "變更受理",
+        "影響評估",
+        "實作計畫",
+        "設計更新",
+        "驗證資料",
+        "變更發行",
+        "文件更新",
+        "獨立審查",
+        "交付檢查"
+      ],
+      "fnDesc": "六個模組的平台架構，清楚區分訊號路徑、共用分支與參考時脈。",
+      "powerDesc": "六個方塊的電源區域架構，包含分配、獨立負載與監控，不預設電氣數值。",
+      "scheduleDesc": "九個任務的交付流程，包含審查節點與獨立文件分支，日期由使用者設定。",
+      "home": "讓架構更清晰，讓設計更直覺。",
+      "intro": "在同一個工作台整理功能架構、電源區域與專案時程。選擇設計類型，開始建立第一張設計。",
+      "project": "新專案",
+      "badge": "參考範本",
+      "startExamples": "使用專業範本開始"
+    }
+  },
+  "applicationVersion": "1.8-rc4",
+  "wiringMode": "direct-ports",
+  "camera": {
+    "x": 26.737704918032787,
+    "y": 276.22131147540983,
+    "z": 0.7065573770491803
+  },
+  "cameras": {
+    "circuit": {
+      "x": 0,
+      "y": 0,
+      "z": 1
+    },
+    "current": {
+      "x": 26.737704918032787,
+      "y": 276.22131147540983,
+      "z": 0.7065573770491803
+    }
+  }
+}
