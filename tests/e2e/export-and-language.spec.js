@@ -6,10 +6,11 @@ import { openIndex, engine, createProject } from './helpers.js';
 
 const pngSize = buf => ({ sig: buf.subarray(0, 8).toString('hex'), w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) });
 
-// The app names the file through <a download="…">. Chromium reports the download as
-// "download" because the blob URL has an opaque origin (blob:null/…, srcdoc iframe opened
-// from file://) — see the handoff note in docs/v3-progress.md. We therefore record the name
-// the app asked for, and read the bytes from the real download.
+// The app names the file through <a download="…">. Headless Chromium under Playwright reports
+// the download as "download" because the blob URL has an opaque origin (blob:null/…, srcdoc
+// iframe opened from file://); real Chrome / Edge save it with the right name (confirmed by
+// the user). We therefore record the name the app asked for, and read the bytes from the
+// real download.
 async function exportAs(page, app, info, format, opts = {}) {
   await engine(page).evaluate(() => {
     if (window.__e2eAnchorHook) return;

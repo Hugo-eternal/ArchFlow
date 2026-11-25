@@ -117,7 +117,7 @@
   - 2.4 鎖定的現行怪異行為（測試名稱以 `QUIRK:` 開頭）：方塊標題長度無上限；超過 8 MB 的檔案只顯示通用訊息「載入失敗，原專案已保留。」（L563 的 8 MB 專屬訊息被外層 loader 蓋掉）。V3 修正時要更新這些測試並寫入 CHANGELOG。
   - **2.5 發現的資料遺失 bug**（`tests/unit/io.roundtrip.test.js` 的 `KNOWN_LOSS`）：存檔後重新載入，功能 / 電源設計的文字框遺失 `align`、`background`；**時程設計的文字框全部消失、`theme` 被清除**。V3 必須修正。
   - 2.6 發現：L624 把 `scheduleLabel` 直接換成 `intervalState(e).label`，時程規則的 `count: 'inclusive'`（含頭尾）完全無作用（測試 `QUIRK: scheduleLabel ignores the inclusive counting rule`）。
-  - **2.15 待人工確認的疑似 bug**：匯出 PNG / SVG（以及其他經 blob 下載的檔案）時，程式以 `<a download="入門方塊圖.svg">` 指定檔名，但 Chromium 回報的檔名是 `download`（沒有副檔名），因為 iframe 的 blob 網址來源是 `blob:null/…`（從 `file://` 開啟、srcdoc iframe）。需要在使用者實際的 Chrome / Edge 從本機開啟 `index.html` 匯出一次確認；若屬實，V3 要改為從頂層文件建立 blob 下載。E2E 目前檢查「程式要求的檔名」。
+  - 2.15 的匯出檔名疑點**已由使用者確認不是 bug**：在實際 Chrome / Edge 從本機開啟 `index.html` 匯出 SVG，檔名正常。Playwright 回報 `download` 只是自動化瀏覽器對 `blob:null` 來源的行為差異；E2E 繼續以「程式要求的檔名」驗證。V3 不需為此修改下載方式。
   - V2 golden 專案是 V2 格式，V3 需測試專用轉換器（plan R1、步驟 3.6）；SVG 快照要用結構化比對（R2）。
   - 階段 2 的 Playwright 一律 `--trace off`，用預裝 chromium，不要執行 `playwright install`。
 - 覆寫掃描已修正（2.6 後）：現為 96 個目標 / 327 層，`*` 整個取代 43 層、`↶` 回退 3 層（audit §1.2、§1.5 已更新）。
