@@ -83,7 +83,8 @@ const declared = new Map(); // name -> [lines]
 
 const TARGET = String.raw`(?:window\.[\w$]+|\$\('[^']+'\)\.on\w+|[\w$]+)`;
 // "const base = X;" and the guarded form "const base = typeof X==='function' ? X : null;"
-const aliasRe = new RegExp(String.raw`\b(?:const|let|var)\s+([\w$]+)\s*=\s*(?:typeof\s+[\w$.]+\s*===?\s*'function'\s*\?\s*)?(${TARGET})\s*(?:[;,]|:\s*null)`, 'g');
+// also the later names in a list: "const __undo = undo, __redo = redo;"
+const aliasRe = new RegExp(String.raw`(?:\b(?:const|let|var)\s+|,\s*)([\w$]+)\s*=\s*(?:typeof\s+[\w$.]+\s*===?\s*'function'\s*\?\s*)?(${TARGET})(?=\s*(?:[;,]|:\s*null))`, 'g');
 const assignRe = new RegExp(String.raw`(^|[^\w$.'"\`])(${TARGET})\s*=\s*(?=async\s|function\b|\([^()]*\)\s*=>|[\w$]+\s*=>)`, 'g');
 
 const aliases = []; // {alias, target, at}
@@ -97,9 +98,12 @@ const aliases = []; // {alias, target, at}
   }
 }
 const aliasedTargets = new Set(aliases.map(a => a.target));
-const isTarget = name => aliasedTargets.has(name);
+// targets: anything saved under an alias, plus every declared function (a declared function
+// reassigned without an alias is a full replacement — e.g. L624 scheduleLabel, found in step 2.6)
+const isTarget = name => aliasedTargets.has(name) || declared.has(name);
 
 const layers = new Map(); // target -> [{line, alias, script, comment}]
+const prevAt = new Map(); // target -> text index of its previous override
 {
   let m;
   while ((m = assignRe.exec(text))) {
@@ -115,19 +119,29 @@ const layers = new Map(); // target -> [{line, alias, script, comment}]
       const stmt = Math.max(text.lastIndexOf(';', at), text.lastIndexOf('{', at), text.lastIndexOf('}', at), text.lastIndexOf('\n', at));
       if (/^\s*(?:const|let|var)\b/.test(text.slice(stmt + 1, at))) continue;
     }
-    const alias = [...aliases].reverse().find(a => a.target === target && a.at < at && at - a.at < 4000);
+    // Which saved copy does the new body call? Look at the body text (until the
+    // next top-level statement is unknowable cheaply, so a bounded window) for any
+    // alias name of this target that was defined before this point.
+    const body = text.slice(at, at + 6000);
+    const earlier = aliases.filter(a => a.target === target && a.at < at);
+    const latest = earlier.at(-1) || null;
+    const called = [...earlier].reverse().find(a => new RegExp(String.raw`(?<![\w$.])${a.alias.replace(/\$/g, '\\$')}\s*(?:\(|\.(?:apply|call)\b)`).test(body)) || null;
     const sc = scriptAt(at);
     const c = commentBefore(at, sc ? sc.at : 0);
     if (!layers.has(target)) layers.set(target, []);
     layers.get(target).push({
       line: lineOf(at),
-      alias: alias ? alias.alias : null,
-      // no alias kept: this layer discards every earlier layer (or, for a DOM
+      alias: called ? called.alias : null,
+      // no saved copy called: this layer discards every earlier layer (or, for a DOM
       // handler / window function, it is the first assignment)
-      replaces: !alias,
+      replaces: !called,
+      // calls an older saved copy than the latest one: the layers in between are dropped
+      // ...i.e. the copy it calls was saved before the previous override of this target
+      rollback: !!(called && prevAt.has(target) && called.at < prevAt.get(target)),
       script: sc ? sc.id : null,
       comment: c ? c.text : null,
     });
+    prevAt.set(target, at);
   }
 }
 
@@ -150,12 +164,14 @@ if (asJson) {
   const total = result.reduce((n, r) => n + r.layers, 0);
   console.log(`# Override chains in ${file}`);
   console.log(`\n${result.length} targets, ${total} override layers. Skipped bundle lines: ${skip.map(([a, b]) => `${lineOf(a)}–${lineOf(b)}`).join(', ') || 'none'}.\n`);
-  console.log('Override lines marked * keep no alias: they replace the whole chain so far.\n');
+  console.log('Marks: `*` = calls no saved copy (replaces the whole chain so far, or is the first assignment);');
+  console.log('`↶` = calls an older saved copy than the latest one (rolls back the layers in between).\n');
   console.log('| Target | Kind | Defined at | Layers | Override lines |');
   console.log('|---|---|---|---|---|');
-  for (const r of result) console.log(`| \`${r.target}\` | ${r.kind} | ${r.definedAt.join(', ') || '—'} | ${r.layers} | ${r.overrides.map(o => o.line + (o.replaces ? '*' : '')).join(', ')} |`);
+  const mark = o => o.line + (o.replaces ? '*' : o.rollback ? '↶' : '');
+  for (const r of result) console.log(`| \`${r.target}\` | ${r.kind} | ${r.definedAt.join(', ') || '—'} | ${r.layers} | ${r.overrides.map(mark).join(', ')} |`);
   for (const r of result) {
     console.log(`\n## \`${r.target}\` — ${r.layers} layer(s)`);
-    for (const o of r.overrides) console.log(`- L${o.line} ${o.alias ? '`' + o.alias + '`' : '**replaces (no alias)**'} [${o.script ?? '?'}]${o.comment ? ' — ' + o.comment : ''}`);
+    for (const o of r.overrides) console.log(`- L${o.line} ${o.replaces ? '**replaces (no saved copy called)**' : '`' + o.alias + '`' + (o.rollback ? ' **(rollback)**' : '')} [${o.script ?? '?'}]${o.comment ? ' — ' + o.comment : ''}`);
   }
 }

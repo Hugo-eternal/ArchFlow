@@ -16,33 +16,34 @@
 
 ### 1.1 閱讀方式
 - 覆寫寫法：`const base = X; X = function(...a){ … base(...a) … }`。**最後定義的那層最先被呼叫**，再由它往內呼叫較早的層。
-- 下表「Layers」是重新指派的次數；標 `*` 的行沒有保留前一層的 alias，代表**捨棄**目前為止的整條鏈，或回退到更早存下的某一層。
+- 下表「Layers」是重新指派的次數。標 `*`：新函式**沒有呼叫任何保存的舊版本**，等於捨棄目前為止的整條鏈（DOM handler / window 函式的第一行則是原始定義）。標 `↶`：呼叫的是**比前一層更早**保存的版本，中間各層被丟掉（回退）。判斷方式是檢查新函式本體實際呼叫了哪個 alias。
 - 「script#N」指沒有 id 的 `<script>`：script#1 = L251（V1 引擎與早期補丁）、script#2 = L863（V1.x 補丁主體）、script#3–#7 = L1943–2160 的面板 IIFE、script#9 = L2184。
 - af20-shell（L5319–10375，React bundle）不在統計範圍內。
 
 ### 1.2 統計
-- **75 個目標、304 層覆寫**；zh-Hant 與 en 結構完全相同。
-- 前 6 名占 145 層（48%）：`inspector` 37、`render` 31、`validateDiagram` 28、`drawEdges` 24、`projectData` 14、`exportSvgDocument` 11。
-- 加上 `scheduleChrome` 12、`workspaceExample` 10，前 8 名占 167 層（55%）。
-- 13 個目標有 `*` 層：其中 `window.ArchFlowSession` L959、`$('#add')` L327、`$('#examplesBtn')` L423、`$('#exportBtn')` L400、`$('#file')` L363 只是原始定義；其餘為真正的取代 / 回退，見 §1.5。
+- **96 個目標、327 層覆寫**；zh-Hant 與 en 結構完全相同。
+- 前 6 名占 145 層（44%）：`inspector` 37、`render` 31、`validateDiagram` 28、`drawEdges` 24、`projectData` 14、`exportSvgDocument` 11。
+- 加上 `scheduleChrome` 12、`workspaceExample` 10，前 8 名占 167 層（51%）。
+- **43 層 `*`（整個取代）**、**3 層 `↶`（回退）**，見 §1.5。
+- 修正紀錄（2.6 之後）：初版腳本只追蹤「有保存舊版本」的函式，漏掉 21 個被直接取代的已宣告函式（例如 L624 `scheduleLabel`，由 2.6 的時程測試發現），也把逗號列表中的第二個 alias（`const __undo=undo,__redo=redo`）漏掉。初版數字為 75 個目標 / 304 層。
 
 ### 1.3 全部目標
 
 | Target | Kind | Defined at | Layers | Override lines |
 |---|---|---|---|---|
-| `inspector` | global | 314 | 37 | 478, 493, 519, 599, 631, 647, 673, 693, 741, 770, 797, 844*, 1406, 1463, 1565, 1805, 1885, 1929, 1951, 1998, 2060, 2082, 2219, 2254, 2273, 2288, 2303, 3047, 3125, 3244, 3509, 3703, 3843, 4108, 10536, 10587, 10627 |
+| `inspector` | global | 314 | 37 | 478, 493, 519, 599, 631, 647, 673, 693, 741, 770, 797, 844↶, 1406, 1463, 1565, 1805, 1885, 1929, 1951, 1998, 2060, 2082, 2219, 2254, 2273, 2288, 2303, 3047, 3125, 3244, 3509, 3703, 3843, 4108, 10536, 10587, 10627 |
 | `render` | global | 308 | 31 | 596, 609, 626, 648, 691, 735, 759, 794, 1122, 1205, 1257, 1401, 1534, 1745, 1779, 1858, 1864, 2199, 2248, 2311, 3097, 3234, 3506, 3707, 3857, 4044, 4424, 10399, 10480, 10565, 10617 |
 | `validateDiagram` | global | 358 | 28 | 605, 633, 675, 694, 737, 798, 817, 850, 1125, 1199, 1297, 1332, 1403, 1443, 1539, 1623, 1739, 1815, 2059, 2349, 3062, 3139, 3387, 4116, 4431, 4579, 10467, 10557 |
 | `drawEdges` | global | 299 | 24 | 597, 629, 668, 688, 733, 795, 849, 1124, 1171, 1187, 1212, 1400, 1465, 1562, 1656, 1738, 1802, 2141, 2249, 3099, 3235, 3507, 10481, 10618 |
 | `projectData` | global | 361 | 14 | 520, 555*, 1008, 1057, 1126, 1359, 1471, 1540, 1625, 1675, 1740, 1779, 1857, 2325 |
 | `scheduleChrome` | global | 580 | 12 | 625, 649, 666, 695, 739, 768, 793, 816, 845, 892, 2203, 3708 |
 | `exportSvgDocument` | global | 390 | 11 | 606, 634, 676, 698, 754, 760, 1469, 1567, 1674, 1744, 1856 |
-| `workspaceExample` | global | 408 | 10 | 602, 907, 964, 1059, 1110, 1176, 1331, 1538, 3145, 3369 |
+| `workspaceExample` | global | 408 | 10 | 602, 907*, 964, 1059, 1110, 1176, 1331, 1538, 3145, 3369 |
 | `scheduleExample` | global | 579 | 6 | 620*, 677*, 925*, 965, 1082, 3489 |
-| `autoArrange` | global | 378 | 5 | 1214*, 1647, 1736*, 1771*, 1850* |
-| `commit` | global | 288 | 5 | 1123, 1348, 1535, 1648*, 3564 |
+| `autoArrange` | global | 378 | 5 | 1214*, 1647, 1736*, 1771*, 1850↶ |
+| `commit` | global | 288 | 5 | 1123, 1348*, 1535, 1648↶, 3564* |
 | `createWorkspaceProject` | global | 470 | 5 | 554*, 967, 2329, 3543, 10433 |
-| `fit` | global | 336 | 5 | 601, 632, 669, 3587, 4445 |
+| `fit` | global | 336 | 5 | 601, 632, 669, 3587*, 4445 |
 | `loadWorkspaceExample` | global | 422 | 5 | 603, 957, 1015, 3544, 10434 |
 | `fullPath` | global | 282 | 4 | 1189, 1211, 1529, 1591 |
 | `select` | global | 291 | 4 | 646, 842, 893, 1396 |
@@ -61,11 +62,13 @@
 | `$('#exportBtn').onclick` | dom-handler | — | 2 | 400*, 708 |
 | `activateDesign` | global | 550 | 2 | 1334, 1402 |
 | `afAlignTemplatePorts` | global | 1177 | 2 | 1508, 1680 |
-| `afNormalizeSharedBranches` | global | 1135 | 2 | 1294, 1304 |
+| `afNormalizeSharedBranches` | global | 1135 | 2 | 1294, 1304* |
 | `afPortUpdate` | global | 1238 | 2 | 1276, 1563 |
 | `appendFreeTextExport` | global | 507 | 2 | 4125, 4433 |
 | `applyBlockAppearance` | global | 435 | 2 | 1432, 1509 |
 | `finish` | global | 319 | 2 | 4209, 4569 |
+| `graphAutoFit` | global | 663 | 2 | 692*, 736* |
+| `openScheduleTemplates` | global | 751 | 2 | 769*, 861* |
 | `renderFreeTexts` | global | 499 | 2 | 2201, 2273 |
 | `rfApply` | global | 1421 | 2 | 1795, 1882 |
 | `uiArrangeLabels` | global | 1714 | 2 | 1762, 1814 |
@@ -76,30 +79,49 @@
 | `addPin` | global | 307 | 1 | 1256 |
 | `afArrangeIO` | global | 1263 | 1 | 1564 |
 | `afRefreshTemplates` | global | 948 | 1 | 1012 |
+| `afSpreadPorts` | global | 1237 | 1 | 1275* |
+| `allowedWorkspace` | global | 465 | 1 | 548* |
 | `anchor` | global | 265 | 1 | 1504 |
+| `appendHeadingExport` | global | 461 | 1 | 1197* |
 | `appendMetrics` | global | 369 | 1 | 2053 |
+| `beginCornerBranch` | global | 354 | 1 | 1306* |
 | `downloadBlob` | global | 388 | 1 | 565 |
+| `drawBranchCorners` | global | 355 | 1 | 1305* |
+| `edgeLabel` | global | 349 | 1 | 1442* |
 | `emptyDiagram` | global | 401 | 1 | 3144 |
 | `ensureBlockWidth` | global | 490 | 1 | 1506 |
 | `ggRoute` | global | 1523 | 1 | 1592 |
 | `graphAppend` | global | 661 | 1 | 3583 |
+| `graphBounds` | global | 656 | 1 | 689* |
+| `graphBranch` | global | 662 | 1 | 3594 |
 | `graphCreateTask` | global | 659 | 1 | 800 |
+| `headingBounds` | global | 460 | 1 | 1197* |
 | `junctionInspector` | global | 352 | 1 | 1281 |
 | `newFreeText` | global | 497 | 1 | 2285 |
 | `normalizeSlots` | global | 451 | 1 | 1507 |
 | `notify` | global | 287 | 1 | 3126 |
+| `openHeading` | global | 462 | 1 | 1197* |
 | `openInlineTime` | global | 641 | 1 | 670 |
 | `placePorts` | global | 305 | 1 | 1299 |
 | `preview` | global | 316 | 1 | 1566 |
 | `project` | global | 304 | 1 | 1505 |
 | `readabilityReport` | global | 442 | 1 | 611 |
+| `redo` | global | 332 | 1 | 2322 |
+| `renderHeading` | global | 459 | 1 | 1197* |
+| `repairJunctionGeometry` | global | 491 | 1 | 1109* |
 | `roGeometry` | global | 1580 | 1 | 1679 |
+| `scheduleLabel` | global | 576 | 1 | 624* |
+| `scheduleTask` | global | 578 | 1 | 619* |
 | `splitAtCorner` | global | 353 | 1 | 1080 |
 | `start` | global | 293 | 1 | 1295 |
+| `storeWorkspace` | global | 343 | 1 | 547* |
+| `taskHeight` | global | 617 | 1 | 721* |
 | `uiCandidate` | global | 1718 | 1 | 1759 |
 | `uiLabelRect` | global | 1709 | 1 | 1813 |
 | `uiLiveLabels` | global | 1713 | 1 | 1812 |
+| `uiMetricScore` | global | 1719 | 1 | 1760* |
 | `uiOpen` | global | 1728 | 1 | 1770 |
+| `uiRoutes` | global | 1708 | 1 | 1758* |
 | `uiShow` | global | 1725 | 1 | 1776 |
 | `undo` | global | 331 | 1 | 2321 |
 | `updateReadability` | global | 443 | 1 | 10426 |
@@ -286,7 +308,7 @@ V2.3.0 徽章、外框、連接器、文字框不是覆寫 `exportSvgDocument`�
 ### 1.5 取代 / 回退層（`*`）與暫時替換
 | 目標 | 行 | 性質 |
 |---|---|---|
-| `inspector` | 844 | 回退到較早的 alias，拿掉 797 那層 |
+| `inspector` | 844 `↶` | 回退到較早的 alias，拿掉 797 那層 |
 | `projectData` | 555 | 改成多設計格式，整個取代 |
 | `scheduleExample` | 620、677、925 | 三代範例，每代完全取代上一代 |
 | `autoArrange` | 1214、1736、1771、1850 | 1214 引擎版 → 1647 RC 引擎 → 1736 / 1771 改開「整合預覽」 → 1850 最終：時程走 `rcAutoEngine`，其他開 v4 預覽 |
@@ -295,6 +317,16 @@ V2.3.0 徽章、外框、連接器、文字框不是覆寫 `exportSvgDocument`�
 | `fit` | 3587 | 插入任務時暫時停用 fit（finally 還原） |
 | `axisLayout` | 657、685 | 時程版面兩代，各自整個取代 |
 | `syncProjectChrome` | 549 | 多設計版本整個取代 |
+| `workspaceExample` | 907 | 保存了 `afOriginalExample` 卻從未呼叫：L602 的時程範例分派層被丟棄，改由 907 自行處理所有類型 |
+| `autoArrange` | 1850 `↶` | 呼叫 L1647 之前保存的 `rcAutoEngine`，跳過 1736 / 1771 兩層 |
+| `scheduleLabel` | 624 | 改為 `intervalState(e).label`：時程規則 `count: 'inclusive'` 從此無作用（2.6 測試鎖定） |
+| `scheduleTask`、`taskHeight`、`graphBounds`、`graphAutoFit`（692、736）、`storeWorkspace`、`allowedWorkspace` | 619、721、689、692/736、547、548 | 時程 / 多設計改版時直接換掉的輔助函式 |
+| `renderHeading`、`headingBounds`、`appendHeadingExport`、`openHeading` | 1197 | 換成空函式：標題功能停用 |
+| `repairJunctionGeometry`、`drawBranchCorners`、`beginCornerBranch`、`afNormalizeSharedBranches` | 1109、1305、1306、1304 | 換成空函式（或 `return 0`）：舊的接點修復 / 轉角分支停用，由新繞線取代 |
+| `edgeLabel` | 1442 | p13 線條標籤格式整個重寫 |
+| `afSpreadPorts` | 1275 | 改為保留鎖定接腳的版本 |
+| `openScheduleTemplates` | 769、861 | 兩代各自整個取代 |
+| `uiRoutes`、`uiMetricScore` | 1758、1760 | RC3 換掉 RC2 的整理計算（RC4 仍會呼叫） |
 | `$('#file').onchange` 等 DOM handler | 363、558 | 第一行是原始定義；558 為多設計版本整個取代 |
 
 ### 1.6 對 V3 的結論
