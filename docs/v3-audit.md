@@ -399,3 +399,59 @@ V3：`af*` 前綴全部去掉，依功能分組（例如 `part: {kind, rot, size
 - **sequence**：`{name, tk, rails:[{id,name,kind,v,color,note,tk,on:{after,delay,ramp},off:{after,delay,ramp}}]}`。`tk` 是時序鍵（例如 `mcu.per`）。全部保留。
 - **flowchart**：`{title, lanes[], nodes:[{id,type,text,x,y,w,h,color,lane,img,att,alt,border}], edges:[{id,from,to,label,color,width,fromSide,toSide,dash}], lineDefault:{color,width,dash}}`。全部保留；流程圖另有獨立的 `.flow.json` 匯出格式（`{app:'archflow-flow', version:1, …}`，L5563），V3 決定是否保留。
 - 這兩種設計的 `nodes` / `edges` / `junctions` 外層陣列恆為空，只是為了通過引擎的 `validateDiagram`；V3 不需要。
+
+### 2.6 專案 JSON 頂層欄位（現行 `version: 5`）
+
+實測輸出（`scripts/audit/dump-project-shape.mjs`）：
+
+| 欄位 | 寫入 | 讀取 | 處置 | 說明 |
+|---|---|---|---|---|
+| `version` | L555（=5） | L559（5）、L363 / L560（4） | **改名** → `schemaVersion: 3` | V3 只接受 3；其他值顯示「不支援舊版格式」 |
+| `project.name` | L555 | L562 | 保留 | 上限 100 字 |
+| `activeDesignId` | L555 | L559 | 保留 | |
+| `designs[]` | L555 | L559 | 保留 | 每筆 `{id, name, type, diagram, camera}`；上限 100 張 |
+| `designs[].type` | | | 保留 | function / power / schedule / sequence / flowchart |
+| `designs[].camera` | L2325 | L559、L2332 | 保留 | `{x, y, z}` |
+| `customStyles` | L520 / L555 | L521、L562 | 保留 | 使用者自訂方塊樣式；同時存在 localStorage（`circuit-studio-custom-styles-v1`，L514），V3 需決定以哪邊為準 |
+| `archflowLocalization.locale` | L1008 | L1009 | 保留 → `locale` | 建檔時的介面語系 |
+| `archflowLocalization.bindings` | L1008 | L1009 | **刪除** | 「系統產生的標籤 ↔ 範本字串」對照，用來在切換語系時翻譯範本名稱；V3 範本名稱改用 i18n key 即可 |
+| `archflowLocalization.catalog` | L1008 | L1009 | **刪除** | 每個存檔都**完整複製一份範本文字目錄**（`AF` 物件，約 20 個欄位），只為了上一項的翻譯 |
+| `applicationVersion` | L1057、L1471…L1857 | L1539、L1623、L1739（只寫不判斷） | 保留，改為單一常數 | 現況 bug：實際寫入 `'1.8-rc4'` |
+| `wiringMode` | L1359（固定 `'direct-ports'`） | 無 | **刪除** | 只寫不讀 |
+| `camera` | L2325 | L2332 | **刪除** | 與 `designs[activeDesignId].camera` 重複 |
+| `cameras.circuit` / `cameras.current` | L2325 | L2332（僅 `version 4`） | **刪除** | V1.x 兩個工作區時代的鏡頭 |
+
+只在讀舊檔時出現（V3 全部刪除）：
+- `version: 4` 格式：`diagrams.circuit` / `diagrams.current`、`active`、`project.type`（含隱藏的 `both`），讀取於 L363、L560、L2332。
+- 無 `version` 的單張圖：直接當成 diagram 交給 `validateDiagram`。
+
+### 2.7 瀏覽器 localStorage（不在專案檔內，但 V3 要決定去留）
+
+| key | 用途 | 位置 |
+|---|---|---|
+| `archflow-language-v2` | 介面語系 | `index.html:4`、`index.html:7` |
+| `circuit-studio-custom-styles-v1` | 自訂方塊樣式（與專案檔 `customStyles` 重複） | L514 |
+| `archflow-v2-recent` | 最近專案 | L5766（殼層） |
+| `archflow-v2-tips-seen` | 提示是否看過 | L10374（殼層） |
+| `archflow-seq-demo-v2`、`archflow-rsi-demo-v1` | 電源時序 / BOM 示範資料 | 殼層 bundle |
+| `edid-web-lang`、`hexbin-lang`、`pg-web-*` | 三個內建工具各自的語系 | 工具內 |
+
+V3 建議：統一前綴 `archflow:`；語系由殼層統一提供給工具，不再各存一份。
+
+### 2.8 V3 schema 草案方向（細節在 1.10 寫入 `docs/v3-plan.md`）
+```jsonc
+{
+  "schemaVersion": 3,
+  "app": "ArchFlow 3.0.0",
+  "locale": "zh-Hant",
+  "project": { "name": "…" },
+  "activeDesignId": "…",
+  "customStyles": [ … ],
+  "designs": [
+    { "id": "…", "name": "…", "type": "function", "camera": {"x":0,"y":0,"z":1},
+      "data": { /* 依 type 而定：function/power 用 nodes/edges/junctions/texts/frames…；
+                   schedule 用 tasks/links；sequence 用 rails；flowchart 用 lanes/nodes/edges */ } }
+  ]
+}
+```
+重點：每種 type 只存自己需要的欄位（不再為了通過共用驗證而帶空的 `nodes/edges/junctions`），衍生欄位一律不存。
