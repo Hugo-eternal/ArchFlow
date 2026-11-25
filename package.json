@@ -1,0 +1,19 @@
+{
+  "name": "archflow",
+  "private": true,
+  "version": "2.10.1",
+  "type": "module",
+  "description": "ArchFlow — offline architecture design workbench (single HTML file)",
+  "scripts": {
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test --trace off",
+    "pack": "node tools/pack.mjs",
+    "unpack": "node tools/unpack.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
+  }
+}

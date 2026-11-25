@@ -20,7 +20,7 @@
 - [x] 1.11 `docs/v3-plan.md`：風險清單、階段 3 的模組遷移順序（逐一列出步驟），並據此細化本檔階段 3 的步驟
 
 ## 階段 2：測試安全網（針對現行 V2.10.1，不改功能）
-- [ ] 2.1 建立 `package.json`（Vitest、jsdom、Playwright 使用預裝 chromium）與 `npm test` 指令；加入空的冒煙測試（L4）
+- [x] 2.1 建立 `package.json`（Vitest、jsdom、Playwright 使用預裝 chromium）與 `npm test` 指令；加入空的冒煙測試（L4）
 - [ ] 2.2 測試輔助：在 jsdom 載入 `src/app.zh-Hant.html` 並取得引擎全域函式（`tests/helpers/load-app.ts`）（L4）
 - [ ] 2.3 Unit：`findPath`——路徑為正交、不穿越方塊、不與既有路徑重疊（標註 router）
 - [ ] 2.4 Unit：`validateDiagram` 資料驗證——合法／非法輸入、上限（100 方塊／400 線／8 MB）（標註 io）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.1 建立 `package.json`（Vitest、jsdom、Playwright 使用預裝 chromium）與 `npm test`，加入冒煙測試
+- **下一步**：2.2 測試輔助 `tests/helpers/load-app`：在測試中載入 `src/app.zh-Hant.html` 並取得引擎全域函式（jsdom 若無法執行引擎，改用 Playwright 頁面上下文並記錄原因）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -117,4 +117,5 @@
   - V2 golden 專案是 V2 格式，V3 需測試專用轉換器（plan R1、步驟 3.6）；SVG 快照要用結構化比對（R2）。
   - 階段 2 的 Playwright 一律 `--trace off`，用預裝 chromium，不要執行 `playwright install`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
-- **最後通過的驗證層級**：L0（1.11：階段 3 步驟依 plan §3.2 順序展開為 45 步；階段 1 文件 `docs/v3-audit.md`、`docs/v3-plan.md` 完成）
+- **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
+- **最後通過的驗證層級**：L4（2.1：`npm test` 1 passed、`npm run test:e2e` 1 passed；E2E 以 V2 殼層的啟動畫面為準，V1 `#createProject` 在 V2 中是隱藏的）
