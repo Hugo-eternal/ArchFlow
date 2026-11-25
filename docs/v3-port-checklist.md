@@ -366,8 +366,8 @@
 | `drawEdges` | 10481 |  | af-v280-ux | V2.8 接腳名稱位置 | ☐ |  |
 | `drawEdges` | 10618 |  | af-v2100-scale | V2.10 名稱置中 | ☐ |  |
 | `fullPath` | 1189 |  | script#2 | Aligned endpoints should be one straight segment, not a short offset dogleg. | ☐ |  |
-| `fullPath` | 1211 |  | script#2 | Wire routing: shortest orthogonal paths with a cost for bends, crossings and overlaps. | ☐ |  |
-| `fullPath` | 1529 |  | script#2 |  | ☐ |  |
+| `fullPath` | 1211 |  | script#2 | Wire routing: shortest orthogonal paths with a cost for bends, crossings and overlaps. | ☐ | 搜尋與成本已移植：`router/find-path` 的 `freeSearch`（afFindRoute + afRouteCost，3.15）；stub / 手動路徑 / 快取 → `router/full-path`（3.16） |
+| `fullPath` | 1529 |  | script#2 |  | ☐ | 格線搜尋已移植：`router/find-path` 的 `gridSearch` / `gridBoxes`（ggFind / ggBoxes，3.15）；ggRoute 的端點 / 合法性 → 3.16 |
 | `fullPath` | 1591 |  | script#2 |  | ☐ |  |
 | `afNormalizeSharedBranches` | 1294 |  | script#2 | Drag gestures are captured before the legacy connect gesture. | ☐ |  |
 | `afNormalizeSharedBranches` | 1304 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
