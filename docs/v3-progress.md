@@ -81,5 +81,5 @@
   - 尚無 `package.json` 與任何測試；階段 2 之前只能跑 L0 驗證。
   - 已實測確認：存檔的 `applicationVersion` 是 `'1.8-rc4'`（L1857 覆寫了 L1057 的 V2.10.1）。
   - §2 中標「待確認」的欄位（`afPresentation`、`scheduleDesign`、`ioConfig`、`review`、`afRouteOnly`）留到 1.6 / 階段 2 判斷。
-- **工具**：`node scripts/audit/find-overrides.mjs`（覆寫鏈）、`node scripts/audit/dump-project-shape.mjs`（在 Chromium 建五種範例專案並列出存檔欄位）。
+- **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）、`node scripts/audit/dump-project-shape.mjs`（在 Chromium 建五種範例專案並列出存檔欄位）。
 - **最後通過的驗證層級**：L0（1.3：欄位清單由瀏覽器實測輸出產生，五種設計皆建立成功、無頁面錯誤）

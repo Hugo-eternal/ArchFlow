@@ -19,3 +19,6 @@
 
 ## 現行程式（V2.10.1）注意事項
 - `index.html` 是發佈檔，第 2 行為 base64，不要直接改。修改 `src/app.zh-Hant.html` 與 `src/app.en.html`（兩份都要改），再執行 `node tools/pack.mjs`；只有新的 `index.html` 時先執行 `node tools/unpack.mjs`。
+
+## 專案 skill
+- `.claude/skills/ui-ux-pro-max`（第三方，MIT，上游 commit 見 `UPSTREAM_COMMIT`）：UI / UX 設計規則與搜尋資料，用於階段 3 的殼層、CSS token 整併與無障礙檢查。本專案中搜尋腳本的路徑為 `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain <domain>`（SKILL.md 寫的 `${CLAUDE_PLUGIN_ROOT}` 路徑是給 plugin 安裝用的）。不要修改此目錄內容；要更新時整個目錄換成新版。
