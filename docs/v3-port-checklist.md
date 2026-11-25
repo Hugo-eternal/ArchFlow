@@ -6,17 +6,17 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 301　☑ 0　✂ 5　⤳ 21
+合計 327 層：☐ 297　☑ 1　✂ 8　⤳ 21
 
 ## core / interaction
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☐ |  |
-| `commit` | 1348 | `*` 取代 | script#2 |  | ☐ |  |
-| `commit` | 1535 |  | script#2 |  | ☐ |  |
-| `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ☐ |  |
-| `commit` | 3564 | `*` 取代 | af15-ux2 | run fn as one undoable step even if it calls commit() internally | ☐ |  |
+| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☐ | 提交前清理接點 → 移到 router/junctions（3.17），不放在 history |
+| `commit` | 1348 | `*` 取代 | script#2 |  | ✂ | 由 `history.batch()`（src/core/history.ts）取代暫時把 commit 換成空函式 |
+| `commit` | 1535 |  | script#2 |  | ☐ | 提交前格線正規化 → core/grid（3.11） |
+| `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ✂ | 由 `history.batch()` 取代；失敗時自動回滾 |
+| `commit` | 3564 | `*` 取代 | af15-ux2 | run fn as one undoable step even if it calls commit() internally | ✂ | 由 `history.batch()` 取代 |
 | `fit` | 601 |  | script#1 |  | ☐ |  |
 | `fit` | 632 |  | script#1 |  | ☐ |  |
 | `fit` | 669 |  | script#1 |  | ☐ |  |
@@ -47,7 +47,7 @@
 | `newFreeText` | 2285 |  | text-design-v22-js |  | ☐ |  |
 | `openHeading` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `preview` | 1566 |  | script#2 |  | ☐ |  |
-| `redo` | 2322 |  | archflow-known-fixes-v3 |  | ☐ |  |
+| `redo` | 2322 |  | archflow-known-fixes-v3 |  | ☑ | src/core/history.ts：undo / redo 都標 dirty |
 | `start` | 1295 |  | script#2 |  | ☐ |  |
 | `undo` | 2321 |  | archflow-known-fixes-v3 |  | ☐ |  |
 

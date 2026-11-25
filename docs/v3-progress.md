@@ -51,7 +51,7 @@
 - [x] 3.8 `docs/v3-port-checklist.md`：由 audit §1.4 產生逐層移植清單（L0）
 ### 3C 底層
 - [x] 3.9 `core/ids`、`core/geometry`（L3）
-- [ ] 3.10 `core/store`、`core/history`（含 `history.batch`）（L3）
+- [x] 3.10 `core/store`、`core/history`（含 `history.batch`）（L3）
 - [ ] 3.11 `core/commands`、`core/camera`、`core/grid`（L3）
 - [ ] 3.12 `model/types` + `model/diagram` 純函式（L3）
 - [ ] 3.13 `io/schema`（V3 schema，plan §2）+ 驗證測試（L4）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.10 `src/core/store.ts`（專案狀態：designs、activeDesignId、selection；訂閱 / 取消訂閱；只能透過 action 修改）與 `src/core/history.ts`（undo / redo，以 JSON 快照或結構共享；`history.batch(fn)` 取代 V2「暫時把 commit 換成空函式」的三處做法——legacy L1348 新增方塊、L1648 自動排列、L3564 插入任務；dirty 旗標；redo 後也要標 dirty，對應 V2 L2322）。單元測試（純 Node）：undo/redo 順序、batch 合併為一步且例外時回滾、連續相同狀態不重複記錄、上限、dirty 狀態。完成後在 `docs/v3-port-checklist.md` 把 `commit`（L1123、L1348、L1535、L1648、L3564）與 `redo`（L2322）等相關列標為 ☑ 或 ✂ 並寫備註。
+- **下一步**：3.11 `src/core/commands.ts`（命令註冊表：id、i18n 標籤 key、快捷鍵、`enabled(state)`、`run(ctx)`；殼層按鈕、快捷鍵、指令面板都只呼叫命令——取代 V2 殼層點擊隱藏元素，audit §4.1 列出的約 40 個 id 就是要提供的命令清單）、`src/core/camera.ts`（平移 / 以游標為中心縮放 / fit 到內容外框，對照 legacy L290 applyCamera、L322 zoomAt、L336 fit）、`src/core/grid.ts`（格距、吸附、正規化；對照 legacy L1474 起的 V1.4 grid 與 commit L1535 的提交前正規化）。純 Node 單元測試；fit / zoom 可在 V2 中跑同輸入比對。完成後更新移植清單（`fit`、`applyCamera`、`commit` L1535 等）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -134,7 +134,8 @@
 - SVG 比對（3.7）：`tests/tools/svg-compare.ts` 的 `compareSvg(expected, actual, { tolerance, colorRoles, ignore })`：比較標籤數量、文字集合、同標籤元素以最近幾何配對（容差預設 1 px，忽略順序與巢狀），顏色先轉成角色再比（`V2_COLOR_ROLES` + `V3_COLOR_ROLES` 合併傳入）。
 - 移植清單（3.8）：`docs/v3-port-checklist.md`（327 層：☐ 301、✂ 5、⤳ 21），依 V3 模組分節；`node scripts/audit/port-checklist.mjs` 重新產生時保留手動改過的狀態 / 備註。每完成一個模組就把它的列改為 ☑ 或 ✂。
 - core 基礎（3.9）：`src/core/geometry.ts`（near / same / orth / dir / inside / cuts / clear / simplify / rectOf / pathLength / toPathData，純函式）與 `src/core/ids.ts`（`uid` 與 V2 同格式、可注入亂數；`isValidId`；`clone`）。測試以 400 組固定亂數輸入在 V2 引擎與 V3 同時執行比對，結果完全一致。
+- 狀態與歷史（3.10）：`src/core/history.ts`（`History<T>`：JSON 快照、`update`、`batch`（巢狀合併、例外回滾）、undo / redo 皆標 dirty、上限）與 `src/core/store.ts`（`Store`：專案名、設計清單各自一份 History、目前設計、選取、鏡頭、`toFile()` / `load()`、訂閱）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.9：`npm run test:all` 全數通過，Vitest 17 檔 106 項）
+- **最後通過的驗證層級**：L3（3.10：`npm run test:all` 全數通過，Vitest 18 檔 120 項；移植清單 ☑ 1、✂ 8）
