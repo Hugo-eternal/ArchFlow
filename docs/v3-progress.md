@@ -41,7 +41,7 @@
 ## 階段 3：模組化重構為 V3（依 `docs/v3-plan.md` §3.2）
 ### 3A 骨架
 - [x] 3.1 TypeScript + Vite 骨架：`package.json` scripts、`tsconfig`、單檔輸出 `dist/ArchFlow.html`（L4）
-- [ ] 3.2 建置產物檢查：無外部 URL、大小記錄（L4）
+- [x] 3.2 建置產物檢查：無外部 URL、大小記錄（L4）
 - [ ] 3.3 i18n 框架 `core/i18n.ts` + `i18n/zh-Hant.json`、`i18n/en.json` + 檢查腳本（key 對齊、src 無中日韓字元）（L1）
 - [ ] 3.4 `styles/tokens.css` design token 骨架（L1）
 - [ ] 3.5 `scripts/extract-vendor.mjs`：從 V2.10.1 逐字抽出 vendor 檔、產生 `VENDOR.md` 與 SHA-256；CI 驗證雜湊（L4）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.2 建置產物檢查：`scripts/check-dist.mjs` 檢查 `dist/ArchFlow.html` 沒有任何外部 URL（http/https、`//`、`src=`/`href=` 指向外部）、記錄大小並與 V2.10.1 `index.html`（12.6 MB）比較，超過則警告；加 npm script `check:dist`，並加入 `test:all`。
+- **下一步**：3.3 i18n 框架：`src/core/i18n.ts`（`t(key, vars)`、目前語系、切換不重新載入、訂閱變更）+ `i18n/zh-Hant.json`、`i18n/en.json` + `scripts/check-i18n.mjs`（兩語系 key 一致；`src/` 中除 `vendor/` 外不得出現中日韓字元）+ 單元測試（Vitest，在 Node 中直接 import TS，不需瀏覽器）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -126,7 +126,8 @@
 - vendor 編輯器（時序 / 流程圖）的匯出在 iframe 內攔截：Playwright 的 download 事件抓不到 srcdoc iframe 的錨點下載，改為暫時掛勾 iframe 的 `URL.createObjectURL` 與 `HTMLAnchorElement.prototype.click`（見 `tests/golden/flowchart.test.js` 的 `runExport`）。
 - E2E 寫法（2.13 建立）：`tests/e2e/helpers.js`。啟動畫面的設計類型、「範本 / 空白設計」都是 **radio**（不是 button）；`engine(page)` = `page.frame({ name: 'app' })`，只用來讀 model 驗證，操作一律走介面。
 - 2.14：設計切換鈕的名稱就是目前設計的名稱（例如「入門方塊圖」），選單有「新增設計…」等項目；新增設計對話框用 V1 隱藏欄位 id（`#managedDesignName`、`#managedDesignType`、`#managedDesignExample`）。殼層「儲存」可用 Playwright `download` 事件攔截；啟動畫面要用「開啟 JSON 專案」按鈕（filechooser 事件可用）。
+- 指令：`npm run build`（`dist/ArchFlow.html`）、`npm run check:dist`（外部請求檢查 + 大小與 V2.10.1 比較）、`npm run typecheck`；`npm run test:all` 依序跑模組標註 → 型別 → 建置 → 產物檢查 → Vitest → Playwright。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4（3.1：`npm run test:all` 通過——模組標註、`tsc` 型別檢查、Vitest 67 項、Playwright 10 項；`npm run build` 產出 0.4 KB 單檔 `dist/ArchFlow.html`；`tools/pack.mjs` 由 `legacy/` 打包仍與原 `index.html` 位元組相同）
+- **最後通過的驗證層級**：L4（3.2：`npm run test:all` 全數通過；`scripts/check-dist.mjs` 以含外部字型 / 腳本 / CSS / fetch 的反例檔確認會失敗（6 項））

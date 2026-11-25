@@ -6,10 +6,11 @@
   "description": "ArchFlow — offline architecture design workbench (single HTML file)",
   "scripts": {
     "build": "vite build",
+    "check:dist": "node scripts/check-dist.mjs",
     "dev": "vite",
     "pack": "node tools/pack.mjs",
     "test": "vitest run",
-    "test:all": "npm run test:modules && npm run typecheck && npm test && npm run test:e2e",
+    "test:all": "npm run test:modules && npm run typecheck && npm run build && npm run check:dist && npm test && npm run test:e2e",
     "test:e2e": "playwright test --trace off",
     "test:modules": "node scripts/check-test-modules.mjs",
     "test:unit": "vitest run",
