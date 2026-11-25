@@ -589,3 +589,33 @@ V3 建議：統一前綴 `archflow:`；語系由殼層統一提供給工具，�
 ### 5.4 對 V3 的影響
 - 「程式碼只留一份、文字抽到 i18n」的目標**不適用於 vendor 內容**：它們內部已以 `c(zh, en)` 處理雙語，語系由 host 的 `lang` 提供即可。
 - 4 份 React 的重複體積在 vendor 方案下無法消除；只有取得原始碼或重寫才能共用一份。
+
+---
+
+## §6 內建工具與 React 編輯器的邊界與資料格式
+
+全部在 iframe 中執行，以 §5.2 的 host 物件和殼層溝通；彼此不共享狀態，也不直接存取引擎（電源時序與流程圖例外，經 `getDoc` / `change` 讀寫目前設計）。
+
+### 6.1 設計型編輯器（資料存在專案檔內）
+
+| 編輯器 | 專案內資料 | 匯入 | 匯出 | 其他 |
+|---|---|---|---|---|
+| 電源時序（`Bf`） | `designs[].diagram.sequence = {name, tk, rails[]}`（§2.5） | 時序 `.json` | `<name>.json`、PNG、SVG；「複製時序表」到剪貼簿（貼到 Word / Excel） | 內建範本 `bd = {zh:[…], en:[…]}`（例如車用顯示控制器）；示範資料 localStorage `archflow-seq-demo-v2` |
+| 流程圖（`$f`） | `designs[].diagram.flowchart = {title, lanes[], nodes[], edges[], lineDefault}`（§2.5） | `.flow.json` / `.json` | `<title>.flow.json`（`{app:'archflow-flow', version:1, …}`）、PNG、SVG | 節點可附圖片（`img` / `att`），圖片由 host 的 `images` 提供；形狀定義 `Ta`（10 種）在 L5765 |
+
+V3：兩者的資料格式直接成為 `designs/sequence`、`designs/flowchart` 的 `data`，獨立的 `.json` / `.flow.json` 匯出入保留（屬於編輯器功能，不是專案格式）。
+
+### 6.2 工具（不寫入專案檔）
+
+| 工具 | 輸入 | 輸出 | 狀態保存 |
+|---|---|---|---|
+| RSI BOM 轉換（`fg`，React + JSZip） | BOM Excel `.xlsx`；規則 `BOM_rules.json` | `<名稱>_RSI.xlsx`；規則 `BOM_rules.json` | localStorage `archflow-rsi-demo-v1`（示範資料） |
+| EDID Generator（`mg`） | `.bin` / `.hex`；設定 `.ini`；程式碼 `.py` / `.txt` | `<名稱>.bin`、`.hex`、`_intel.hex`、`.ini` | localStorage `edid-web-lang` |
+| Hex/Bin 編輯比對（`vg`） | `.bin` / `.hex` / `.txt`（拖放） | `.bin`、`.hex`、`.txt` | localStorage `hexbin-lang` |
+| Pattern Generator（`xg`） | `.ini` / `.txt` / `.py` 程式碼；機種設定 `.json`；圖片 `image/*`、`.bmp` | `.ini`、`<名稱>.pgprofile.json` | localStorage `pg-web-*`；內含巢狀 Pattern Generator HTML（L10368 起） |
+
+### 6.3 邊界結論（給 1.9 模組切分）
+- `tools/bom`、`tools/edid`、`tools/hex`、`tools/pattern`：各自 = vendor 內容 + 一個 host 轉接（lang、close、toast）。**L2 層級**，互不影響。
+- `designs/sequence`、`designs/flowchart`：vendor 編輯器 + 轉接層（getDoc / change ↔ V3 schema）。**L2 層級**。
+- 這六個元件都不依賴引擎的 `model.nodes/edges`、繞線、屬性面板或匯出；V3 的 core / router / render / inspector / export 只服務 function / power / schedule 三種設計。
+- 語系：殼層統一提供 `lang`，取代各工具自己存在 localStorage 的語系 key。
