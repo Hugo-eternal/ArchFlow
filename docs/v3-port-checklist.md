@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 293　☑ 4　✂ 9　⤳ 21
+合計 327 層：☐ 291　☑ 6　✂ 9　⤳ 21
 
 ## core / interaction
 
@@ -30,20 +30,20 @@
 | `status` | 1003 |  | script#2 | The toolbar may wrap in English. Size the canvas from actual chrome height. | ☐ |  |
 | `status` | 1624 |  | script#2 | Persist route metadata independently of manual routes, preserving every original field. | ☐ |  |
 | `status` | 1657 |  | script#2 | Multi-selection is UI state, never part of the electrical project. | ☐ |  |
-| `$('#add').onclick` | 327 | `*` 取代 | script#1 |  | ☐ |  |
+| `$('#add').onclick` | 327 | `*` 取代 | script#1 |  | ☑ | `model/diagram.makeBlock` / `addBlock`（3.12）；放在畫面中央由命令 `block.add` 決定位置（3.20） |
 | `$('#add').onclick` | 600 |  | script#1 |  | ☐ |  |
 | `$('#add').onclick` | 664 |  | script#1 | Schedule graph v1: directed trees, no cycles and no merging branches. | ☐ |  |
 | `refreshSelection` | 480 |  | script#1 | Context-sensitive deletion protects against accidental destructive clicks. | ☐ |  |
 | `refreshSelection` | 508 |  | script#1 |  | ☐ |  |
 | `refreshSelection` | 667 |  | script#1 |  | ☐ |  |
-| `removeSelection` | 505 |  | script#1 |  | ☐ |  |
+| `removeSelection` | 505 |  | script#1 |  | ☑ | `model/diagram.remove`（3.12）：方塊、接腳、線、接點、文字框、外框一次處理 |
 | `removeSelection` | 674 |  | script#1 |  | ☐ |  |
 | `removeSelection` | 772 |  | script#1 | Delete a middle task without blocking browser dialogs; preserve descendants and reconnect. | ☐ |  |
 | `finish` | 4209 |  | af15-ux2 | pressing near a lead end starts a wire, not a move: the lead dots are small | ☐ |  |
 | `finish` | 4569 |  | af15-ux2 | ---------- snap onto a frame edge after a move ---------- | ☐ |  |
 | `updateExplorer` | 763 |  | script#1 | Export uses the same palette and typography as the editor, including moved axis points. | ☐ |  |
 | `updateExplorer` | 775 |  | script#1 | Rebind the toolbar too: older handlers retained a previous remove function. | ☐ |  |
-| `addPin` | 1256 |  | script#2 |  | ☐ |  |
+| `addPin` | 1256 |  | script#2 |  | ☐ | 點擊位置 → `core/grid.portAt` + `model/diagram.addPort`（已完成）；指標事件 → interaction（3.20） |
 | `newFreeText` | 2285 |  | text-design-v22-js |  | ☐ |  |
 | `openHeading` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `preview` | 1566 |  | script#2 |  | ☐ |  |
@@ -294,7 +294,7 @@
 | `render` | 794 |  | script#1 | 時程分支配色 CSS 變數 | ☐ |  |
 | `render` | 1122 |  | script#2 | 非拖曳時先清理接點拓撲 | ☐ |  |
 | `render` | 1205 |  | script#2 | 重繪後套用時程配色（afPaintSchedule） | ☐ |  |
-| `render` | 1257 |  | script#2 | 功能設計的多接腳版面（af-function-multi） | ☐ |  |
+| `render` | 1257 |  | script#2 | 功能設計的多接腳版面（af-function-multi） | ☐ | 依接腳數加大方塊的規則已移到 `model/diagram.growForPorts`（3.12）；`af-function-multi` 樣式 → render（3.18） |
 | `render` | 1401 |  | script#2 | 同步線條樣式面板 | ☐ |  |
 | `render` | 1534 |  | script#2 | 格線：新設計自動啟用格線並正規化座標 | ☐ |  |
 | `render` | 1745 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ☐ |  |
