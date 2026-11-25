@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 252　☑ 31　✂ 23　⤳ 21
+合計 327 層：☐ 247　☑ 35　✂ 24　⤳ 21
 
 ## core / interaction
 
@@ -365,15 +365,15 @@
 | `drawEdges` | 3507 |  | af15-ux2 | 時程裝飾、分支顏色（setTimeout） | ☐ |  |
 | `drawEdges` | 10481 |  | af-v280-ux | V2.8 接腳名稱位置 | ☐ |  |
 | `drawEdges` | 10618 |  | af-v2100-scale | V2.10 名稱置中 | ☐ |  |
-| `fullPath` | 1189 |  | script#2 | Aligned endpoints should be one straight segment, not a short offset dogleg. | ☐ |  |
-| `fullPath` | 1211 |  | script#2 | Wire routing: shortest orthogonal paths with a cost for bends, crossings and overlaps. | ☐ | 搜尋與成本已移植：`router/find-path` 的 `freeSearch`（afFindRoute + afRouteCost，3.15）；stub / 手動路徑 / 快取 → `router/full-path`（3.16） |
-| `fullPath` | 1529 |  | script#2 |  | ☐ | 格線搜尋已移植：`router/find-path` 的 `gridSearch` / `gridBoxes`（ggFind / ggBoxes，3.15）；ggRoute 的端點 / 合法性 → 3.16 |
-| `fullPath` | 1591 |  | script#2 |  | ☐ |  |
+| `fullPath` | 1189 |  | script#2 | Aligned endpoints should be one straight segment, not a short offset dogleg. | ✂ | `afCleanRoute` 刪除（plan §2.2） |
+| `fullPath` | 1211 |  | script#2 | Wire routing: shortest orthogonal paths with a cost for bends, crossings and overlaps. | ☑ | `router/full-path` 格線關閉模式（3.15 搜尋 + 3.16 stub / 手動 / 退回）；快取由 render 每格處理 |
+| `fullPath` | 1529 |  | script#2 |  | ☑ | `router/full-path` 格線模式（ggRoute + ggPathLegal，3.16） |
+| `fullPath` | 1591 |  | script#2 |  | ☑ | `route` 合併 `afRouteOnly`：從端點開始的 `route` 視為完整路徑（3.16） |
 | `afNormalizeSharedBranches` | 1294 |  | script#2 | Drag gestures are captured before the legacy connect gesture. | ☐ |  |
 | `afNormalizeSharedBranches` | 1304 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
 | `anchor` | 1504 |  | script#2 |  | ☑ | `core/grid.portPoint` / `endPoint`（3.11） |
 | `beginCornerBranch` | 1306 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
-| `ggRoute` | 1592 |  | script#2 |  | ☐ |  |
+| `ggRoute` | 1592 |  | script#2 |  | ☑ | 同上；格線模式下 `simplify([a, ...route, b])` 對完整路徑與轉折點都成立 |
 | `repairJunctionGeometry` | 1109 | `*` 取代 | script#2 | The old alignment helper moved a junction without moving its saved wire bends. | ☐ |  |
 | `splitAtCorner` | 1080 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ☐ |  |
 
