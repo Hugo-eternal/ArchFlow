@@ -53,10 +53,10 @@ describe('io/schema: one block-diagram type with two views (3.26c)', () => {
     expect(codes(f)).toEqual(['designs[0].data.view required']);
   });
 
-  it('reserved UI fields are optional and validated (block size / style.color, wire routing / waypoints / labelOffset, groups)', () => {
+  it('reserved UI fields are optional and validated (block size / style.color, wire routing / labelOffset, groups)', () => {
     const f = fn(), d = f.designs[0].data as BlockDiagram, b = d.blocks[0], w = d.wires[0];
     b.size = 'M'; b.style.color = 'teal';
-    w.routing = 'manual'; w.waypoints = [{ x: 10, y: 20 }]; w.labelOffset = { x: 4, y: -6 };
+    w.routing = 'manual'; w.route = [{ x: 10, y: 20 }]; w.labelOffset = { x: 4, y: -6 };
     d.groups = [{ id: 'grp1', name: 'Power stage', members: [b.id], bounds: { x: 0, y: 0, w: 300, h: 200 } }];
     expect(codes(f)).toEqual([]);
     expect(validateProject(JSON.parse(JSON.stringify(f))).ok).toBe(true);
@@ -67,6 +67,10 @@ describe('io/schema: one block-diagram type with two views (3.26c)', () => {
     expect(codes(f)).toEqual(['designs[0].data.groups[0].members[1] missing-ref']);
     d.groups[0].members.pop(); d.groups[0].id = b.id;
     expect(codes(f)).toEqual(['designs[0].data.groups[0].id duplicate-id']);
+    d.groups[0].id = 'grp1';
+    // path points live only in `route`; there is no separate waypoints field
+    (w as unknown as Record<string, unknown>).waypoints = [{ x: 1, y: 2 }];
+    expect(codes(f)).toEqual(['designs[0].data.wires[0].waypoints unknown-key']);
   });
 });
 

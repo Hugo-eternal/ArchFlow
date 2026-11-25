@@ -158,8 +158,8 @@ export interface Wire {
   line: LineFormat;                  // V2: afLineFormat, merged with color / arrow / arrowSize
   route?: Point[];                   // V2: manual, or afRouteOnly.points
   locked: boolean;                   // V2: afGridLocked | afLocked | locked
-  routing?: 'auto' | 'manual';       // reserved (3.26c): default 'auto'; today `route` alone decides
-  waypoints?: Point[];               // reserved (3.26c): user bend points for the future routing UI
+  routing?: 'auto' | 'manual';       // reserved (3.26c): whether `route` was set by hand (default 'auto');
+                                     // `route` stays the only place for path points
   labelOffset?: Point;               // reserved (3.26c): label offset from its automatic position
   electrical?: { voltage: string; current: string; unit?: 'A' | 'mA' | 'uA'; show: boolean };
   label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } };

@@ -205,10 +205,9 @@ interface Wire {
   a: End; b: End;                 // End = { block, port } | { junction }
   name: string; kind: 'signal'|'power'|'clock'|'bus'|string;
   line: LineFormat;               // 合併 afLineFormat + color + arrow + arrowSize
-  route?: Point[];                // 合併 manual + afRouteOnly
+  route?: Point[];                // 合併 manual + afRouteOnly；路徑點只存在這裡
   locked: boolean;                // 合併 afGridLocked / afLocked / locked
-  routing?: 'auto' | 'manual';    // 預留（3.26c），預設 auto；目前仍只由 route 決定
-  waypoints?: Point[];            // 預留（3.26c）：使用者轉折點（之後的走線 UI；實作時與 route 合併並寫 migrate）
+  routing?: 'auto' | 'manual';    // 預留（3.26c），預設 auto：標示 route 是否為使用者手動設定（不另設 waypoints）
   labelOffset?: Point;            // 預留（3.26c）：標籤相對自動位置的偏移
   electrical?: { voltage?: string; current?: string; unit?: 'A'|'mA'|'uA'; show: boolean };
   label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } }; // afLabelSize/afLabelPreset/afLabelMark
@@ -232,10 +231,11 @@ interface Wire {
 | 匯出 | 依目前檢視；對話框可另選 | 同左 |
 | 範本 | 「入門方塊圖」 | 「入門電源樹」 |
 
-- 切換只改呈現、不改資料，**不記一步復原**；但 `view` 存在檔案裡（開檔回到上次的檢視），所以切換會標記未存檔。
+- 切換只改呈現、不改資料，**不記一步復原**；但 `view` 存在檔案裡（開檔回到上次的檢視），所以切換會標記未存檔（使用者已確認）。
+- 快捷鍵 **Shift+V** 在兩種檢視間切換（使用者已確認；不用 Tab，Tab 留給焦點移動）。
 - 預設值由 `model/diagram` 的 `makeBlock` / `connect` 讀 `d.view` 決定（取代 3.12–3.26 的 `BlockFlavour` 參數與 `DesignModule.blockDiagram.flavour`）。
-- 格線 / 吸附屬於使用者偏好（localStorage），不寫進檔案（`grid` 欄位維持現狀，之後若改為偏好需寫 migrate）。
-- 預留欄位（方塊 `size`、`style.color`；線路 `routing`、`waypoints`、`labelOffset`；`groups`）都是選填、未實作功能；schema 驗證其形狀，`groups[].members` 必須指向存在的方塊。
+- 格線 / 吸附**繼續存在檔案裡**（`BlockDiagram.grid`；使用者已確認改決定）：格線會影響資料本身——方塊位置依格距對齊，且格線開啟用格線繞線、關閉用自由繞線，兩者算出的路徑不同，放在偏好會讓同一份檔案在不同電腦上長得不一樣。
+- 預留欄位（方塊 `size`、`style.color`；線路 `routing`、`labelOffset`；`groups`）都是選填、未實作功能；schema 驗證其形狀，`groups[].members` 必須指向存在的方塊。
 
 ### 2.3 時程
 

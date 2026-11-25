@@ -140,7 +140,7 @@ const wireEnd = union(obj({ block: id, port: id }), obj({ junction: id }));
 const wire = obj({
   id, a: wireEnd, b: wireEnd, name: str(), kind: str(), line: lineFormat,
   route: opt(arr(point, FILE_LIMITS.route)), locked: bool,
-  routing: opt(oneOf('auto', 'manual')), waypoints: opt(arr(point, FILE_LIMITS.route)), labelOffset: opt(point),
+  routing: opt(oneOf('auto', 'manual')), labelOffset: opt(point),
   electrical: opt(obj({ voltage: str(), current: str(), unit: opt(unit), show: bool })),
   label: opt(obj({ size: opt(num({ min: 0, max: 400 })), preset: opt(str()), mark: opt(obj({ x: coord, y: coord, angle: num({ min: -360, max: 360 }) })) })),
 });

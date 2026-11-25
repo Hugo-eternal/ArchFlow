@@ -74,7 +74,7 @@
 - [x] 3.26a 區域外框（3.26 拆成兩步：外框屬於所有方塊圖共用，放在 model / render / interaction / inspector）（L3）
 - [x] 3.26b `designs/function`：連接器、LCD 範本（L2）
 - [x] 3.26c 方塊圖合併（規劃步驟）：「功能方塊圖」與「電源架構」合併為一種設計類型 `function`（介面名稱「方塊圖」），同一份資料以 `BlockDiagram.view`（`'function' | 'power'`）切換「功能檢視 / 電源檢視」；只改計畫與存檔格式，不寫新功能（L4）
-- [ ] 3.27a `designs/function` 檢視切換：畫布上方兩段式切換「功能檢視 / 電源檢視」（只改呈現、不改資料、不記復原，`view` 存檔）；依檢視呈現（功能檢視：隱藏電壓 / 電流 / 效率、角色配色、需求 vs 額定，電源線照畫但無數值標籤；電源檢視：顯示上述標註與電源線電壓 / 電流標籤，訊號線變淡）；屬性面板依檢視列欄位（資料兩邊都保留）；新方塊 / 新線路預設值跟著檢視（model 已在 3.26c 改為讀 `view`）；匯出依目前檢視、對話框可另選檢視（L3：會改到 render / inspector / shell / export）
+- [ ] 3.27a `designs/function` 檢視切換：畫布上方兩段式切換「功能檢視 / 電源檢視」與快捷鍵 Shift+V（只改呈現、不改資料、不記復原，`view` 存檔，切換標記未存檔）；依檢視呈現（功能檢視：隱藏電壓 / 電流 / 效率、角色配色、需求 vs 額定，電源線照畫但無數值標籤；電源檢視：顯示上述標註與電源線電壓 / 電流標籤，訊號線變淡）；屬性面板依檢視列欄位（資料兩邊都保留）；新方塊 / 新線路預設值跟著檢視（model 已在 3.26c 改為讀 `view`）；匯出依目前檢視、對話框可另選檢視（L3：會改到 render / inspector / shell / export）
 - [ ] 3.27b `designs/function` 電源檢視的電源功能（V2 電源架構全部移植）：角色（source / converter / distribution / load）與角色配色、量測欄位（電壓 / 電流 + 單位 / 功率 / 效率、顯示開關）與量測表繪製、線路電氣欄位（`wire.electrical`）、需求 vs 額定警示、「入門電源樹」範本（以電源檢視開啟）；golden power 在電源檢視下與 V2 匯出比對，golden function 在功能檢視下的比對維持不變（L2）
 - [ ] 3.28 `designs/schedule`：時間軸版面與渲染（L2）
 - [ ] 3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（L2）
@@ -111,7 +111,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成；3.26c（方塊圖合併規劃）已完成
-- **下一步**：3.27a 檢視切換（L3）。**不建立 `src/designs/power/`**（3.26c 決定：電源架構是方塊圖的電源檢視，全部放在 `src/designs/function/` 內）。做法建議：檢視切換為殼層命令（例如 `view.mode.function` / `view.mode.power`，以 `store` 直接改目前設計的 `data.view`，不經 `commitEdit`、不進 History，但要標記未存檔——需在 `core/store` 加一個不記復原的設定方法）；render / inspector / export 的擴充點都已收到含 `view` 的 data，依 `d.view` 決定；`render/wires` 的電源線數值標籤與訊號線變淡要能由檢視控制；匯出對話框加「檢視」選項。設計類型名稱 i18n 改為「方塊圖 / Block diagram」。之後 3.27b 再做電源功能：先讀 audit / 移植清單中電源相關列（inspector 1998 電源欄位分組、2060 電流單位、3843 需求 vs 額定 `af24-load`、3244 角色配色、render 3857 電源設計新方塊預設電源接腳、render 的電源量測表，以及 V2「入門電源樹」範本，golden power 有 metrics / role）；範本用 V2 引擎產生「入門電源樹 / Starter power tree」並轉成 V3（同 3.24，`data.view: 'power'`），加到 `functionDesign.templates`；golden power 的量測表繪製要與 V2 匯出比對（V2 power 匯出的量測是表格：「電壓 / 電流 / 效率」標籤 + 數值 + 單位文字）。
+- **下一步**：3.27a 檢視切換（L3）。快捷鍵 **Shift+V**（3.26c 使用者確認；目前無衝突）；切換會標記未存檔（使用者確認）。**不建立 `src/designs/power/`**（3.26c 決定：電源架構是方塊圖的電源檢視，全部放在 `src/designs/function/` 內）。做法建議：檢視切換為殼層命令（例如 `view.mode.function` / `view.mode.power`，以 `store` 直接改目前設計的 `data.view`，不經 `commitEdit`、不進 History，但要標記未存檔——需在 `core/store` 加一個不記復原的設定方法）；render / inspector / export 的擴充點都已收到含 `view` 的 data，依 `d.view` 決定；`render/wires` 的電源線數值標籤與訊號線變淡要能由檢視控制；匯出對話框加「檢視」選項。設計類型名稱 i18n 改為「方塊圖 / Block diagram」。之後 3.27b 再做電源功能：先讀 audit / 移植清單中電源相關列（inspector 1998 電源欄位分組、2060 電流單位、3843 需求 vs 額定 `af24-load`、3244 角色配色、render 3857 電源設計新方塊預設電源接腳、render 的電源量測表，以及 V2「入門電源樹」範本，golden power 有 metrics / role）；範本用 V2 引擎產生「入門電源樹 / Starter power tree」並轉成 V3（同 3.24，`data.view: 'power'`），加到 `functionDesign.templates`；golden power 的量測表繪製要與 V2 匯出比對（V2 power 匯出的量測是表格：「電壓 / 電流 / 效率」標籤 + 數值 + 單位文字）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -200,11 +200,12 @@
   - 變更連接器造成線被刪除時沒有提示（V2 有），已記入 CHANGELOG。
 - 方塊圖合併（3.26c，規劃 + 存檔格式）：
   - `DesignType` 移除 `'power'`，`DATA_SCHEMAS` 只剩 function / schedule / sequence / flowchart；`BlockDiagram.view: 'function' | 'power'`（必填）；`BlockView` 由 `io/schema-types` 匯出、`model/types` 轉出。schemaVersion 維持 3、無遷移（V3 未發版）。
-  - 預留欄位（選填、未實作）：方塊 `size`（S / M / L）、`style.color`；線路 `routing`（auto / manual）、`waypoints`、`labelOffset`；`groups`（id、name、members（方塊 id，schema 檢查存在）、bounds；id 與其他項目共用命名空間）。
+  - 預留欄位（選填、未實作）：方塊 `size`（S / M / L）、`style.color`；線路 `routing`（auto / manual，標示 `route` 是否為手動；不另設 `waypoints`）、`labelOffset`；`groups`（id、name、members（方塊 id，schema 檢查存在）、bounds；id 與其他項目共用命名空間）。
   - `BlockFlavour` 刪除：`makeBlock(d, at, view = d.view)`、`connect(d, a, b, opts, view = d.view)`、`emptyDiagram(view = 'function')`；`GestureHost.flavour()` 刪除；`DesignModule.blockDiagram` 改為 `true`。`commitEdit` / 畫布命令 / schema 參照檢查只認 `'function'`。
   - 轉換器：V2 power → `type: 'function'`、`view: 'power'`；V2 function → `view: 'function'`。golden function / power 的 `project.v3.json` 已重新產生（只多 `view`、power 的 `type` 改為 `function`），寫入 CHANGELOG「專案檔」。
   - 測試裡的 `golden('power')` 指的是 golden **目錄名稱**（`tests/golden/power/`），目錄維持不變；`export.test` / `export.png.test` 改以 `type === 'function' && data.view === <name>` 取設計。
   - 計畫：`docs/v3-plan.md` §1.1、§1.3、§1.4、§2.1、§2.2（新增 §2.2.1「兩種檢視」對照表）、§2.5、§3.2 已更新；3.28 之後的步驟沒有引用 `'power'` 設計類型，不需修改。
+  - 使用者確認（3.26c 追加 commit）：切換檢視快捷鍵 Shift+V；移除預留的 `waypoints`（路徑點只存在 `route`，`routing` 標示是否手動）；切換檢視標記未存檔；格線 / 吸附繼續存在檔案（`grid` 影響方塊對齊與繞線結果）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
@@ -218,15 +219,15 @@
 - **P1**
   - 雙擊空白處新增方塊並直接進入改名。
   - 方塊四邊「＋」：快速延伸出新方塊並自動接線。
-  - 接點吸附與正交自動走線（使用預留的 `wire.routing` / `waypoints`；實作時把現有 `route` 合併進來並寫 migrate）。
+  - 接點吸附與正交自動走線（手動路徑仍存在 `wire.route`，以預留的 `wire.routing` 標示是否為手動）。
   - 原地改名（畫布上直接編輯標題）。
-  - 對齊參考線與格線吸附（格線 / 吸附改為使用者偏好，不寫進檔案；屆時 `BlockDiagram.grid` 需要 migrate）。
+  - 對齊參考線與格線吸附（格線 / 吸附繼續存在檔案的 `BlockDiagram.grid`，3.26c 確認）。
   - 空白狀態引導（沒有內容時的說明與動作）。
 - **P2**
   - 多選浮動工具列：對齊 / 分布 / 統一大小（使用預留的 `block.size`）。
   - 精簡右鍵選單。
   - 統一搜尋與最近使用（零件、命令）。
-  - 快捷鍵：F2 改名、切換檢視、Ctrl+D 複製、方向鍵微調（方向鍵移動已在 3.20 完成）。
+  - 快捷鍵：F2 改名、Ctrl+D 複製、方向鍵微調（方向鍵移動已在 3.20 完成）。切換檢視的 Shift+V 在 3.27a 就做。
 - **P3**
   - 角色配色圖例。
   - 超過額定的 ⚠ 徽章與狀態列警示統計。
@@ -242,7 +243,7 @@
 
 #### ui-ux-pro-max 檢查建議（只列建議，不擴大範圍）
 以 `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux` 對照上列清單：
-1. **「Tab 切換檢視」與鍵盤導覽衝突**（Keyboard Navigation，High）：Tab 是瀏覽器移動焦點的鍵，拿來切換檢視會讓鍵盤使用者無法離開畫布。建議改用不衝突的組合（例如 `Mod+1` / `Mod+2` 或 `Shift+V`），或只在畫布取得焦點且無選取時才攔截並提供跳出方式。
+1. **（已決定：改用 Shift+V，3.27a 實作）「Tab 切換檢視」與鍵盤導覽衝突**（Keyboard Navigation，High）：Tab 是瀏覽器移動焦點的鍵，拿來切換檢視會讓鍵盤使用者無法離開畫布。建議改用不衝突的組合（例如 `Mod+1` / `Mod+2` 或 `Shift+V`），或只在畫布取得焦點且無選取時才攔截並提供跳出方式。
 2. **角色配色不可只靠顏色**（Color Only，High）：角色配色要搭配圖例與文字 / 圖示（例如方塊上的角色縮寫）；超過額定用 ⚠ 圖示 + 文字（清單中的做法正確），不要只把邊框變紅。
 3. **拖曳要有替代操作**（Dragging Movements，WCAG 2.5.7，High）：四邊「＋」、對齊參考線、接點吸附都是拖曳操作，需保留鍵盤 / 按鈕替代（屬性面板座標、方向鍵、命令「延伸方塊」）。
 4. **點擊目標至少 24 × 24 CSS px**（Target Size，WCAG 2.2 AA，High）：「＋」把手與外框四角把手（目前 `FRAME_HANDLE` 8 px）的**命中範圍**應放大到 24 px，畫出來的大小可以較小。

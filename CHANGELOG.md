@@ -12,7 +12,7 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 - 存檔欄位 `applicationVersion`（V2 誤寫為 `1.8-rc4`）改為 `app`（例如 `ArchFlow 3.0.0`）。
 
 - **「功能方塊圖」與「電源架構」合併為一種設計類型「方塊圖」（有意的格式修正，3.26c）。** 存檔只剩 `type: 'function'`，`'power'` 不再是設計類型（含 `'power'` 的 V3 檔會驗證失敗；V3 尚未發版，所以維持 `schemaVersion: 3`、不寫遷移）。方塊圖資料新增必填的 `view: 'function' | 'power'`（目前檢視，存在檔案裡）；V2 的電源設計對應為 `type: 'function'` + `view: 'power'`，V2 功能設計為 `view: 'function'`。新方塊 / 新線路的預設值改由 `view` 決定（電源檢視：角色「轉換器」、電源線帶箭頭），不再依設計類型。golden `function` / `power` 的 `project.v3.json` 因此重新產生（只多了 `view`、power 的 `type` 改為 `function`，其餘不變）。（`tests/unit/io.schema.test.ts`「one block-diagram type with two views」、`tests/unit/v2-to-v3.test.ts`、`tests/unit/model.diagram.test.ts`「defaults … follow the diagram view」）
-- 為之後的方塊圖 UI/UX 優化預留選填欄位（尚無功能）：方塊 `size`（S / M / L）、`style.color`；線路 `routing`（`auto` / `manual`）、`waypoints`、`labelOffset`；方塊圖 `groups`（群組框：id、名稱、成員方塊 id、外框；成員必須是存在的方塊）。格線 / 吸附之後改為使用者偏好，不寫進檔案。（3.26c）
+- 為之後的方塊圖 UI/UX 優化預留選填欄位（尚無功能）：方塊 `size`（S / M / L）、`style.color`；線路 `routing`（`auto` / `manual`，標示 `route` 是否為手動設定；路徑點只存在 `route`，不另設 `waypoints`）、`labelOffset`；方塊圖 `groups`（群組框：id、名稱、成員方塊 id、外框；成員必須是存在的方塊）。格線 / 吸附繼續存在檔案裡（`grid`），因為它會影響方塊位置與繞線結果。（3.26c）
 
 ### 繞線
 - **失效的手動路徑一律改回自動繞線（未鎖定時）。** V2 只在格線開啟時，以及對 `afRouteOnly` 這樣做；格線關閉時，不合法的 `manual` 路徑會原樣保留並顯示為錯誤。V3 兩種模式規則一致；鎖定的線仍保留原路徑並標示為無效。（3.16；`tests/unit/router.full-path.test.ts`）
