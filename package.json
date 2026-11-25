@@ -9,7 +9,9 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test --trace off",
     "pack": "node tools/pack.mjs",
-    "unpack": "node tools/unpack.mjs"
+    "unpack": "node tools/unpack.mjs",
+    "test:modules": "node scripts/check-test-modules.mjs",
+    "test:all": "npm run test:modules && npm test && npm run test:e2e"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
