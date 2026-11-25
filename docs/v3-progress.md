@@ -8,7 +8,7 @@
 
 ## 階段 1：盤點（只讀，不改程式；全部為 L0）
 - [x] 1.1 寫一支只讀分析腳本 `scripts/audit/find-overrides.mjs`：在 `src/app.zh-Hant.html` 找出所有 `const X=fn; fn=function` 覆寫，輸出函式名、層數、行號
-- [ ] 1.2 依 1.1 的結果寫 `docs/v3-audit.md` §1：每個被覆寫函式的每一層目的（inspector、render、drawEdges、validateDiagram、projectData、exportSvgDocument 優先）
+- [x] 1.2 依 1.1 的結果寫 `docs/v3-audit.md` §1：每個被覆寫函式的每一層目的（inspector、render、drawEdges、validateDiagram、projectData、exportSvgDocument 優先）
 - [ ] 1.3 `docs/v3-audit.md` §2：列出 model 欄位（nodes / edges / junctions / texts / theme…），標示「使用中／僅相容舊檔」
 - [ ] 1.4 `docs/v3-audit.md` §2 續：列出專案 JSON 頂層欄位（project、designs、customStyles、applicationVersion…）與 V3 處置
 - [ ] 1.5 寫 `scripts/audit/diff-locales.mjs`：比對 zh-Hant 與 en，濾掉翻譯字串，輸出非翻譯差異；結果寫入 `docs/v3-audit.md` §3
@@ -73,11 +73,12 @@
 
 ## 交接
 - **目前階段**：階段 1（盤點）
-- **下一步**：1.2 依 `node scripts/audit/find-overrides.mjs` 的結果撰寫 `docs/v3-audit.md` §1
+- **下一步**：1.3 `docs/v3-audit.md` §2：model 欄位盤點
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行。
   - V2 殼層、電源時序、流程圖、BOM 為 minified React bundle（L5319–10374），尚未確認是否有原始碼。
   - 尚無 `package.json` 與任何測試；階段 2 之前只能跑 L0 驗證。
   - 1.1 結果：75 個目標、304 層覆寫（zh-Hant 與 en 相同）。標 `*` 的層沒有保留前一層（整條鏈被取代），例如 `inspector` L844、`projectData` L555、`autoArrange` L1214/1736/1771/1850、`commit` L1648（暫時換成空函式）。腳本略過 af20-shell bundle。
-- **最後通過的驗證層級**：L0（1.1：腳本在 zh-Hant / en 皆可執行，Markdown 與 `--json` 輸出正常；人工抽查行號正確）
+- 1.2 發現：存檔的 `applicationVersion` 最後被 L1857 寫成 `'1.8-rc4'`（不是 V2.10.1），階段 2 要用測試確認；時程設計在各主要函式有 2–5 代互相取代的實作，只需移植最後一代（詳見 `docs/v3-audit.md` §1.6）。
+- **最後通過的驗證層級**：L0（1.2：audit §1 行號以腳本輸出交叉核對；1.1：腳本在 zh-Hant / en 皆可執行，Markdown 與 `--json` 輸出正常；人工抽查行號正確）
