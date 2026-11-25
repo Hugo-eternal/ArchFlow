@@ -123,3 +123,149 @@ main → app → shell
 - **殼層用 React 19 + TS**：殼層有大量面板、選單與狀態，用元件框架較好維護；引擎（core 到 render）不依賴 React。
 - 不引入狀態管理套件；`core/store` 以簡單的訂閱模式提供給 React（`useSyncExternalStore`）。
 - 測試：Vitest（core / model / router / io 在 Node；render / inspector 用 jsdom）、Playwright（只用 chromium）。
+
+---
+
+## §2 V3 schema 與 design 策略介面
+
+依據 audit §2 的欄位處置（保留 / 合併 / 衍生 / 刪除）。以 TypeScript 型別表示；`io/schema.ts` 以同一份定義產生執行期驗證。
+
+### 2.1 專案檔
+
+```ts
+interface ProjectFile {
+  schemaVersion: 3;                 // 其他值 → 「不支援舊版格式」
+  app: string;                      // 例如 "ArchFlow 3.0.0"，單一常數（修正 applicationVersion bug）
+  locale: 'zh-Hant' | 'en';         // 建檔時語系，僅供參考
+  project: { name: string };        // ≤ 100 字
+  activeDesignId: string;
+  customStyles: BlockStyle[];       // ≤ 50；以專案檔為準，localStorage 只做「最近使用」
+  designs: Design[];                // 1–100 張
+}
+
+type Design =
+  | DesignOf<'function', BlockDiagram>
+  | DesignOf<'power', BlockDiagram>
+  | DesignOf<'schedule', ScheduleData>
+  | DesignOf<'sequence', SequenceDoc>     // vendor 編輯器格式，原樣保存
+  | DesignOf<'flowchart', FlowchartDoc>;  // vendor 編輯器格式，原樣保存
+
+interface DesignOf<T extends string, D> {
+  id: string; name: string; type: T;
+  camera: { x: number; y: number; z: number };
+  data: D;
+}
+```
+
+刪除（audit §2.6）：`version`、`archflowLocalization`（含 `bindings`、`catalog`）、`wiringMode`、頂層 `camera` / `cameras`、`applicationVersion`（改為 `app`）。
+
+### 2.2 方塊圖（function / power）
+
+```ts
+interface BlockDiagram {
+  blocks: Block[];  wires: Wire[];  junctions: Junction[];
+  texts: TextBox[]; frames: Frame[];           // frames 只在 function 使用
+  theme: Theme;                                // 字型、字級
+  grid: { size: number; show: boolean; snap: boolean };
+  portLabels: 'inside' | 'outside' | 'hidden'; // 原 afPinLabels
+  wireDefaults?: LineFormat; wirePresets: LineFormat[];
+  presentationClean: boolean;                  // 原 afPresentation==='clean'
+}
+
+interface Block {
+  id: string; x: number; y: number; w: number; h: number;
+  title: string; subtitle: string; partNumber: string; ref: string;
+  ports: Port[];
+  style: BlockStyle;              // 原 appearance；刪除舊 color
+  titleAlign: TitleAlign;         // 原 afLayout（9 宮格）
+  font?: { subtitle?: number; label?: number; metric?: number };  // 原 afFont
+  sizing: 'auto' | 'free';        // 原 afFree
+  showTitle: boolean;             // 原 afNoName 取反
+  locked: boolean;                // 原 afLocked
+  role?: string;                  // power：source / converter / distribution / load
+  metrics?: Partial<Record<'voltage'|'current'|'power'|'efficiency', { value: string; unit?: string; show: boolean }>>;
+                                  // 合併 voltage/current/power/efficiency/showMetrics/afCurrentUnit
+  part?: { kind: string; rot: 0|90|180|270; size: 'S'|'M'|'L'; rails?: string[]; bothSides?: boolean }; // 原 afPart/afSym/afRot/afSize/afRails/afBoth
+  connector?: { mpn: string; rows: number; side: 'l'|'r'|'both'; pin1: string; end: string };      // 原 afConn/afMpn/afRows/afPin/afEnd
+}
+
+interface Port {
+  id: string; name: string; side: 'l'|'r'|'t'|'b'; t: number;   // t ∈ [0,1]
+  type: string; label: 'inside' | 'outside' | 'hidden';         // 合併 showLabel + afLabelPos
+  locked: boolean;
+}
+
+interface Wire {
+  id: string;
+  a: End; b: End;                 // End = { block, port } | { junction }
+  name: string; kind: 'signal'|'power'|'clock'|'bus'|string;
+  line: LineFormat;               // 合併 afLineFormat + color + arrow + arrowSize
+  route?: Point[];                // 合併 manual + afRouteOnly
+  locked: boolean;                // 合併 afGridLocked / afLocked / locked
+  electrical?: { voltage?: string; current?: string; unit?: 'A'|'mA'|'uA'; show: boolean };
+  label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } }; // afLabelSize/afLabelPreset/afLabelMark
+}
+```
+
+刪除（audit §2.1–2.3、§4.5）：`heading`、`afNeedsPortAlignment`、`afUnifiedLabel`、`afCleanRoute`、`afGridOffset`（衍生）、`ioConfig`（待階段 2 確認可衍生）、`review`、`note` / `showNote`、舊 `color`。
+
+### 2.3 時程
+
+```ts
+interface ScheduleData {
+  tasks: Task[]; links: Link[]; texts: TextBox[];
+  rules: { endpoint: 'start'|'end'; count: 'difference'|'inclusive' };   // 原 scheduleRules
+  appearance: ScheduleAppearance;   // 合併 scheduleAppearance / engineeringStyle / savedEngineeringStyle / customStyleActive / scheduleDesign
+  snap: { enabled: boolean; range: number };
+}
+interface Task {
+  id: string; title: string; ref: string; note: string; side: 'top'|'bottom';
+  time: { type: 'none' } | { type: 'range'; start: string; end: string } | { type: 'deadline'; date: string };
+  status: 'todo'|'doing'|'done'; milestone: boolean;
+  offset: { card: Point; axis: Point };   // 原 cardDx/cardDy/axisDx/axisDy
+  branchColor?: string;
+}
+interface Link { id: string; from: string; to: string; days: { mode: 'auto' } | { mode: 'manual'; value: number } }
+```
+
+刪除：`schedule`、`scheduleGraph`、`graphVersion`、任務的 `ports`、所有版面快取（`x/y/w/h/baseX/baseY/axisX/axisY/axisBaseX/axisBaseY/graphLane/graphDepth`，由版面演算法重算）。
+
+### 2.4 sequence / flowchart
+`data` 直接是 vendor 編輯器的文件格式（audit §2.5、§6.1），schema 只驗證外層結構與大小上限，內部由編輯器負責。不再附帶空的 `nodes/edges/junctions`。
+
+### 2.5 `DesignModule` 策略介面
+
+```ts
+interface DesignModule<D = unknown> {
+  type: DesignType;
+  label: I18nKey;                              // 設計類型名稱
+  schema: Schema<D>;                           // 該類型 data 的驗證
+  create(opts: { template?: string }): D;      // 空白或範本
+  templates: { id: string; label: I18nKey }[];
+
+  // 編輯器形式：'canvas' 使用共用的 render / interaction / inspector；'embedded' 交給 vendor iframe
+  editor: 'canvas' | 'embedded';
+
+  // 以下僅 editor === 'canvas'
+  layout?(data: D): void;                      // 例：時程軸排版（schedule 不使用 router）
+  renderExtras?(ctx: RenderContext, data: D): void;          // 徽章、外框、時間軸…
+  inspectorFields?(sel: Selection, data: D): FieldSpec[];    // 一次回傳完整欄位描述
+  commands?: CommandSpec[];                    // 例：新增任務、插入零件、LCD 範本
+  exportExtras?(svg: SvgBuilder, data: D): void;
+  arrange?(data: D, opts: ArrangeOptions): ArrangePlan;      // 自動排列策略
+
+  // 以下僅 editor === 'embedded'
+  mount?(frame: HTMLIFrameElement, host: EmbeddedHost<D>): EmbeddedApi;  // 提供 afSeqHost / afFlowHost
+}
+
+interface ToolModule {
+  id: 'bom' | 'edid' | 'hex' | 'pattern';
+  label: I18nKey; description: I18nKey; icon: IconName;
+  mount(frame: HTMLIFrameElement, host: { lang: Locale; close(): void; toast(text: string): void }): void;
+}
+```
+
+規則：
+- 共用模組只透過 `registry.design(type)` 取得策略；**禁止**在共用模組中判斷特定類型（`if (type === 'schedule')`）。
+- `inspectorFields` 必須同步、一次回傳完整欄位（取代現行 microtask / setTimeout 延遲修補，audit §1.4）。
+- 新增欄位 → 更新該類型的 `schema` 與 golden；變更既有欄位 → 提高 `schemaVersion` 並在 `io/migrate.ts` 寫 V3.x 遷移。
