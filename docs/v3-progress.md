@@ -12,7 +12,7 @@
 - [x] 1.3 `docs/v3-audit.md` §2：列出 model 欄位（nodes / edges / junctions / texts / theme…），標示「使用中／僅相容舊檔」
 - [x] 1.4 `docs/v3-audit.md` §2 續：列出專案 JSON 頂層欄位（project、designs、customStyles、applicationVersion…）與 V3 處置
 - [x] 1.5 寫 `scripts/audit/diff-locales.mjs`：比對 zh-Hant 與 en，濾掉翻譯字串，輸出非翻譯差異；結果寫入 `docs/v3-audit.md` §3
-- [ ] 1.6 `docs/v3-audit.md` §4：死碼與已廢止功能（heading、隱藏的 both 類型、RC 實驗分支、legacy copper / off-grid 轉換）及行號
+- [x] 1.6 `docs/v3-audit.md` §4：死碼與已廢止功能（heading、隱藏的 both 類型、RC 實驗分支、legacy copper / off-grid 轉換）及行號
 - [ ] 1.7 `docs/v3-audit.md` §5：af20-shell React bundle 的原始碼判斷（搜尋 sourcemap、註解、repo 歷史）；找不到時提出 `vendor/` 隔離方案
 - [ ] 1.8 盤點內建工具（BOM / EDID / Hex / Pattern）、電源時序、流程圖的邊界與資料格式，寫入 `docs/v3-audit.md` §6
 - [ ] 1.9 `docs/v3-plan.md`：模組切分（core、model、router、render、inspector、io、export、shell、designs/<type>、tools/<tool>）與依賴方向
@@ -73,7 +73,7 @@
 
 ## 交接
 - **目前階段**：階段 1（盤點）
-- **下一步**：1.6 `docs/v3-audit.md` §4：死碼與已廢止功能（heading、隱藏的 both 類型、RC 實驗分支、legacy copper / off-grid 轉換，以及 §1 找到的被遮蔽時程實作）
+- **下一步**：1.7 `docs/v3-audit.md` §5：af20-shell React bundle 能否找到原始碼；找不到時提出 `vendor/` 隔離方案
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行。
@@ -83,4 +83,5 @@
   - §2 中標「待確認」的欄位（`afPresentation`、`scheduleDesign`、`ioConfig`、`review`、`afRouteOnly`）留到 1.6 / 階段 2 判斷。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/diff-locales.mjs`（語系結構差異）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）、`node scripts/audit/dump-project-shape.mjs`（在 Chromium 建五種範例專案並列出存檔欄位）。
 - 1.5 發現：兩語系只差 252 行（7 處結構差異，其餘為寫死的翻譯字串）；React bundle 兩語系完全相同。
-- **最後通過的驗證層級**：L0（1.5：diff 腳本結果以原始逐行比對交叉驗證（252 行不同）；1.4：頂層欄位以實測輸出與讀寫行號交叉核對；1.3：欄位清單由瀏覽器實測輸出產生，五種設計皆建立成功、無頁面錯誤）
+- 1.6 發現：V1 介面在 V2 中全部隱藏，殼層靠點擊約 40 個隱藏元素 id 驅動引擎（清單見 audit §4.1，V3 需改為明確 API）；自動整理只有 RC4 `v4Open` 生效，但它仍呼叫 RC2/RC3 的計算函式。
+- **最後通過的驗證層級**：L0（1.6：可見性與 autoArrange 行為以 Chromium 實測確認；1.5：diff 腳本結果以原始逐行比對交叉驗證（252 行不同）；1.4：頂層欄位以實測輸出與讀寫行號交叉核對；1.3：欄位清單由瀏覽器實測輸出產生，五種設計皆建立成功、無頁面錯誤）

@@ -483,3 +483,63 @@ V3 建議：統一前綴 `archflow:`；語系由殼層統一提供給工具，�
 ### 3.3 限制
 - 遮蔽字串後才比對，因此字串**內部**的差異（例如兩語系範本資料中的數值不同）不會被列出；這類差異屬於範本內容，會在階段 3 抽成 i18n / 範本 JSON 時逐一對照。
 - 嵌入的工具 HTML 位於跨行模板字串內，仍以逐行方式比對（行內字串被遮蔽），結果顯示兩語系相同。
+
+---
+
+## §4 死碼與已廢止功能
+
+依據：靜態搜尋 + 在 Chromium 建立功能設計專案後，檢查元素是否存在 / 可見，並呼叫 `autoArrange()` 看實際開啟哪個對話框。
+
+### 4.1 關鍵事實：V1 介面全部隱藏，殼層透過「點隱藏按鈕」驅動引擎
+- 建立專案後，V1 的工具列、側欄按鈕（`#add`、`#exportBtn`、`#layoutBtn`、`#saveProject`、`#fit`…）**全部不可見**，畫面只有 V2 React 殼層。
+- 殼層以 `z(id)`（= `document.getElementById(id).click()`）與 `B(id)` 操作這些隱藏元素。bundle 內引用到的 id（括號為次數）：
+  `view`(9)、`add`(5)、`saveProject`(4)、`uiOpen`(3)、`inspector`(3)、`designSelect`(3)、`workspaceManage`(2)、`toggleInspector`(2)、`startScreen`(2)、`startExamples`(2)、`startCancel`(2)、`scheduleBranch`(2)、`scheduleAuto`(2)、`reroute`(2)、`projectName`(2)、`p13Name`(2)、`newProject`(2)、`managedDesignType`(2)、`managedDesignExample`(2)、`m2Reroute`(2)、`fit`(2)、`exportBtn`(2)、`chineseFont`(2)、`afArrangeSelectedIO`(2)、`addText`(2)、`undo`、`stats`、`startLoad`、`renameDesign`、`remove`、`rcClearRoutes`、`projectSaveState`、`notice`、`load`、`helpBtn`、`examplesBtn`、`englishFont`、`duplicateDesign`、`designBtn`、`deleteDesign`、`createProject`、`addDesign`。
+- 這些 id 就是現行「殼層 → 引擎」的實際介面。V3 必須改為明確的函式 API（例如 `app.commands.addBlock()`），不再依賴隱藏 DOM。
+
+### 4.2 已廢止功能
+
+| 功能 | 狀態 | 相關程式 | V3 處置 |
+|---|---|---|---|
+| 工作區標題（heading） | `#headingBtn`、`#headingDialog` 已不在 DOM；L240 以 CSS 隱藏 `.workspace-heading`；L1195 註明停用 | CSS L26、L28；HTML L247、L251；`cleanHeading`/`renderHeading`/`headingBounds`/`appendHeadingExport`/`openHeading` L458–463；`render` L310、`fit` L336、`exportSvgDocument` L390/L398、`validateDiagram` L360 中的呼叫 | 全部刪除 |
+| 隱藏的 `both` 專案類型 | 啟動畫面卡片 `hidden`（L246）；殼層也在 bundle 中把它濾掉 | `allowedWorkspace` L465、`createWorkspaceProject` L470、L2329、`acceptLoadedProject` L474、L3370、L3526 | 刪除；V3 一個專案本來就可含多張不同類型設計 |
+| V1 雙工作區（circuit / current 分頁） | `#tab-circuit`、`#tab-current` 隱藏；多設計（designs[]）已取代 | `workspaces`、`switchWorkspace`、`updateWorkspaceUI` L340–346；`activeWorkspace` 仍被大量用來判斷「電源設計」 | 刪除工作區概念，改由 `design.type` 判斷 |
+| `version: 4` 專案格式 | 只在載入時轉換 | L363、L560、L2332 | 刪除（V3 不相容舊檔） |
+| 時程 legacy copper 樣式轉換 | 只在載入舊檔時把 amber 主題轉為自訂樣式 | L817–818 | 刪除 |
+| 舊圖 off-grid 端點轉接 | 只對未對齊格線的舊檔接點產生短轉接線 | L1593–1613（`roLegacyNote`）、`ggLegacy` L1483 / L1514、L1542 | 刪除；V3 新檔一律在格線上 |
+| `archflowLocalization` 綁定推論 | 讀舊檔時推論範本綁定 | `afInferLegacyBindings` L971、L976 | 刪除 |
+| 舊 junction 網路拒絕載入 | 載入時檢查 | L1325–1327 | 刪除 |
+| en 文字清理 | 只在 en 版存在 | en L2361–2368 `v147-en-text-tidy` | 不移植（§3） |
+| 版本字樣反覆改寫 | 3 個 `render` 層各自把 `.af-brand-version` 改成 V2.10.1，另有 `archflow-v13-release-lock`（L2352–2360）定時覆寫 | L1745、L1779、L1858、L2353 | 改為單一版本常數 |
+
+### 4.3 自動整理：RC 實驗分支
+最後生效的是 **RC4（`v4Open`，L1848）**：
+- `autoArrange()` → 時程走 `rcAutoEngine`，其他設計開 `v4Dialog`（實測）。
+- `#uiOpen` 按鈕（殼層用它開「整理預覽」）在 L1850 被重新綁到 `v4Open`；L1792 起 `uiOpen = v4Open`，`roOpen`、`rcPortAssess` 也改指向 `v4Open`。
+
+因此下列**入口與對話框是死碼**：
+- RC2 整合預覽對話框 `#uiDialog` 與 `uiOpen()` 本體（L1681–1745）。
+- RC3 `ss*` 預覽 UI（L1747–1781，`#ssPreview`、`#ssMode`、`#ssScope`）。
+- 路線整理 `ro*` 對話框入口、`#rcPortDialog`（接點評估）、`#rcAutoDialog` 對話框 UI。
+
+但 **RC2 / RC3 的計算函式仍被 RC4 使用**：`v4Generate`（L1847）呼叫 `uiCandidate`、`uiRoutes`、`uiNoOverlap`、`uiArrangeLabels`、`uiVerify`、`roGeometry`、`roLocked`、`roCurrentPaths`、`rcEndLabel` 等；`rcAutoEngine` 仍是時程的自動排列。階段 3 移植時以 `v4Generate` 為入口，只搬它實際呼叫到的函式。
+
+### 4.4 被後層遮蔽的實作（來自 §1）
+| 函式 | 已無作用的層（時程分支） | 實際生效 |
+|---|---|---|
+| `render` | 596、626 的時程分支 | 691 以後各層 |
+| `drawEdges` | 597、629、668 的時程分支 | 688 以後 |
+| `inspector` | 599、631、673 的時程分支；797 被 844 回退 | 741 以後 |
+| `exportSvgDocument` | 606、634、698 的時程分支 | 754、760 |
+| `scheduleExample` | 620、677 | 925 之後的包覆 |
+| `axisLayout` | 618、657 | 685 + 722 |
+| `autoArrange` | 378 本體、1214、1647、1736、1771 | 1850 |
+| `projectData` | 520（被 555 整個取代） | 555 + 後續 |
+
+### 4.5 待確認欄位（承 §2）
+| 欄位 | 結果 |
+|---|---|
+| `review` | 只有讀取（L308 若為 true 加上 `.review-tag`，但 CSS L14 將其 `display:none`）與驗證（L359），程式中沒有任何地方設定它；實測五種範例存檔皆無此欄位 → **刪除** |
+| `afPresentation` | 只有 `'clean'`，由 p13 線條面板設定（L1443、L1469） → 保留為 boolean |
+| `scheduleDesign` | 只在 schedule-release-patch（L2244）讀寫，用於記錄時程設計的樣式選擇 → 併入 `scheduleAppearance` |
+| `ioConfig` | 電源設計接腳槽位（L451–456），V2.4 之後接腳改用接腳表格管理；階段 2 以測試確認是否仍影響渲染 |
+| `afRouteOnly` | RC4 套用整理結果時寫入（L1581–1623），`fullPath` L1591 優先採用 → 保留，V3 與 `manual` 合併為 `route` |
