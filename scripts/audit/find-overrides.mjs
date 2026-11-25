@@ -3,7 +3,7 @@
 // overridden with the "const base = X; X = function(){ … base() … }" chain.
 //
 // Usage:
-//   node scripts/audit/find-overrides.mjs [src/app.zh-Hant.html] [--json]
+//   node scripts/audit/find-overrides.mjs [legacy/app.zh-Hant.html] [--json]
 //
 // Output: per target — original definition line(s), number of override layers,
 // and for each layer: line, alias that keeps the previous layer, enclosing
@@ -15,7 +15,7 @@ import fs from 'node:fs';
 
 const args = process.argv.slice(2);
 const asJson = args.includes('--json');
-const file = args.find(a => !a.startsWith('--')) || 'src/app.zh-Hant.html';
+const file = args.find(a => !a.startsWith('--')) || 'legacy/app.zh-Hant.html';
 const text = fs.readFileSync(file, 'utf8');
 
 // ---- line index -----------------------------------------------------------

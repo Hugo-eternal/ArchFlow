@@ -5,17 +5,23 @@
   "type": "module",
   "description": "ArchFlow — offline architecture design workbench (single HTML file)",
   "scripts": {
-    "test": "vitest run",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test --trace off",
+    "build": "vite build",
+    "dev": "vite",
     "pack": "node tools/pack.mjs",
-    "unpack": "node tools/unpack.mjs",
+    "test": "vitest run",
+    "test:all": "npm run test:modules && npm run typecheck && npm test && npm run test:e2e",
+    "test:e2e": "playwright test --trace off",
     "test:modules": "node scripts/check-test-modules.mjs",
-    "test:all": "npm run test:modules && npm test && npm run test:e2e"
+    "test:unit": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "unpack": "node tools/unpack.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-singlefile": "^2.2.0",
     "vitest": "^3.2.4"
   }
 }

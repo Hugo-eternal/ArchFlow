@@ -1,4 +1,4 @@
-// Test helper: open the V2.10.1 app (src/app.<locale>.html) in headless Chromium and
+// Test helper: open the V2.10.1 app (legacy/app.<locale>.html) in headless Chromium and
 // call engine globals (findPath, validateDiagram, projectData, …) from Vitest.
 //
 // Why not jsdom: loading the engine in jsdom never settles (step 2.2 probe timed out
@@ -40,7 +40,7 @@ export async function openApp({ locale = 'zh-Hant', viewport = { width: 1500, he
   // file:// page first so the document has a file:// origin (localStorage works, as in the
   // shipped iframe); about:blank would deny localStorage to the embedded editors.
   await page.goto('file://' + path.resolve('tests/helpers/blank.html'));
-  await page.setContent(withFont(fs.readFileSync(`src/app.${locale}.html`, 'utf8')), { waitUntil: 'load' });
+  await page.setContent(withFont(fs.readFileSync(`legacy/app.${locale}.html`, 'utf8')), { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForFunction(() => typeof window.findPath === 'function' && typeof window.projectData === 'function');
   // let the post-load patches (setTimeout / rAF based) settle

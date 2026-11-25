@@ -20,7 +20,7 @@ V3 重構的安全網：先鎖定 V2.10.1 的現行行為（階段 2），重構
 | `tests/unit/` | 單元測試：繞線、資料驗證、存檔↔載入、時程日期、自動排列 |
 | `tests/golden/` | 黃金測試：每種設計一個固定專案（`<type>/project.json`）+ 行為摘要與匯出快照（`<type>/__snapshots__/`） |
 | `tests/e2e/` | 端對端：經 `index.html` 與 V2 殼層的真實操作 |
-| `tests/helpers/` | `load-app.js`：在 Chromium 載入 `src/app.<locale>.html` 並呼叫引擎函式 |
+| `tests/helpers/` | `load-app.js`：在 Chromium 載入 `legacy/app.<locale>.html` 並呼叫引擎函式 |
 
 ## 模組標註（必填）
 

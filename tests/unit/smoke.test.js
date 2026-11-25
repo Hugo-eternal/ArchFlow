@@ -8,7 +8,7 @@ describe('smoke', () => {
     const sources = JSON.parse(line.slice('const sources='.length).replace(/;\s*$/, ''));
     expect(Object.keys(sources).sort()).toEqual(['en', 'zh-Hant']);
     for (const [locale, b64] of Object.entries(sources)) {
-      expect(Buffer.from(b64, 'base64').equals(fs.readFileSync(`src/app.${locale}.html`))).toBe(true);
+      expect(Buffer.from(b64, 'base64').equals(fs.readFileSync(`legacy/app.${locale}.html`))).toBe(true);
     }
   });
 });

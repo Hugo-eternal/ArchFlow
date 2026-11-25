@@ -3,7 +3,7 @@
 // one example project per design type, call the engine's projectData(), and print
 // every field (with its JS type) found in the saved JSON.
 //
-// Usage: node scripts/audit/dump-project-shape.mjs [src/app.zh-Hant.html]
+// Usage: node scripts/audit/dump-project-shape.mjs [legacy/app.zh-Hant.html]
 // Needs Playwright with a Chromium build (preinstalled in the cloud sessions).
 
 import { createRequire } from 'node:module';
@@ -11,7 +11,7 @@ import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
-const file = path.resolve(process.argv[2] || 'src/app.zh-Hant.html');
+const file = path.resolve(process.argv[2] || 'legacy/app.zh-Hant.html');
 const TYPES = ['function', 'power', 'schedule', 'sequence', 'flowchart'];
 
 const browser = await chromium.launch();

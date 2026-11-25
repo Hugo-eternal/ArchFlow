@@ -1,6 +1,6 @@
 # ArchFlow V2.10.1 盤點報告（V3 重構用）
 
-範圍：`src/app.zh-Hant.html`（行號以此檔為準；en 版 L2361 之後約 +8 行）。
+範圍：`legacy/app.zh-Hant.html`（行號以此檔為準；en 版 L2361 之後約 +8 行）。
 產生方式：`node scripts/audit/find-overrides.mjs`（只讀分析），再逐層人工閱讀。
 
 - §1 覆寫鏈

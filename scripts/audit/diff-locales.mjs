@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Read-only audit (V3 step 1.5): compare src/app.zh-Hant.html and src/app.en.html
+// Read-only audit (V3 step 1.5): compare legacy/app.zh-Hant.html and legacy/app.en.html
 // after masking every piece of human-readable text, so that only differences in
 // code / markup structure remain.
 //
@@ -13,8 +13,8 @@ import fs from 'node:fs';
 
 const args = process.argv.slice(2);
 const files = args.filter(a => !a.startsWith('--'));
-const a = files[0] || 'src/app.zh-Hant.html';
-const b = files[1] || 'src/app.en.html';
+const a = files[0] || 'legacy/app.zh-Hant.html';
+const b = files[1] || 'legacy/app.en.html';
 const ctxArg = args.indexOf('--context');
 const MAXSHOW = 220;
 
