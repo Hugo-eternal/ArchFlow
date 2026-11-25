@@ -33,7 +33,7 @@
 - [x] 2.11 Golden：`tests/golden/sequence`（電源時序）
 - [x] 2.12 Golden：`tests/golden/flowchart`
 - [x] 2.13 E2E（Playwright, chromium, `--trace off`）：建立專案、新增方塊與連線
-- [ ] 2.14 E2E：切換設計、存檔後重開
+- [x] 2.14 E2E：切換設計、存檔後重開
 - [ ] 2.15 E2E：匯出 PNG / SVG、切換語系
 - [ ] 2.16 E2E：開啟每個內建工具（BOM / EDID / Hex / Pattern）
 - [ ] 2.17 確認每個測試都有模組標註；整套在 V2.10.1 全部通過；寫 `tests/README.md`
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.14 E2E：切換設計、存檔後重開（用 `tests/e2e/helpers.js`：`openIndex`、`createProject`、`engine(page)`；存檔經殼層「儲存」按鈕，攔截 download 後再經「開啟」載回）
+- **下一步**：2.15 E2E：匯出 PNG / SVG（殼層「匯出」按鈕 → 下載，檢查檔名、格式與尺寸）、切換語系（app bar 的「中 / EN」radio；切換後未存檔的專案要保留，介面文字改為英文）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -124,7 +124,8 @@
 - **測試輔助已改為注入內嵌字型**（與 `index.html` 相同的 Source Han Sans TC），並從空白 `file://` 頁面以 `setContent` 載入（與正式版 iframe srcdoc 相同；`about:blank` 會讓流程圖編輯器讀不到 localStorage）。
 - vendor 編輯器（時序 / 流程圖）的匯出在 iframe 內攔截：Playwright 的 download 事件抓不到 srcdoc iframe 的錨點下載，改為暫時掛勾 iframe 的 `URL.createObjectURL` 與 `HTMLAnchorElement.prototype.click`（見 `tests/golden/flowchart.test.js` 的 `runExport`）。
 - E2E 寫法（2.13 建立）：`tests/e2e/helpers.js`。啟動畫面的設計類型、「範本 / 空白設計」都是 **radio**（不是 button）；`engine(page)` = `page.frame({ name: 'app' })`，只用來讀 model 驗證，操作一律走介面。
+- 2.14：設計切換鈕的名稱就是目前設計的名稱（例如「入門方塊圖」），選單有「新增設計…」等項目；新增設計對話框用 V1 隱藏欄位 id（`#managedDesignName`、`#managedDesignType`、`#managedDesignExample`）。殼層「儲存」可用 Playwright `download` 事件攔截；啟動畫面要用「開啟 JSON 專案」按鈕（filechooser 事件可用）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（2.13：`npm run test:e2e` 2 項通過（連跑 2 次）；新增 `tests/e2e/create-and-wire.spec.js`：空白專案 → 新增 2 方塊 → 滑鼠拖曳連線 → 復原 / 重做）
+- **最後通過的驗證層級**：L3（2.14：`npm run test:e2e` 3 項通過；新增 `tests/e2e/designs-save-reopen.spec.js`）
