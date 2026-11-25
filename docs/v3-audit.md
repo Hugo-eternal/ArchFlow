@@ -543,3 +543,49 @@ V3 建議：統一前綴 `archflow:`；語系由殼層統一提供給工具，�
 | `scheduleDesign` | 只在 schedule-release-patch（L2244）讀寫，用於記錄時程設計的樣式選擇 → 併入 `scheduleAppearance` |
 | `ioConfig` | 電源設計接腳槽位（L451–456），V2.4 之後接腳改用接腳表格管理；階段 2 以測試確認是否仍影響渲染 |
 | `afRouteOnly` | RC4 套用整理結果時寫入（L1581–1623），`fullPath` L1591 優先採用 → 保留，V3 與 `manual` 合併為 `route` |
+
+---
+
+## §5 React 殼層（af20-shell）原始碼
+
+### 5.1 結論：repo 與 bundle 中都找不到原始碼
+- bundle 中沒有 `sourceMappingURL` / `sourceURL`，沒有任何原始檔名（`.tsx`/`.jsx` 字樣都是壓縮後的變數名，例如 `M.jsx`），沒有 license 註解。
+- 格式是 esbuild 的 IIFE 輸出（`var Gg=Object.create;…var Re=(t,e)=>()=>…` 的 CommonJS 包裝）。
+- repo 只有本 session 上傳的 V2.10.1，沒有更早的歷史。
+- **只有原作者可能還保有原始專案**（V2.0 起的建置環境）。若能提供，階段 3 直接把它放進 `src/shell` 是最好的路徑；以下 vendor 方案是在拿不到原始碼時的做法。
+
+### 5.2 bundle 的實際組成
+`<script id="af20-shell">`（L5319–L10375）是一個 IIFE，裡面以**字串**內嵌了其他獨立 bundle 與工具網頁，執行時注入 iframe：
+
+| 變數 | 位置 | 內容 | 自帶函式庫 | 與殼層的介面 |
+|---|---|---|---|---|
+| （殼層本體） | L5319–5327 前段、L5766 後段、L10374 | App bar、指令面板、屬性面板標頭、啟動畫面、Tools 中心 | React 19.2.8 #1 | 直接呼叫引擎全域函式 + 點擊隱藏元素（§4.1） |
+| `Bf` | L5327（字串長 296 KB） | 電源時序編輯器 | React 19.2.8 #2 | `window.afSeqHost = {lang, getDoc(), change(doc, designId)}`；編輯器回傳 `window.afSeqApi = {load, undo, redo, getDoc, designId, openExport, copyTable, canUndo, canRedo}` |
+| （CSS 字串） | L5328–5562 | 電源時序樣式 | | |
+| `$f` | L5563（300 KB） | 流程圖編輯器 | React 19.2.8 #3 | `window.afFlowHost = {lang, images, getDoc(), change(doc, designId)}`；`window.afFlowApi = {load, undo, redo, openExport, closeMenus}` |
+| （CSS 字串） | L5564–5764 | 流程圖樣式 | | |
+| `fg` | L5766（369 KB） | RSI BOM 轉換器 | React 19.2.8 #4 + JSZip 3.10.1 | `window.afRsiHost = {lang, close(), toast(text)}` |
+| `mg` | L5994–6762 | EDID Generator（獨立 HTML） | 無 | `window.afEdidHost = {lang, close, toast}` |
+| `vg` | L6763–7485 | Hex/Bin Editor & Compare（獨立 HTML） | 無 | `window.afHexHost` |
+| `xg` | L7486–10373 | Pattern Generator（獨立 HTML） | 無 | `window.afPgHost` |
+
+- 共 **4 份 React**（殼層、時序、流程圖、BOM 各一份），約占 1 MB。
+- 工具字串中的 `</script>` 以 `<#/script` 跳脫，注入前還原（`G4` 對照表）。
+- 電源時序與流程圖的資料存在引擎 `model.sequence` / `model.flowchart`，經 `afSeqHost.change` / `afFlowHost.change` 寫回；所以它們存檔時會帶著空的 `nodes/edges/junctions`（§2.5）。
+
+### 5.3 vendor 隔離方案（拿不到原始碼時）
+1. **逐字抽出**上表每個字串成檔案，內容不改：
+   - `vendor/sequence-editor/bundle.js`（+ `style.css`）
+   - `vendor/flowchart-editor/bundle.js`（+ `style.css`）
+   - `vendor/rsi-bom/bundle.js`
+   - `vendor/tools/edid.html`、`vendor/tools/hex.html`、`vendor/tools/pattern.html`
+   - 每個目錄附 `VENDOR.md`：來源（V2.10.1 行號）、SHA-256、對外介面、不可修改的聲明。
+2. **介面保持不變**：V3 的 `designs/sequence`、`designs/flowchart` 只是轉接層，負責提供 `afSeqHost` / `afFlowHost`（lang、getDoc、change）並以 V3 schema 讀寫資料；`tools/<x>` 提供 `af*Host`（lang、close、toast）。
+3. **殼層本體不保留**：它是 V3 要重寫的部分（app bar、指令面板、屬性面板、啟動畫面、Tools 中心），而且與 V1 引擎綁死在隱藏 DOM 上。以 §4.1 的 id 清單與實際畫面為規格，在 `src/shell` 重寫（React 或 vanilla 由 1.9 決定）。
+4. **建置**：Vite 把 vendor 檔以 `?raw` 字串內嵌進 `dist/ArchFlow.html`，執行時注入 iframe，行為與現在相同。
+5. **檢查**：CI 比對 vendor 檔的 SHA-256，防止被誤改；E2E 測試涵蓋每個 vendor 元件的開啟、編輯、存檔（階段 2.11、2.12、2.16）。
+6. 長期：若之後取得原始碼，或決定重寫某個編輯器，只要換掉對應 vendor 目錄並維持相同 host 介面。
+
+### 5.4 對 V3 的影響
+- 「程式碼只留一份、文字抽到 i18n」的目標**不適用於 vendor 內容**：它們內部已以 `c(zh, en)` 處理雙語，語系由 host 的 `lang` 提供即可。
+- 4 份 React 的重複體積在 vendor 方案下無法消除；只有取得原始碼或重寫才能共用一份。
