@@ -86,5 +86,21 @@
   "inspector.textAlign.left": "Left",
   "inspector.textAlign.center": "Centre",
   "inspector.textAlign.right": "Right",
-  "inspector.text.background": "Background"
+  "inspector.text.background": "Background",
+  "export.read.empty": "This design has no blocks.",
+  "export.read.textOnly": "This design has only text; it exports normally.",
+  "export.read.size": "Output {width} × {height}; shown whole on a 1366 × 768 screen, block titles are about {title} px and port / wire labels about {label} px.",
+  "export.read.small": "Text may be too small: tighten the layout, enlarge the fonts, or split the drawing.",
+  "export.read.ok": "The font sizes suit normal screen reading.",
+  "export.read.invalid": "{count} wires have no valid route (drawn as red dashes).",
+  "export.read.overlap": "{count} text boxes overlap a block or another text box.",
+  "export.read.estimate": "This is an estimate; the result depends on the screen and viewer.",
+  "export.error.empty": "This design is empty.",
+  "export.error.too-large": "The picture is too large. Lower the resolution or export SVG instead.",
+  "export.error.image": "The picture could not be created. Export SVG instead.",
+  "export.page.2560x1440": "Slide · 2560 × 1440 (16:9, high resolution)",
+  "export.page.1600x900": "Screen · 1600 × 900 (16:9)",
+  "export.page.1920x1080": "Projector · 1920 × 1080 (16:9)",
+  "export.page.1366x768": "Laptop · 1366 × 768",
+  "export.page.native": "Drawing size"
 }

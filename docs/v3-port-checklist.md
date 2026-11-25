@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 215　☑ 57　✂ 34　⤳ 21
+合計 327 層：☐ 209　☑ 63　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -122,11 +122,11 @@
 | `exportSvgDocument` | 698 |  | script#1 | **時程**：預覽 / PNG / SVG 共用的獨立 SVG（不呼叫 base） | ⤳ |  |
 | `exportSvgDocument` | 754 |  | script#1 | **時程**：套用外觀與字型的匯出（取代 698） | ☐ |  |
 | `exportSvgDocument` | 760 |  | script#1 | 時程匯出後處理（色盤） | ☐ |  |
-| `exportSvgDocument` | 1469 |  | script#2 | p13：匯出前重繪連線、套用 clean 簡報樣式 | ☐ |  |
-| `exportSvgDocument` | 1567 |  | script#2 | 格線：移除格線把手 | ☐ |  |
-| `exportSvgDocument` | 1674 |  | script#2 | RC：移除選取高亮 | ☐ |  |
-| `exportSvgDocument` | 1744 |  | script#2 | 移除統一標籤引線 | ☐ |  |
-| `exportSvgDocument` | 1856 |  | script#2 | 移除標記外框、保留標記旋轉與位置 | ☐ |  |
+| `exportSvgDocument` | 1469 |  | script#2 | p13：匯出前重繪連線、套用 clean 簡報樣式 | ☑ | 3.22 `export/svg.ts` 直接用 render 的 VNode 產生，固定為 clean 樣式 |
+| `exportSvgDocument` | 1567 |  | script#2 | 格線：移除格線把手 | ☑ | 3.22 匯出不畫格線把手，無需移除 |
+| `exportSvgDocument` | 1674 |  | script#2 | RC：移除選取高亮 | ☑ | 3.22 匯出不傳選取，無需移除 |
+| `exportSvgDocument` | 1744 |  | script#2 | 移除統一標籤引線 | ☑ | 3.22 V3 沒有標籤引線元素 |
+| `exportSvgDocument` | 1856 |  | script#2 | 移除標記外框、保留標記旋轉與位置 | ☑ | 3.22 V3 沒有標記外框元素；標記位置由 render 處理 |
 | `$('#exportBtn').onclick` | 400 | `*` 取代 | script#1 |  | ☐ |  |
 | `$('#exportBtn').onclick` | 708 |  | script#1 | Export and preview live together in one dialog. No external library or connection required. | ☐ |  |
 | `appendFreeTextExport` | 4125 |  | af15-ux2 | ---------- exports draw the badges and icons ---------- | ☐ |  |
@@ -135,7 +135,7 @@
 | `appendHeadingExport` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `headingBounds` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `readabilityReport` | 611 |  | script#1 | Preserve the discriminator even for a newly created empty schedule. | ☐ |  |
-| `updateReadability` | 10426 |  | af-v270-sizing | readability on a PPT slide | ☐ |  |
+| `updateReadability` | 10426 |  | af-v270-sizing | readability on a PPT slide | ☑ | 3.22 `export/readability.ts`（PPT 頁面倍率） |
 
 ## inspector
 

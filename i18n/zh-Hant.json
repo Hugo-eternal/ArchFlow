@@ -86,5 +86,21 @@
   "inspector.textAlign.left": "靠左",
   "inspector.textAlign.center": "置中",
   "inspector.textAlign.right": "靠右",
-  "inspector.text.background": "背景"
+  "inspector.text.background": "背景",
+  "export.read.empty": "目前工作區沒有方塊。",
+  "export.read.textOnly": "目前為文字圖面，可正常匯出。",
+  "export.read.size": "輸出 {width} × {height}；以 1366 × 768 螢幕完整顯示估算：IC 約 {title} px、接腳／線路約 {label} px。",
+  "export.read.small": "文字可能偏小：建議緊湊編排、加大字級，或拆成多張圖。",
+  "export.read.ok": "目前字級適合一般螢幕閱讀。",
+  "export.read.invalid": "有 {count} 條線路沒有合法路徑（以紅色虛線顯示）。",
+  "export.read.overlap": "有 {count} 個文字框與方塊或其他文字框重疊。",
+  "export.read.estimate": "此為尺寸估算，實際效果依螢幕與檢視器而異。",
+  "export.error.empty": "目前工作區沒有內容。",
+  "export.error.too-large": "圖面過大，請降低解析度或改匯出 SVG。",
+  "export.error.image": "圖片轉換失敗，請改匯出 SVG。",
+  "export.page.2560x1440": "PPT 投影片 · 2560 × 1440（16:9 高解析）",
+  "export.page.1600x900": "電腦閱讀 · 1600 × 900（16:9）",
+  "export.page.1920x1080": "簡報投影 · 1920 × 1080（16:9）",
+  "export.page.1366x768": "筆電閱讀 · 1366 × 768",
+  "export.page.native": "原始圖面大小"
 }

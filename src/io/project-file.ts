@@ -49,9 +49,14 @@ export const FILE_EXTENSION = '.archflow.json';
 
 /** A safe download name from the project name ("My: board?" → "My board.archflow.json"). */
 export function fileNameFor(projectName: string): string {
+  return safeFileName(projectName) + FILE_EXTENSION;
+}
+
+/** A name usable as a file name on Windows / macOS / Linux ('ArchFlow' when nothing is left). */
+export function safeFileName(name: string): string {
   // characters Windows / macOS do not allow, control characters, and leading / trailing dots
-  const clean = projectName.replace(/[\\/:*?"<>|\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '').slice(0, 100).trim();
-  return (clean || 'ArchFlow') + FILE_EXTENSION;
+  const clean = name.replace(/[\\/:*?"<>|\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^\.+|\.+$/g, '').slice(0, 100).trim();
+  return clean || 'ArchFlow';
 }
 
 /** The project as file text (pretty-printed so files diff well). */
@@ -70,7 +75,12 @@ export function saveProject(store: Store, { markSaved = true } = {}): { name: st
 
 /** Offer text as a file download (browser only). */
 export function downloadText(name: string, text: string, type = 'application/json'): void {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+  downloadBlob(name, new Blob([text], { type }));
+}
+
+/** Browser download of a blob (export: SVG / PNG). */
+export function downloadBlob(name: string, blob: Blob): void {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = name; a.rel = 'noopener';
   document.body.append(a); a.click(); a.remove();
