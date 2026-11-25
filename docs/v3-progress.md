@@ -63,7 +63,7 @@
 ### 3E 畫面
 - [x] 3.18 `render`：方塊、接腳（L3）
 - [x] 3.19 `render`：連線、接點、文字框（L3）
-- [ ] 3.20 `interaction`：選取、拖曳、拉線、框選、鍵盤（L3）
+- [x] 3.20 `interaction`：選取、拖曳、拉線、框選、鍵盤（L3）
 - [ ] 3.21 `inspector` 框架與欄位元件（L3）
 - [ ] 3.22 `export`：SVG / PNG / 頁面 / 可讀性（L3）
 ### 3F 最小殼層
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.20 `interaction`：選取、拖曳、拉線、框選、鍵盤。建議拆法：`src/interaction/hit.ts`（純函式：世界座標 → 命中的方塊 / 接腳 / 線段 / 接點 / 文字框，用 3.18–3.19 的幾何，不靠 DOM 事件目標）、`src/interaction/gestures.ts`（指標狀態機：pan、移動選取項（`model/diagram.moveItems` + 格線吸附 `core/grid.snapIfOn`）、從接腳拉線（`connect`）、框選、縮放滾輪 `core/camera`），每個手勢結束時以**一次** `store.update`（或 `history.batch`）提交，提交流程固定執行 `core/grid.normalize` + `protect`（格線開啟時）與 `router/junctions.cleanJunctions`——這就是 V2 commit L1123 / L1535 的位置。鍵盤透過 `CommandRegistry.handleKey`。測試：在 jsdom 或 Chromium 中以合成指標事件跑完整手勢，檢查 store 的 data 與 undo 一步回到原狀；V2 對照：拖曳後座標吸附、拉線建立的線與 V2 相同。L3。
+- **下一步**：3.21 `inspector` 框架與欄位元件。`src/inspector/fields.ts`：`FieldSpec` 型別（text / textarea / number（單位、min/max/step）/ select / toggle / color / segmented / group / custom），每個欄位帶 i18n label key、`get(data, sel)`、`set(data, sel, value) → data`（純函式，經 `interaction/commit.commitEdit` 提交，文字輸入 debounce 後一次提交、按 Enter / blur 時提交）；`src/inspector/panel.ts`：依 `FieldSpec[]` 產生 DOM（無障礙：label 對應、鍵盤可操作、錯誤訊息 `aria-describedby`），**同步一次產出完整欄位**（取代 V2 inspector 37 層 microtask / setTimeout 修補，audit §1.4）。先實作共用欄位：方塊（標題、料號、參照、副標、對齊、樣式顏色、鎖定）、接腳（名稱、類型、標籤位置）、線（名稱、種類、線條格式、箭頭）、文字框（內容、字級、顏色、粗斜體、對齊、背景）。設計專屬欄位由 `DesignModule.inspectorFields` 在 3.24 起補上。測試：jsdom 或 Chromium 中產生面板、輸入值、檢查 store data 與一步復原。先讀 audit §1 的 inspector 37 層表，挑出共用欄位。L3。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -162,8 +162,14 @@
   - 與 V2 比對：golden function / power 每條線的點、箭頭有無、標籤文字與座標都與 V2 `drawEdges` 相同。
   - src/ 不能出現中日韓字元：正規式的字元範圍要寫成 `\uXXXX` 跳脫（見 `render/texts.ts` 的 `CJK`）。注意：用工具寫檔時 `\u` 可能被先轉成實際字元，寫完用 `npm run check:i18n` 確認。
   - 標籤去重（V2 L3099）、外框 frames（3.26）尚未做。
+- 互動（3.20）：`src/interaction/`——
+  - `commit.ts`：**唯一的提交流程** `commitEdit(store, edit)` / `prepare(before, after)`：格線開啟時 `normalize` + `protect`，然後 `cleanJunctions`，最後 `store.commit`（新增，一次一步復原）。鎖定擋下時不提交，回傳 `{ ok: false, error }`（`GridError` / `ModelError`），殼層用 i18n `canvas.refused`（帶 `{reason}`）顯示。**之後所有修改（inspector、命令、自動排列）都要經過 `commitEdit`。**
+  - `hit.ts`：世界座標命中測試（接腳 > 接點 > 文字 > 線 > 方塊 > 外框邊），容差以螢幕 px 除以縮放；`itemsInRect` 框選（整個在框內；兩端都被選的線也選）；`nearestPort`（拉線吸附 22 px）。文字框高度用 `render/texts.textLayout`（3.20 新增，畫與命中共用）。
+  - `gestures.ts`：與 DOM 無關的指標狀態機 `Gestures(host)`：`down / move / up / cancel / wheel`、`selection`（多選 `ItemRef[]`，第一個同步到 `store.select`）、`preview`、`draft()`（拖曳中畫這份，放開才提交）、`previewPoints()`。操作對照寫在檔頭（空白拖 = 平移、Shift 拖 = 框選、接腳拖 = 拉線、接點拖 = 拉線 / Shift 拖 = 移動、中鍵 = 平移）。
+  - `commands.ts`：`canvasCommands()`——復原 / 重做（Mod+Z、Mod+Shift+Z、Mod+Y）、刪除（Delete / Backspace）、全選、Escape（取消手勢或清除選取）、方向鍵移動一格（無格線 1 px）、Shift+方向鍵十格。i18n：`cmd.*`、`canvas.refused*`。
+  - 測試在 Node 中以真 `Store` + 合成指標序列跑完整手勢；拖曳吸附公式與 V2 `snap` 比對一致。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.19：型別、i18n、token（95 個、54 組對比）、vendor、建置、產物檢查、Vitest 28 檔 194 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 47、✂ 34）。前一步 3.18：L3（型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L3（3.20：型別、i18n、token、vendor、建置、產物檢查、Vitest 29 檔 204 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 50、✂ 34）。前一步 3.19：L3（型別、i18n、token（95 個、54 組對比）、vendor、建置、產物檢查、Vitest 28 檔 194 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 47、✂ 34）。前一步 3.18：L3（型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。

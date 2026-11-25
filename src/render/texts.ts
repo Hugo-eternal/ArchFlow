@@ -58,10 +58,17 @@ export function wrapText(text: string, width: number, px: number, bold = false, 
 
 export interface TextRenderOptions { selected?: ReadonlySet<string>; measure?: Measure }
 
-export function textNode(t: TextBox, opts: TextRenderOptions = {}): VNode {
+/** Wrapped lines and box height of a text box (shared by drawing and hit testing). */
+export function textLayout(t: TextBox, measure: Measure = estimateWidth): { lines: string[]; lineHeight: number; height: number } {
   const px = ptToPx(t.size), inner = Math.max(1, t.w - 2 * TEXT_PAD);
-  const lines = wrapText(t.text, inner, px, t.bold, t.italic, opts.measure);
-  const lh = px * LINE_HEIGHT, height = lines.length * lh + 2 * TEXT_PAD;
+  const lines = wrapText(t.text, inner, px, t.bold, t.italic, measure);
+  const lineHeight = px * LINE_HEIGHT;
+  return { lines, lineHeight, height: lines.length * lineHeight + 2 * TEXT_PAD };
+}
+
+export function textNode(t: TextBox, opts: TextRenderOptions = {}): VNode {
+  const px = ptToPx(t.size);
+  const { lines, lineHeight: lh, height } = textLayout(t, opts.measure);
   const x = t.align === 'center' ? t.x + t.w / 2 : t.align === 'right' ? t.x + t.w - TEXT_PAD : t.x + TEXT_PAD;
   const anchor = t.align === 'center' ? 'middle' : t.align === 'right' ? 'end' : 'start';
   const selected = opts.selected?.has(t.id);

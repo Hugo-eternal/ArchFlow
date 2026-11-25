@@ -12,5 +12,19 @@
   "file.notJson": "這不是 ArchFlow 專案檔（無法讀取 JSON）。目前的專案未變更。",
   "file.legacyFormat": "不支援舊版格式：這是 ArchFlow V1 / V2 的專案檔，V3 無法開啟。目前的專案未變更。",
   "file.newerFormat": "這個檔案由較新版的 ArchFlow 建立，請更新後再開啟。目前的專案未變更。",
-  "file.invalid": "專案檔內容有誤，無法開啟（{count} 處問題）。目前的專案未變更。"
+  "file.invalid": "專案檔內容有誤，無法開啟（{count} 處問題）。目前的專案未變更。",
+  "cmd.undo": "復原",
+  "cmd.redo": "重做",
+  "cmd.delete": "刪除",
+  "cmd.selectAll": "全選",
+  "cmd.clearSelection": "取消選取",
+  "cmd.nudgeLeft": "向左移動",
+  "cmd.nudgeRight": "向右移動",
+  "cmd.nudgeUp": "向上移動",
+  "cmd.nudgeDown": "向下移動",
+  "canvas.refused": "未套用，原圖已保留：{reason}",
+  "canvas.refused.locked-block": "方塊已鎖定",
+  "canvas.refused.locked-port": "接腳已鎖定",
+  "canvas.refused.locked-wire": "線路已鎖定",
+  "canvas.refused.limit": "已達上限"
 }

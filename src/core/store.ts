@@ -138,6 +138,11 @@ export class Store {
     this.requireActive().history.update(fn);
   }
 
+  /** Replace the active design's data as one undo step (no-op when unchanged). */
+  commit(data: Design['data']): void {
+    this.requireActive().history.commit(data);
+  }
+
   /** Several updates as one undo step; rolled back if fn throws. */
   batch<R>(fn: () => R): R { return this.requireActive().history.batch(fn); }
 

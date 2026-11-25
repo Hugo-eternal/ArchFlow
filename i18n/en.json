@@ -12,5 +12,19 @@
   "file.notJson": "This is not an ArchFlow project file (not valid JSON). The current project is unchanged.",
   "file.legacyFormat": "Legacy format not supported: this is an ArchFlow V1 / V2 project file, which V3 cannot open. The current project is unchanged.",
   "file.newerFormat": "This file was made by a newer ArchFlow. Update ArchFlow to open it. The current project is unchanged.",
-  "file.invalid": "The project file has errors and cannot be opened ({count} problems). The current project is unchanged."
+  "file.invalid": "The project file has errors and cannot be opened ({count} problems). The current project is unchanged.",
+  "cmd.undo": "Undo",
+  "cmd.redo": "Redo",
+  "cmd.delete": "Delete",
+  "cmd.selectAll": "Select all",
+  "cmd.clearSelection": "Clear selection",
+  "cmd.nudgeLeft": "Move left",
+  "cmd.nudgeRight": "Move right",
+  "cmd.nudgeUp": "Move up",
+  "cmd.nudgeDown": "Move down",
+  "canvas.refused": "Not applied; original preserved: {reason}",
+  "canvas.refused.locked-block": "block is locked",
+  "canvas.refused.locked-port": "port is locked",
+  "canvas.refused.locked-wire": "wire is locked",
+  "canvas.refused.limit": "limit reached"
 }

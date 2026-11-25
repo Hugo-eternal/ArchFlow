@@ -6,15 +6,15 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 225　☑ 47　✂ 34　⤳ 21
+合計 327 層：☐ 222　☑ 50　✂ 34　⤳ 21
 
 ## core / interaction
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次 |
+| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☑ | `interaction/commit.prepare` 呼叫 `cleanJunctions`（3.17 / 3.20） |
 | `commit` | 1348 | `*` 取代 | script#2 |  | ✂ | 由 `history.batch()`（src/core/history.ts）取代暫時把 commit 換成空函式 |
-| `commit` | 1535 |  | script#2 |  | ☑ | `core/grid` 的 `normalize` / `protect`（3.11）；提交流程在 3.20 由命令呼叫 |
+| `commit` | 1535 |  | script#2 |  | ☑ | `interaction/commit.prepare`：normalize + protect（3.11 / 3.20） |
 | `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ✂ | 由 `history.batch()` 取代；失敗時自動回滾 |
 | `commit` | 3564 | `*` 取代 | af15-ux2 | run fn as one undoable step even if it calls commit() internally | ✂ | 由 `history.batch()` 取代 |
 | `fit` | 601 |  | script#1 |  | ☐ | 時程 fit → `designs/schedule` 提供 `FitOptions` / 外框（3.28）；共用計算為 `core/camera.fit` |
@@ -46,10 +46,10 @@
 | `addPin` | 1256 |  | script#2 |  | ☐ | 點擊位置 → `core/grid.portAt` + `model/diagram.addPort`（已完成）；指標事件 → interaction（3.20） |
 | `newFreeText` | 2285 |  | text-design-v22-js |  | ☑ | 預設寬 180 → `model/diagram.TEXT_DEFAULT`（3.12） |
 | `openHeading` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
-| `preview` | 1566 |  | script#2 |  | ☐ |  |
+| `preview` | 1566 |  | script#2 |  | ☑ | `Gestures.previewPoints`：有目標時用 `routeWire` 的實際路徑，否則吸附格線的 L 形（3.20） |
 | `redo` | 2322 |  | archflow-known-fixes-v3 |  | ☑ | src/core/history.ts：undo / redo 都標 dirty |
-| `start` | 1295 |  | script#2 |  | ☐ |  |
-| `undo` | 2321 |  | archflow-known-fixes-v3 |  | ☐ |  |
+| `start` | 1295 |  | script#2 |  | ☑ | 鎖定項目不可拖：`interaction/commit` 經 `core/grid.protect` 拒絕並保留原狀（3.20） |
+| `undo` | 2321 |  | archflow-known-fixes-v3 |  | ☑ | `history.undo` 命令（`interaction/commands`，3.20）；復原標記 dirty 由 History 處理（3.10） |
 
 ## designs/* (templates)
 
