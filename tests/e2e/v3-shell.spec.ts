@@ -54,6 +54,7 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
 
   // start screen → new project
   await page.getByLabel('專案名稱').fill('主機板');
+  await page.getByRole('radio', { name: '空白設計' }).check();
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.getByRole('navigation', { name: '設計清單' }).getByRole('button', { name: /設計 1/ })).toBeVisible();
 

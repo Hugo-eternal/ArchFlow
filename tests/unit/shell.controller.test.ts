@@ -1,7 +1,10 @@
 // module: shell — V3 src/shell/controller.ts without a browser: commands registered once in the
 // registry, edits as single undo steps, design list commands, dialogs and refusal messages.
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Shell, refusalText } from '../../src/shell/controller';
+import { Shell as BaseShell, refusalText } from '../../src/shell/controller';
+import { createRegistry } from '../../src/app';
+
+class Shell extends BaseShell { constructor() { super(createRegistry()); } }
 import { setLocale, t } from '../../src/core/i18n';
 import { GridError } from '../../src/core/grid';
 import { ModelError } from '../../src/model/types';
@@ -29,7 +32,7 @@ describe('shell controller', () => {
 
   it('adds blocks, ports and text at the view centre as one undo step each', async () => {
     const s = new Shell();
-    s.newProject('P');
+    s.newProject('P', { type: 'function' });
     s.setViewport({ w: 1000, h: 600 });
     await s.run('block.add');
     const b = s.data().blocks[0];
@@ -51,8 +54,8 @@ describe('shell controller', () => {
     s.newProject('P');
     expect(s.enabled('design.delete')).toBe(false);
     await s.run('design.add');
-    expect(s.dialog?.kind).toBe('prompt');
-    if (s.dialog?.kind === 'prompt') s.dialog.ok('B');
+    expect(s.dialog?.kind).toBe('newDesign');
+    s.addDesign({ type: 'function', name: 'B' });
     expect(s.dialog).toBeNull();
     expect(s.store.designs.map(d => d.name)).toEqual([t('design.defaultName', { n: 1 }), 'B']);
     expect(s.store.activeDesign!.name).toBe('B');
@@ -61,6 +64,17 @@ describe('shell controller', () => {
     await s.run('design.delete');
     if (s.dialog?.kind === 'confirm') s.dialog.ok();
     expect(s.store.designs.map(d => d.name)).toEqual(['B']);
+  });
+
+  it('new projects and designs come from the design module (blank or template)', () => {
+    const s = new Shell();
+    s.newProject('P', { type: 'function', template: 'starter' });
+    expect(s.store.activeDesign!.name).toBe(t('template.function.starter.name'));
+    expect(s.data().blocks).toHaveLength(4);
+    expect(s.pendingFit).toBe(true);
+    s.addDesign({ type: 'function' });
+    expect(s.data().blocks).toHaveLength(0);
+    expect(s.store.activeDesign!.name).toBe(t('design.defaultName', { n: 2 }));
   });
 
   it('asks before discarding unsaved changes', async () => {

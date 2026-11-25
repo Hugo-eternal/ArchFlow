@@ -33,7 +33,8 @@ export function InspectorPane({ shell }: { shell: Shell }) {
   const sel = shell.gestures.selection;
   const key = sel.length === 1 ? JSON.stringify(sel[0]) : `n${sel.length}`;
   useEffect(() => {
-    insp.current?.show(sel.length === 1 ? sel[0] : null);
+    const one = sel.length === 1 ? sel[0] : null;
+    insp.current?.show(one, one && shell.module?.inspectorFields ? shell.module.inspectorFields(one, shell.data()) : []);
   }, [key, designId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

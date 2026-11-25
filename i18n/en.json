@@ -153,5 +153,18 @@
   "cmd.zoomIn": "Zoom in",
   "cmd.zoomOut": "Zoom out",
   "cmd.toggleInspector": "Properties panel",
-  "cmd.exportOpen": "Export"
+  "cmd.exportOpen": "Export",
+  "template.function.starter.sensor.title": "Temperature",
+  "template.function.starter.sensor.partNumber": "Sensor",
+  "template.function.starter.mcu.partNumber": "Microcontroller",
+  "template.function.starter.radio.partNumber": "Radio module",
+  "template.function.starter.power.partNumber": "Power supply",
+  "template.function.starter.heading": "Starter block diagram",
+  "template.function.starter.hint": "Four blocks, three connections. Click a block to rename it or edit ports; drag from a port to add a connection.",
+  "template.function.starter.name": "Starter block diagram",
+  "design.start": "Start from",
+  "design.fromTemplate": "Template: {name}",
+  "design.blank": "Blank design",
+  "design.type": "Design type",
+  "design.nameAuto": "Leave empty to use the template name"
 }

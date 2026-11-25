@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 204　☑ 68　✂ 34　⤳ 21
+合計 327 層：☐ 197　☑ 75　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -56,8 +56,8 @@
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
 | `workspaceExample` | 602 |  | script#1 |  | ⤳ |  |
-| `workspaceExample` | 907 | `*` 取代 | script#2 | Localized template catalog and session-safe language switching. | ☐ |  |
-| `workspaceExample` | 964 |  | script#2 | Bind only generated labels. User-authored names are never translated. | ☐ |  |
+| `workspaceExample` | 907 | `*` 取代 | script#2 | Localized template catalog and session-safe language switching. | ☑ | 3.24 `designs/function` 範本文字為 i18n key（`@i18n:` 由 `localize` 依目前語言替換） |
+| `workspaceExample` | 964 |  | script#2 | Bind only generated labels. User-authored names are never translated. | ☑ | 3.24 只有範本文字經 i18n；使用者輸入的名稱不翻譯 |
 | `workspaceExample` | 1059 |  | script#2 | Release identity: retain the author name without a role label. | ☐ |  |
 | `workspaceExample` | 1110 |  | script#2 | The old alignment helper moved a junction without moving its saved wire bends. | ☐ |  |
 | `workspaceExample` | 1176 |  | script#2 | Align generated templates using measured port positions, never a guessed card height. | ☐ |  |
@@ -67,12 +67,12 @@
 | `workspaceExample` | 3369 |  | af15-ux2 |  | ☐ |  |
 | `loadWorkspaceExample` | 603 |  | script#1 |  | ☐ |  |
 | `loadWorkspaceExample` | 957 |  | script#2 |  | ☐ |  |
-| `loadWorkspaceExample` | 1015 |  | script#2 | Replace duplicate dropdowns with accessible template choice cards. | ☐ |  |
-| `loadWorkspaceExample` | 3544 |  | af15-ux2 | Give the new design a name that matches the starter template. | ☐ |  |
+| `loadWorkspaceExample` | 1015 |  | script#2 | Replace duplicate dropdowns with accessible template choice cards. | ☑ | 3.24 啟動畫面 / 新增設計對話框以 radio 選擇範本或空白 |
+| `loadWorkspaceExample` | 3544 |  | af15-ux2 | Give the new design a name that matches the starter template. | ☑ | 3.24 範本設計名稱 = 範本名稱（`create().name`） |
 | `loadWorkspaceExample` | 10434 |  | af-v270-sizing | new projects start compact and readable | ☐ |  |
-| `$('#examplesBtn').onclick` | 423 | `*` 取代 | script#1 |  | ☐ |  |
-| `$('#examplesBtn').onclick` | 604 |  | script#1 |  | ☐ |  |
-| `$('#examplesBtn').onclick` | 678 |  | script#1 |  | ☐ |  |
+| `$('#examplesBtn').onclick` | 423 | `*` 取代 | script#1 |  | ☑ | 3.24 由 `DesignChooser` 取代 |
+| `$('#examplesBtn').onclick` | 604 |  | script#1 |  | ☑ | 3.24 由 `DesignChooser` 取代 |
+| `$('#examplesBtn').onclick` | 678 |  | script#1 |  | ☑ | 3.24 由 `DesignChooser` 取代 |
 
 ## designs/schedule
 

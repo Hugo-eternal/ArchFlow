@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import { t, getLocale, setLocale, LOCALES, isLocale, onLocaleChange, type MessageKey } from '../core/i18n';
 import { formatShortcut } from '../core/commands';
 import { APP_VERSION } from '../version';
-import { isMac, type Shell } from './controller';
+import { isMac, type Shell, type DesignChoice } from './controller';
 import { useVersion } from './use-store';
 import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
-import { ConfirmDialog, ExportDialog, PromptDialog } from './Dialogs';
+import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
 
 function useLocale(): string {
   const [l, setL] = useState(getLocale());
@@ -52,6 +52,7 @@ function FileInput({ shell }: { shell: Shell }) {
 
 function StartScreen({ shell }: { shell: Shell }) {
   const [name, setName] = useState('');
+  const [choice, setChoice] = useState<DesignChoice>(() => defaultChoice(shell));
   return (
     <main className="af-start">
       <div className="af-start-card">
@@ -60,15 +61,12 @@ function StartScreen({ shell }: { shell: Shell }) {
           <LocaleSelect />
         </div>
         <p className="af-start-tagline">{t('app.tagline')}</p>
-        <form onSubmit={e => { e.preventDefault(); shell.newProject(name); }}>
+        <form onSubmit={e => { e.preventDefault(); shell.newProject(name, choice); }}>
           <label className="af-form-field">
             <span>{t('start.projectName')}</span>
             <input value={name} maxLength={100} placeholder={t('project.untitled')} onChange={e => setName(e.target.value)} />
           </label>
-          <fieldset className="af-form-field af-choice">
-            <legend>{t('start.designType')}</legend>
-            <label><input type="radio" name="af-start-type" value="function" defaultChecked /><span>{t('design.type.function')}</span></label>
-          </fieldset>
+          <DesignChooser shell={shell} value={choice} onChange={setChoice} legend="start.designType" />
           <p className="af-start-note">{t('start.moreTypesLater')}</p>
           <div className="af-start-actions">
             <button type="submit" className="af-button is-primary">{t('start.create')}</button>
@@ -186,6 +184,7 @@ export function App({ shell }: { shell: Shell }) {
       {dlg?.kind === 'prompt' && <PromptDialog key="prompt" shell={shell} d={dlg} />}
       {dlg?.kind === 'confirm' && <ConfirmDialog key="confirm" shell={shell} d={dlg} />}
       {dlg?.kind === 'export' && <ExportDialog shell={shell} />}
+      {dlg?.kind === 'newDesign' && <NewDesignDialog shell={shell} />}
     </>
   );
 }

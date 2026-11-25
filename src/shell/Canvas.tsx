@@ -36,9 +36,13 @@ export function Canvas({ shell }: { shell: Shell }) {
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const ro = new ResizeObserver(() => shell.setViewport({ w: svg.clientWidth, h: svg.clientHeight }));
+    const size = () => {
+      shell.setViewport({ w: svg.clientWidth, h: svg.clientHeight });
+      if (shell.pendingFit && svg.clientWidth > 0) { shell.pendingFit = false; shell.fitView(); }
+    };
+    const ro = new ResizeObserver(size);
     ro.observe(svg);
-    shell.setViewport({ w: svg.clientWidth, h: svg.clientHeight });
+    size();
     const wheel = (e: WheelEvent) => { e.preventDefault(); const p = pointer(svg, { ...e, button: 0 }); shell.gestures.wheel(e.deltaY, p); };
     svg.addEventListener('wheel', wheel, { passive: false });
     return () => { ro.disconnect(); svg.removeEventListener('wheel', wheel); };
@@ -52,10 +56,13 @@ export function Canvas({ shell }: { shell: Shell }) {
     const routes = shell.routesFor(d);
     const sel = shell.gestures.selection;
     const ids = (k: string) => new Set(sel.filter(s => s.kind === k).map(s => s.id));
+    const m = shell.module, extra = m?.renderExtras?.(d) ?? {};
     const tree = h('g', {}, [
+      ...(extra.below ?? []),
       wiresLayer(d, routes, { selected: new Set([...ids('wire'), ...ids('junction')]) }),
-      blocksLayer(d, { selected: ids('block'), theme: d.theme }),
+      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate }),
       textsLayer(d.texts, { selected: ids('text'), measure: shell.measure }),
+      ...(extra.above ?? []),
       overlay(shell),
     ]);
     const c = shell.camera;

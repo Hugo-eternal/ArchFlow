@@ -7,9 +7,10 @@ import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
 import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, snapIfOn } from '../core/grid';
-import type { BlockDiagram, Camera } from '../io/schema-types';
+import type { BlockDiagram, Camera, DesignType } from '../io/schema-types';
+import type { DesignModule, DesignRegistry } from '../designs/module';
 import { ModelError } from '../model/types';
-import { addBlock, addPort, addText, BLOCK_DEFAULT, emptyDiagram, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addPort, addText, BLOCK_DEFAULT, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { estimateWidth, type Measure } from '../render/texts';
 import { Gestures } from '../interaction/gestures';
@@ -23,6 +24,7 @@ export interface Message { key: MessageKey; vars?: Vars; tone: 'info' | 'error' 
 export type Dialog =
   | null
   | { kind: 'export' }
+  | { kind: 'newDesign' }
   | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
   | { kind: 'confirm'; title: MessageKey; message: MessageKey; vars?: Vars; ok: () => void };
 
@@ -40,6 +42,9 @@ export function refusalText(r: Refusal): string {
   return t('canvas.refused', { reason: t(reason) });
 }
 
+/** What a new design starts from: a type and, optionally, one of its templates. */
+export interface DesignChoice { type: DesignType; template?: string; name?: string }
+
 export class Shell {
   readonly store = new Store();
   readonly registry = new CommandRegistry<Shell>();
@@ -51,28 +56,33 @@ export class Shell {
   inspectorOpen = true;
   viewport: Viewport = { w: 800, h: 600 };
   measure: Measure = estimateWidth;
+  /** Fit the view once the canvas knows its size (new design from a template, opened file). */
+  pendingFit = false;
   /** Set by the canvas: open the browser's file picker. */
   pickFile: () => void = () => {};
   private routeCache: { data: BlockDiagram | null; routes: Map<string, Route> } = { data: null, routes: new Map() };
 
-  constructor() {
+  constructor(readonly designs: DesignRegistry) {
     this.gestures = new Gestures({
       store: this.store,
       camera: () => this.camera,
       setCamera: c => this.store.setCamera(c),
       routes: () => this.routesFor(this.gestures.draft()),
-      flavour: () => (this.store.activeDesign?.type === 'power' ? 'power' : 'function'),
+      flavour: () => this.module?.blockDiagram?.flavour ?? 'function',
       measure: this.measure,
       changed: () => this.ui.emit(),
       refused: r => this.refused(r),
     });
     this.registry.registerAll(canvasCommands() as unknown as Command<Shell>[]);
     this.registry.registerAll(shellCommands());
+    for (const m of designs.list()) if (m.commands) this.registry.registerAll(m.commands as unknown as Command<Shell>[]);
   }
 
   // ------------------------------------------------------------------ reading
   get camera(): Camera { return this.store.activeDesign?.camera ?? IDENTITY; }
-  get isBlockDiagram(): boolean { const t = this.store.activeDesign?.type; return t === 'function' || t === 'power'; }
+  /** The strategy of the active design. */
+  get module(): DesignModule | undefined { const d = this.store.activeDesign; return d ? this.designs.get(d.type) : undefined; }
+  get isBlockDiagram(): boolean { return !!this.module?.blockDiagram; }
   data(): BlockDiagram { return this.store.data(this.store.activeDesignId) as BlockDiagram; }
   routesFor(d: BlockDiagram): Map<string, Route> {
     if (this.routeCache.data !== d) this.routeCache = { data: d, routes: routeAll(d) };
@@ -89,12 +99,27 @@ export class Shell {
   closeDialog(): void { this.dialog = null; this.ui.emit(); }
   setViewport(v: Viewport): void { this.viewport = v; }
 
-  /** A new project with one empty function design. */
-  newProject(name: string, designName = t('design.defaultName', { n: 1 })): void {
-    this.store.newProject(name.trim() || t('project.untitled'), { type: 'function', name: designName, data: emptyDiagram() });
+  /** A new project with one design (blank or from a template). */
+  newProject(name: string, choice: DesignChoice = { type: this.designs.list()[0].type }): void {
+    const made = this.designs.require(choice.type).create({ template: choice.template });
+    const designName = choice.name?.trim() || made.name || t('design.defaultName', { n: 1 });
+    this.store.newProject(name.trim() || t('project.untitled'), { type: choice.type, name: designName, data: made.data });
     this.gestures.select([]);
     this.screen = 'workspace';
     this.message = null;
+    this.pendingFit = !!choice.template;
+    this.ui.emit();
+  }
+
+  /** Add a design to the open project and switch to it. */
+  addDesign(choice: DesignChoice): void {
+    const made = this.designs.require(choice.type).create({ template: choice.template });
+    const name = choice.name?.trim() || made.name || t('design.defaultName', { n: this.store.designs.length + 1 });
+    this.gestures.cancel();
+    this.gestures.select([]);
+    this.store.addDesign(choice.type, name, made.data, { activate: true });
+    this.pendingFit = !!choice.template;
+    this.dialog = null;
     this.ui.emit();
   }
 
@@ -104,6 +129,7 @@ export class Shell {
       this.store.load(r.file);
       this.gestures.select([]);
       this.screen = 'workspace';
+      this.pendingFit = false;
       this.notify('file.opened');
     } else {
       this.notify(openMessage(r), r.reason === 'invalid' ? { count: r.errors.length } : undefined, 'error');
@@ -147,10 +173,7 @@ export function shellCommands(): Command<Shell>[] {
     },
     {
       id: 'design.add', label: 'cmd.designAdd', group: 'design', enabled: hasProject,
-      run: s => s.openDialog({
-        kind: 'prompt', title: 'cmd.designAdd', label: 'design.name', value: t('design.defaultName', { n: s.store.designs.length + 1 }),
-        ok: name => { s.store.addDesign('function', name.trim() || t('design.defaultName', { n: s.store.designs.length + 1 }), emptyDiagram(), { activate: true }); s.gestures.select([]); s.closeDialog(); },
-      }),
+      run: s => s.openDialog({ kind: 'newDesign' }),
     },
     {
       id: 'design.rename', label: 'cmd.designRename', group: 'design', enabled: hasProject,
@@ -176,7 +199,8 @@ export function shellCommands(): Command<Shell>[] {
         const d = s.data(), c = s.viewCentre();
         const at = { x: snapIfOn(c.x - BLOCK_DEFAULT.w / 2, d.grid), y: snapIfOn(c.y - BLOCK_DEFAULT.h / 2, d.grid) };
         let id = '';
-        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at, s.store.activeDesign!.type === 'power' ? 'power' : 'function')); id = out.id; return out.data; });
+        const flavour = s.module?.blockDiagram?.flavour ?? 'function';
+        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at, flavour)); id = out.id; return out.data; });
         if (r.ok) s.gestures.select([{ kind: 'block', id }]);
       },
     },

@@ -8,7 +8,7 @@
 // L1856 drop mark outlines. V3 never draws those overlays into an export, so the clean-up
 // layers have nothing to remove. Schedule export (L754) belongs to designs/schedule (3.29).
 import type { BlockDiagram } from '../io/schema-types';
-import { blocksLayer } from '../render/blocks';
+import { blocksLayer, type BlockRenderOptions } from '../render/blocks';
 import { wiresLayer } from '../render/wires';
 import { textLayout, textsLayer, estimateWidth, type Measure } from '../render/texts';
 import { h, toMarkup, SVG_NS, type VNode } from '../render/vnode';
@@ -36,6 +36,8 @@ export interface SvgExportOptions {
   measure?: Measure;
   /** Design-specific drawing (frames, part symbols …: DesignModule.exportExtras, 3.24 on). */
   extras?: (ctx: ExportContext) => { below?: VNode[]; above?: VNode[]; bounds?: Bounds[] };
+  /** Extra drawing on blocks (DesignModule.decorate). */
+  decorate?: BlockRenderOptions['decorate'];
   /** Routes already computed for this data (the canvas has them). */
   routes?: ReadonlyMap<string, Route>;
 }
@@ -110,7 +112,7 @@ export function exportSvg(d: BlockDiagram, o: SvgExportOptions = {}): SvgExport 
   const drawing = h('g', { class: 'af-export' }, [
     ...(extra.below ?? []),
     wiresLayer(d, routes),
-    blocksLayer(d, { theme: d.theme }),
+    blocksLayer(d, { theme: d.theme, decorate: o.decorate }),
     textsLayer(d.texts, { measure }),
     ...(extra.above ?? []),
   ]);

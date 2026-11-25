@@ -8,7 +8,7 @@ import { svgToPng, PNG_SCALES } from '../export/png';
 import { readability } from '../export/readability';
 import { ExportError } from '../export/errors';
 import { downloadBlob } from '../io/project-file';
-import type { Shell } from './controller';
+import type { Shell, DesignChoice } from './controller';
 
 function Modal({ title, onClose, children, wide }: { title: MessageKey; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -79,7 +79,8 @@ export function ExportDialog({ shell }: { shell: Shell }) {
   const [error, setError] = useState<MessageKey | null>(null);
   const data = shell.data();
   const exp = useMemo<SvgExport | ExportError>(() => {
-    try { return exportSvg(data, { transparent, measure: shell.measure, routes: shell.routesFor(data) }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
+    const m = shell.module;
+    try { return exportSvg(data, { transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
   }, [data, transparent, shell]);
   const result = exp instanceof ExportError ? null : fitPage(exp, page);
   const report = result ? readability(data, result, shell.routesFor(data), shell.measure) : null;
@@ -135,6 +136,65 @@ export function ExportDialog({ shell }: { shell: Shell }) {
         <button type="button" className="af-button" onClick={() => shell.closeDialog()}>{t('dialog.cancel')}</button>
         <button type="button" className="af-button is-primary" disabled={!result || busy} onClick={() => void run()}>{t('export.download')}</button>
       </div>
+    </Modal>
+  );
+}
+
+/** The first registered design type, starting from its first template when it has one (V2 default). */
+export function defaultChoice(shell: Shell): DesignChoice {
+  const m = shell.designs.list()[0];
+  return { type: m.type, template: m.templates[0]?.id };
+}
+
+/** Design type and starting point (blank or a template) as two radio groups. */
+export function DesignChooser({ shell, value, onChange, legend }: { shell: Shell; value: DesignChoice; onChange: (c: DesignChoice) => void; legend: MessageKey }) {
+  const modules = shell.designs.list();
+  const current = shell.designs.require(value.type);
+  return (
+    <>
+      <fieldset className="af-form-field af-choice">
+        <legend>{t(legend)}</legend>
+        {modules.map(m => (
+          <label key={m.type}>
+            <input type="radio" name="af-design-type" value={m.type} checked={value.type === m.type}
+              onChange={() => onChange({ ...value, type: m.type, template: m.templates[0]?.id })} />
+            <span>{t(m.label)}</span>
+          </label>
+        ))}
+      </fieldset>
+      <fieldset className="af-form-field af-choice">
+        <legend>{t('design.start')}</legend>
+        {current.templates.map(tpl => (
+          <label key={tpl.id}>
+            <input type="radio" name="af-design-template" value={tpl.id} checked={value.template === tpl.id} onChange={() => onChange({ ...value, template: tpl.id })} />
+            <span>{t('design.fromTemplate', { name: t(tpl.label) })}</span>
+          </label>
+        ))}
+        <label>
+          <input type="radio" name="af-design-template" value="" checked={!value.template} onChange={() => onChange({ ...value, template: undefined })} />
+          <span>{t('design.blank')}</span>
+        </label>
+      </fieldset>
+    </>
+  );
+}
+
+export function NewDesignDialog({ shell }: { shell: Shell }) {
+  const [choice, setChoice] = useState<DesignChoice>(() => defaultChoice(shell));
+  const [name, setName] = useState('');
+  return (
+    <Modal title="cmd.designAdd" onClose={() => shell.closeDialog()}>
+      <form onSubmit={e => { e.preventDefault(); shell.addDesign({ ...choice, name }); }}>
+        <label className="af-form-field">
+          <span>{t('design.name')}</span>
+          <input data-autofocus value={name} maxLength={100} placeholder={t('design.nameAuto')} onChange={e => setName(e.target.value)} />
+        </label>
+        <DesignChooser shell={shell} value={choice} onChange={setChoice} legend="design.type" />
+        <div className="af-modal-actions">
+          <button type="button" className="af-button" onClick={() => shell.closeDialog()}>{t('dialog.cancel')}</button>
+          <button type="submit" className="af-button is-primary">{t('dialog.ok')}</button>
+        </div>
+      </form>
     </Modal>
   );
 }

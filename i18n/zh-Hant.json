@@ -153,5 +153,18 @@
   "cmd.zoomIn": "放大",
   "cmd.zoomOut": "縮小",
   "cmd.toggleInspector": "屬性面板",
-  "cmd.exportOpen": "匯出"
+  "cmd.exportOpen": "匯出",
+  "template.function.starter.sensor.title": "溫度",
+  "template.function.starter.sensor.partNumber": "感測器",
+  "template.function.starter.mcu.partNumber": "微控制器",
+  "template.function.starter.radio.partNumber": "無線模組",
+  "template.function.starter.power.partNumber": "電源",
+  "template.function.starter.heading": "入門方塊圖",
+  "template.function.starter.hint": "四個方塊、三條連線：點方塊可改名稱與接點，從接點拖曳可新增連線。",
+  "template.function.starter.name": "入門方塊圖",
+  "design.start": "起點",
+  "design.fromTemplate": "範本：{name}",
+  "design.blank": "空白設計",
+  "design.type": "設計類型",
+  "design.nameAuto": "留空則使用範本名稱"
 }
