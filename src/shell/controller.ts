@@ -71,6 +71,7 @@ export class Shell {
       flavour: () => this.module?.blockDiagram?.flavour ?? 'function',
       measure: this.measure,
       changed: () => this.ui.emit(),
+      adjustMove: (d, ids) => this.module?.afterMove?.(d, ids) ?? d,
       refused: r => this.refused(r),
     });
     this.registry.registerAll(canvasCommands() as unknown as Command<Shell>[]);

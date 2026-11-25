@@ -126,3 +126,14 @@
 .af-frame-gray.af-frame-fill .af-frame-box { fill: var(--frame-gray-line); }
 .af-frame-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
 .af-frame-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; }
+
+/* connectors (designs/function/connector.ts; V2 .af41-*) */
+.af-conn-glyph { stroke-width: 1.6px; }
+.af-conn-bar { fill: var(--color-surface); }
+.af-conn-stiffener { fill: var(--part-stroke); fill-opacity: 0.14; stroke: none; }
+.af-conn-split { stroke-dasharray: 3 3; stroke-width: 1px; }
+.af-conn-title { fill: var(--part-label); font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
+.af-conn-num, .af-conn-more { fill: var(--conn-num); font-family: var(--font-ui); font-size: 10px; }
+.af-conn-more { font-weight: 600; }
+.af-conn-name { fill: var(--part-label); font-family: var(--font-ui); font-size: 11.5px; }
+.af-conn-name.is-both { fill: var(--conn-name-both); font-size: 10.5px; }

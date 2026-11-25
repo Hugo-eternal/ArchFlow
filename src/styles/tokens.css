@@ -78,6 +78,8 @@
   --frame-blue-line: #5B84B8;  --frame-blue-tab: #E0EAF6;  --frame-blue-ink: #1E3F6B;
   --frame-amber-line: #C0893A; --frame-amber-tab: #F7E9D2; --frame-amber-ink: #6B4612;
   --frame-gray-line: #8693A1;  --frame-gray-tab: #E8ECF0;  --frame-gray-ink: #33414F;
+  --conn-num: #5A6B7D;
+  --conn-name-both: #405366;
   --part-stroke: #2A3A4B;
   --part-label: #22313F;
   --rail-surface: #FFFFFF;
@@ -166,6 +168,8 @@
     --frame-blue-line: #7FA3D3;  --frame-blue-tab: #1B2E47;  --frame-blue-ink: #CFE0F5;
     --frame-amber-line: #D6A35A; --frame-amber-tab: #3C2C14; --frame-amber-ink: #F3DDB8;
     --frame-gray-line: #9AA6B3;  --frame-gray-tab: #27313B;  --frame-gray-ink: #DCE3EA;
+    --conn-num: #A9B7C6;
+    --conn-name-both: #BFCCD9;
     --part-stroke: #C9D6E3;
     --part-label: #DCE6F0;
     --rail-surface: #18222C;
@@ -222,6 +226,8 @@
   --frame-blue-line: #7FA3D3;  --frame-blue-tab: #1B2E47;  --frame-blue-ink: #CFE0F5;
   --frame-amber-line: #D6A35A; --frame-amber-tab: #3C2C14; --frame-amber-ink: #F3DDB8;
   --frame-gray-line: #9AA6B3;  --frame-gray-tab: #27313B;  --frame-gray-ink: #DCE3EA;
+  --conn-num: #A9B7C6;
+  --conn-name-both: #BFCCD9;
   --part-stroke: #C9D6E3;
   --part-label: #DCE6F0;
   --rail-surface: #18222C;

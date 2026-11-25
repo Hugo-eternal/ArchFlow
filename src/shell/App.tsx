@@ -89,21 +89,30 @@ function Status({ shell }: { shell: Shell }) {
   );
 }
 
-/** Design commands of one group (e.g. the parts library) as a picker that runs the chosen one. */
-function CommandPicker({ shell, group, label }: { shell: Shell; group: string; label: MessageKey }) {
-  const ids = new Set((shell.module?.commands ?? []).filter(c => c.group === group).map(c => c.id));
-  const cmds = shell.registry.list(group).filter(c => ids.has(c.id));
-  if (!cmds.length) return null;
+/** Design commands of some groups (e.g. the parts library) as one picker, a section per group. */
+function CommandPicker({ shell, groups, label }: { shell: Shell; groups: { id: string; label: MessageKey }[]; label: MessageKey }) {
+  const ids = new Set((shell.module?.commands ?? []).map(c => c.id));
+  const sections = groups.map(g => ({ ...g, cmds: shell.registry.list(g.id).filter(c => ids.has(c.id)) })).filter(g => g.cmds.length);
+  if (!sections.length) return null;
+  const all = sections.flatMap(g => g.cmds);
   return (
     <label className="af-picker">
       <span className="af-visually-hidden">{t(label)}</span>
-      <select value="" disabled={!cmds.some(c => shell.enabled(c.id))} onChange={e => { const id = e.target.value; e.target.value = ''; if (id) void shell.run(id); }}>
+      <select value="" disabled={!all.some(c => shell.enabled(c.id))} onChange={e => { const id = e.target.value; e.target.value = ''; if (id) void shell.run(id); }}>
         <option value="">{t(label)}</option>
-        {cmds.map(c => <option key={c.id} value={c.id} disabled={!shell.enabled(c.id)}>{t(c.label)}</option>)}
+        {sections.map(g => (
+          <optgroup key={g.id} label={t(g.label)}>
+            {g.cmds.map(c => <option key={c.id} value={c.id} disabled={!shell.enabled(c.id)}>{t(c.label)}</option>)}
+          </optgroup>
+        ))}
       </select>
     </label>
   );
 }
+
+const PART_GROUPS: { id: string; label: MessageKey }[] = [
+  { id: 'parts', label: 'part.group.parts' }, { id: 'connectors', label: 'part.group.connectors' }, { id: 'templates', label: 'part.group.templates' },
+];
 
 function DesignList({ shell }: { shell: Shell }) {
   const s = shell.store;
@@ -153,7 +162,7 @@ function Workspace({ shell }: { shell: Shell }) {
           <CommandButton shell={shell} id="port.add" />
           <CommandButton shell={shell} id="text.add" />
           <CommandButton shell={shell} id="frame.add" />
-          <CommandPicker shell={shell} group="parts" label="part.insert" />
+          <CommandPicker shell={shell} groups={PART_GROUPS} label="part.insert" />
           <CommandButton shell={shell} id="selection.delete" />
           <span className="af-toolbar-sep" aria-hidden="true" />
           <CommandButton shell={shell} id="view.fit" />

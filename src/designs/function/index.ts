@@ -21,6 +21,11 @@ import {
   PARTS, badgesNode, cleanRails, decorationBounds, isTwoPin, makePart, normRail, partItem, partNode,
   reshapePart, setPartValue, sizesFor, type PartKind,
 } from './parts';
+import {
+  CONN, CONN_KINDS, CONN_SIDES, cleanPins, connectorBounds, connectorNode, makeConnector, nextConnectorName,
+  snapConnectorsToFrames, updateConnector, type ConnKind,
+} from './connector';
+import { insertLcd, lcdOrigin } from './lcd';
 import starter from './templates/starter.json';
 
 const TEMPLATES = { starter } as const;
@@ -61,6 +66,40 @@ function partFields(b: Block): F[] {
   return fields;
 }
 
+/** Connector panel (V2 L4529): name, type, wire side, pin count, pin names, wired only, Maker_Part_Number. */
+function connectorFields(): F[] {
+  const conn = (d: BlockDiagram, s: ItemRef) => blockOf(d, s).connector!;
+  const set = (patch: Parameters<typeof updateConnector>[2]) => (d: BlockDiagram, s: ItemRef) => updateConnector(d, s.id, patch).data;
+  return [
+    { kind: 'text', key: 'connName', label: 'conn.field.name', placeholder: 'conn.field.nameHint', maxLength: 200, get: (d, s) => blockOf(d, s).partNumber, set: (d, s, v) => updateBlock(d, s.id, { partNumber: v.trim() }) },
+    {
+      kind: 'segmented', key: 'connKind', label: 'conn.field.kind', options: CONN_KINDS.map(k => ({ value: k, label: `part.conn-${k}` as MessageKey })),
+      get: (d, s) => conn(d, s).kind, set: (d, s, v) => set({ kind: v })(d, s),
+    },
+    {
+      kind: 'segmented', key: 'connSide', label: 'conn.field.side', options: CONN_SIDES.map(k => ({ value: k, label: `conn.side.${k}` as MessageKey })),
+      get: (d, s) => conn(d, s).side, set: (d, s, v) => set({ side: v as 'l' | 'r' | 'both' })(d, s),
+    },
+    {
+      kind: 'number', key: 'connCount', label: 'conn.field.count', min: 1, max: CONN.maxPins, step: 1,
+      get: (d, s) => conn(d, s).pins.length,
+      set: (d, s, v) => {
+        const k = Math.max(1, Math.min(CONN.maxPins, Math.round(v))), pins = conn(d, s).pins.slice(0, k);
+        while (pins.length < k) pins.push('');
+        return set({ pins })(d, s);
+      },
+    },
+    {
+      kind: 'textarea', key: 'connPins', label: 'conn.field.pins', placeholder: 'conn.field.pinsHint', rows: 6, maxLength: CONN.maxPins * (CONN.nameMax + 4),
+      get: (d, s) => conn(d, s).pins.join('\n'),
+      set: (d, s, v) => set({ pins: cleanPins(v) })(d, s),
+      validate: v => (cleanPins(v).length ? null : 'conn.field.pinsEmpty'),
+    },
+    { kind: 'toggle', key: 'connOnly', label: 'conn.field.only', get: (d, s) => conn(d, s).only, set: (d, s, v) => set({ only: v })(d, s) },
+    { kind: 'text', key: 'connMpn', label: 'conn.field.mpn', placeholder: 'conn.field.mpnHint', maxLength: 60, get: (d, s) => conn(d, s).mpn, set: (d, s, v) => set({ mpn: v.trim() })(d, s) },
+  ];
+}
+
 /** Voltage badges of a plain block, as "3.3V, 1.8V" (V2 rails section, up to four). */
 const railsField: F = {
   kind: 'text', key: 'rails', label: 'part.field.rails', hint: 'part.field.railsHint', maxLength: 60,
@@ -96,6 +135,31 @@ function insertCommand(kind: PartKind): Command<DesignCommandContext> {
   };
 }
 
+function connectorCommand(kind: ConnKind): Command<DesignCommandContext> {
+  return {
+    id: `part.insert.conn_${kind}`, label: `part.conn-${kind}` as MessageKey, group: 'connectors',
+    enabled: c => !c.gestures.busy && c.store.activeDesign?.type === 'function',
+    run: c => {
+      const d = c.data(), at = c.viewCentre();
+      const b = makeConnector(kind, at, nextConnectorName(d), t(`part.conn-${kind}` as MessageKey));
+      const spot = freeSpot(d, b.w, b.h, at, d.grid.snap ? gridSize(d.grid) : 1);
+      let id = '';
+      const r = c.edit(x => { const out = addBlock(x, { ...b, x: spot.x, y: spot.y }); id = out.id; return out.data; });
+      if (r.ok) c.gestures.select([{ kind: 'block', id }]);
+    },
+  };
+}
+
+const lcdCommand: Command<DesignCommandContext> = {
+  id: 'template.lcd', label: 'lcd.template', group: 'templates',
+  enabled: c => !c.gestures.busy && c.store.activeDesign?.type === 'function',
+  run: c => {
+    const d = c.data(), origin = lcdOrigin(d, c.viewCentre(), d.grid.snap ? gridSize(d.grid) : 10);
+    const r = c.edit(x => insertLcd(x, origin));
+    if (r.ok) { c.gestures.select([]); c.fitView(); c.notify('lcd.added'); }
+  },
+};
+
 const rotateCommand: Command<DesignCommandContext> = {
   id: 'part.rotate', label: 'part.rotate', group: 'parts-edit', shortcut: 'R',
   enabled: c => {
@@ -125,15 +189,16 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     return { name: out.name, data: out.data, camera: out.camera };
   },
   decorate(b) {
-    const sym = partNode(b), badges = badgesNode(b);
+    const sym = b.connector ? connectorNode(b) : partNode(b), badges = badgesNode(b);
     return sym || badges ? h('g', { class: 'af-decor' }, [sym, badges]) : null;
   },
   inspectorFields(sel, d) {
     if (sel.kind !== 'block') return [];
     const b = d.blocks.find(x => x.id === sel.id);
     if (!b) return [];
-    return b.part ? partFields(b) : [railsField];
+    return b.connector ? connectorFields() : b.part ? partFields(b) : [railsField];
   },
-  commands: [...PARTS.map(p => insertCommand(p.kind)), rotateCommand],
-  exportExtras: ({ data, measure }) => ({ bounds: data.blocks.flatMap(b => decorationBounds(b, measure)) }),
+  commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand],
+  afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
+  exportExtras: ({ data, measure }) => ({ bounds: data.blocks.flatMap(b => [...decorationBounds(b, measure), ...connectorBounds(b)]) }),
 };

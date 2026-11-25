@@ -23,6 +23,10 @@ export interface DesignCommandContext {
   edit(fn: (d: BlockDiagram) => BlockDiagram): { ok: boolean };
   /** Centre of the visible canvas in diagram coordinates. */
   viewCentre(): { x: number; y: number };
+  /** Fit the view to the design. */
+  fitView(): void;
+  /** Show a status message. */
+  notify(key: MessageKey, vars?: Record<string, string | number>): void;
 }
 
 export interface DesignTemplate { id: string; label: MessageKey }
@@ -51,6 +55,8 @@ export interface DesignModule<D = Design['data']> {
   inspectorFields?(sel: ItemRef, d: BlockDiagram): FieldSpec<BlockDiagram, ItemRef>[];
   /** Design-specific commands, registered by the shell (context: the shell). */
   commands?: readonly Command<DesignCommandContext>[];
+  /** Adjust a finished drag before it is committed (moved item ids). */
+  afterMove?(d: BlockDiagram, movedIds: readonly string[]): BlockDiagram;
   /** Export additions (and the bounds they need). */
   exportExtras?: SvgExportOptions['extras'];
 }

@@ -112,3 +112,34 @@ test('function: frame around the selection, rename and recolour it, move it with
   expect(after.frames[0]).toMatchObject({ title: '主控板', color: 'blue' });
   expect(errors).toEqual([]);
 });
+
+test('function: LCD module template and connector settings', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: '空白設計' }).check();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await page.getByLabel('插入零件').selectOption({ label: 'LCD 模組' });
+  await expect(page.getByRole('status').first()).toContainText('已加入 LCD 模組範本');
+  let d = await data(page);
+  expect(d.blocks).toHaveLength(8);
+  expect(d.wires).toHaveLength(9);
+  await expect(page.locator('svg.af-canvas .af-frame-name')).toHaveText('LCD 面板');
+  await expect(page.locator('svg.af-canvas .af-conn-title')).toHaveText('CN1');
+  // one undo removes the whole template
+  await page.getByRole('button', { name: '復原' }).click();
+  expect((await data(page)).blocks).toHaveLength(0);
+  await page.getByRole('button', { name: '重做' }).click();
+
+  // select the connector and give it 8 pins on the right only
+  await page.evaluate(() => { const s = (window as unknown as { archflow: { data(): { blocks: { id: string; partNumber: string }[] }; gestures: { select(x: unknown[]): void } } }).archflow; s.gestures.select([{ kind: 'block', id: s.data().blocks.find(b => b.partNumber === 'CN1')!.id }]); });
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  await panel.getByRole('radio', { name: '右' }).check();
+  const count = panel.getByLabel('腳位數');
+  await count.fill('8');
+  await count.press('Enter');
+  await expect(page.locator('svg.af-canvas .af-conn-num')).toHaveCount(8);
+  d = await data(page);
+  expect(d.wires.length).toBeLessThan(9);       // wires on the removed left side are gone
+  expect(errors).toEqual([]);
+});

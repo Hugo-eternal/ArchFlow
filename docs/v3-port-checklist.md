@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 192　☑ 80　✂ 34　⤳ 21
+合計 327 層：☐ 191　☑ 81　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -40,7 +40,7 @@
 | `removeSelection` | 674 |  | script#1 |  | ☐ |  |
 | `removeSelection` | 772 |  | script#1 | Delete a middle task without blocking browser dialogs; preserve descendants and reconnect. | ☐ |  |
 | `finish` | 4209 |  | af15-ux2 | pressing near a lead end starts a wire, not a move: the lead dots are small | ☐ |  |
-| `finish` | 4569 |  | af15-ux2 | ---------- snap onto a frame edge after a move ---------- | ☐ |  |
+| `finish` | 4569 |  | af15-ux2 | ---------- snap onto a frame edge after a move ---------- | ☑ | 3.26b `DesignModule.afterMove` → `snapConnectorsToFrames`（Gestures `adjustMove`） |
 | `updateExplorer` | 763 |  | script#1 | Export uses the same palette and typography as the editor, including moved axis points. | ☐ |  |
 | `updateExplorer` | 775 |  | script#1 | Rebind the toolbar too: older handlers retained a previous remove function. | ☐ |  |
 | `addPin` | 1256 |  | script#2 |  | ☐ | 點擊位置 → `core/grid.portAt` + `model/diagram.addPort`（已完成）；指標事件 → interaction（3.20） |

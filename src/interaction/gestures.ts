@@ -46,6 +46,8 @@ export interface GestureHost {
   measure?: Measure;
   /** Called whenever selection, preview or draft change (the canvas re-renders). */
   changed?(): void;
+  /** Adjust a finished move before it is committed (e.g. connectors snapping to frame edges). */
+  adjustMove?(d: BlockDiagram, movedIds: readonly string[]): BlockDiagram;
   /** A commit was refused (lock) or an edit failed. */
   refused?(r: Extract<CommitResult, { ok: false }>): void;
 }
@@ -196,7 +198,8 @@ export class Gestures {
         break;
       case 'resize':
       case 'move': {
-        const r = commitEdit(this.host.store, () => s.draft);
+        const out = s.kind === 'move' && this.host.adjustMove ? this.host.adjustMove(s.draft, s.ids) : s.draft;
+        const r = commitEdit(this.host.store, () => out);
         if (!r.ok) this.host.refused?.(r);
         break;
       }
