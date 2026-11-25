@@ -269,3 +269,38 @@ interface ToolModule {
 - 共用模組只透過 `registry.design(type)` 取得策略；**禁止**在共用模組中判斷特定類型（`if (type === 'schedule')`）。
 - `inspectorFields` 必須同步、一次回傳完整欄位（取代現行 microtask / setTimeout 延遲修補，audit §1.4）。
 - 新增欄位 → 更新該類型的 `schema` 與 golden；變更既有欄位 → 提高 `schemaVersion` 並在 `io/migrate.ts` 寫 V3.x 遷移。
+
+---
+
+## §3 風險與階段 3 執行順序
+
+### 3.1 風險
+
+| # | 風險 | 影響 | 對策 |
+|---|---|---|---|
+| R1 | V2 golden 專案是 V2 格式，V3 不能載入 | 階段 2 的 golden 無法直接拿來驗 V3 | 階段 3 開頭寫**只在測試中使用**的 `tests/tools/v2-to-v3.ts`，把 golden 專案轉成 V3 格式；不打包進產品 |
+| R2 | SVG 快照在 CSS token 整併後必然有細微差異 | golden 大量失敗、被迫改黃金檔 | 快照比對採「結構比對」：元素種類 / 數量、文字、座標容差 ±0.5 px、顏色依 token 名稱；純視覺差異另以 PNG 截圖人工審查 |
+| R3 | 行為散在 167 層覆寫中，容易漏移植 | V3 少功能 | 以 audit §1.4 的逐層表當檢查清單，每個模組完成時逐列勾選「已移植 / 刻意刪除」，寫入 `docs/v3-port-checklist.md` |
+| R4 | 時程有 2–5 代互相取代的實作 | 移植到錯誤的一代 | 只以 audit §4.4「實際生效」欄為準；E2E 以 V2.10.1 實際畫面對照 |
+| R5 | vendor 編輯器依賴引擎全域（`model.sequence`、`designs`、`activeDesignId`…） | 轉接層漏接導致編輯器空白或存不了檔 | 轉接層只實作 audit §5.2 列出的 host 介面；E2E 2.11 / 2.12 / 2.16 必須先在 V2 上通過，再在 V3 上通過 |
+| R6 | 殼層重寫範圍大（app bar、指令面板、屬性面板外框、啟動畫面、Tools 中心） | 時程延長、外觀走樣 | 以 V2.10.1 截圖為驗收基準；用 `ui-ux-pro-max` 檢查無障礙與一致性；殼層分 5 步提交 |
+| R7 | 自動整理（RC4）演算法複雜且依賴 RC2 / RC3 計算函式 | 移植量大、易出錯 | `layout/` 最後才移植；先以 `v4Generate` 為入口做呼叫圖，只搬實際用到的函式；golden 鎖定整理結果 |
+| R8 | 單檔產物體積（字型 + 4 份 React + 工具） | 開啟變慢 | CI 記錄 `dist/ArchFlow.html` 大小，超過 V2.10.1（12.6 MB）即警告 |
+| R9 | 兩語系 252 行寫死字串分散 | i18n 漏翻 | i18n 檢查腳本：所有 key 兩語系皆存在；src 中不得出現中日韓字元（vendor 除外） |
+| R10 | 現行 bug（例如 `applicationVersion`、載入錯誤訊息判斷不一致） | 被當成「行為」鎖進 golden | 階段 2 發現的 bug 只記錄不修；階段 3 修正時同步更新 golden 並寫進 `CHANGELOG.md` |
+
+### 3.2 階段 3 執行順序
+
+原則：由下往上（依賴方向的底層先做），每個模組完成即跑該模組測試；可運作的最小產品（能建立功能設計、拉線、存檔、匯出）越早出現越好。
+
+1. **骨架**：Vite + TS + 單檔輸出 + 無外部請求檢查；i18n 框架；design token 骨架；vendor 抽取與 SHA-256 檢查。
+2. **測試轉接**：`v2-to-v3` 測試轉換器、結構化 SVG 比對工具。
+3. **底層**：`core`（store、history、commands、ids、geometry、camera、grid）→ `model` → `io`（schema、存開檔、migrate 框架）。
+4. **繞線**：`router`（find-path、full-path、junctions）——以階段 2 的 router unit test 驗證。
+5. **畫面**：`render` → `interaction` → `inspector` 框架 → `export`。
+6. **最小殼層**：只有啟動畫面、設計清單、畫布、屬性面板外框，足以操作 function 設計。
+7. **設計類型**：`designs/function` → `designs/power` → `designs/schedule` → `designs/sequence` → `designs/flowchart`。
+8. **工具**：`tools/bom` → `edid` → `hex` → `pattern`。
+9. **自動整理**：`layout/`（autoArrange + RC4 預覽）。
+10. **完整殼層**：app bar、命令列、指令面板、快捷鍵、Tools 中心、狀態列、提示。
+11. **收尾**：CSS 整併、死碼確認、移植清單全勾、全部測試對 `dist/ArchFlow.html`、版本 V3.0.0。
