@@ -1,0 +1,1886 @@
+[
+  {
+    "depth": 0,
+    "tag": "svg",
+    "width": "760",
+    "height": "789",
+    "viewBox": "0 0 760 789"
+  },
+  {
+    "depth": 1,
+    "tag": "rect",
+    "width": "760",
+    "height": "789",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 1,
+    "tag": "g"
+  },
+  {
+    "depth": 2,
+    "tag": "text",
+    "text": "車用顯示控制器",
+    "x": "20",
+    "y": "33",
+    "fill": "#1C2733",
+    "font-size": "18.5",
+    "font-weight": "700"
+  },
+  {
+    "depth": 2,
+    "tag": "text",
+    "text": "上電時序 · 12 項 · 2026/11/25",
+    "x": "20",
+    "y": "54",
+    "fill": "#7A8694",
+    "font-size": "12.5"
+  },
+  {
+    "depth": 1,
+    "tag": "g",
+    "transform": "translate(0 68)"
+  },
+  {
+    "depth": 2,
+    "tag": "svg",
+    "width": "760",
+    "height": "715",
+    "viewBox": "0 0 760 715"
+  },
+  {
+    "depth": 3,
+    "tag": "defs"
+  },
+  {
+    "depth": 4,
+    "tag": "marker",
+    "viewBox": "0 0 8 8"
+  },
+  {
+    "depth": 5,
+    "tag": "path",
+    "d": "M0 0 L8 4 L0 8 z",
+    "fill": "#7A8694"
+  },
+  {
+    "depth": 4,
+    "tag": "marker",
+    "viewBox": "0 0 8 8"
+  },
+  {
+    "depth": 5,
+    "tag": "path",
+    "d": "M0 0 L8 4 L0 8 z",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "56",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "106",
+    "x2": "760",
+    "y2": "106",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "67",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "60",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "常電，系統最先存在"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "VBAT（KL30）",
+    "x": "27",
+    "y": "86.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "106",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "156",
+    "x2": "760",
+    "y2": "156",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "117",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "110",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "點火開／關，觸發上電與斷電"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "KL15 點火",
+    "x": "27",
+    "y": "136.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "156",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "206",
+    "x2": "760",
+    "y2": "206",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "167",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2000000E62"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "160",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "SoC 接手供電後可能被拉低"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "WAKE 喚醒",
+    "x": "27",
+    "y": "186.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "206",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "256",
+    "x2": "760",
+    "y2": "256",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "217",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#9A6A26"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "210",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "5V0 預穩壓",
+    "x": "27",
+    "y": "236.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "256",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "306",
+    "x2": "760",
+    "y2": "306",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "267",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#9A6A26"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "260",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "3V3_AO",
+    "x": "27",
+    "y": "286.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "306",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "356",
+    "x2": "760",
+    "y2": "356",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "317",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "310",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "1V8_IO",
+    "x": "27",
+    "y": "336.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "356",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "406",
+    "x2": "760",
+    "y2": "406",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "367",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#5B5394"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "360",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "1V1_DDR",
+    "x": "27",
+    "y": "386.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "406",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "456",
+    "x2": "760",
+    "y2": "456",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "417",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "410",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "0V8_CORE",
+    "x": "27",
+    "y": "436.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "456",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "506",
+    "x2": "760",
+    "y2": "506",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "467",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#A33A32"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "460",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "全部 PG 後釋放"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "POR_B 重置釋放",
+    "x": "27",
+    "y": "486.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "506",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "556",
+    "x2": "760",
+    "y2": "556",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "517",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "510",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "SoC 開機後輸出影像"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "LVDS 影像輸出",
+    "x": "27",
+    "y": "536.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "556",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "606",
+    "x2": "760",
+    "y2": "606",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "567",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2000000E62"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "560",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "影像訊號穩定後開啟"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "面板 AVDD／VGH／VGL",
+    "x": "27",
+    "y": "586.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "0",
+    "y": "606",
+    "width": "760",
+    "height": "50",
+    "fill": "#FFFFFF"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "0",
+    "y1": "656",
+    "x2": "760",
+    "y2": "656",
+    "stroke": "#F0F2F4"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "14.5",
+    "y": "617",
+    "rx": "1.5",
+    "width": "3.5",
+    "height": "28",
+    "fill": "#2A6F8C"
+  },
+  {
+    "depth": 4,
+    "tag": "g"
+  },
+  {
+    "depth": 5,
+    "tag": "rect",
+    "x": "20",
+    "y": "610",
+    "width": "178",
+    "height": "42",
+    "fill": "transparent"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "斷電時最先關閉"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "BL_EN 背光致能",
+    "x": "27",
+    "y": "636.5",
+    "fill": "#1C2733",
+    "font-size": "16",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "419.5",
+    "y": "50",
+    "width": "75",
+    "height": "606",
+    "fill": "#F4F5F7"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "≈ 45 ms",
+    "x": "457",
+    "y": "23",
+    "fill": "#7A8694",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "此段壓縮顯示，實際 45 ms"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M452 52 l4 -8 M458 52 l4 -8",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "rect",
+    "x": "550.5",
+    "y": "50",
+    "width": "75",
+    "height": "606",
+    "fill": "#F4F5F7"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "≈ 200 ms",
+    "x": "588",
+    "y": "23",
+    "fill": "#7A8694",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 5,
+    "tag": "title",
+    "text": "此段壓縮顯示，實際 200 ms"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M583 52 l4 -8 M589 52 l4 -8",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1"
+  },
+  {
+    "depth": 3,
+    "tag": "line",
+    "x1": "205.5",
+    "y1": "50",
+    "x2": "205.5",
+    "y2": "656",
+    "stroke": "#E30000000EB"
+  },
+  {
+    "depth": 3,
+    "tag": "text",
+    "text": "上電時間（ms）",
+    "x": "27",
+    "y": "34",
+    "fill": "#4A5765",
+    "font-size": "13.5",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "line",
+    "x1": "206",
+    "y1": "50",
+    "x2": "746",
+    "y2": "50",
+    "stroke": "#C5CDD5"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "206",
+    "y1": "46",
+    "x2": "206",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "0",
+    "x": "206",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "206",
+    "y1": "54",
+    "x2": "206",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "292.5",
+    "y1": "46",
+    "x2": "292.5",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "20",
+    "x": "292.5",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "292.5",
+    "y1": "54",
+    "x2": "292.5",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "342.5",
+    "y1": "46",
+    "x2": "342.5",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "31.5",
+    "x": "342.5",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "342.5",
+    "y1": "54",
+    "x2": "342.5",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "398",
+    "y1": "46",
+    "x2": "398",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "44.3",
+    "x": "398",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "398",
+    "y1": "54",
+    "x2": "398",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "494.5",
+    "y1": "46",
+    "x2": "494.5",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "94.3",
+    "x": "494.5",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "494.5",
+    "y1": "54",
+    "x2": "494.5",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "550.5",
+    "y1": "46",
+    "x2": "550.5",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "107.3",
+    "x": "550.5",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "550.5",
+    "y1": "54",
+    "x2": "550.5",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "625.5",
+    "y1": "46",
+    "x2": "625.5",
+    "y2": "54",
+    "stroke": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "307.3",
+    "x": "625.5",
+    "y": "39",
+    "fill": "#4A5765",
+    "font-size": "13",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "625.5",
+    "y1": "54",
+    "x2": "625.5",
+    "y2": "656",
+    "stroke": "#F2F4F6"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M206 131 V131 H291.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M292.5 119 V181 H296",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M292.5 119 V231 H313.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M321 219 V281 H324",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M329.5 269 V331 H333",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M338 319 V381 H341.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M347 369 V431 H350",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M354.5 419 V481 H397",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M398 469 V531 H493.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M505.5 531 V581 H536.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M550.5 569 V631 H624.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "path",
+    "d": "M398 469 V181 H418.5",
+    "fill": "none",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1",
+    "stroke-dasharray": "3 3",
+    "marker-end": "url(#tl-arrow-on)"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 93 H206 L214.5 69 H746 V93 H208 Z",
+    "fill": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 93 H206 L214.5 69 H746",
+    "fill": "none",
+    "stroke": "#5B6876",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M292.5 143 L292.5 119 H746 V143 Z",
+    "fill": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 143 H292.5 L292.5 119 H746",
+    "fill": "none",
+    "stroke": "#5B6876",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M297 193 V169 H419.5 V193 Z",
+    "fill": "#2000000E62"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 193 H297 V169 H419.5",
+    "fill": "none",
+    "stroke": "#2000000E62",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M419.5 169 H746",
+    "fill": "none",
+    "stroke": "#2000000E62",
+    "stroke-width": "1.5",
+    "stroke-dasharray": "5 4"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M419.5 169 V193 H746",
+    "fill": "none",
+    "stroke": "#2000000E62",
+    "stroke-width": "1.5",
+    "stroke-dasharray": "5 4"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "可能回落",
+    "x": "427",
+    "y": "186",
+    "fill": "#2000000E62",
+    "stroke": "#FFFFFF",
+    "stroke-width": "3.5",
+    "font-size": "12",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 243 H314.5 L321 219 H746 V243 H208 Z",
+    "fill": "#9A6A26"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 243 H314.5 L321 219 H746",
+    "fill": "none",
+    "stroke": "#9A6A26",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 293 H325 L329.5 269 H746 V293 H208 Z",
+    "fill": "#9A6A26"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 293 H325 L329.5 269 H746",
+    "fill": "none",
+    "stroke": "#9A6A26",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 343 H334 L338 319 H746 V343 H208 Z",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 343 H334 L338 319 H746",
+    "fill": "none",
+    "stroke": "#2B5C8A",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 393 H342.5 L347 369 H746 V393 H208 Z",
+    "fill": "#5B5394"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 393 H342.5 L347 369 H746",
+    "fill": "none",
+    "stroke": "#5B5394",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 443 H351 L354.5 419 H746 V443 H208 Z",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 443 H351 L354.5 419 H746",
+    "fill": "none",
+    "stroke": "#2B5C8A",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M398 493 L398 469 H746 V493 Z",
+    "fill": "#A33A32"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 493 H398 L398 469 H746",
+    "fill": "none",
+    "stroke": "#A33A32",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "208",
+    "y1": "531",
+    "x2": "494.5",
+    "y2": "531",
+    "stroke": "#9AA6B2",
+    "stroke-width": "1.5",
+    "stroke-dasharray": "2 3"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M494.5 531 L505.5 519 H746 V543 H505.5 Z",
+    "fill": "#2B5C8A"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M494.5 531 L505.5 519 H746 M494.5 531 L505.5 543 H746",
+    "fill": "none",
+    "stroke": "#2B5C8A",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "LVDS 有效",
+    "x": "515.5",
+    "y": "536",
+    "fill": "#2B5C8A",
+    "font-size": "13.5",
+    "font-weight": "600"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 593 H537.5 L550.5 569 H746 V593 H208 Z",
+    "fill": "#2000000E62"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 593 H537.5 L550.5 569 H746",
+    "fill": "none",
+    "stroke": "#2000000E62",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M625.5 643 L625.5 619 H746 V643 Z",
+    "fill": "#2A6F8C"
+  },
+  {
+    "depth": 4,
+    "tag": "path",
+    "d": "M208 643 H625.5 L625.5 619 H746",
+    "fill": "none",
+    "stroke": "#2A6F8C",
+    "stroke-width": "2"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "206",
+    "cy": "131",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(340.5 131)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T1 20 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "292.5",
+    "cy": "119",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(252.5 181)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T2 1 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "292.5",
+    "cy": "119",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(252.5 231)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T3 5 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "321",
+    "cy": "219",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(280.5 281)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T4 1 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "329.5",
+    "cy": "269",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(289.5 331)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T5 1 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "338",
+    "cy": "319",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(298 381)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T6 1 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "347",
+    "cy": "369",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(306.5 431)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T7 1 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "354.5",
+    "cy": "419",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(311 481)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T8 10 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "398",
+    "cy": "469",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(446 531)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T10 50 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "505.5",
+    "cy": "531",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(458 581)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T11 10 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "550.5",
+    "cy": "569",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(499.5 631)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T12 200 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "circle",
+    "cx": "398",
+    "cy": "469",
+    "r": "3",
+    "fill": "#9AA6B2"
+  },
+  {
+    "depth": 4,
+    "tag": "g",
+    "transform": "translate(358 181)"
+  },
+  {
+    "depth": 5,
+    "tag": "text",
+    "text": "T9 5 ms",
+    "x": "0",
+    "y": "5",
+    "fill": "#4A5765",
+    "stroke": "#FFFFFF",
+    "stroke-width": "6",
+    "font-size": "14",
+    "font-weight": "500",
+    "text-anchor": "middle"
+  },
+  {
+    "depth": 3,
+    "tag": "g"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "206",
+    "y1": "682",
+    "x2": "625.5",
+    "y2": "682",
+    "stroke": "#5B6876",
+    "stroke-width": "1"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "206",
+    "y1": "676",
+    "x2": "206",
+    "y2": "688",
+    "stroke": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "line",
+    "x1": "625.5",
+    "y1": "676",
+    "x2": "625.5",
+    "y2": "688",
+    "stroke": "#5B6876"
+  },
+  {
+    "depth": 4,
+    "tag": "text",
+    "text": "全部上電完成 307.3 ms",
+    "x": "415.5",
+    "y": "676",
+    "fill": "#1C2733",
+    "stroke": "#FFFFFF",
+    "stroke-width": "3.5",
+    "font-size": "13.5",
+    "font-weight": "600",
+    "text-anchor": "middle"
+  }
+]

@@ -69,3 +69,11 @@ export function diagramSummary(app) {
 }
 
 export const json = v => JSON.stringify(v, null, 2) + '\n';
+
+/** Paths whose value in `a` is missing or different in `b` (`b` may add fields). */
+export function missingFrom(a, b, path = '') {
+  if (a === null || typeof a !== 'object') return Object.is(a, b) ? [] : [path || '(root)'];
+  if (b === null || typeof b !== 'object' || Array.isArray(a) !== Array.isArray(b)) return [path || '(root)'];
+  if (Array.isArray(a) && a.length !== b.length) return [path + '.length'];
+  return Object.keys(a).flatMap(k => missingFrom(a[k], b[k], path + '.' + k));
+}
