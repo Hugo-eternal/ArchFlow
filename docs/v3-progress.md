@@ -55,7 +55,7 @@
 - [x] 3.11 `core/commands`、`core/camera`、`core/grid`（L3）
 - [x] 3.12 `model/types` + `model/diagram` 純函式（L3）
 - [x] 3.13 `io/schema`（V3 schema，plan §2）+ 驗證測試（L4）
-- [ ] 3.14 `io/project-file`：存開檔、非 V3 顯示「不支援舊版格式」、`io/migrate.ts` 框架（L3）
+- [x] 3.14 `io/project-file`：存開檔、非 V3 顯示「不支援舊版格式」、`io/migrate.ts` 框架（L3）
 ### 3D 繞線
 - [ ] 3.15 `router/find-path`（A* + 成本）（L3）
 - [ ] 3.16 `router/full-path`（stub、手動路徑、共用線段）（L3）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.14 `src/io/project-file.ts`：開檔（`File` / 文字 → `parseProject`；非 V3 回傳 `legacy-format` 結果，由殼層顯示「不支援舊版格式」，不得當機；驗證失敗保留目前專案）、存檔（`store.toFile()` → JSON 文字 → 下載檔名 `<專案名>.archflow.json`，檔名去除非法字元）、`src/io/migrate.ts` 框架（`migrations: Record<number, (f) => f>`，目前為空；`migrate(raw)` 只接受 `schemaVersion` 3，未來 3.x 升級在此加入）。i18n 訊息 key：`file.legacyFormat`、`file.invalid`、`file.tooLarge`、`file.saved`。測試：golden V3 存開檔往返一致（含 2.5 記錄的文字框 `align` / `background` 與時程文字框不再遺失）、V2 檔回傳 legacy、壞 JSON / 超過 8 MB。L3。
+- **下一步**：3.15 `src/router/find-path.ts`：移植 V2 `findPath`（A* 正交路徑 + 轉彎 / 靠近方塊 / 重疊既有線段的成本）。先讀 legacy `findPath` 與其覆寫層（`node scripts/audit/find-overrides.mjs` 或移植清單 router 節），寫成純函式 `findPath(from, to, { obstacles, existing, grid })`。測試：以 2.3 的 `tests/unit/router.*` 情境與隨機案例，在 V2 與 V3 用同樣輸入比對路徑（完全一致或長度 / 轉彎數相同且合法）。L3。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -146,8 +146,11 @@
   - 五份 golden 的 V3 轉換檔與 store 輸出的檔案都通過；V2 檔回傳 `version` 錯誤（3.14 用它顯示「不支援舊版格式」）。
   - `scheduleSchema.appearance` 目前只驗為 JSON 物件（≤ 200 KB），形狀在 3.29 補上。
   - **人工驗收**（L4 項目）：這一步沒有使用者可見的介面，留到 3.14 開檔流程與 3.45 發版時一併驗收。遷移測試：`io/migrate.ts` 在 3.14 才建立，屆時補上。
+- 存開檔（3.14）：`src/io/project-file.ts`——`readProjectText` / `readProjectBlob`（先檢查 8 MB）→ `migrate` → `validateProject`；結果 `reason` 為 `too-large` / `not-json` / `legacy-format` / `newer-format` / `invalid`，`openMessage(r)` 給 i18n key（`file.*`，`file.invalid` 帶 `{count}`）。`openProjectText(store, text)` 失敗時 store 完全不變。`saveProject(store)` 先自我驗證（失敗代表程式錯誤，直接丟例外）、回傳 `{ name, text }` 並標記已存；檔名 `fileNameFor`（去除非法字元，副檔名 `.archflow.json`）；`downloadText` 為瀏覽器下載。`src/io/migrate.ts`：`MIGRATIONS[n]` 把 n 版升到 n+1，目前為空；低於 3 → legacy，高於目前 → newer。
+  - 有意的行為修正已寫入新建的 `CHANGELOG.md`（不讀舊檔、存開檔不再遺失文字框 / 時程 theme、8 MB 專屬訊息、嚴格驗證、`app` 欄位）。之後每次有意修正都加在這裡。
+  - 人工驗收（3.13 留下的 L4 項目）：開檔流程還沒有介面，等 3.23 最小殼層接上「開啟」後，請使用者實際開一個 V2 檔確認顯示「不支援舊版格式」。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4 自動項目（3.13：型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L3（3.14：型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。

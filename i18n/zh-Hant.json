@@ -5,5 +5,12 @@
   "app.loading": "載入中…",
   "locale.zh-Hant": "繁體中文",
   "locale.en": "English",
-  "locale.switch": "介面語言"
+  "locale.switch": "介面語言",
+  "file.opened": "已開啟專案。",
+  "file.saved": "已儲存「{name}」。",
+  "file.tooLarge": "檔案超過 8 MB，無法開啟。目前的專案未變更。",
+  "file.notJson": "這不是 ArchFlow 專案檔（無法讀取 JSON）。目前的專案未變更。",
+  "file.legacyFormat": "不支援舊版格式：這是 ArchFlow V1 / V2 的專案檔，V3 無法開啟。目前的專案未變更。",
+  "file.newerFormat": "這個檔案由較新版的 ArchFlow 建立，請更新後再開啟。目前的專案未變更。",
+  "file.invalid": "專案檔內容有誤，無法開啟（{count} 處問題）。目前的專案未變更。"
 }

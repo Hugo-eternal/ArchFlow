@@ -5,5 +5,12 @@
   "app.loading": "Loading…",
   "locale.zh-Hant": "繁體中文",
   "locale.en": "English",
-  "locale.switch": "Interface language"
+  "locale.switch": "Interface language",
+  "file.opened": "Project opened.",
+  "file.saved": "Saved “{name}”.",
+  "file.tooLarge": "The file is larger than 8 MB and cannot be opened. The current project is unchanged.",
+  "file.notJson": "This is not an ArchFlow project file (not valid JSON). The current project is unchanged.",
+  "file.legacyFormat": "Legacy format not supported: this is an ArchFlow V1 / V2 project file, which V3 cannot open. The current project is unchanged.",
+  "file.newerFormat": "This file was made by a newer ArchFlow. Update ArchFlow to open it. The current project is unchanged.",
+  "file.invalid": "The project file has errors and cannot be opened ({count} problems). The current project is unchanged."
 }

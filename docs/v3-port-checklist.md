@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 267　☑ 26　✂ 13　⤳ 21
+合計 327 層：☐ 252　☑ 31　✂ 23　⤳ 21
 
 ## core / interaction
 
@@ -223,19 +223,19 @@
 | `validateDiagram` | 10467 |  | af-v280-ux | `afFont`、接腳名稱位置 | ☑ | `io/schema`（3.13）：`font`、`port.label` |
 | `validateDiagram` | 10557 |  | af-v290-free | 自由尺寸、無名稱、空副標 | ☑ | `io/schema`（3.13）：`sizing` / `showTitle` / `subtitle` |
 | `projectData` | 520 |  | script#1 | 加 `customStyles` | ⤳ |  |
-| `projectData` | 555 | `*` 取代 | script#1 | 多設計格式 `version:5`：**整個取代**（內含 customStyles，所以 520 失效但不影響結果） | ☐ |  |
-| `projectData` | 1008 |  | script#2 | `archflowLocalization`（語系、綁定、範本目錄） | ☐ |  |
-| `projectData` | 1057 |  | script#2 | `applicationVersion='V2.10.1'` | ☐ |  |
-| `projectData` | 1126 |  | script#2 | 存檔前清理每張設計的接點 | ☐ |  |
-| `projectData` | 1359 |  | script#2 | `wiringMode='direct-ports'` | ☐ |  |
-| `projectData` | 1471 |  | script#2 | `applicationVersion='1.3'` | ☐ |  |
-| `projectData` | 1540 |  | script#2 | `applicationVersion='1.4'` | ☐ |  |
-| `projectData` | 1625 |  | script#2 | `applicationVersion='1.5-rc1'` | ☐ |  |
-| `projectData` | 1675 |  | script#2 | `applicationVersion='1.5-rc1'` | ☐ |  |
-| `projectData` | 1740 |  | script#2 | `applicationVersion='1.6-rc2'` | ☐ |  |
-| `projectData` | 1779 |  | script#2 | `applicationVersion='1.7-rc3'` | ☐ |  |
-| `projectData` | 1857 |  | script#2 | `applicationVersion='1.8-rc4'` | ☐ |  |
-| `projectData` | 2325 |  | archflow-known-fixes-v3 | known-fixes-v3：加 `camera` / `cameras` 與設計層資料 | ☐ |  |
+| `projectData` | 555 | `*` 取代 | script#1 | 多設計格式 `version:5`：**整個取代**（內含 customStyles，所以 520 失效但不影響結果） | ☑ | `core/store.toFile` + `io/project-file.saveProject`（3.14） |
+| `projectData` | 1008 |  | script#2 | `archflowLocalization`（語系、綁定、範本目錄） | ✂ | `archflowLocalization` 刪除；只保留 `locale`（plan §2.1） |
+| `projectData` | 1057 |  | script#2 | `applicationVersion='V2.10.1'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1126 |  | script#2 | 存檔前清理每張設計的接點 | ☐ | 存檔前清理接點 → router/junctions（3.17）在提交時處理，存檔不另外改資料 |
+| `projectData` | 1359 |  | script#2 | `wiringMode='direct-ports'` | ✂ | `wiringMode` 刪除（plan §2.1） |
+| `projectData` | 1471 |  | script#2 | `applicationVersion='1.3'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1540 |  | script#2 | `applicationVersion='1.4'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1625 |  | script#2 | `applicationVersion='1.5-rc1'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1675 |  | script#2 | `applicationVersion='1.5-rc1'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1740 |  | script#2 | `applicationVersion='1.6-rc2'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1779 |  | script#2 | `applicationVersion='1.7-rc3'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 1857 |  | script#2 | `applicationVersion='1.8-rc4'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
+| `projectData` | 2325 |  | archflow-known-fixes-v3 | known-fixes-v3：加 `camera` / `cameras` 與設計層資料 | ☑ | 每張設計的 `camera` 由 store 保存（3.10 / 3.14）；頂層 `camera` / `cameras` 刪除 |
 | `createWorkspaceProject` | 554 | `*` 取代 | script#1 |  | ☐ |  |
 | `createWorkspaceProject` | 967 |  | script#2 | Bind only generated labels. User-authored names are never translated. | ☐ |  |
 | `createWorkspaceProject` | 2329 |  | archflow-known-fixes-v3 |  | ☐ |  |
@@ -245,15 +245,15 @@
 | `window.ArchFlowSession` | 1007 |  | script#2 | Carry bindings through language changes and project files. | ☐ |  |
 | `window.ArchFlowSession` | 1032 |  | script#2 | Full native language names remain recognizable in either locale. | ☐ |  |
 | `window.ArchFlowSession` | 1358 |  | script#2 | Inherit appearance only, not labels, connections, locks or port counts. | ☐ |  |
-| `$('#file').onchange` | 363 | `*` 取代 | script#1 | Strict project loader: sanitize text and endpoint IDs; no HTML is imported. | ☐ |  |
+| `$('#file').onchange` | 363 | `*` 取代 | script#1 | Strict project loader: sanitize text and endpoint IDs; no HTML is imported. | ☑ | `io/schema` 嚴格驗證（3.13）；文字一律以純文字處理，render 不得用 innerHTML |
 | `$('#file').onchange` | 487 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☐ |  |
-| `$('#file').onchange` | 558 | `*` 取代 | script#1 | Validate the complete import before replacing the open project. | ☐ |  |
+| `$('#file').onchange` | 558 | `*` 取代 | script#1 | Validate the complete import before replacing the open project. | ☑ | `io/project-file.openProjectText`：整份驗證通過才取代目前專案（3.14） |
 | `syncProjectChrome` | 549 | `*` 取代 | script#1 |  | ☐ |  |
 | `syncProjectChrome` | 995 |  | script#2 | The toolbar may wrap in English. Size the canvas from actual chrome height. | ☐ |  |
 | `syncProjectChrome` | 1357 |  | script#2 | Inherit appearance only, not labels, connections, locks or port counts. | ☐ |  |
 | `activateDesign` | 1334 |  | script#2 | History and locale snapshots are migrated without changing task schedules. | ☐ |  |
 | `activateDesign` | 1402 |  | script#2 |  | ☐ |  |
-| `acceptLoadedProject` | 521 |  | script#1 |  | ☐ |  |
+| `acceptLoadedProject` | 521 |  | script#1 |  | ☑ | `core/store.load`（3.10）經 `io/project-file`（3.14） |
 | `allowedWorkspace` | 548 | `*` 取代 | script#1 |  | ✂ |  |
 | `downloadBlob` | 565 |  | script#1 | Export images for the active design; export JSON for the whole project. | ☐ |  |
 | `emptyDiagram` | 3144 |  | af15-ux2 | New designs and templates put pin names inside blocks; older files keep their look until changed. | ☐ |  |
