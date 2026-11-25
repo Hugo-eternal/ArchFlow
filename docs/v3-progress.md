@@ -26,7 +26,7 @@
 - [x] 2.4 Unit：`validateDiagram` 資料驗證——合法／非法輸入、上限（100 方塊／400 線／8 MB）（標註 io）
 - [x] 2.5 Unit：存檔 ↔ 載入結果一致（`projectData` → `acceptLoadedProject`）（標註 io）
 - [x] 2.6 Unit：時程日期計算（scheduleDay、intervalState、手動天數）（標註 designs:schedule）
-- [ ] 2.7 Unit：自動排列 `autoArrange`——決定性、無重疊（標註 core）
+- [x] 2.7 Unit：自動排列 `autoArrange`——決定性、無重疊（標註 core）
 - [ ] 2.8 Golden：`tests/golden/function` 代表性專案 + SVG 匯出快照
 - [ ] 2.9 Golden：`tests/golden/power`
 - [ ] 2.10 Golden：`tests/golden/schedule`
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.7 Unit：自動排列 `autoArrange`——決定性、無重疊（標註 core）。注意 `autoArrange()` 對非時程設計只會開 RC4 預覽對話框（audit §4.3），測試要驅動 `v4Generate` / 套用流程，或直接測 `rcAutoEngine`。
+- **下一步**：2.8 Golden：`tests/golden/function` 代表性專案 + SVG 匯出快照。先做共用的 golden 工具：存專案 JSON、`exportSvgDocument()` 產生的 SVG 以結構化方式比對（plan R2：元素種類 / 數量、文字、座標容差），快照檔放 `tests/golden/<type>/`。
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -123,4 +123,4 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2（2.6：`npm test` 6 檔 40 項通過；新增 `tests/unit/schedule.dates.test.js` 9 項）
+- **最後通過的驗證層級**：L3（2.7：`npm test` 7 檔 45 項通過；新增 `tests/unit/core.arrange.test.js` 5 項：RC4 整理預覽的線路模式 / 分層佈局模式（經 `#v4Mode`、`#v4Apply` 真實操作）、可復原、決定性，以及時程自動排版）
