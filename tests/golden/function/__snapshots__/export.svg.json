@@ -1,0 +1,876 @@
+{
+  "width": 1196,
+  "height": 847,
+  "elements": [
+    {
+      "depth": 0,
+      "tag": "svg",
+      "width": "1196",
+      "height": "847",
+      "viewBox": "-118 -389 1196 847"
+    },
+    {
+      "depth": 1,
+      "tag": "defs"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#536b8c"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#3.34e+72"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#6d28d9"
+    },
+    {
+      "depth": 2,
+      "tag": "marker",
+      "viewBox": "0 0 10 10"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M0 0L10 5L0 10z",
+      "fill": "#536b8c"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "-118",
+      "y": "-389",
+      "width": "1196",
+      "height": "847",
+      "fill": "#ffffff"
+    },
+    {
+      "depth": 1,
+      "tag": "g"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "230",
+      "y": "-70",
+      "rx": "10",
+      "width": "800",
+      "height": "480",
+      "fill": "none",
+      "stroke": "#4A9C90",
+      "stroke-width": "1.5",
+      "stroke-dasharray": "7 5"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "247",
+      "y": "-82",
+      "rx": "6",
+      "width": "77.5",
+      "height": "26",
+      "fill": "#DDF0EC",
+      "stroke": "#4A9C90",
+      "stroke-width": "1"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "LCD 面板",
+      "x": "259",
+      "y": "-63.5",
+      "fill": "rgb(15, 81, 72)",
+      "font-size": "13",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M130,110 L130,110 L210,110 L210,90 L220,90 L220,90",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M130,150 L130,150 L210,150 L210,130 L220,130 L220,130",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M130,200 L130,200 L140,200 L140,170 L220,170 L220,170",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M250,130 L250,130 L260,130 L260,90 L350,90 L350,90",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M250,170 L250,170 L260,170 L260,310 L350,310 L350,310",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M550,70 L550,70 L700,70 L700,30 L710,30 L710,30",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M550,110 L550,110 L700,110 L700,170 L710,170 L710,170",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none",
+      "marker-end": "url(#arrow-536b8c-9)"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M550,310 L550,310 L650,310 L650,310",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M750,310 L750,310 L810,310 L810,310",
+      "fill": "none",
+      "stroke": "#536b8c",
+      "stroke-width": "2",
+      "stroke-dasharray": "none"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "-70",
+      "y": "60",
+      "rx": "7",
+      "width": "200",
+      "height": "180",
+      "fill": "rgb(234, 240, 246)",
+      "stroke": "#8fa5bc",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M-65,62H125",
+      "stroke": "#355c82",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "主機板",
+      "x": "0",
+      "y": "158.5",
+      "fill": "rgb(36, 61, 86)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M225,72H245",
+      "stroke": "transparent",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "350",
+      "y": "10",
+      "rx": "7",
+      "width": "200",
+      "height": "160",
+      "fill": "rgb(234, 240, 246)",
+      "stroke": "#8fa5bc",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M355,12H545",
+      "stroke": "#355c82",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "TCON",
+      "x": "422.5",
+      "y": "98.5",
+      "fill": "rgb(36, 61, 86)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "710",
+      "y": "-20",
+      "rx": "7",
+      "width": "260",
+      "height": "100",
+      "fill": "rgb(234, 240, 246)",
+      "stroke": "#8fa5bc",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M715,-18H965",
+      "stroke": "#355c82",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "Source IC ×4",
+      "x": "776",
+      "y": "38.5",
+      "fill": "rgb(36, 61, 86)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "710",
+      "y": "120",
+      "rx": "7",
+      "width": "260",
+      "height": "100",
+      "fill": "rgb(234, 240, 246)",
+      "stroke": "#8fa5bc",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M715,122H965",
+      "stroke": "#355c82",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "Gate IC ×2",
+      "x": "787",
+      "y": "178.5",
+      "fill": "rgb(36, 61, 86)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "350",
+      "y": "250",
+      "rx": "7",
+      "width": "200",
+      "height": "120",
+      "fill": "rgb(234, 240, 246)",
+      "stroke": "#8fa5bc",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M355,252H545",
+      "stroke": "#355c82",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "背光驅動",
+      "x": "410",
+      "y": "318.5",
+      "fill": "rgb(36, 61, 86)",
+      "font-size": "20",
+      "font-weight": "600"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M655,292H745",
+      "stroke": "transparent",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M815,292H905",
+      "stroke": "transparent",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M925,-338H1015",
+      "stroke": "transparent",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "path",
+      "d": "M955,-88H985",
+      "stroke": "transparent",
+      "stroke-width": "4"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "g",
+      "transform": "translate(220,70) scale(1,1)",
+      "fill": "none",
+      "stroke": "rgb(42, 58, 75)",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 4,
+      "tag": "rect",
+      "x": "6",
+      "y": "4",
+      "rx": "3",
+      "width": "18",
+      "height": "132",
+      "fill": "#fff"
+    },
+    {
+      "depth": 4,
+      "tag": "rect",
+      "x": "6",
+      "y": "4",
+      "rx": "2",
+      "width": "18",
+      "height": "7",
+      "fill": "currentColor",
+      "stroke": "none"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M6 11H24"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 20H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 20H30"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 40H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 40H30"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 60H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 60H30"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 80H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 80H30"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 100H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 100H30"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 120H6"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M24 120H30"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "CN1",
+      "x": "223",
+      "y": "64.5",
+      "fill": "rgb(34, 49, 63)",
+      "font-size": "12",
+      "font-weight": "600"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "1",
+      "x": "232",
+      "y": "94",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "VDD",
+      "x": "189.5",
+      "y": "86.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "2",
+      "x": "232",
+      "y": "114",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "GND",
+      "x": "188",
+      "y": "106.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "3",
+      "x": "232",
+      "y": "134",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "LVDS+",
+      "x": "180",
+      "y": "126.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "4",
+      "x": "232",
+      "y": "154",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "LVDS−",
+      "x": "180",
+      "y": "146.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "5",
+      "x": "232",
+      "y": "174",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "BL_EN",
+      "x": "177.5",
+      "y": "166.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "6",
+      "x": "232",
+      "y": "194",
+      "fill": "rgb(90, 107, 125)",
+      "font-size": "10",
+      "font-weight": "400"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "BL_PWM",
+      "x": "167",
+      "y": "186.5",
+      "fill": "rgb(64, 83, 102)",
+      "font-size": "10.5",
+      "font-weight": "400"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "g",
+      "transform": "translate(650,290) scale(1,1)",
+      "fill": "none",
+      "stroke": "rgb(42, 58, 75)",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 20H40M60 20H100"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M40 9l20 11-20 11z",
+      "fill": "currentColor"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M60 9v22M57 6l6-6M60 0h3v3M65 9l6-6M68 3h3v3"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "g",
+      "transform": "translate(810,290) scale(1,1)",
+      "fill": "none",
+      "stroke": "rgb(42, 58, 75)",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 20H40M60 20H100"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M40 9l20 11-20 11z",
+      "fill": "currentColor"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M60 9v22M57 6l6-6M60 0h3v3M65 9l6-6M68 3h3v3"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "g",
+      "transform": "translate(920,-340) scale(1,1)",
+      "fill": "none",
+      "stroke": "rgb(42, 58, 75)",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M0 20H30l3.5-8 6.5 16 6.5-16 6.5 16 6.5-16 6.5 16 3.5-8H100"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "g",
+      "transform": "translate(950,-90) scale(1,1)",
+      "fill": "none",
+      "stroke": "rgb(42, 58, 75)",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 4,
+      "tag": "path",
+      "d": "M20 0V18M7 18H33M12 25H28M17 32H23"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "Golden: LCD module",
+      "x": "48",
+      "y": "-45.5",
+      "fill": "rgb(20, 32, 44)",
+      "font-size": "24",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "g"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "PWR",
+      "x": "139.5",
+      "y": "124.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "LVDS",
+      "x": "139.5",
+      "y": "164.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "BL_EN",
+      "x": "139.5",
+      "y": "214.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "LVDS",
+      "x": "315",
+      "y": "104.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "SRC",
+      "x": "559.5",
+      "y": "84.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "GATE",
+      "x": "559.5",
+      "y": "124.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "IN",
+      "x": "689.5",
+      "y": "44.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "IN",
+      "x": "689.5",
+      "y": "184.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "EN",
+      "x": "326",
+      "y": "324.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    },
+    {
+      "depth": 2,
+      "tag": "text",
+      "text": "OUT",
+      "x": "559.5",
+      "y": "324.5",
+      "fill": "rgb(51, 78, 112)",
+      "stroke": "white",
+      "stroke-width": "5",
+      "font-size": "11",
+      "font-weight": "500"
+    }
+  ]
+}
