@@ -302,3 +302,100 @@ V2.3.0 徽章、外框、連接器、文字框不是覆寫 `exportSvgDocument`�
 2. 時程設計在 render / drawEdges / inspector / export / validate / example 都有 2–5 代互相取代的實作，只需移植**最後生效的一代**：render 691 以後、drawEdges 688 以後、inspector 741 以後、export 754 以後。
 3. 延遲執行的 DOM 修補（microtask / rAF / setTimeout）全部改為同步、一次產生。
 4. `applicationVersion` bug 在階段 2 以測試確認；V3 不再用「暫時把 `commit` 換掉」的方式控制歷史，改為顯式的交易 API（例如 `history.batch(fn)`）。
+
+---
+
+## §2 model 與專案 JSON 欄位
+
+來源：`node scripts/audit/dump-project-shape.mjs`（在 Chromium 實際建立五種設計的範例專案並呼叫 `projectData()`），加上 `validateDiagram` 各層保留的欄位（§1.4）。實測已確認：**存檔的 `applicationVersion` 為 `'1.8-rc4'`**，`version` 為 5。
+
+處置代號：**保留**＝V3 schema 照收（可改名）；**合併**＝與其他欄位重複，V3 只留一個；**衍生**＝可由其他欄位重算，不存檔；**刪除**＝只為相容舊檔或已廢止。
+
+### 2.1 設計（diagram）層級欄位
+
+| 欄位 | 適用類型 | 處置 | 說明 / 依據 |
+|---|---|---|---|
+| `nodes` / `edges` / `junctions` | 全部 | 保留 | sequence / flowchart 這三個陣列恆為空，資料在 `sequence` / `flowchart` 物件內 |
+| `texts` | 功能 / 電源 / 時程 | 保留 | 自由文字框（L495） |
+| `theme` | 功能 / 電源 / 時程 | 保留 | 字型與字級（L426–431） |
+| `afGrid` | 全部 | 保留 | `{version,size,show,enabled}`；V3 去掉 `version` |
+| `afPinLabels` | 功能 / 電源 | 保留 | 接腳名稱預設放置（inside…），L3140 |
+| `afFrames` | 功能 | 保留 | 區域外框（L4431） |
+| `afLineDefaults` / `afLinePresets` | 功能 / 電源 | 保留 | 線條預設格式與自訂預設（L1403） |
+| `afPresentation` | 功能 / 電源 | 保留（待確認） | 只有 `'clean'` 一個值（L1443），可改成 boolean |
+| `heading` | 功能 / 電源 | **刪除** | 標題功能已停用，只為讀舊檔保留（L1195） |
+| `schedule` | 時程 | **刪除** | 舊的類型判別旗標；V3 以 `design.type` 判斷 |
+| `scheduleGraph`、`graphVersion` | 時程 | **刪除** | 時程版面 v1→v3 升級用（L675–737） |
+| `scheduleAppearance` | 時程 | 保留 | 時程主題、字型 |
+| `scheduleRules` | 時程 | 保留 | 天數計算規則：`endpoint` start/end、`difference`/`inclusive`（L576） |
+| `scheduleSnapEnabled` / `scheduleSnapRange` | 時程 | 保留 | 磁吸（L2349） |
+| `engineeringStyle` / `savedEngineeringStyle` / `customStyleActive` | 時程 | **合併** | 三個欄位描述「目前樣式 + 一個自訂槽」；L818 的 legacy copper 轉換可刪；V3 合併進 `scheduleAppearance` |
+| `scheduleDesign` | 時程 | 衍生（待確認） | 只在 L2244 schedule-release-patch 讀寫 |
+| `afNeedsPortAlignment` | 功能 / 電源範本 | **刪除** | 範本載入後的暫時旗標（L1176），不應存檔 |
+| `sequence` | sequence | 保留 | `{name, tk, rails[]}`，見 2.4 |
+| `flowchart` | flowchart | 保留 | `{title, lanes[], nodes[], edges[], lineDefault}`，見 2.5 |
+
+### 2.2 方塊（node）欄位：功能 / 電源
+
+| 欄位 | 處置 | 說明 |
+|---|---|---|
+| `id`、`x`、`y`、`w`、`h` | 保留 | |
+| `title`、`partNumber`、`ref`、`text` | 保留 | 名稱、料號、參考編號、副標 |
+| `ports[]` | 保留 | 見 2.3 |
+| `appearance` | 保留 | `{fill,border,accent,text,subtitle,titleSize…}`（L432） |
+| `color` | **刪除** | 舊版單色欄位，已由 `appearance` 取代；L1332 在載入時轉換 |
+| `role` | 保留 | 電源角色 source / converter / distribution / load（電源）；功能設計用於配色（L3249） |
+| `voltage`、`current`、`power`、`efficiency`、`showMetrics` | 保留 | 方塊量測標註（L366–371） |
+| `afCurrentUnit` | **合併** | 與連線的 `currentUnit` 同義，V3 統一為 `unit` 結構 |
+| `ioConfig` | 衍生（待確認） | 電源設計的接腳槽位設定（L451–455），階段 2 確認能否由 ports 重算 |
+| `afLayout` | 保留 | 標題位置 9 宮格（L3052–3062） |
+| `afLocked` | 保留 | 鎖定方塊 |
+| `afFont` | 保留 | V2.7 每方塊字級 `{subtitle,label,metric}` |
+| `afFree`、`afNoName` | 保留 | V2.9 自由尺寸、無名稱 |
+| `afRails`、`afPart`、`afSym`、`afRot`、`afSize`、`afBoth` | 保留 | V2.3 零件 / 符號 / 電壓徽章（L4116） |
+| `afConn`、`afMpn`、`afPin`、`afEnd`、`afRows` | 保留 | V2.4.1 連接器（L4579） |
+| `note`、`showNote` | **刪除** | `projectData` 在存檔前就刪掉（L361） |
+| `review` | 待確認 | 出現在基礎驗證（L358），需在 1.6 確認是否為死欄位 |
+
+V3：`af*` 前綴全部去掉，依功能分組（例如 `part: {kind, rot, size, rails}`、`connector: {mpn, rows, pins}`）。
+
+### 2.3 接腳（port）、連線（edge）、接點、文字框
+
+| 物件.欄位 | 處置 | 說明 |
+|---|---|---|
+| port `id`、`name`、`side`、`t`、`type` | 保留 | `side` ∈ l/r/t/b，`t` 為邊上相對位置 0–1 |
+| port `showLabel`、`afLabelPos` | **合併** | `afLabelPos`（inside / outside / hidden，V2.8）已涵蓋 `showLabel` |
+| port `afGridOffset` | 衍生 | 由格線正規化計算（L1489） |
+| port `afLocked` | 保留 | 鎖點 |
+| edge `id`、`a`、`b` | 保留 | `a`/`b` = `{node,port}` 或 `{junction}` |
+| edge `name`、`kind` | 保留 | `kind` ∈ signal / power / clock / bus…（L285） |
+| edge `manual` | 保留 | 手動路徑點 |
+| edge `afLineFormat` | 保留 | `{color,width,dash,arrow…}` |
+| edge `color`、`arrow`、`arrowSize` | **合併** | 與 `afLineFormat` 重複（L1400 會互相複製） |
+| edge `voltage`、`current`、`currentUnit`、`afShowElectrical` | 保留 | 電源支路標註 |
+| edge `afLabelSize`、`afLabelPreset` | 保留 | 標籤字級與位置預設 |
+| edge `afUnifiedLabel` | **刪除** | RC2 標籤位置，已被 RC4 的 `afLabelMark` 取代 |
+| edge `afLabelMark` | 保留 | 手動標記位置 / 角度 |
+| edge `afRouteOnly` | 待確認 | 「整理預覽」套用後的路徑記錄（L1581–1623），可能與 `manual` 合併 |
+| edge `afGridLocked`、`afLocked`、`locked` | **合併** | 三個同義鎖定旗標 → `locked` |
+| edge `afCleanRoute` | **刪除** | 舊版路徑清理標記（L1184–1199） |
+| junction `id`、`x`、`y`、`name` | 保留 | |
+| text `id`、`text`、`x`、`y`、`w`、`size`、`color`、`bold`、`italic`、`align`、`background` | 保留 | |
+
+### 2.4 時程（schedule）node / edge
+
+| 欄位 | 處置 | 說明 |
+|---|---|---|
+| node `id`、`title`、`ref`、`note`、`side` | 保留 | `side` ∈ top / bottom |
+| node `timeType`、`startDate`、`endDate`、`deadline` | 保留 | `timeType` ∈ none / range / deadline |
+| node `afStatus`、`afMilestone` | 保留 | V1.6 狀態 todo / doing / done、里程碑 |
+| node `cardDx`、`cardDy`、`axisDx`、`axisDy` | 保留 | 使用者對任務框 / 軸點的手動位移 |
+| node `x`、`y`、`w`、`h`、`baseX`、`baseY`、`axisX`、`axisY`、`axisBaseX`、`axisBaseY`、`graphLane`、`graphDepth` | **衍生** | 都由 `axisLayout()` 重算（L618、L657、L722），不需存檔 |
+| node `ports` | **刪除** | 時程任務恆為空陣列 |
+| node `branchColor` | 保留 | 分支配色 |
+| edge `id`、`a`、`b`、`timeMode`、`manualDays` | 保留 | `timeMode` ∈ auto / manual |
+
+### 2.5 React 編輯器資料（sequence / flowchart）
+- **sequence**：`{name, tk, rails:[{id,name,kind,v,color,note,tk,on:{after,delay,ramp},off:{after,delay,ramp}}]}`。`tk` 是時序鍵（例如 `mcu.per`）。全部保留。
+- **flowchart**：`{title, lanes[], nodes:[{id,type,text,x,y,w,h,color,lane,img,att,alt,border}], edges:[{id,from,to,label,color,width,fromSide,toSide,dash}], lineDefault:{color,width,dash}}`。全部保留；流程圖另有獨立的 `.flow.json` 匯出格式（`{app:'archflow-flow', version:1, …}`，L5563），V3 決定是否保留。
+- 這兩種設計的 `nodes` / `edges` / `junctions` 外層陣列恆為空，只是為了通過引擎的 `validateDiagram`；V3 不需要。
