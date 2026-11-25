@@ -270,3 +270,31 @@ export function remove(d: BlockDiagram, items: readonly ItemRef[]): BlockDiagram
   data.frames = data.frames.filter(f => !frames.has(f.id));
   return data;
 }
+
+// ------------------------------------------------------------------ placement
+
+/**
+ * Top-left corner for a new w × h item near `centre` that does not overlap a block (with
+ * `margin` around it): the centre itself if free, else the nearest free spot on rings of
+ * `step`; `obstacles` adds other rectangles to keep clear of (wire segments, badges). V2 inserted at the view centre even on top of a block;
+ * V3 keeps new items readable (CHANGELOG 3.25).
+ */
+export function freeSpot(d: BlockDiagram, w: number, h: number, centre: Point, step = 10, margin = 20,
+  obstacles: readonly { x: number; y: number; w: number; h: number }[] = []): Point {
+  const s = Math.max(1, step);
+  const snap = (v: number) => Math.round(v / s) * s;
+  const x0 = snap(centre.x - w / 2), y0 = snap(centre.y - h / 2);
+  const boxes = [...d.blocks, ...obstacles];
+  const free = (x: number, y: number) => boxes.every(b =>
+    x + w + margin <= b.x || b.x + b.w + margin <= x || y + h + margin <= b.y || b.y + b.h + margin <= y);
+  if (free(x0, y0)) return { x: x0, y: y0 };
+  const ring = Math.max(2, Math.round(20 / s)) * s;
+  for (let r = ring; r <= 60 * ring; r += ring) {
+    const cands: Point[] = [];
+    for (let k = -r; k <= r; k += ring) cands.push({ x: x0 + r, y: y0 + k }, { x: x0 + k, y: y0 + r }, { x: x0 - r, y: y0 + k }, { x: x0 + k, y: y0 - r });
+    cands.sort((a, b) => Math.hypot(a.x - x0, a.y - y0) - Math.hypot(b.x - x0, b.y - y0));
+    const hit = cands.find(p => free(p.x, p.y));
+    if (hit) return hit;
+  }
+  return { x: x0, y: y0 };
+}

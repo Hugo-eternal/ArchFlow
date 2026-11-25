@@ -13,6 +13,18 @@ import type { FieldSpec } from '../inspector/fields';
 import type { VNode } from '../render/vnode';
 import type { SvgExportOptions } from '../export/svg';
 
+/** What design commands can use (the shell provides it; designs never import the shell). */
+export interface DesignCommandContext {
+  readonly store: import('../core/store').Store;
+  readonly gestures: import('../interaction/gestures').Gestures;
+  /** The active block diagram. */
+  data(): BlockDiagram;
+  /** Commit an edit as one undo step (refusals are shown by the shell). */
+  edit(fn: (d: BlockDiagram) => BlockDiagram): { ok: boolean };
+  /** Centre of the visible canvas in diagram coordinates. */
+  viewCentre(): { x: number; y: number };
+}
+
 export interface DesignTemplate { id: string; label: MessageKey }
 
 export interface NewDesign<D> { name: string; data: D; camera?: Camera }
@@ -38,7 +50,7 @@ export interface DesignModule<D = Design['data']> {
   /** Design-specific inspector fields, appended after the shared ones — complete, synchronous. */
   inspectorFields?(sel: ItemRef, d: BlockDiagram): FieldSpec<BlockDiagram, ItemRef>[];
   /** Design-specific commands, registered by the shell (context: the shell). */
-  commands?: readonly Command<never>[];
+  commands?: readonly Command<DesignCommandContext>[];
   /** Export additions (and the bounds they need). */
   exportExtras?: SvgExportOptions['extras'];
 }

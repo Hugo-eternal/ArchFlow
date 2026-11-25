@@ -113,7 +113,7 @@ const blockStyle = obj({
   fill: opt(str()), border: opt(str()), accent: opt(str()), text: opt(str()), subtitle: opt(str()),
   titleSize: opt(num({ min: 0, max: 400 })), name: opt(str(FILE_LIMITS.name)),
 });
-const lineFormat = obj({ color: str(), width: num({ min: 0, max: 100 }), dash: str(), arrow: bool, arrowSize: opt(num({ min: 0, max: 100 })) });
+const lineFormat = obj({ color: str(), width: num({ min: 0, max: 100 }), dash: str(), arrow: bool, arrowSize: opt(num({ min: 0, max: 100 })), bothEnds: opt(bool) });
 const metric = obj({ value: str(), show: bool, unit: opt(unit) });
 
 const port = obj({
@@ -129,7 +129,8 @@ const block = obj<Block>({
   font: opt(obj({ subtitle: opt(num({ min: 0, max: 400 })), label: opt(num({ min: 0, max: 400 })), metric: opt(num({ min: 0, max: 400 })) })),
   sizing: oneOf('auto', 'free'), showTitle: bool, locked: bool, role: opt(str()),
   metrics: obj({ voltage: opt(metric), current: opt(metric), power: opt(metric), efficiency: opt(metric) }),
-  part: opt(obj({ kind: str(), rot: oneOf(0, 90, 180, 270), size: oneOf('S', 'M', 'L'), rails: opt(arr(str(), 20)), bothSides: opt(bool) })),
+  rails: opt(arr(str(10), 4)),
+  part: opt(obj({ kind: str(), rot: oneOf(0, 90, 180, 270), size: oneOf('S', 'M', 'L') })),
   connector: opt(obj({
     kind: str(), side: oneOf('l', 'r', 'both'), pins: arr(str(), 1000), only: bool, mpn: str(),
     visibleRows: arr(num({ min: 0, max: 10_000, int: true }), 1000), hiddenRows: num({ min: 0, max: 10_000, int: true }),

@@ -165,3 +165,11 @@
   .af-designs { border-right: 0; border-bottom: var(--border-width) solid var(--color-rule); flex-direction: row; flex-wrap: wrap; }
   .af-inspector-pane { width: auto; max-height: 40vh; border-left: 0; border-top: var(--border-width) solid var(--color-rule); }
 }
+.af-picker select {
+  min-height: var(--touch-target);
+  padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--color-rule-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}

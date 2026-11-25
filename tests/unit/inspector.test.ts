@@ -244,6 +244,19 @@ describe('editing', () => {
     expect(s.root.textContent).toBe(t('inspector.empty'));
   });
 
+  it('a change event from a control of the previous selection is ignored (pending text is flushed first)', () => {
+    const s = setup();
+    s.insp.show({ kind: 'block', id: 'A' });
+    const old = ctl(s.root, 'title');
+    type(old, 'typed');
+    s.insp.show({ kind: 'text', id: s.text });       // flushes 'typed' into block A
+    expect(s.data().blocks[0].title).toBe('typed');
+    old.value = 'late';
+    expect(() => change(old)).not.toThrow();         // browsers fire change when a focused input is removed
+    expect(s.data().blocks[0].title).toBe('typed');
+    expect(s.data().texts[0].text).toBe('note');
+  });
+
   it('remembers open / closed groups across selections', () => {
     const s = setup();
     s.insp.show({ kind: 'block', id: 'A' });

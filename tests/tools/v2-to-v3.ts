@@ -74,6 +74,7 @@ function convertLine(f: Raw | undefined, e: Raw = {}): LineFormat {
   };
   const size = f?.arrowSize ?? e.arrowSize;
   if (typeof size === 'number') line.arrowSize = size;
+  if (e.afBoth === true) line.bothEnds = true;
   return line;
 }
 
@@ -112,9 +113,12 @@ function convertBlock(n: Raw): Block {
   if (typeof n.role === 'string') block.role = n.role;
   if (typeof n.afSym === 'string' && n.afSym) {
     const part: Part = { kind: n.afSym, rot: ([0, 90, 180, 270].includes(n.afRot) ? n.afRot : 0) as Part['rot'], size: (['S', 'M', 'L'].includes(n.afSize) ? n.afSize : 'M') as Part['size'] };
-    if (Array.isArray(n.afRails)) part.rails = [...n.afRails];
-    if (n.afBoth === true) part.bothSides = true;
     block.part = part;
+  }
+  // voltage badges: plain blocks only (V2 hides them on symbols), cleaned as V2 cleanRails
+  if (!block.part && Array.isArray(n.afRails)) {
+    const rails = [...new Set(n.afRails.map((r: unknown) => String(r ?? '').trim()).filter(Boolean))].slice(0, 4) as string[];
+    if (rails.length) block.rails = rails;
   }
   if (n.afConn && typeof n.afConn === 'object') {
     const c: Connector = {

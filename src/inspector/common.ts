@@ -121,6 +121,10 @@ export function wireFields(): BlockField[] {
         },
         { kind: 'toggle', key: 'arrow', label: 'inspector.line.arrow', get: (d, s) => wire(d, s).line.arrow, set: setLine('arrow') },
         {
+          kind: 'toggle', key: 'bothEnds', label: 'inspector.line.bothEnds', visible: (d, s) => wire(d, s).line.arrow,
+          get: (d, s) => !!wire(d, s).line.bothEnds, set: (d, s, v) => setLine('bothEnds')(d, s, v || undefined),
+        },
+        {
           kind: 'number', key: 'arrowSize', label: 'inspector.line.arrowSize', unit: 'px', min: 4, max: 24, step: 1,
           visible: (d, s) => wire(d, s).line.arrow,
           get: (d, s) => wire(d, s).line.arrowSize ?? 9, set: setLine('arrowSize'),

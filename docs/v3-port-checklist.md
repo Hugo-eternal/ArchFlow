@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 197　☑ 75　✂ 34　⤳ 21
+合計 327 層：☐ 194　☑ 78　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -129,7 +129,7 @@
 | `exportSvgDocument` | 1856 |  | script#2 | 移除標記外框、保留標記旋轉與位置 | ☑ | 3.22 V3 沒有標記外框元素；標記位置由 render 處理 |
 | `$('#exportBtn').onclick` | 400 | `*` 取代 | script#1 |  | ☑ | 3.23 命令 `export.open` → `ExportDialog` |
 | `$('#exportBtn').onclick` | 708 |  | script#1 | Export and preview live together in one dialog. No external library or connection required. | ☑ | 3.23 匯出與可讀性在同一個對話框 |
-| `appendFreeTextExport` | 4125 |  | af15-ux2 | ---------- exports draw the badges and icons ---------- | ☐ |  |
+| `appendFreeTextExport` | 4125 |  | af15-ux2 | ---------- exports draw the badges and icons ---------- | ☑ | 3.25 符號與徽章由 `decorate` 直接畫進匯出（`exportSvg({ decorate })`），外框加 `decorationBounds` |
 | `appendFreeTextExport` | 4433 |  | af15-ux2 | exports: frames go first so they sit behind blocks and wires | ☐ |  |
 | `$('#doExport').onclick` | 488 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☑ | 3.23 `ExportDialog` 的「下載」 |
 | `appendHeadingExport` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
@@ -174,7 +174,7 @@
 | `inspector` | 3509 |  | af15-ux2 | V1.5：範本與時程線條樣式修正（再加 `setTimeout 30`） | ☐ |  |
 | `inspector` | 3703 |  | af15-ux2 | V1.6 時程：工期 / 快速修正（`setTimeout 40、120`） | ☐ |  |
 | `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☐ |  |
-| `inspector` | 4108 |  | af15-ux2 | V2.3.0：電壓徽章、箭頭「一鍵套用」 | ☐ |  |
+| `inspector` | 4108 |  | af15-ux2 | V2.3.0：電壓徽章、箭頭「一鍵套用」 | ☑ | 3.25 `functionDesign.inspectorFields`（零件數值 / 大小 / 方向、電壓標示）；雙向箭頭為共用欄位 `bothEnds` |
 | `inspector` | 10536 |  | af-v280-ux | V2.8：記住區段開合（`setTimeout 0/80/250`） | ☐ |  |
 | `inspector` | 10587 |  | af-v290-free | V2.9：自由尺寸開關、精確寬高（`setTimeout 0/80/250`） | ☐ |  |
 | `inspector` | 10627 |  | af-v2100-scale | V2.10：文字隨方塊縮放開關（`setTimeout 0/80/250/500`） | ☐ |  |
@@ -217,7 +217,7 @@
 | `validateDiagram` | 3062 |  | af15-ux2 | 方塊標題版面 | ☑ | `io/schema`（3.13）：`titleAlign` |
 | `validateDiagram` | 3139 |  | af15-ux2 | V1.5 新欄位（接腳標籤、線條標籤…） | ☑ | `io/schema`（3.13）：`port.label`、`wire.label` |
 | `validateDiagram` | 3387 |  | af15-ux2 | V1.6 時程任務欄位（狀態、工期…） | ☑ | `io/schema`（3.13）：`task.status` / `milestone` / `time` |
-| `validateDiagram` | 4116 |  | af15-ux2 | V2.3.0 零件 / 電壓徽章欄位 | ☑ | `io/schema`（3.13）：`part`（含 `rails`） |
+| `validateDiagram` | 4116 |  | af15-ux2 | V2.3.0 零件 / 電壓徽章欄位 | ☑ | `io/schema`：`block.rails`（3.25 由 `part.rails` 移出）、`part`、`line.bothEnds` |
 | `validateDiagram` | 4431 |  | af15-ux2 | `afFrames`（區域外框） | ☑ | `io/schema`（3.13）：`frames` |
 | `validateDiagram` | 4579 |  | af15-ux2 | 連接器資料 | ☑ | `io/schema`（3.13）：`connector` |
 | `validateDiagram` | 10467 |  | af-v280-ux | `afFont`、接腳名稱位置 | ☑ | `io/schema`（3.13）：`font`、`port.label` |
@@ -309,7 +309,7 @@
 | `render` | 3506 |  | af15-ux2 | 時程裝飾、分支顏色（setTimeout 0） | ☐ |  |
 | `render` | 3707 |  | af15-ux2 | 提示 | ☐ |  |
 | `render` | 3857 |  | af15-ux2 | V2.2.4：電源設計新方塊預設電源接腳 | ☐ |  |
-| `render` | 4044 |  | af15-ux2 | V2.3.0：零件庫插入位置 | ☐ |  |
+| `render` | 4044 |  | af15-ux2 | V2.3.0：零件庫插入位置 | ☑ | 3.25 插入位置改用 `model.freeSpot`（避開方塊 / 徽章 / 線路，CHANGELOG） |
 | `render` | 4424 |  | af15-ux2 | V2.4.0：繪製區域外框 | ☐ |  |
 | `render` | 10399 |  | af-v270-sizing | V2.7：每方塊字型 | ☐ |  |
 | `render` | 10480 |  | af-v280-ux | V2.8：接腳名稱位置 | ☐ |  |

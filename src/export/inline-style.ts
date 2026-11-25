@@ -113,7 +113,7 @@ export function resolveVars(value: string, vars: ReadonlyMap<string, string>, de
 /** Properties written as presentation attributes; everything else stays in `style`. */
 const PRESENTATION = new Set([
   'fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray', 'stroke-linejoin', 'stroke-linecap', 'stroke-opacity',
-  'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'text-anchor', 'dominant-baseline', 'paint-order', 'letter-spacing',
+  'opacity', 'color', 'font-family', 'font-size', 'font-weight', 'font-style', 'text-anchor', 'dominant-baseline', 'paint-order', 'letter-spacing',
 ]);
 /** Editor-only properties dropped from exports. */
 const DROP = new Set(['pointer-events', 'cursor', 'transition', 'user-select']);

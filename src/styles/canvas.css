@@ -73,3 +73,31 @@
 /* free text (render/texts.ts) */
 .af-text-body { font-family: var(--font-ui); white-space: pre; }
 .af-text-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
+
+/* parts library: symbols and voltage badges (designs/function/parts.ts) */
+.af-part-glyph {
+  color: var(--part-stroke);
+  fill: none;
+  stroke: var(--part-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.af-part-value { fill: var(--part-label); font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
+.af-part-value.af-rail-unknown, .af-rail-unknown .af-rail-text, .af-rail-unknown .af-rail-bolt { fill: var(--rail-unknown); }
+.af-part-value.af-rail-negative, .af-rail-negative .af-rail-text { fill: var(--rail-negative); }
+.af-part-value.af-rail-core, .af-rail-core .af-rail-text { fill: var(--rail-core); }
+.af-part-value.af-rail-io, .af-rail-io .af-rail-text { fill: var(--rail-io); }
+.af-part-value.af-rail-logic, .af-rail-logic .af-rail-text { fill: var(--rail-logic); }
+.af-part-value.af-rail-mid, .af-rail-mid .af-rail-text { fill: var(--rail-mid); }
+.af-part-value.af-rail-high, .af-rail-high .af-rail-text { fill: var(--rail-high); }
+.af-rail-pill { fill: var(--rail-surface); stroke-width: 1px; }
+.af-rail-unknown .af-rail-pill, .af-rail-unknown .af-rail-bolt { stroke: var(--rail-unknown); }
+.af-rail-negative .af-rail-pill, .af-rail-negative .af-rail-bolt { stroke: var(--rail-negative); }
+.af-rail-core .af-rail-pill, .af-rail-core .af-rail-bolt { stroke: var(--rail-core); }
+.af-rail-io .af-rail-pill, .af-rail-io .af-rail-bolt { stroke: var(--rail-io); }
+.af-rail-logic .af-rail-pill, .af-rail-logic .af-rail-bolt { stroke: var(--rail-logic); }
+.af-rail-mid .af-rail-pill, .af-rail-mid .af-rail-bolt { stroke: var(--rail-mid); }
+.af-rail-high .af-rail-pill, .af-rail-high .af-rail-bolt { stroke: var(--rail-high); }
+.af-rail-bolt { fill: none; stroke-width: 1.9px; stroke-linecap: round; stroke-linejoin: round; }
+.af-rail-unknown .af-rail-bolt { fill: none; }
+.af-rail-text { font-family: var(--font-ui); font-size: 12px; font-weight: 600; }

@@ -6,11 +6,11 @@ import { CommandRegistry, type Command } from '../core/commands';
 import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
 import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
-import { GridError, snapIfOn } from '../core/grid';
+import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, Camera, DesignType } from '../io/schema-types';
 import type { DesignModule, DesignRegistry } from '../designs/module';
 import { ModelError } from '../model/types';
-import { addBlock, addPort, addText, BLOCK_DEFAULT, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addPort, addText, BLOCK_DEFAULT, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { estimateWidth, type Measure } from '../render/texts';
 import { Gestures } from '../interaction/gestures';
@@ -197,7 +197,7 @@ export function shellCommands(): Command<Shell>[] {
       id: 'block.add', label: 'cmd.blockAdd', group: 'insert', shortcut: 'B', enabled: canEdit,
       run: s => {
         const d = s.data(), c = s.viewCentre();
-        const at = { x: snapIfOn(c.x - BLOCK_DEFAULT.w / 2, d.grid), y: snapIfOn(c.y - BLOCK_DEFAULT.h / 2, d.grid) };
+        const at = freeSpot(d, BLOCK_DEFAULT.w, BLOCK_DEFAULT.h, c, d.grid.snap ? gridSize(d.grid) : 1);
         let id = '';
         const flavour = s.module?.blockDiagram?.flavour ?? 'function';
         const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at, flavour)); id = out.id; return out.data; });

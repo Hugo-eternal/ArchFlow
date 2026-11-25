@@ -89,6 +89,22 @@ function Status({ shell }: { shell: Shell }) {
   );
 }
 
+/** Design commands of one group (e.g. the parts library) as a picker that runs the chosen one. */
+function CommandPicker({ shell, group, label }: { shell: Shell; group: string; label: MessageKey }) {
+  const ids = new Set((shell.module?.commands ?? []).filter(c => c.group === group).map(c => c.id));
+  const cmds = shell.registry.list(group).filter(c => ids.has(c.id));
+  if (!cmds.length) return null;
+  return (
+    <label className="af-picker">
+      <span className="af-visually-hidden">{t(label)}</span>
+      <select value="" disabled={!cmds.some(c => shell.enabled(c.id))} onChange={e => { const id = e.target.value; e.target.value = ''; if (id) void shell.run(id); }}>
+        <option value="">{t(label)}</option>
+        {cmds.map(c => <option key={c.id} value={c.id} disabled={!shell.enabled(c.id)}>{t(c.label)}</option>)}
+      </select>
+    </label>
+  );
+}
+
 function DesignList({ shell }: { shell: Shell }) {
   const s = shell.store;
   return (
@@ -136,6 +152,7 @@ function Workspace({ shell }: { shell: Shell }) {
           <CommandButton shell={shell} id="block.add" />
           <CommandButton shell={shell} id="port.add" />
           <CommandButton shell={shell} id="text.add" />
+          <CommandPicker shell={shell} group="parts" label="part.insert" />
           <CommandButton shell={shell} id="selection.delete" />
           <span className="af-toolbar-sep" aria-hidden="true" />
           <CommandButton shell={shell} id="view.fit" />

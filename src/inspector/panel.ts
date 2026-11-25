@@ -363,6 +363,7 @@ export class InspectorPanel<D, S> {
   }
 
   private schedule(b: Built<D, S>, raw: string): void {
+    if (this.stale(b)) return;
     if (this.pending && this.pending.built !== b) this.flush();
     if (this.pending) this.o.clearTimer(this.pending.timer);
     const parsed = parseValue(b.field, raw);
@@ -371,7 +372,11 @@ export class InspectorPanel<D, S> {
     this.pending = { built: b, raw, timer };
   }
 
+  /** Events from controls of an earlier build (removing a focused input fires change / blur). */
+  private stale(b: Built<D, S>): boolean { return this.built.get(b.field.key) !== b; }
+
   private commitNow(b: Built<D, S>, raw: string | boolean): void {
+    if (this.stale(b)) return;
     if (this.pending) {
       this.o.clearTimer(this.pending.timer);
       if (this.pending.built !== b) { const p = this.pending; this.pending = null; this.apply(p.built, p.raw); }

@@ -50,18 +50,21 @@ export interface WireRenderOptions { selected?: ReadonlySet<string> }
 
 function wireNode(w: Wire, route: Route, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions): VNode {
   const s = strokeOf(w), d = toPathData(route.ps);
-  const arrow = w.line.arrow && !('junction' in w.b);
-  let marker: string | undefined;
-  if (arrow && route.valid) {
+  // an arrow never points into a junction; `bothEnds` adds one at the start (V2 edge.afBoth, L4112)
+  const arrowEnd = w.line.arrow && !('junction' in w.b);
+  const arrowStart = w.line.arrow && !!w.line.bothEnds && !('junction' in w.a);
+  let marker: string | undefined, markerStart: string | undefined;
+  if ((arrowEnd || arrowStart) && route.valid) {
     const id = markerId(w.line.color, w.line.arrowSize ?? 9);
     markers.set(id, { ...w.line, kindColor: s.cls.split(' ')[1] });
-    marker = `url(#${id})`;
+    if (arrowEnd) marker = `url(#${id})`;
+    if (arrowStart) markerStart = `url(#${id})`;
   }
   const style = [s.color && `stroke:${s.color}`, w.line.width && `stroke-width:${w.line.width}px`].filter(Boolean).join(';') || undefined;
   const text = wireLabel(w), pos = text ? labelPosition(w, route.ps) : null;
   return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
     opts.selected?.has(w.id) ? h('path', { class: 'af-wire-selected', d }) : null,
-    h('path', { class: s.cls, d, style, 'stroke-dasharray': DASH[w.line.dash], 'marker-end': marker }),
+    h('path', { class: s.cls, d, style, 'stroke-dasharray': DASH[w.line.dash], 'marker-end': marker, 'marker-start': markerStart }),
     pos ? h('text', {
       class: 'af-wire-label', x: r2(pos.x), y: r2(pos.y), 'text-anchor': pos.anchor,
       style: w.label?.size && w.label.size !== LABEL_SIZE ? `font-size:${w.label.size}px` : undefined,

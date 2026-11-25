@@ -91,6 +91,7 @@ export interface Block {
   locked: boolean;                   // V2: afLocked
   role?: string;                     // power: source / converter / distribution / load
   metrics: Partial<Record<MetricKey, Metric>>;  // V2: voltage/current/power/efficiency + showMetrics + afCurrentUnit
+  rails?: string[];                  // voltage badges on the top-right edge, up to 4 (V2: afRails)
   part?: Part;
   connector?: Connector;
 }
@@ -99,8 +100,6 @@ export interface Part {
   kind: string;                      // V2: afSym (res, cap, led, gnd, conn, …)
   rot: 0 | 90 | 180 | 270;           // V2: afRot
   size: 'S' | 'M' | 'L';             // V2: afSize
-  rails?: string[];                  // V2: afRails (voltage badges)
-  bothSides?: boolean;               // V2: afBoth
 }
 
 export interface Connector {
@@ -133,6 +132,7 @@ export interface LineFormat {
   dash: string;                      // solid / dash / dot …
   arrow: boolean;
   arrowSize?: number;
+  bothEnds?: boolean;                // arrow at both ends (V2: edge.afBoth)
 }
 
 export interface Wire {

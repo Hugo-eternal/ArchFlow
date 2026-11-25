@@ -44,3 +44,39 @@ test('function: starter template, then a blank design, then save', async ({ page
   expect(file.designs[0].data.blocks).toHaveLength(4);
   expect(errors).toEqual([]);
 });
+
+test('function: insert parts from the toolbar, edit a supply and voltage badges, export', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+
+  await page.getByLabel('插入零件').selectOption({ label: '電阻' });
+  await page.getByLabel('插入零件').selectOption({ label: '電源符號' });
+  await expect(page.locator('svg.af-canvas .af-part-glyph')).toHaveCount(2);
+  // the supply is selected: change its voltage in the panel
+  const volt = page.getByRole('complementary', { name: '屬性' }).getByLabel('電壓', { exact: true });
+  await volt.fill('5v');
+  await volt.press('Enter');
+  await expect(page.locator('svg.af-canvas .af-part-value')).toHaveText('5V');
+  // R turns the resistor
+  await page.evaluate(() => { const s = (window as unknown as { archflow: { data(): { blocks: { id: string; part?: unknown }[] }; gestures: { select(x: unknown[]): void } } }).archflow; s.gestures.select([{ kind: 'block', id: s.data().blocks.find(b => b.part)!.id }]); });
+  await page.locator('svg.af-canvas').focus();
+  await page.keyboard.press('r');
+  expect((await data(page)).blocks.find(b => (b as { part?: { rot: number } }).part)).toMatchObject({ part: { rot: 90 } });
+
+  // voltage badges on the MCU block
+  await page.evaluate(() => { const s = (window as unknown as { archflow: { data(): { blocks: { id: string }[] }; gestures: { select(x: unknown[]): void } } }).archflow; s.gestures.select([{ kind: 'block', id: s.data().blocks[1].id }]); });
+  const rails = page.getByRole('complementary', { name: '屬性' }).getByLabel('電壓標示');
+  await rails.fill('3v3, 1.8');
+  await rails.press('Enter');
+  await expect(page.locator('svg.af-canvas .af-rail-text')).toHaveText(['3.3V', '1.8V']);
+
+  await page.getByRole('button', { name: '匯出' }).click();
+  const [svg] = await Promise.all([page.waitForEvent('download'), page.getByRole('dialog').getByRole('button', { name: '下載' }).click()]);
+  const source = fs.readFileSync(await svg.path(), 'utf8');
+  expect(source).toContain('>3.3V<');
+  expect(source).toContain('>5V<');
+  expect(source).toContain('M0 20H30l3.3-8');
+  expect(errors).toEqual([]);
+});

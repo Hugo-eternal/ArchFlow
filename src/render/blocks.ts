@@ -95,7 +95,8 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
   // stack the rows around the vertical centre (or from the top)
   const total = rows.reduce((n, r) => n + r.height, 0);
   let y = lay.top ? b.y + BLOCK_PAD : b.y + b.h / 2 - total / 2;
-  const textNodes = rows.map(row => {
+  // a part (schematic symbol) shows no title / reference: its value is drawn by decorate (V2 L3986)
+  const textNodes = isPart ? [] : rows.map(row => {
     // a per-block size goes in style: a presentation attribute would lose to the CSS class
     const node = h('text', {
       class: row.cls, x: r2(lay.x), y: r2(y + row.height / 2), 'text-anchor': lay.anchor, 'dominant-baseline': 'central',

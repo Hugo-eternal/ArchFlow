@@ -72,6 +72,17 @@
   --wire-label-halo: #FFFFFF;
   --wire-label-size: 14px;
   --junction-fill: #334E70;
+  /* parts and voltage badges (designs/function; V2 af24 glyph #2A3A4B, label #22313F, railColor bands) */
+  --part-stroke: #2A3A4B;
+  --part-label: #22313F;
+  --rail-surface: #FFFFFF;
+  --rail-unknown: #55657A;
+  --rail-negative: #8A3B6E;
+  --rail-core: #6B4FA0;
+  --rail-io: #2B5C8A;
+  --rail-logic: #2F7A4F;
+  --rail-mid: #94600F;
+  --rail-high: #B3402E;
 
   /* typography */
   --font-ui: "Source Han Sans TC", "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
@@ -146,6 +157,16 @@
     --wire-label: #B9CCE0;
     --wire-label-halo: #10171E;
     --junction-fill: #B9CCE0;
+    --part-stroke: #C9D6E3;
+    --part-label: #DCE6F0;
+    --rail-surface: #18222C;
+    --rail-unknown: #A9B7C6;
+    --rail-negative: #E59AC8;
+    --rail-core: #BBA6EC;
+    --rail-io: #8DBBE8;
+    --rail-logic: #84CFA0;
+    --rail-mid: #E8B35E;
+    --rail-high: #F2998A;
     --color-surface: #18222C;
     --color-surface-2: #1E2933;
     --color-hover: #233040;
@@ -188,6 +209,16 @@
   --wire-label: #B9CCE0;
   --wire-label-halo: #10171E;
   --junction-fill: #B9CCE0;
+  --part-stroke: #C9D6E3;
+  --part-label: #DCE6F0;
+  --rail-surface: #18222C;
+  --rail-unknown: #A9B7C6;
+  --rail-negative: #E59AC8;
+  --rail-core: #BBA6EC;
+  --rail-io: #8DBBE8;
+  --rail-logic: #84CFA0;
+  --rail-mid: #E8B35E;
+  --rail-high: #F2998A;
   --color-surface: #18222C;
   --color-surface-2: #1E2933;
   --color-hover: #233040;
