@@ -24,7 +24,7 @@
 - [x] 2.2 測試輔助：在 jsdom 載入 `src/app.zh-Hant.html` 並取得引擎全域函式（`tests/helpers/load-app.ts`）（L4）——改用 Chromium，見交接
 - [x] 2.3 Unit：`findPath`——路徑為正交、不穿越方塊、不與既有路徑重疊（標註 router）
 - [x] 2.4 Unit：`validateDiagram` 資料驗證——合法／非法輸入、上限（100 方塊／400 線／8 MB）（標註 io）
-- [ ] 2.5 Unit：存檔 ↔ 載入結果一致（`projectData` → `acceptLoadedProject`）（標註 io）
+- [x] 2.5 Unit：存檔 ↔ 載入結果一致（`projectData` → `acceptLoadedProject`）（標註 io）
 - [ ] 2.6 Unit：時程日期計算（scheduleDay、intervalState、手動天數）（標註 designs:schedule）
 - [ ] 2.7 Unit：自動排列 `autoArrange`——決定性、無重疊（標註 core）
 - [ ] 2.8 Golden：`tests/golden/function` 代表性專案 + SVG 匯出快照
@@ -108,16 +108,17 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.5 Unit：存檔 ↔ 載入結果一致（`projectData` → `acceptLoadedProject`）（標註 io）
+- **下一步**：2.6 Unit：時程日期計算（scheduleDay、intervalState、手動天數）（標註 designs:schedule）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
   - V2 React 介面沒有原始碼，使用者已確認採 vendor 隔離（audit §5.3）；V3 殼層以 React + TS 重寫。
   - 已實測確認：存檔的 `applicationVersion` 是 `'1.8-rc4'`。階段 2 只記錄現行 bug、不修（plan §3.1 R10）。
   - 2.4 鎖定的現行怪異行為（測試名稱以 `QUIRK:` 開頭）：方塊標題長度無上限；超過 8 MB 的檔案只顯示通用訊息「載入失敗，原專案已保留。」（L563 的 8 MB 專屬訊息被外層 loader 蓋掉）。V3 修正時要更新這些測試並寫入 CHANGELOG。
+  - **2.5 發現的資料遺失 bug**（`tests/unit/io.roundtrip.test.js` 的 `KNOWN_LOSS`）：存檔後重新載入，功能 / 電源設計的文字框遺失 `align`、`background`；**時程設計的文字框全部消失、`theme` 被清除**。V3 必須修正。
   - V2 golden 專案是 V2 格式，V3 需測試專用轉換器（plan R1、步驟 3.6）；SVG 快照要用結構化比對（R2）。
   - 階段 2 的 Playwright 一律 `--trace off`，用預裝 chromium，不要執行 `playwright install`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（2.4：`npm test` 4 檔 24 項通過；新增 `tests/unit/io.validate.test.js` 10 項）
+- **最後通過的驗證層級**：L3（2.5：`npm test` 5 檔 31 項通過；新增 `tests/unit/io.roundtrip.test.js` 7 項，經真實 `#file` 輸入載入五種設計與多設計專案）
