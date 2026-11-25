@@ -2,6 +2,7 @@
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/canvas.css';
+import './styles/inspector.css';
 import { APP_VERSION } from './version';
 import { initLocale, onLocaleChange, t } from './core/i18n';
 

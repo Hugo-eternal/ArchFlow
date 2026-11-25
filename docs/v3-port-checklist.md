@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 222　☑ 50　✂ 34　⤳ 21
+合計 327 層：☐ 215　☑ 57　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -141,8 +141,8 @@
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `inspector` | 478 |  | script#1 | 把「尺寸與外觀」以下的欄位包進可收合的 `<details>` | ☐ |  |
-| `inspector` | 493 |  | script#1 | 選取文字框時改走 `textInspector()`；記住 advanced 區塊開合 | ☐ |  |
+| `inspector` | 478 |  | script#1 | 把「尺寸與外觀」以下的欄位包進可收合的 `<details>` | ☑ | 3.21 `GroupField` → `<details>` |
+| `inspector` | 493 |  | script#1 | 選取文字框時改走 `textInspector()`；記住 advanced 區塊開合 | ☑ | 3.21 `textFields()`；群組開合記在 panel |
 | `inspector` | 519 |  | script#1 | 方塊加入「自訂樣式」欄位 | ☐ |  |
 | `inspector` | 599 |  | script#1 | **時程**：整個面板改成任務欄位（不呼叫 base） | ⤳ |  |
 | `inspector` | 631 |  | script#1 | **時程**：連線改為「間隔編輯器」（取代 599 的時程分支） | ⤳ |  |
@@ -153,8 +153,8 @@
 | `inspector` | 770 |  | script#1 | **時程**：移除舊樣式按鈕，改用常駐的外觀區 | ☐ |  |
 | `inspector` | 797 |  | script#1 | **時程**：分支 / 連線配色區 | ⤳ |  |
 | `inspector` | 844 | `↶` 回退 | script#1 | **回退到 797 之前的 alias**（`engineeringBaseInspector`），等於把 797 那層拿掉 | ☐ |  |
-| `inspector` | 1406 |  | script#2 | 線條樣式（ux）面板與選取範圍同步 | ☐ |  |
-| `inspector` | 1463 |  | script#2 | 非時程的連線改用 p13 線條面板（不呼叫 base） | ☐ |  |
+| `inspector` | 1406 |  | script#2 | 線條樣式（ux）面板與選取範圍同步 | ☑ | 3.21 `InspectorPanel.sync()`（store 變更後同步） |
+| `inspector` | 1463 |  | script#2 | 非時程的連線改用 p13 線條面板（不呼叫 base） | ☑ | 3.21 `wireFields()` 線條格式群組 |
 | `inspector` | 1565 |  | script#2 | 格線啟用時加入格線相關欄位 | ☐ |  |
 | `inspector` | 1805 |  | script#2 | 連線加「手動標記」位置 / 角度 | ☐ |  |
 | `inspector` | 1885 |  | script#2 | 同步標記面板（mSyncInspector） | ☐ |  |
@@ -165,9 +165,9 @@
 | `inspector` | 2082 |  | script#6 | 保護性路線欄位 | ☐ |  |
 | `inspector` | 2219 |  | script#9 | 時程文字對齊控制 | ☐ |  |
 | `inspector` | 2254 |  | schedule-release-patch | 時程：改寫區段標題（路線 → 連接設定） | ☐ |  |
-| `inspector` | 2273 |  | text-ux-v19-js | 文字 UX v19：microtask 中掛載文字控制 | ☐ |  |
-| `inspector` | 2288 |  | text-design-v22-js | 文字設計 v22：清理外觀區 | ☐ |  |
-| `inspector` | 2303 |  | text-controller-v24-js | 文字控制 v24：`setTimeout` 同步外觀模式 | ☐ |  |
+| `inspector` | 2273 |  | text-ux-v19-js | 文字 UX v19：microtask 中掛載文字控制 | ☑ | 3.21 一次同步產生，無 microtask |
+| `inspector` | 2288 |  | text-design-v22-js | 文字設計 v22：清理外觀區 | ☑ | 3.21 `textFields()` |
+| `inspector` | 2303 |  | text-controller-v24-js | 文字控制 v24：`setTimeout` 同步外觀模式 | ☑ | 3.21 `sync()` 取代 setTimeout |
 | `inspector` | 3047 |  | af15-ux2 | V1.5：接腳表格（enhance + 2 層 microtask） | ☐ |  |
 | `inspector` | 3125 |  | af15-ux2 | V1.5：線條樣式 / 方塊字型（enhance + 3 層 microtask） | ☐ |  |
 | `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☐ |  |
