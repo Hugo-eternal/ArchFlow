@@ -195,5 +195,21 @@
   "part.direction.vertical": "垂直",
   "part.field.rails": "電壓標示",
   "part.field.railsHint": "最多 4 個，以逗號分隔，例如 3.3V, 1.8V",
-  "part.field.railsTooMany": "電壓標示最多 4 個。"
+  "part.field.railsTooMany": "電壓標示最多 4 個。",
+  "frame.name": "區域框名稱",
+  "frame.style": "框線樣式",
+  "frame.style.dash": "虛線",
+  "frame.style.solid": "實線",
+  "frame.style.fill": "底色",
+  "frame.color": "顏色",
+  "frame.color.teal": "青綠",
+  "frame.color.blue": "藍",
+  "frame.color.amber": "琥珀",
+  "frame.color.gray": "灰",
+  "frame.width": "寬度",
+  "frame.height": "高度",
+  "frame.fit": "貼合內容",
+  "frame.fitEmpty": "框內還沒有方塊，先把方塊拖進框裡。",
+  "frame.defaultName": "區域 {n}",
+  "cmd.frameAdd": "新增區域框"
 }

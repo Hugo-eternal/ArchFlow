@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 194　☑ 78　✂ 34　⤳ 21
+合計 327 層：☐ 192　☑ 80　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -21,7 +21,7 @@
 | `fit` | 632 |  | script#1 |  | ☐ | 同上（3.28） |
 | `fit` | 669 |  | script#1 |  | ☐ | 同上（3.28） |
 | `fit` | 3587 | `*` 取代 | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ✂ | 暫停 fit 的技巧不需要：V3 的 fit 只在命令 `view.fit` 執行時才呼叫 |
-| `fit` | 4445 |  | af15-ux2 | "Fit to screen" also takes frames into account (they may reach past the blocks) | ☐ | 外框納入 fit 範圍 → `designs/function` 的外框（3.26），共用 `core/camera.unionBounds` |
+| `fit` | 4445 |  | af15-ux2 | "Fit to screen" also takes frames into account (they may reach past the blocks) | ☑ | 3.26a 殼層 `fitView` 的範圍含外框（`unionBounds`） |
 | `select` | 646 |  | script#1 | Edit interval days directly beside the clicked axis segment. | ☐ |  |
 | `select` | 842 |  | script#1 | Remove now-empty containers, keeping all existing input handlers intact. | ☐ |  |
 | `select` | 893 |  | script#2 |  | ☐ |  |
@@ -130,7 +130,7 @@
 | `$('#exportBtn').onclick` | 400 | `*` 取代 | script#1 |  | ☑ | 3.23 命令 `export.open` → `ExportDialog` |
 | `$('#exportBtn').onclick` | 708 |  | script#1 | Export and preview live together in one dialog. No external library or connection required. | ☑ | 3.23 匯出與可讀性在同一個對話框 |
 | `appendFreeTextExport` | 4125 |  | af15-ux2 | ---------- exports draw the badges and icons ---------- | ☑ | 3.25 符號與徽章由 `decorate` 直接畫進匯出（`exportSvg({ decorate })`），外框加 `decorationBounds` |
-| `appendFreeTextExport` | 4433 |  | af15-ux2 | exports: frames go first so they sit behind blocks and wires | ☐ |  |
+| `appendFreeTextExport` | 4433 |  | af15-ux2 | exports: frames go first so they sit behind blocks and wires | ☑ | 3.26a `render/frames.framesLayer` 是匯出的第一層；外框邊界含名稱標籤 |
 | `$('#doExport').onclick` | 488 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☑ | 3.23 `ExportDialog` 的「下載」 |
 | `appendHeadingExport` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `headingBounds` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |

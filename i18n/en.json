@@ -195,5 +195,21 @@
   "part.direction.vertical": "Vertical",
   "part.field.rails": "Voltage badges",
   "part.field.railsHint": "Up to four, separated by commas, e.g. 3.3V, 1.8V",
-  "part.field.railsTooMany": "At most four voltage badges."
+  "part.field.railsTooMany": "At most four voltage badges.",
+  "frame.name": "Frame name",
+  "frame.style": "Frame style",
+  "frame.style.dash": "Dashed",
+  "frame.style.solid": "Solid",
+  "frame.style.fill": "Shaded",
+  "frame.color": "Colour",
+  "frame.color.teal": "Teal",
+  "frame.color.blue": "Blue",
+  "frame.color.amber": "Amber",
+  "frame.color.gray": "Gray",
+  "frame.width": "Width",
+  "frame.height": "Height",
+  "frame.fit": "Fit contents",
+  "frame.fitEmpty": "Nothing inside yet. Drag blocks into the frame first.",
+  "frame.defaultName": "Area {n}",
+  "cmd.frameAdd": "Add frame"
 }

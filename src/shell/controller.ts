@@ -10,7 +10,7 @@ import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, Camera, DesignType } from '../io/schema-types';
 import type { DesignModule, DesignRegistry } from '../designs/module';
 import { ModelError } from '../model/types';
-import { addBlock, addPort, addText, BLOCK_DEFAULT, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { estimateWidth, type Measure } from '../render/texts';
 import { Gestures } from '../interaction/gestures';
@@ -221,6 +221,29 @@ export function shellCommands(): Command<Shell>[] {
         let id = '';
         const r = s.edit(x => { const out = addText(x, { x: c.x - TEXT_DEFAULT.w / 2, y: c.y - 20 }, t('text.placeholder')); id = out.id; return out.data; });
         if (r.ok) s.gestures.select([{ kind: 'text', id }]);
+      },
+    },
+    {
+      id: 'frame.add', label: 'cmd.frameAdd', group: 'insert', enabled: canEdit,
+      run: s => {
+        // around the selection (V2 draws by dragging; V3 frames what is selected, else a default box)
+        const d = s.data(), sel = s.gestures.selection;
+        const boxes = [
+          ...d.blocks.filter(b => sel.some(i => i.kind === 'block' && i.id === b.id)),
+          ...d.texts.filter(x => sel.some(i => i.kind === 'text' && i.id === x.id)).map(x => ({ x: x.x, y: x.y, w: x.w, h: 24 })),
+        ];
+        const g = d.grid.snap ? gridSize(d.grid) : 10, S = (v: number) => Math.round(v / g) * g;
+        let rect: { x: number; y: number; w: number; h: number };
+        if (boxes.length) {
+          const x1 = S(Math.min(...boxes.map(b => b.x)) - FRAME.pad), y1 = S(Math.min(...boxes.map(b => b.y)) - FRAME.pad - 10);
+          rect = { x: x1, y: y1, w: S(Math.max(...boxes.map(b => b.x + b.w)) + FRAME.pad) - x1, h: S(Math.max(...boxes.map(b => b.y + b.h)) + FRAME.pad) - y1 };
+        } else {
+          const c = s.viewCentre();
+          rect = { x: S(c.x - FRAME.defaultW / 2), y: S(c.y - FRAME.defaultH / 2), w: FRAME.defaultW, h: FRAME.defaultH };
+        }
+        let id = '';
+        const r = s.edit(x => { const out = addFrame(x, rect, t('frame.defaultName', { n: x.frames.length + 1 })); id = out.id; return out.data; });
+        if (r.ok) s.gestures.select([{ kind: 'frame', id }]);
       },
     },
     { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },

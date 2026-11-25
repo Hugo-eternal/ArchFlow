@@ -111,6 +111,7 @@
   background-size: var(--grid-size) var(--grid-size);
   background-position: var(--grid-x) var(--grid-y);
 }
+.af-canvas:focus-visible { outline-offset: -3px; }
 .af-canvas-empty { display: grid; place-items: center; color: var(--color-muted); }
 .af-box-select { fill: var(--color-accent-tint); stroke: var(--color-accent); stroke-width: 1px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
 .af-wire-preview path { fill: none; stroke: var(--color-accent); stroke-width: 2px; stroke-dasharray: 6 4; }

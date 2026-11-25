@@ -101,3 +101,28 @@
 .af-rail-bolt { fill: none; stroke-width: 1.9px; stroke-linecap: round; stroke-linejoin: round; }
 .af-rail-unknown .af-rail-bolt { fill: none; }
 .af-rail-text { font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
+
+/* area frames (render/frames.ts) */
+.af-frame-box { fill: none; stroke-width: 1.5px; }
+.af-frame-dash .af-frame-box { stroke-dasharray: 7 5; }
+.af-frame-fill .af-frame-box { fill-opacity: 0.09; }
+.af-frame-tab { stroke-width: 1px; }
+.af-frame-name { font-family: var(--font-ui); font-size: 13px; font-weight: 600; }
+.af-frame-teal .af-frame-box, .af-frame-teal .af-frame-tab { stroke: var(--frame-teal-line); }
+.af-frame-teal .af-frame-tab { fill: var(--frame-teal-tab); }
+.af-frame-teal .af-frame-name { fill: var(--frame-teal-ink); }
+.af-frame-teal.af-frame-fill .af-frame-box { fill: var(--frame-teal-line); }
+.af-frame-blue .af-frame-box, .af-frame-blue .af-frame-tab { stroke: var(--frame-blue-line); }
+.af-frame-blue .af-frame-tab { fill: var(--frame-blue-tab); }
+.af-frame-blue .af-frame-name { fill: var(--frame-blue-ink); }
+.af-frame-blue.af-frame-fill .af-frame-box { fill: var(--frame-blue-line); }
+.af-frame-amber .af-frame-box, .af-frame-amber .af-frame-tab { stroke: var(--frame-amber-line); }
+.af-frame-amber .af-frame-tab { fill: var(--frame-amber-tab); }
+.af-frame-amber .af-frame-name { fill: var(--frame-amber-ink); }
+.af-frame-amber.af-frame-fill .af-frame-box { fill: var(--frame-amber-line); }
+.af-frame-gray .af-frame-box, .af-frame-gray .af-frame-tab { stroke: var(--frame-gray-line); }
+.af-frame-gray .af-frame-tab { fill: var(--frame-gray-tab); }
+.af-frame-gray .af-frame-name { fill: var(--frame-gray-ink); }
+.af-frame-gray.af-frame-fill .af-frame-box { fill: var(--frame-gray-line); }
+.af-frame-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
+.af-frame-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; }

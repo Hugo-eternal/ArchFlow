@@ -10,6 +10,7 @@ import type { ItemRef } from '../model/types';
 import { gridSize, portPoint } from '../core/grid';
 import type { Point } from '../core/geometry';
 import type { Route } from '../router/full-path';
+import { frameTab } from '../render/frames';
 import { textLayout, type Measure } from '../render/texts';
 
 export interface HitOptions {
@@ -76,6 +77,8 @@ export function hitTest(d: BlockDiagram, p: Point, o: HitOptions = {}): ItemRef 
     const onX = p.x >= f.x - tol && p.x <= f.x + f.w + tol, onY = p.y >= f.y - tol && p.y <= f.y + f.h + tol;
     const nearEdge = Math.abs(p.x - f.x) <= tol || Math.abs(p.x - f.x - f.w) <= tol || Math.abs(p.y - f.y) <= tol || Math.abs(p.y - f.y - f.h) <= tol;
     if (onX && onY && nearEdge) return { kind: 'frame', id: f.id };
+    const tab = frameTab(f, o.measure);
+    if (p.x >= tab.x && p.x <= tab.x + tab.w && p.y >= tab.y && p.y <= tab.y + tab.h) return { kind: 'frame', id: f.id };
   }
   return null;
 }

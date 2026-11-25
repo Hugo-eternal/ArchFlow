@@ -53,6 +53,7 @@ const PAIRS = [
   ['--wire-label', '--wire-label-halo', 4.5], ['--junction-fill', '--color-board', 3],
   ['--part-stroke', '--color-board', 3], ['--part-label', '--color-board', 4.5],
   ...['unknown', 'negative', 'core', 'io', 'logic', 'mid', 'high'].map(b => [`--rail-${b}`, '--rail-surface', 4.5]),
+  ...['teal', 'blue', 'amber', 'gray'].flatMap(c => [[`--frame-${c}-ink`, `--frame-${c}-tab`, 4.5], [`--frame-${c}-line`, '--color-board', 1.5]]),
 ];
 const rows = [];
 for (const [theme, t] of [['light', light], ['dark', dark]]) for (const [fg, bg, min] of PAIRS) {

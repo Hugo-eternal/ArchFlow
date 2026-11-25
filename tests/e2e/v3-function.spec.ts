@@ -80,3 +80,35 @@ test('function: insert parts from the toolbar, edit a supply and voltage badges,
   expect(source).toContain('M0 20H30l3.3-8');
   expect(errors).toEqual([]);
 });
+
+test('function: frame around the selection, rename and recolour it, move it with its contents', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  type W = { archflow: { data(): { blocks: { id: string; x: number; y: number }[]; frames: { x: number; y: number; title: string; color: string }[] }; gestures: { select(x: unknown[]): void }; camera: { x: number; y: number; z: number } } };
+  await page.evaluate(() => { const s = (window as unknown as W).archflow; s.gestures.select(s.data().blocks.slice(1, 3).map(b => ({ kind: 'block', id: b.id }))); });
+  await page.getByRole('button', { name: '新增區域框' }).click();
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  await panel.getByLabel('區域框名稱').fill('主控板');
+  await panel.getByLabel('區域框名稱').press('Enter');
+  await panel.getByRole('radio', { name: '藍' }).check();
+  await expect(page.locator('svg.af-canvas .af-frame-name')).toHaveText('主控板');
+
+  const before = await page.evaluate(() => (window as unknown as W).archflow.data());
+  const f = before.frames[0];
+  const box = (await page.locator('svg.af-canvas').boundingBox())!;
+  const c = await page.evaluate(() => (window as unknown as W).archflow.camera);
+  const sx = box.x + (f.x + 40) * c.z + c.x, sy = box.y + f.y * c.z + c.y;
+  await page.mouse.move(sx, sy);
+  await page.mouse.down();
+  await page.mouse.move(sx + 50, sy + 60, { steps: 5 });
+  await page.mouse.up();
+  const after = await page.evaluate(() => (window as unknown as W).archflow.data());
+  const dx = after.frames[0].x - f.x;
+  expect(dx).toBeGreaterThan(0);
+  expect(after.blocks[1].x - before.blocks[1].x).toBe(dx);      // inside: moved with the frame
+  expect(after.blocks[0].x).toBe(before.blocks[0].x);           // outside: stayed
+  expect(after.frames[0]).toMatchObject({ title: '主控板', color: 'blue' });
+  expect(errors).toEqual([]);
+});

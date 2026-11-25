@@ -235,11 +235,56 @@ export function updateText(d: BlockDiagram, id: string, patch: Partial<Omit<Text
   return data;
 }
 
-export function addFrame(d: BlockDiagram, rect: Pick<Frame, 'x' | 'y' | 'w' | 'h'>, title = '', color = 'teal'): { data: BlockDiagram; id: string } {
-  const f: Frame = { id: uid(), title, ...rect, style: 'solid', color };
+/** Area frames (V2.4.0 L4288): styles dash / solid / fill, colours teal / blue / amber / gray, at least 120 × 80. */
+export const FRAME = Object.freeze({ minW: 120, minH: 80, defaultW: 400, defaultH: 260, pad: 30, styles: ['dash', 'solid', 'fill'], colors: ['teal', 'blue', 'amber', 'gray'] });
+
+export function addFrame(d: BlockDiagram, rect: Pick<Frame, 'x' | 'y' | 'w' | 'h'>, title = '', color = 'teal', style = 'dash'): { data: BlockDiagram; id: string } {
+  const f: Frame = { id: uid(), title: title.slice(0, 80), x: rect.x, y: rect.y, w: Math.max(FRAME.minW, rect.w), h: Math.max(FRAME.minH, rect.h), style, color };
   const data = clone(d);
   data.frames.push(f);
   return { data, id: f.id };
+}
+
+export function updateFrame(d: BlockDiagram, id: string, patch: Partial<Omit<Frame, 'id'>>): BlockDiagram {
+  const data = clone(d), f = data.frames.find(x => x.id === id);
+  if (!f) throw new ModelError('missing', id);
+  Object.assign(f, patch);
+  f.w = Math.max(FRAME.minW, f.w);
+  f.h = Math.max(FRAME.minH, f.h);
+  f.title = f.title.slice(0, 80);
+  return data;
+}
+
+/**
+ * What a frame carries when it moves (V2 members L4307): blocks and text boxes whose centre is
+ * inside it, junctions inside it, and frames entirely inside it.
+ */
+export function frameMembers(d: BlockDiagram, id: string): string[] {
+  const f = d.frames.find(x => x.id === id);
+  if (!f) return [];
+  const inside = (x: number, y: number) => x >= f.x && x <= f.x + f.w && y >= f.y && y <= f.y + f.h;
+  return [
+    ...d.blocks.filter(b => inside(b.x + b.w / 2, b.y + b.h / 2)).map(b => b.id),
+    ...d.junctions.filter(j => inside(j.x, j.y)).map(j => j.id),
+    ...d.texts.filter(t => inside(t.x + t.w / 2, t.y + 8)).map(t => t.id),
+    ...d.frames.filter(g => g !== f && g.x >= f.x && g.y >= f.y && g.x + g.w <= f.x + f.w && g.y + g.h <= f.y + f.h).map(g => g.id),
+  ];
+}
+
+/** Shrink / grow a frame around its contents with a 30 px margin (V2 fitFrame); null when it holds nothing. */
+export function fitFrame(d: BlockDiagram, id: string, step = 10): BlockDiagram | null {
+  const ids = new Set(frameMembers(d, id));
+  const boxes = [
+    ...d.blocks.filter(b => ids.has(b.id)),
+    ...d.texts.filter(t => ids.has(t.id)).map(t => ({ x: t.x, y: t.y, w: t.w || 80, h: 24 })),
+    ...d.frames.filter(g => ids.has(g.id)),
+    ...d.junctions.filter(j => ids.has(j.id)).map(j => ({ x: j.x, y: j.y, w: 0, h: 0 })),
+  ];
+  if (!boxes.length) return null;
+  const S = (v: number) => Math.round(v / step) * step;
+  const x1 = S(Math.min(...boxes.map(b => b.x)) - FRAME.pad), y1 = S(Math.min(...boxes.map(b => b.y)) - FRAME.pad - 10);
+  const x2 = S(Math.max(...boxes.map(b => b.x + b.w)) + FRAME.pad), y2 = S(Math.max(...boxes.map(b => b.y + b.h)) + FRAME.pad);
+  return updateFrame(d, id, { x: x1, y: y1, w: x2 - x1, h: y2 - y1 });
 }
 
 // ------------------------------------------------------------------ deletion

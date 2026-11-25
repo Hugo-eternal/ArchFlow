@@ -152,6 +152,7 @@ function Workspace({ shell }: { shell: Shell }) {
           <CommandButton shell={shell} id="block.add" />
           <CommandButton shell={shell} id="port.add" />
           <CommandButton shell={shell} id="text.add" />
+          <CommandButton shell={shell} id="frame.add" />
           <CommandPicker shell={shell} group="parts" label="part.insert" />
           <CommandButton shell={shell} id="selection.delete" />
           <span className="af-toolbar-sep" aria-hidden="true" />

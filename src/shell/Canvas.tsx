@@ -7,6 +7,7 @@ import { gridSize } from '../core/grid';
 import { blocksLayer } from '../render/blocks';
 import { wiresLayer, invalidCount } from '../render/wires';
 import { textsLayer } from '../render/texts';
+import { framesLayer } from '../render/frames';
 import { h, mount, r2, type VNode } from '../render/vnode';
 import type { PointerIn } from '../interaction/gestures';
 import type { Shell } from './controller';
@@ -58,6 +59,7 @@ export function Canvas({ shell }: { shell: Shell }) {
     const ids = (k: string) => new Set(sel.filter(s => s.kind === k).map(s => s.id));
     const m = shell.module, extra = m?.renderExtras?.(d) ?? {};
     const tree = h('g', {}, [
+      framesLayer(d.frames, { selected: ids('frame'), measure: shell.measure }),
       ...(extra.below ?? []),
       wiresLayer(d, routes, { selected: new Set([...ids('wire'), ...ids('junction')]) }),
       blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate }),

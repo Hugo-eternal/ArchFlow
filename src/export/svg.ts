@@ -10,6 +10,7 @@
 import type { BlockDiagram } from '../io/schema-types';
 import { blocksLayer, type BlockRenderOptions } from '../render/blocks';
 import { wiresLayer } from '../render/wires';
+import { framesLayer, frameTab } from '../render/frames';
 import { textLayout, textsLayer, estimateWidth, type Measure } from '../render/texts';
 import { h, toMarkup, SVG_NS, type VNode } from '../render/vnode';
 import { routeAll, type Route } from '../router/full-path';
@@ -59,7 +60,7 @@ export function contentBounds(d: BlockDiagram, routes: ReadonlyMap<string, Route
   const boxes: Bounds[] = [...extra];
   for (const b of d.blocks) boxes.push({ x: b.x, y: b.y, w: b.w, h: b.h });
   for (const t of d.texts) boxes.push({ x: t.x, y: t.y, w: t.w, h: textLayout(t, measure).height });
-  for (const f of d.frames) boxes.push({ x: f.x, y: f.y, w: f.w, h: f.h });
+  for (const f of d.frames) boxes.push({ x: f.x, y: f.y, w: f.w, h: f.h }, frameTab(f, measure));
   for (const j of d.junctions) boxes.push({ x: j.x - 5, y: j.y - 5, w: 10, h: 10 });
   for (const r of routes.values()) for (const p of r.ps) boxes.push({ x: p.x, y: p.y, w: 0, h: 0 });
   if (!boxes.length) return null;
@@ -108,8 +109,9 @@ export function exportSvg(d: BlockDiagram, o: SvgExportOptions = {}): SvgExport 
   const width = Math.max(1, Math.ceil(box.x + box.w + EXPORT_MARGIN) - left);
   const height = Math.max(1, Math.ceil(box.y + box.h + EXPORT_MARGIN) - top);
 
-  // V2 order: frames and decorations below, wires, blocks, free text on top
+  // V2 order: frames (L4433 "frames go first") and decorations below, wires, blocks, free text on top
   const drawing = h('g', { class: 'af-export' }, [
+    framesLayer(d.frames, { measure }),
     ...(extra.below ?? []),
     wiresLayer(d, routes),
     blocksLayer(d, { theme: d.theme, decorate: o.decorate }),

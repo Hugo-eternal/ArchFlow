@@ -73,6 +73,11 @@
   --wire-label-size: 14px;
   --junction-fill: #334E70;
   /* parts and voltage badges (designs/function; V2 af24 glyph #2A3A4B, label #22313F, railColor bands) */
+  /* area frames (V2 af40 COLORS: line / tab / ink) */
+  --frame-teal-line: #4A9C90;  --frame-teal-tab: #DDF0EC;  --frame-teal-ink: #0F5148;
+  --frame-blue-line: #5B84B8;  --frame-blue-tab: #E0EAF6;  --frame-blue-ink: #1E3F6B;
+  --frame-amber-line: #C0893A; --frame-amber-tab: #F7E9D2; --frame-amber-ink: #6B4612;
+  --frame-gray-line: #8693A1;  --frame-gray-tab: #E8ECF0;  --frame-gray-ink: #33414F;
   --part-stroke: #2A3A4B;
   --part-label: #22313F;
   --rail-surface: #FFFFFF;
@@ -157,6 +162,10 @@
     --wire-label: #B9CCE0;
     --wire-label-halo: #10171E;
     --junction-fill: #B9CCE0;
+    --frame-teal-line: #5FB5A8;  --frame-teal-tab: #173A35;  --frame-teal-ink: #BFE8E0;
+    --frame-blue-line: #7FA3D3;  --frame-blue-tab: #1B2E47;  --frame-blue-ink: #CFE0F5;
+    --frame-amber-line: #D6A35A; --frame-amber-tab: #3C2C14; --frame-amber-ink: #F3DDB8;
+    --frame-gray-line: #9AA6B3;  --frame-gray-tab: #27313B;  --frame-gray-ink: #DCE3EA;
     --part-stroke: #C9D6E3;
     --part-label: #DCE6F0;
     --rail-surface: #18222C;
@@ -209,6 +218,10 @@
   --wire-label: #B9CCE0;
   --wire-label-halo: #10171E;
   --junction-fill: #B9CCE0;
+  --frame-teal-line: #5FB5A8;  --frame-teal-tab: #173A35;  --frame-teal-ink: #BFE8E0;
+  --frame-blue-line: #7FA3D3;  --frame-blue-tab: #1B2E47;  --frame-blue-ink: #CFE0F5;
+  --frame-amber-line: #D6A35A; --frame-amber-tab: #3C2C14; --frame-amber-ink: #F3DDB8;
+  --frame-gray-line: #9AA6B3;  --frame-gray-tab: #27313B;  --frame-gray-ink: #DCE3EA;
   --part-stroke: #C9D6E3;
   --part-label: #DCE6F0;
   --rail-surface: #18222C;

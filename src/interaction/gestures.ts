@@ -10,6 +10,7 @@
 //   port               drag = new wire, dropped on a port or junction (22 px snap, V2 nearest)
 //   junction           drag = new wire from it; Shift-drag = move it (V2: Shift moved junctions)
 //   wire               click = select
+//   frame              drag = move it with what is inside; a corner of the selected frame = resize
 //   middle button      pan anywhere
 //   wheel              zoom around the pointer (core/camera)
 //
@@ -23,7 +24,10 @@ import { simplify } from '../core/geometry';
 import type { Measure } from '../render/texts';
 import { panBy, toWorld, wheelFactor, zoomAt } from '../core/camera';
 import { gridSize, portPoint, snapIfOn } from '../core/grid';
-import { connect, moveItems } from '../model/diagram';
+import { connect, frameMembers, moveItems, updateFrame, FRAME } from '../model/diagram';
+
+/** Screen px around a selected frame's corner that start a resize. */
+export const FRAME_HANDLE = 8;
 import { commitEdit, type CommitResult } from './commit';
 import { hitTest, itemsInRect, nearestPort, normRect, SNAP_RADIUS, JUNCTION_HIT, type Rect } from './hit';
 
@@ -56,6 +60,7 @@ type State =
   | { kind: 'box'; start: Point; additive: boolean; base: ItemRef[] }
   | { kind: 'press'; start: PointerIn; world: Point; item: ItemRef; shift: boolean }   // not yet a drag
   | { kind: 'move'; start: Point; ids: string[]; anchor: Point; before: BlockDiagram; draft: BlockDiagram }
+  | { kind: 'resize'; frame: string; corner: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'wire'; from: WireEnd; at: Point; to: Point; target: { end: WireEnd; at: Point } | null };
 
 const same = (a: ItemRef, b: ItemRef) => a.kind === b.kind && a.id === b.id && (a.kind !== 'port' || (b.kind === 'port' && a.block === b.block));
@@ -71,7 +76,7 @@ export class Gestures {
 
   /** The diagram to draw: the moving draft during a move, else the store's data. */
   draft(): BlockDiagram {
-    return this.state.kind === 'move' ? this.state.draft : this.data();
+    return this.state.kind === 'move' || this.state.kind === 'resize' ? this.state.draft : this.data();
   }
 
   isSelected(ref: Pick<ItemRef, 'kind' | 'id'>): boolean { return this.selection.some(s => s.kind === ref.kind && s.id === ref.id); }
@@ -89,6 +94,17 @@ export class Gestures {
     const cam = this.host.camera(), world = toWorld(cam, ev);
     if (ev.button === 1) { this.state = { kind: 'pan', start: ev, camera: cam }; return; }
     const d = this.data();
+    // a corner handle of the one selected frame resizes it (V2 grip L4372)
+    const only = this.selection.length === 1 && this.selection[0].kind === 'frame' ? d.frames.find(f => f.id === this.selection[0].id) : undefined;
+    if (only && !ev.shift) {
+      const tol = FRAME_HANDLE / cam.z;
+      for (const [c, x, y] of [['nw', only.x, only.y], ['ne', only.x + only.w, only.y], ['sw', only.x, only.y + only.h], ['se', only.x + only.w, only.y + only.h]] as const) {
+        if (Math.abs(world.x - x) <= tol && Math.abs(world.y - y) <= tol) {
+          this.state = { kind: 'resize', frame: only.id, corner: c, start: world, before: d, draft: d };
+          return;
+        }
+      }
+    }
     const item = hitTest(d, world, { zoom: cam.z, routes: this.host.routes(), measure: this.host.measure });
     if (!item) {
       if (ev.shift) this.state = { kind: 'box', start: world, additive: true, base: [...this.selection] };
@@ -132,6 +148,8 @@ export class Gestures {
         if (!this.isSelected(s.item)) this.select(s.shift ? [...this.selection, s.item] : [s.item]);
         const before = this.data();
         const ids = this.selection.filter(i => MOVABLE.has(i.kind)).map(i => i.id);
+        // a frame carries what is inside it (V2 grab L4352)
+        for (const f of this.selection.filter(i => i.kind === 'frame')) for (const m of frameMembers(before, f.id)) if (!ids.includes(m)) ids.push(m);
         this.state = { kind: 'move', start: s.world, ids, anchor: this.anchorOf(before, s.item), before, draft: before };
         this.move(ev);
         return;
@@ -148,6 +166,16 @@ export class Gestures {
         s.to = world;
         this.updateWirePreview();
         return;
+      case 'resize': {
+        const f = s.before.frames.find(x => x.id === s.frame)!, g = s.before.grid;
+        const S = (v: number) => snapIfOn(v, g), dx = world.x - s.start.x, dy = world.y - s.start.y;
+        let { x, y, w, h } = f;
+        if (s.corner.includes('w')) { const nx = Math.min(S(f.x + dx), f.x + f.w - FRAME.minW); w = f.x + f.w - nx; x = nx; } else w = Math.max(FRAME.minW, S(f.w + dx));
+        if (s.corner.includes('n')) { const ny = Math.min(S(f.y + dy), f.y + f.h - FRAME.minH); h = f.y + f.h - ny; y = ny; } else h = Math.max(FRAME.minH, S(f.h + dy));
+        s.draft = updateFrame(s.before, s.frame, { x, y, w, h });
+        this.host.changed?.();
+        return;
+      }
     }
   }
 
@@ -166,6 +194,7 @@ export class Gestures {
         if (s.shift) this.select(this.isSelected(s.item) ? this.selection.filter(i => !same(i, s.item)) : [...this.selection, s.item]);
         else this.select([s.item]);
         break;
+      case 'resize':
       case 'move': {
         const r = commitEdit(this.host.store, () => s.draft);
         if (!r.ok) this.host.refused?.(r);

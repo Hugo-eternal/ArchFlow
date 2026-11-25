@@ -7,11 +7,11 @@
 // format panel L1463, text controls L2219–L2303.
 import type { Block, BlockDiagram, BlockStyle, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
 import { LIMITS, type ItemRef } from '../model/types';
-import { blockOf, portOf, updateBlock, updatePort, updateText, updateWire, wireOf } from '../model/diagram';
+import { blockOf, fitFrame, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
 import { FILE_LIMITS } from '../io/schema';
 import { commitEdit } from '../interaction/commit';
 import type { Store } from '../core/store';
-import type { MessageKey } from '../core/i18n';
+import { t, type MessageKey } from '../core/i18n';
 import type { FieldOption, FieldSpec } from './fields';
 import { InspectorPanel, type PanelOptions } from './panel';
 
@@ -153,6 +153,43 @@ export function textFields(): BlockField[] {
   ];
 }
 
+const frame = (d: BlockDiagram, s: ItemRef) => {
+  const f = d.frames.find(x => x.id === s.id);
+  if (!f) throw new Error(`no frame ${s.id}`);
+  return f;
+};
+
+/** Area frame (V2 frame bar L4316): name, style, colour, size, fit contents. Delete = Delete key. */
+export function frameFields(): BlockField[] {
+  return [
+    { kind: 'text', key: 'title', label: 'frame.name', maxLength: 80, get: (d, s) => frame(d, s).title, set: (d, s, v) => updateFrame(d, s.id, { title: v }) },
+    {
+      kind: 'segmented', key: 'style', label: 'frame.style', options: opts('frame.style', FRAME.styles),
+      get: (d, s) => frame(d, s).style, set: (d, s, v) => updateFrame(d, s.id, { style: v }),
+    },
+    {
+      kind: 'segmented', key: 'color', label: 'frame.color', options: opts('frame.color', FRAME.colors),
+      get: (d, s) => frame(d, s).color, set: (d, s, v) => updateFrame(d, s.id, { color: v }),
+    },
+    { kind: 'number', key: 'w', label: 'frame.width', unit: 'px', min: FRAME.minW, max: 20000, step: 10, get: (d, s) => frame(d, s).w, set: (d, s, v) => updateFrame(d, s.id, { w: v }) },
+    { kind: 'number', key: 'h', label: 'frame.height', unit: 'px', min: FRAME.minH, max: 20000, step: 10, get: (d, s) => frame(d, s).h, set: (d, s, v) => updateFrame(d, s.id, { h: v }) },
+    {
+      kind: 'custom', key: 'fit', label: 'frame.fit',
+      render: ({ doc, sel, data, apply }) => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'af-field-reset';
+        b.textContent = t('frame.fit');
+        const fitted = fitFrame(data, sel.id, data.grid.snap ? data.grid.size : 10);
+        b.disabled = !fitted;
+        b.title = fitted ? '' : t('frame.fitEmpty');
+        b.addEventListener('click', () => apply(d => fitFrame(d, sel.id, d.grid.snap ? d.grid.size : 10) ?? d));
+        return b;
+      },
+    },
+  ];
+}
+
 /** The shared fields for a selection, or null when the item has no shared fields. */
 export function commonFields(sel: ItemRef): BlockField[] | null {
   switch (sel.kind) {
@@ -160,6 +197,7 @@ export function commonFields(sel: ItemRef): BlockField[] | null {
     case 'port': return portFields();
     case 'wire': return wireFields();
     case 'text': return textFields();
+    case 'frame': return frameFields();
     default: return null;
   }
 }

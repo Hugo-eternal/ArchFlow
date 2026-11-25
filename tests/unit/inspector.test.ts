@@ -63,7 +63,7 @@ describe('panel construction', () => {
 
   it('chooses the shared fields by selection kind', () => {
     expect(commonFields({ kind: 'junction', id: 'x' })).toBeNull();
-    expect(commonFields({ kind: 'frame', id: 'x' })).toBeNull();
+    expect(commonFields({ kind: 'frame', id: 'x' })!.map(f => f.key)).toContain('title');
     const s = setup();
     s.insp.show({ kind: 'port', block: 'A', id: s.portA });
     expect([...s.root.querySelectorAll('[data-field]')].map(e => (e as HTMLElement).dataset.field)).toEqual(['name', 'type', 'label', 'locked']);
