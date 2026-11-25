@@ -11,7 +11,7 @@
 - [x] 1.2 依 1.1 的結果寫 `docs/v3-audit.md` §1：每個被覆寫函式的每一層目的（inspector、render、drawEdges、validateDiagram、projectData、exportSvgDocument 優先）
 - [x] 1.3 `docs/v3-audit.md` §2：列出 model 欄位（nodes / edges / junctions / texts / theme…），標示「使用中／僅相容舊檔」
 - [x] 1.4 `docs/v3-audit.md` §2 續：列出專案 JSON 頂層欄位（project、designs、customStyles、applicationVersion…）與 V3 處置
-- [ ] 1.5 寫 `scripts/audit/diff-locales.mjs`：比對 zh-Hant 與 en，濾掉翻譯字串，輸出非翻譯差異；結果寫入 `docs/v3-audit.md` §3
+- [x] 1.5 寫 `scripts/audit/diff-locales.mjs`：比對 zh-Hant 與 en，濾掉翻譯字串，輸出非翻譯差異；結果寫入 `docs/v3-audit.md` §3
 - [ ] 1.6 `docs/v3-audit.md` §4：死碼與已廢止功能（heading、隱藏的 both 類型、RC 實驗分支、legacy copper / off-grid 轉換）及行號
 - [ ] 1.7 `docs/v3-audit.md` §5：af20-shell React bundle 的原始碼判斷（搜尋 sourcemap、註解、repo 歷史）；找不到時提出 `vendor/` 隔離方案
 - [ ] 1.8 盤點內建工具（BOM / EDID / Hex / Pattern）、電源時序、流程圖的邊界與資料格式，寫入 `docs/v3-audit.md` §6
@@ -73,7 +73,7 @@
 
 ## 交接
 - **目前階段**：階段 1（盤點）
-- **下一步**：1.5 寫 `scripts/audit/diff-locales.mjs` 比對 zh-Hant / en 的非翻譯差異，結果寫入 `docs/v3-audit.md` §3
+- **下一步**：1.6 `docs/v3-audit.md` §4：死碼與已廢止功能（heading、隱藏的 both 類型、RC 實驗分支、legacy copper / off-grid 轉換，以及 §1 找到的被遮蔽時程實作）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行。
@@ -81,5 +81,6 @@
   - 尚無 `package.json` 與任何測試；階段 2 之前只能跑 L0 驗證。
   - 已實測確認：存檔的 `applicationVersion` 是 `'1.8-rc4'`（L1857 覆寫了 L1057 的 V2.10.1）。
   - §2 中標「待確認」的欄位（`afPresentation`、`scheduleDesign`、`ioConfig`、`review`、`afRouteOnly`）留到 1.6 / 階段 2 判斷。
-- **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）、`node scripts/audit/dump-project-shape.mjs`（在 Chromium 建五種範例專案並列出存檔欄位）。
-- **最後通過的驗證層級**：L0（1.4：頂層欄位以實測輸出與讀寫行號交叉核對；1.3：欄位清單由瀏覽器實測輸出產生，五種設計皆建立成功、無頁面錯誤）
+- **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/diff-locales.mjs`（語系結構差異）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）、`node scripts/audit/dump-project-shape.mjs`（在 Chromium 建五種範例專案並列出存檔欄位）。
+- 1.5 發現：兩語系只差 252 行（7 處結構差異，其餘為寫死的翻譯字串）；React bundle 兩語系完全相同。
+- **最後通過的驗證層級**：L0（1.5：diff 腳本結果以原始逐行比對交叉驗證（252 行不同）；1.4：頂層欄位以實測輸出與讀寫行號交叉核對；1.3：欄位清單由瀏覽器實測輸出產生，五種設計皆建立成功、無頁面錯誤）
