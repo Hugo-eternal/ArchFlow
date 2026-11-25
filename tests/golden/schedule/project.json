@@ -1,0 +1,399 @@
+{
+  "version": 5,
+  "project": {
+    "name": "Test"
+  },
+  "activeDesignId": "x9u2ht9jjj",
+  "designs": [
+    {
+      "id": "x9u2ht9jjj",
+      "name": "產品開發流程",
+      "type": "schedule",
+      "diagram": {
+        "schedule": true,
+        "scheduleGraph": true,
+        "graphVersion": 3,
+        "nodes": [
+          {
+            "id": "xrsx0kh22x",
+            "title": "規劃",
+            "ref": "T01",
+            "x": 70,
+            "y": 35,
+            "w": 240,
+            "h": 134,
+            "ports": [],
+            "side": "top",
+            "note": "專案經理",
+            "timeType": "range",
+            "startDate": "2026-01-05",
+            "endDate": "2026-01-12",
+            "deadline": "",
+            "baseX": 70,
+            "baseY": 35,
+            "axisX": 190,
+            "axisY": 203,
+            "axisBaseX": 190,
+            "axisBaseY": 203,
+            "cardDx": 0,
+            "cardDy": 0,
+            "axisDx": 0,
+            "axisDy": 0,
+            "graphLane": 0,
+            "graphDepth": 0,
+            "afStatus": "done"
+          },
+          {
+            "id": "xs1kl03rit",
+            "title": "設計",
+            "ref": "T02",
+            "x": 355,
+            "y": 35,
+            "w": 240,
+            "h": 134,
+            "ports": [],
+            "side": "top",
+            "note": "設計組",
+            "timeType": "range",
+            "startDate": "2026-01-19",
+            "endDate": "2026-01-26",
+            "deadline": "",
+            "baseX": 355,
+            "baseY": 35,
+            "axisX": 475,
+            "axisY": 203,
+            "axisBaseX": 475,
+            "axisBaseY": 203,
+            "cardDx": 0,
+            "cardDy": 0,
+            "axisDx": 0,
+            "axisDy": 0,
+            "graphLane": 0,
+            "graphDepth": 1,
+            "afStatus": "doing"
+          },
+          {
+            "id": "xi5limkrle",
+            "title": "開發",
+            "ref": "T03",
+            "x": 640,
+            "y": 35,
+            "w": 240,
+            "h": 134,
+            "ports": [],
+            "side": "top",
+            "note": "開發組",
+            "timeType": "range",
+            "startDate": "2026-02-02",
+            "endDate": "2026-02-09",
+            "deadline": "",
+            "baseX": 640,
+            "baseY": 35,
+            "axisX": 760,
+            "axisY": 203,
+            "axisBaseX": 760,
+            "axisBaseY": 203,
+            "cardDx": 0,
+            "cardDy": 0,
+            "axisDx": 0,
+            "axisDy": 0,
+            "graphLane": 0,
+            "graphDepth": 2,
+            "afStatus": "todo"
+          },
+          {
+            "id": "x587upi1rq",
+            "title": "測試",
+            "ref": "T04",
+            "x": 925,
+            "y": 35,
+            "w": 240,
+            "h": 134,
+            "ports": [],
+            "side": "top",
+            "note": "測試組",
+            "timeType": "range",
+            "startDate": "2026-02-16",
+            "endDate": "2026-02-23",
+            "deadline": "",
+            "baseX": 925,
+            "baseY": 35,
+            "axisX": 1045,
+            "axisY": 203,
+            "axisBaseX": 1045,
+            "axisBaseY": 203,
+            "cardDx": 0,
+            "cardDy": 0,
+            "axisDx": 0,
+            "axisDy": 0,
+            "graphLane": 0,
+            "graphDepth": 3,
+            "afStatus": "todo"
+          },
+          {
+            "id": "xu5rzfgewh",
+            "title": "發行",
+            "ref": "T05",
+            "x": 1210,
+            "y": 50,
+            "w": 240,
+            "h": 119,
+            "ports": [],
+            "side": "top",
+            "note": "專案經理",
+            "timeType": "deadline",
+            "startDate": "2027-01-11",
+            "endDate": "2027-01-14",
+            "deadline": "2026-03-09",
+            "baseX": 1210,
+            "baseY": 50,
+            "axisX": 1330,
+            "axisY": 203,
+            "axisBaseX": 1330,
+            "axisBaseY": 203,
+            "cardDx": 0,
+            "cardDy": 0,
+            "axisDx": 0,
+            "axisDy": 0,
+            "graphLane": 0,
+            "graphDepth": 4,
+            "afStatus": "todo",
+            "afMilestone": true
+          }
+        ],
+        "edges": [
+          {
+            "id": "xgbho9l5c2",
+            "a": {
+              "node": "xrsx0kh22x"
+            },
+            "b": {
+              "node": "xs1kl03rit"
+            },
+            "timeMode": "auto",
+            "manualDays": ""
+          },
+          {
+            "id": "x233zpuoge",
+            "a": {
+              "node": "xs1kl03rit"
+            },
+            "b": {
+              "node": "xi5limkrle"
+            },
+            "timeMode": "manual",
+            "manualDays": "3"
+          },
+          {
+            "id": "x5quokgcit",
+            "a": {
+              "node": "xi5limkrle"
+            },
+            "b": {
+              "node": "x587upi1rq"
+            },
+            "timeMode": "auto",
+            "manualDays": ""
+          },
+          {
+            "id": "xqesf5njoh",
+            "a": {
+              "node": "x587upi1rq"
+            },
+            "b": {
+              "node": "xu5rzfgewh"
+            },
+            "timeMode": "auto",
+            "manualDays": ""
+          }
+        ],
+        "junctions": [],
+        "texts": [],
+        "scheduleAppearance": {
+          "theme": "blue",
+          "title": 16,
+          "body": 12,
+          "time": 12
+        },
+        "scheduleRules": {
+          "endpoint": "start",
+          "count": "difference"
+        },
+        "theme": {
+          "english": "Source Han Sans TC",
+          "chinese": "Source Han Sans TC",
+          "title": 20,
+          "subtitle": 13,
+          "label": 13,
+          "metric": 13
+        }
+      },
+      "camera": {
+        "x": -0.6111111111110503,
+        "y": 326.9222222222222,
+        "z": 0.6402777777777777
+      }
+    }
+  ],
+  "customStyles": [
+    null
+  ],
+  "archflowLocalization": {
+    "locale": "zh-Hant",
+    "bindings": {
+      "nodes": {
+        "xjrl0okx86": {
+          "field": "title",
+          "key": "tasks",
+          "index": 0
+        },
+        "x39298fmg7": {
+          "field": "title",
+          "key": "tasks",
+          "index": 1
+        },
+        "xynx4l7i8o": {
+          "field": "title",
+          "key": "tasks",
+          "index": 2
+        },
+        "xghg24h1tm": {
+          "field": "title",
+          "key": "tasks",
+          "index": 3
+        },
+        "xu6uh4zqpe": {
+          "field": "title",
+          "key": "tasks",
+          "index": 4
+        },
+        "xptfgui7cm": {
+          "field": "title",
+          "key": "tasks",
+          "index": 5
+        },
+        "x897pycfkc": {
+          "field": "title",
+          "key": "tasks",
+          "index": 6
+        },
+        "xvp05mys1k": {
+          "field": "title",
+          "key": "tasks",
+          "index": 7
+        },
+        "xvqo3o2u8u": {
+          "field": "title",
+          "key": "tasks",
+          "index": 8
+        }
+      },
+      "designs": {
+        "x9u2ht9jjj": {
+          "type": "schedule",
+          "index": 0
+        }
+      }
+    },
+    "catalog": {
+      "new": "建立新專案",
+      "lang": "介面語言",
+      "variant": "內建範本",
+      "variants": [
+        "01 / 系統平台架構",
+        "02 / 聯網感測平台"
+      ],
+      "power": [
+        "01 / 分散式電源架構",
+        "02 / 獨立電源區域"
+      ],
+      "schedule": [
+        "01 / 產品開發流程",
+        "02 / 工程變更流程"
+      ],
+      "note": "可編輯的架構參考範本。日期與電氣數值預設留白，不代表電路模擬或元件規格。",
+      "templates": "專業範本",
+      "function": [
+        "系統控制器",
+        "主機介面",
+        "資料擷取",
+        "通訊模組",
+        "系統監測",
+        "參考時脈"
+      ],
+      "function2": [
+        "閘道控制器",
+        "感測前端",
+        "訊號處理",
+        "網路介面",
+        "本機儲存",
+        "參考時脈"
+      ],
+      "powerNodes": [
+        "輸入保護",
+        "主電源轉換",
+        "運算電源區",
+        "介面電源區",
+        "類比電源區",
+        "監控模組"
+      ],
+      "powerNodes2": [
+        "輸入保護",
+        "區域電源分配",
+        "主電源區",
+        "隔離電源區",
+        "輔助電源區",
+        "電源監控"
+      ],
+      "tasks": [
+        "需求基準確認",
+        "架構審查",
+        "細部設計",
+        "整合準備",
+        "驗證審查",
+        "發行準備",
+        "文件建置",
+        "文件審查",
+        "交付準備"
+      ],
+      "tasks2": [
+        "變更受理",
+        "影響評估",
+        "實作計畫",
+        "設計更新",
+        "驗證資料",
+        "變更發行",
+        "文件更新",
+        "獨立審查",
+        "交付檢查"
+      ],
+      "fnDesc": "六個模組的平台架構，清楚區分訊號路徑、共用分支與參考時脈。",
+      "powerDesc": "六個方塊的電源區域架構，包含分配、獨立負載與監控，不預設電氣數值。",
+      "scheduleDesc": "九個任務的交付流程，包含審查節點與獨立文件分支，日期由使用者設定。",
+      "home": "讓架構更清晰，讓設計更直覺。",
+      "intro": "在同一個工作台整理功能架構、電源區域與專案時程。選擇設計類型，開始建立第一張設計。",
+      "project": "新專案",
+      "badge": "參考範本",
+      "startExamples": "使用專業範本開始"
+    }
+  },
+  "applicationVersion": "1.8-rc4",
+  "wiringMode": "direct-ports",
+  "camera": {
+    "x": -0.6111111111110503,
+    "y": 326.9222222222222,
+    "z": 0.6402777777777777
+  },
+  "cameras": {
+    "circuit": {
+      "x": -0.6111111111110503,
+      "y": 326.9222222222222,
+      "z": 0.6402777777777777
+    },
+    "current": {
+      "x": 0,
+      "y": 0,
+      "z": 1
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "tasks": [
+    {
+      "id": "xrsx0kh22x",
+      "title": "規劃",
+      "side": "top",
+      "x": 70,
+      "y": 35,
+      "w": 240,
+      "h": 134,
+      "axis": [
+        190,
+        203
+      ],
+      "time": "range",
+      "start": "2026-01-05",
+      "end": "2026-01-12",
+      "deadline": "",
+      "status": "done",
+      "milestone": false
+    },
+    {
+      "id": "xs1kl03rit",
+      "title": "設計",
+      "side": "top",
+      "x": 355,
+      "y": 35,
+      "w": 240,
+      "h": 134,
+      "axis": [
+        475,
+        203
+      ],
+      "time": "range",
+      "start": "2026-01-19",
+      "end": "2026-01-26",
+      "deadline": "",
+      "status": "doing",
+      "milestone": false
+    },
+    {
+      "id": "xi5limkrle",
+      "title": "開發",
+      "side": "top",
+      "x": 640,
+      "y": 35,
+      "w": 240,
+      "h": 134,
+      "axis": [
+        760,
+        203
+      ],
+      "time": "range",
+      "start": "2026-02-02",
+      "end": "2026-02-09",
+      "deadline": "",
+      "status": "todo",
+      "milestone": false
+    },
+    {
+      "id": "x587upi1rq",
+      "title": "測試",
+      "side": "top",
+      "x": 925,
+      "y": 35,
+      "w": 240,
+      "h": 134,
+      "axis": [
+        1045,
+        203
+      ],
+      "time": "range",
+      "start": "2026-02-16",
+      "end": "2026-02-23",
+      "deadline": "",
+      "status": "todo",
+      "milestone": false
+    },
+    {
+      "id": "xu5rzfgewh",
+      "title": "發行",
+      "side": "top",
+      "x": 1210,
+      "y": 50,
+      "w": 240,
+      "h": 119,
+      "axis": [
+        1330,
+        203
+      ],
+      "time": "deadline",
+      "start": "2027-01-11",
+      "end": "2027-01-14",
+      "deadline": "2026-03-09",
+      "status": "todo",
+      "milestone": true
+    }
+  ],
+  "links": [
+    {
+      "id": "xgbho9l5c2",
+      "from": "xrsx0kh22x",
+      "to": "xs1kl03rit",
+      "mode": "auto",
+      "label": "14 天"
+    },
+    {
+      "id": "x233zpuoge",
+      "from": "xs1kl03rit",
+      "to": "xi5limkrle",
+      "mode": "manual",
+      "label": "3 天"
+    },
+    {
+      "id": "x5quokgcit",
+      "from": "xi5limkrle",
+      "to": "x587upi1rq",
+      "mode": "auto",
+      "label": "14 天"
+    },
+    {
+      "id": "xqesf5njoh",
+      "from": "x587upi1rq",
+      "to": "xu5rzfgewh",
+      "mode": "auto",
+      "label": "21 天"
+    }
+  ]
+}

@@ -1,0 +1,604 @@
+{
+  "width": 1440,
+  "height": 262,
+  "elements": [
+    {
+      "depth": 0,
+      "tag": "svg",
+      "width": "1440",
+      "height": "262",
+      "viewBox": "40 5 1440 262"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "40",
+      "y": "5",
+      "width": "1440",
+      "height": "262",
+      "fill": "#fff"
+    },
+    {
+      "depth": 1,
+      "tag": "g"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M190,203 H475",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M458,199 L465,203 L458,207",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "288.5",
+      "y": "189",
+      "rx": "7",
+      "width": "88",
+      "height": "28",
+      "fill": "#f8fafc",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "14 天",
+      "x": "332.5",
+      "y": "207",
+      "fill": "#172b46",
+      "font-size": "12",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M475,203 H760",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M743,199 L750,203 L743,207",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "573.5",
+      "y": "189",
+      "rx": "7",
+      "width": "88",
+      "height": "28",
+      "fill": "#f8fafc",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "3 天",
+      "x": "617.5",
+      "y": "207",
+      "fill": "#172b46",
+      "font-size": "12",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M760,203 H1045",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1028,199 L1035,203 L1028,207",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "858.5",
+      "y": "189",
+      "rx": "7",
+      "width": "88",
+      "height": "28",
+      "fill": "#f8fafc",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "14 天",
+      "x": "902.5",
+      "y": "207",
+      "fill": "#172b46",
+      "font-size": "12",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1045,203 H1330",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1313,199 L1320,203 L1313,207",
+      "fill": "none",
+      "stroke": "#52677e",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "g"
+    },
+    {
+      "depth": 3,
+      "tag": "rect",
+      "x": "1143.5",
+      "y": "189",
+      "rx": "7",
+      "width": "88",
+      "height": "28",
+      "fill": "#f8fafc",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 3,
+      "tag": "text",
+      "text": "21 天",
+      "x": "1187.5",
+      "y": "207",
+      "fill": "#172b46",
+      "font-size": "12",
+      "text-anchor": "middle"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M190,203 V186 H190 V169",
+      "fill": "none",
+      "stroke": "#245b88",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "line",
+      "x1": "130",
+      "y1": "203",
+      "x2": "180",
+      "y2": "203",
+      "stroke": "#64748b",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 2,
+      "tag": "circle",
+      "cx": "190",
+      "cy": "203",
+      "r": "7",
+      "fill": "#245b88",
+      "stroke": "#fff",
+      "stroke-width": "3"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M475,203 V186 H475 V169",
+      "fill": "none",
+      "stroke": "#245b88",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "circle",
+      "cx": "475",
+      "cy": "203",
+      "r": "7",
+      "fill": "#245b88",
+      "stroke": "#fff",
+      "stroke-width": "3"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M760,203 V186 H760 V169",
+      "fill": "none",
+      "stroke": "#245b88",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "circle",
+      "cx": "760",
+      "cy": "203",
+      "r": "7",
+      "fill": "#245b88",
+      "stroke": "#fff",
+      "stroke-width": "3"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1045,203 V186 H1045 V169",
+      "fill": "none",
+      "stroke": "#245b88",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "circle",
+      "cx": "1045",
+      "cy": "203",
+      "r": "7",
+      "fill": "#245b88",
+      "stroke": "#fff",
+      "stroke-width": "3"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1330,203 V186 H1330 V169",
+      "fill": "none",
+      "stroke": "#245b88",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 2,
+      "tag": "line",
+      "x1": "1340",
+      "y1": "203",
+      "x2": "1385",
+      "y2": "203",
+      "stroke": "#64748b",
+      "stroke-width": "2",
+      "stroke-dasharray": "4 4"
+    },
+    {
+      "depth": 2,
+      "tag": "circle",
+      "cx": "1330",
+      "cy": "203",
+      "r": "7",
+      "fill": "#245b88",
+      "stroke": "#fff",
+      "stroke-width": "3"
+    },
+    {
+      "depth": 2,
+      "tag": "path",
+      "d": "M1330 194L1339 203L1330 212L1321 203Z",
+      "fill": "#9A6A26",
+      "stroke": "#ffffff",
+      "stroke-width": "2"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "70",
+      "y": "35",
+      "rx": "4",
+      "width": "240",
+      "height": "134",
+      "fill": "#f8fafc",
+      "stroke": "#64748b",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "規劃",
+      "x": "83",
+      "y": "66.5",
+      "fill": "#172b46",
+      "font-size": "16",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "專案經理",
+      "x": "83",
+      "y": "101",
+      "fill": "#64748b",
+      "font-size": "12",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "line",
+      "x1": "82",
+      "y1": "113",
+      "x2": "298",
+      "y2": "113",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開始  2026/01/05",
+      "x": "83",
+      "y": "133",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "結束  2026/01/12",
+      "x": "83",
+      "y": "152",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "355",
+      "y": "35",
+      "rx": "4",
+      "width": "240",
+      "height": "134",
+      "fill": "#f8fafc",
+      "stroke": "#64748b",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "設計",
+      "x": "368",
+      "y": "66.5",
+      "fill": "#172b46",
+      "font-size": "16",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "設計組",
+      "x": "368",
+      "y": "101",
+      "fill": "#64748b",
+      "font-size": "12",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "line",
+      "x1": "367",
+      "y1": "113",
+      "x2": "583",
+      "y2": "113",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開始  2026/01/19",
+      "x": "368",
+      "y": "133",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "結束  2026/01/26",
+      "x": "368",
+      "y": "152",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "640",
+      "y": "35",
+      "rx": "4",
+      "width": "240",
+      "height": "134",
+      "fill": "#f8fafc",
+      "stroke": "#64748b",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開發",
+      "x": "653",
+      "y": "66.5",
+      "fill": "#172b46",
+      "font-size": "16",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開發組",
+      "x": "653",
+      "y": "101",
+      "fill": "#64748b",
+      "font-size": "12",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "line",
+      "x1": "652",
+      "y1": "113",
+      "x2": "868",
+      "y2": "113",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開始  2026/02/02",
+      "x": "653",
+      "y": "133",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "結束  2026/02/09",
+      "x": "653",
+      "y": "152",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "925",
+      "y": "35",
+      "rx": "4",
+      "width": "240",
+      "height": "134",
+      "fill": "#f8fafc",
+      "stroke": "#64748b",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "測試",
+      "x": "938",
+      "y": "66.5",
+      "fill": "#172b46",
+      "font-size": "16",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "測試組",
+      "x": "938",
+      "y": "101",
+      "fill": "#64748b",
+      "font-size": "12",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "line",
+      "x1": "937",
+      "y1": "113",
+      "x2": "1153",
+      "y2": "113",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "開始  2026/02/16",
+      "x": "938",
+      "y": "133",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "結束  2026/02/23",
+      "x": "938",
+      "y": "152",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    },
+    {
+      "depth": 1,
+      "tag": "rect",
+      "x": "1210",
+      "y": "50",
+      "rx": "4",
+      "width": "240",
+      "height": "119",
+      "fill": "#f8fafc",
+      "stroke": "#64748b",
+      "stroke-width": "1.5"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "發行",
+      "x": "1223",
+      "y": "81.5",
+      "fill": "#172b46",
+      "font-size": "16",
+      "font-weight": "700"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "專案經理",
+      "x": "1223",
+      "y": "116",
+      "fill": "#64748b",
+      "font-size": "12",
+      "font-weight": "400"
+    },
+    {
+      "depth": 1,
+      "tag": "line",
+      "x1": "1222",
+      "y1": "128",
+      "x2": "1438",
+      "y2": "128",
+      "stroke": "#64748b"
+    },
+    {
+      "depth": 1,
+      "tag": "text",
+      "text": "截止  2026/03/09",
+      "x": "1223",
+      "y": "150",
+      "fill": "#172b46",
+      "font-size": "12",
+      "font-weight": "500"
+    }
+  ]
+}

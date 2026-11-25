@@ -29,7 +29,7 @@
 - [x] 2.7 Unit：自動排列 `autoArrange`——決定性、無重疊（標註 core）
 - [x] 2.8 Golden：`tests/golden/function` 代表性專案 + SVG 匯出快照
 - [x] 2.9 Golden：`tests/golden/power`
-- [ ] 2.10 Golden：`tests/golden/schedule`
+- [x] 2.10 Golden：`tests/golden/schedule`
 - [ ] 2.11 Golden：`tests/golden/sequence`（電源時序）
 - [ ] 2.12 Golden：`tests/golden/flowchart`
 - [ ] 2.13 E2E（Playwright, chromium, `--trace off`）：建立專案、新增方塊與連線
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.10 Golden：`tests/golden/schedule`（時程範例；summary 要含任務日期、間隔標籤 `intervalState`、軸點位置；注意時程重新載入會遺失文字框與 theme，見 2.5 的 KNOWN_LOSS，所以 bootstrap 不要依賴文字框）
+- **下一步**：2.11 Golden：`tests/golden/sequence`（電源時序，vendor React 編輯器在 iframe 內；資料在 `model.sequence`，經 `afSeqHost` / `afSeqApi` 交換，見 audit §5.2。SVG 匯出走編輯器自己的匯出，不是 `exportSvgDocument`，需要先找出取得 SVG 的方式）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -125,4 +125,4 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2（2.9：`npm test` 9 檔 53 項通過；golden power 連跑 3 次一致，含下游需求 vs 額定讀數（其中一個轉換器 140% 超載））
+- **最後通過的驗證層級**：L2（2.10：`npm test` 10 檔 57 項通過；golden schedule 連跑 3 次一致）
