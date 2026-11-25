@@ -34,7 +34,7 @@
 - [x] 2.12 Golden：`tests/golden/flowchart`
 - [x] 2.13 E2E（Playwright, chromium, `--trace off`）：建立專案、新增方塊與連線
 - [x] 2.14 E2E：切換設計、存檔後重開
-- [ ] 2.15 E2E：匯出 PNG / SVG、切換語系
+- [x] 2.15 E2E：匯出 PNG / SVG、切換語系
 - [ ] 2.16 E2E：開啟每個內建工具（BOM / EDID / Hex / Pattern）
 - [ ] 2.17 確認每個測試都有模組標註；整套在 V2.10.1 全部通過；寫 `tests/README.md`
 
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 2（測試安全網）——階段 1 已全部完成
-- **下一步**：2.15 E2E：匯出 PNG / SVG（殼層「匯出」按鈕 → 下載，檢查檔名、格式與尺寸）、切換語系（app bar 的「中 / EN」radio；切換後未存檔的專案要保留，介面文字改為英文）
+- **下一步**：2.16 E2E：開啟每個內建工具（啟動畫面的 RSI BOM Converter / EDID Generator / Hex/Bin Editor & Compare / Pattern Generator 按鈕；確認工具 iframe 出現、內容可用、可關閉回到主頁、無頁面錯誤）
 - **已知問題**：
   - 程式碼目前為 V2.10.1，`index.html` 以 base64 內嵌 `src/app.zh-Hant.html` 與 `src/app.en.html`；改 `src/` 後需執行 `node tools/pack.mjs`。階段 3 開始後 `src/` 會改放 V3 原始碼，屆時 V2 原始碼需先移到 `legacy/`（3.1 處理）。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -117,6 +117,7 @@
   - 2.4 鎖定的現行怪異行為（測試名稱以 `QUIRK:` 開頭）：方塊標題長度無上限；超過 8 MB 的檔案只顯示通用訊息「載入失敗，原專案已保留。」（L563 的 8 MB 專屬訊息被外層 loader 蓋掉）。V3 修正時要更新這些測試並寫入 CHANGELOG。
   - **2.5 發現的資料遺失 bug**（`tests/unit/io.roundtrip.test.js` 的 `KNOWN_LOSS`）：存檔後重新載入，功能 / 電源設計的文字框遺失 `align`、`background`；**時程設計的文字框全部消失、`theme` 被清除**。V3 必須修正。
   - 2.6 發現：L624 把 `scheduleLabel` 直接換成 `intervalState(e).label`，時程規則的 `count: 'inclusive'`（含頭尾）完全無作用（測試 `QUIRK: scheduleLabel ignores the inclusive counting rule`）。
+  - **2.15 待人工確認的疑似 bug**：匯出 PNG / SVG（以及其他經 blob 下載的檔案）時，程式以 `<a download="入門方塊圖.svg">` 指定檔名，但 Chromium 回報的檔名是 `download`（沒有副檔名），因為 iframe 的 blob 網址來源是 `blob:null/…`（從 `file://` 開啟、srcdoc iframe）。需要在使用者實際的 Chrome / Edge 從本機開啟 `index.html` 匯出一次確認；若屬實，V3 要改為從頂層文件建立 blob 下載。E2E 目前檢查「程式要求的檔名」。
   - V2 golden 專案是 V2 格式，V3 需測試專用轉換器（plan R1、步驟 3.6）；SVG 快照要用結構化比對（R2）。
   - 階段 2 的 Playwright 一律 `--trace off`，用預裝 chromium，不要執行 `playwright install`。
 - 覆寫掃描已修正（2.6 後）：現為 96 個目標 / 327 層，`*` 整個取代 43 層、`↶` 回退 3 層（audit §1.2、§1.5 已更新）。
@@ -128,4 +129,4 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（2.14：`npm run test:e2e` 3 項通過；新增 `tests/e2e/designs-save-reopen.spec.js`）
+- **最後通過的驗證層級**：L3（2.15：`npm run test:e2e` 5 項通過（連跑 2 次）；新增 `tests/e2e/export-and-language.spec.js`：SVG 內容含方塊標題、PNG 2560×1440、切換 EN 再切回保留未存檔專案）
