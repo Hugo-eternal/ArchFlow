@@ -5,7 +5,7 @@
 // V2 sources (legacy/app.zh-Hant.html): base inspector L314 (ref, part number, title, wire name
 // / kind / arrow / arrow size 4–24), appearance fields L519 / L3125, port table L3047, line
 // format panel L1463, text controls L2219–L2303.
-import type { Block, BlockDiagram, BlockStyle, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
+import type { Block, BlockDiagram, BlockStyle, BlockView, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
 import { LIMITS, type ItemRef } from '../model/types';
 import { blockOf, fitFrame, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
 import { FILE_LIMITS } from '../io/schema';
@@ -188,6 +188,18 @@ export function frameFields(): BlockField[] {
       },
     },
   ];
+}
+
+/**
+ * Fields that belong to one view of a block diagram (3.27a): listed only while the diagram is
+ * shown in that view. The data stays in both views; the panel rebuilds when the view changes
+ * (InspectorPanel.sync compares the visible field set).
+ */
+export function inView(view: BlockView, fields: readonly BlockField[]): BlockField[] {
+  return fields.map(f => {
+    const own = f.visible;
+    return { ...f, visible: (d: BlockDiagram, s: ItemRef) => d.view === view && (!own || own(d, s)) } as BlockField;
+  });
 }
 
 /** The shared fields for a selection, or null when the item has no shared fields. */

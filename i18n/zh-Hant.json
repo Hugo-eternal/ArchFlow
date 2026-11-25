@@ -111,7 +111,7 @@
   "design.list": "設計清單",
   "design.name": "設計名稱",
   "design.deleteConfirm": "確定要刪除「{name}」嗎？可在存檔前重新開啟原專案檔還原。",
-  "design.type.function": "功能方塊圖",
+  "design.type.function": "方塊圖",
   "design.type.power": "電源架構",
   "design.type.schedule": "專案時程",
   "design.type.sequence": "電源時序",
@@ -238,5 +238,12 @@
   "lcd.gate": "Gate IC ×2",
   "lcd.backlight": "背光驅動",
   "lcd.frame": "LCD 面板",
-  "lcd.added": "已加入 LCD 模組範本：區域框、FPC、TCON、驅動 IC 與背光，全部可再編輯。"
+  "lcd.added": "已加入 LCD 模組範本：區域框、FPC、TCON、驅動 IC 與背光，全部可再編輯。",
+  "view.mode.label": "檢視",
+  "view.mode.function": "功能檢視",
+  "view.mode.power": "電源檢視",
+  "view.mode.functionOn": "已切換為功能檢視",
+  "view.mode.powerOn": "已切換為電源檢視",
+  "cmd.viewModeToggle": "切換功能 / 電源檢視",
+  "export.view": "檢視"
 }

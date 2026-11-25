@@ -146,6 +146,14 @@ export class Store {
   /** Several updates as one undo step; rolled back if fn throws. */
   batch<R>(fn: () => R): R { return this.requireActive().history.batch(fn); }
 
+  /**
+   * Change a presentation setting of the active design (the block-diagram view, 3.27a): not an
+   * undo step and kept through undo / redo, but the project becomes unsaved.
+   */
+  setPresentation(fn: (draft: Design['data']) => void): boolean {
+    return this.requireActive().history.patchAll(fn);
+  }
+
   undo(): boolean { return this.activeDesign?.history.undo() ?? false; }
   redo(): boolean { return this.activeDesign?.history.redo() ?? false; }
 

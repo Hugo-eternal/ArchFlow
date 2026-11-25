@@ -112,6 +112,19 @@
   background-position: var(--grid-x) var(--grid-y);
 }
 .af-canvas:focus-visible { outline-offset: -3px; }
+/* function / power view switch, floating over the top of the canvas (3.27a) */
+.af-view-switch {
+  position: absolute; top: var(--space-2); left: 50%; transform: translateX(-50%); z-index: 1;
+  display: inline-flex; padding: 2px; gap: 2px;
+  background: var(--color-surface); border: var(--border-width) solid var(--color-rule); border-radius: var(--radius-md);
+}
+.af-view-option {
+  min-height: 28px; padding: 0 var(--space-3); border: 0; border-radius: var(--radius-sm);
+  background: transparent; color: var(--color-ink); font: inherit; font-size: var(--text-sm); cursor: pointer;
+}
+.af-view-option:hover:not(:disabled) { background: var(--color-hover); }
+.af-view-option.is-active { background: var(--color-accent); color: var(--color-on-accent); }
+.af-view-option:disabled { cursor: default; }
 .af-canvas-empty { display: grid; place-items: center; color: var(--color-muted); }
 .af-box-select { fill: var(--color-accent-tint); stroke: var(--color-accent); stroke-width: 1px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
 .af-wire-preview path { fill: none; stroke: var(--color-accent); stroke-width: 2px; stroke-dasharray: 6 4; }

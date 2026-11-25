@@ -7,7 +7,7 @@ import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
 import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, gridSize } from '../core/grid';
-import type { BlockDiagram, Camera, DesignType } from '../io/schema-types';
+import type { BlockDiagram, BlockView, Camera, DesignType } from '../io/schema-types';
 import type { DesignModule, DesignRegistry } from '../designs/module';
 import { ModelError } from '../model/types';
 import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
@@ -148,6 +148,19 @@ export class Shell {
     if (c) this.store.setCamera(c);
   }
 
+  /** The view of the active block diagram (function / power, 3.27a). */
+  get view(): BlockView { return this.isBlockDiagram ? this.data().view : 'function'; }
+
+  /**
+   * Show the active block diagram in another view: presentation only — no undo step, kept
+   * through undo / redo, saved with the file, marks the project unsaved (3.26c decisions).
+   */
+  setView(view: BlockView): void {
+    if (!this.isBlockDiagram || this.view === view) return;
+    this.store.setPresentation(d => { (d as BlockDiagram).view = view; });
+    this.notify(view === 'power' ? 'view.mode.powerOn' : 'view.mode.functionOn');
+  }
+
   edit(fn: (d: BlockDiagram) => BlockDiagram): CommitResult {
     const r = commitEdit(this.store, fn);
     if (!r.ok) this.refused(r);
@@ -157,6 +170,7 @@ export class Shell {
 
 const hasProject = (s: Shell) => s.screen === 'workspace' && !!s.store.activeDesign;
 const canEdit = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
+const canSwitchView = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
 
 function confirmDiscard(s: Shell, then: () => void): void {
   if (!s.store.dirty) { then(); return; }
@@ -248,6 +262,12 @@ export function shellCommands(): Command<Shell>[] {
     { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },
     { id: 'view.zoomIn', label: 'cmd.zoomIn', group: 'view', shortcut: 'Mod+=', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1.2, s.viewport)) },
     { id: 'view.zoomOut', label: 'cmd.zoomOut', group: 'view', shortcut: 'Mod+-', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1 / 1.2, s.viewport)) },
+    { id: 'view.mode.function', label: 'view.mode.function', group: 'view-mode', enabled: canSwitchView, run: s => s.setView('function') },
+    { id: 'view.mode.power', label: 'view.mode.power', group: 'view-mode', enabled: canSwitchView, run: s => s.setView('power') },
+    {
+      id: 'view.mode.toggle', label: 'cmd.viewModeToggle', group: 'view', shortcut: 'Shift+V', enabled: canSwitchView,
+      run: s => s.setView(s.view === 'power' ? 'function' : 'power'),
+    },
     { id: 'view.toggleInspector', label: 'cmd.toggleInspector', group: 'view', enabled: hasProject, run: s => { s.inspectorOpen = !s.inspectorOpen; s.ui.emit(); } },
     { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'export' }) },
   ];

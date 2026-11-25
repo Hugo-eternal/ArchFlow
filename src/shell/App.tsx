@@ -114,6 +114,23 @@ const PART_GROUPS: { id: string; label: MessageKey }[] = [
   { id: 'parts', label: 'part.group.parts' }, { id: 'connectors', label: 'part.group.connectors' }, { id: 'templates', label: 'part.group.templates' },
 ];
 
+/** Two-segment switch above the canvas: function view / power view (Shift+V toggles, 3.27a). */
+function ViewSwitch({ shell }: { shell: Shell }) {
+  if (!shell.isBlockDiagram) return null;
+  const view = shell.view;
+  const sc = formatShortcut('Shift+V', isMac());
+  return (
+    <div className="af-view-switch" role="group" aria-label={t('view.mode.label')} title={`${t('cmd.viewModeToggle')} (${sc})`}>
+      {(['function', 'power'] as const).map(v => (
+        <button key={v} type="button" className={`af-view-option${view === v ? ' is-active' : ''}`} aria-pressed={view === v}
+          disabled={!shell.enabled(`view.mode.${v}`)} onClick={() => void shell.run(`view.mode.${v}`)}>
+          {t(`view.mode.${v}`)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function DesignList({ shell }: { shell: Shell }) {
   const s = shell.store;
   return (
@@ -174,6 +191,7 @@ function Workspace({ shell }: { shell: Shell }) {
       <div className="af-body">
         <DesignList shell={shell} />
         <section className="af-stage" aria-label={d?.name}>
+          <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />
         </section>
         <InspectorPane shell={shell} />

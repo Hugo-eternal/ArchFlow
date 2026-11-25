@@ -111,7 +111,7 @@
   "design.list": "Designs",
   "design.name": "Design name",
   "design.deleteConfirm": "Delete “{name}”? You can get it back by reopening the saved project file.",
-  "design.type.function": "Function block diagram",
+  "design.type.function": "Block diagram",
   "design.type.power": "Power architecture",
   "design.type.schedule": "Project schedule",
   "design.type.sequence": "Power sequence",
@@ -238,5 +238,12 @@
   "lcd.gate": "Gate IC ×2",
   "lcd.backlight": "Backlight driver",
   "lcd.frame": "LCD panel",
-  "lcd.added": "Added the LCD module template: frame, FPC, TCON, drivers and backlight, all editable."
+  "lcd.added": "Added the LCD module template: frame, FPC, TCON, drivers and backlight, all editable.",
+  "view.mode.label": "View",
+  "view.mode.function": "Function view",
+  "view.mode.power": "Power view",
+  "view.mode.functionOn": "Switched to the function view",
+  "view.mode.powerOn": "Switched to the power view",
+  "cmd.viewModeToggle": "Switch function / power view",
+  "export.view": "View"
 }

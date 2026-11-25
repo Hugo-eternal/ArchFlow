@@ -56,6 +56,8 @@
 .af-arrow.af-wire-bus { fill: var(--wire-bus); }
 .af-arrow { stroke: none; }
 .af-wire-group.is-invalid .af-wire { stroke: var(--color-danger); stroke-dasharray: 6 4; }
+/* power view: wires that are not power wires step back (3.27a) */
+.af-wire-muted { opacity: 0.35; }
 .af-wire-selected { fill: none; stroke: var(--color-selection); stroke-width: 9px; stroke-linejoin: round; }
 .af-wire-label {
   fill: var(--wire-label);

@@ -8,6 +8,7 @@ import { svgToPng, PNG_SCALES } from '../export/png';
 import { readability } from '../export/readability';
 import { ExportError } from '../export/errors';
 import { downloadBlob } from '../io/project-file';
+import type { BlockView } from '../io/schema-types';
 import type { Shell, DesignChoice } from './controller';
 
 function Modal({ title, onClose, children, wide }: { title: MessageKey; onClose: () => void; children: ReactNode; wide?: boolean }) {
@@ -77,7 +78,10 @@ export function ExportDialog({ shell }: { shell: Shell }) {
   const [transparent, setTransparent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<MessageKey | null>(null);
-  const data = shell.data();
+  // the export shows the current view unless another one is picked here (3.27a)
+  const [view, setView] = useState<BlockView>(() => shell.view);
+  const current = shell.data();
+  const data = useMemo(() => ({ ...current, view }), [JSON.stringify(current), view]); // eslint-disable-line react-hooks/exhaustive-deps
   const exp = useMemo<SvgExport | ExportError>(() => {
     const m = shell.module;
     try { return exportSvg(data, { transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
@@ -107,6 +111,12 @@ export function ExportDialog({ shell }: { shell: Shell }) {
             <legend>{t('export.format')}</legend>
             {(['svg', 'png'] as const).map(f => (
               <label key={f}><input type="radio" name="af-export-format" value={f} checked={format === f} onChange={() => setFormat(f)} /><span>{f.toUpperCase()}</span></label>
+            ))}
+          </fieldset>
+          <fieldset className="af-form-field af-choice">
+            <legend>{t('export.view')}</legend>
+            {(['function', 'power'] as const).map(v => (
+              <label key={v}><input type="radio" name="af-export-view" value={v} checked={view === v} onChange={() => setView(v)} /><span>{t(`view.mode.${v}`)}</span></label>
             ))}
           </fieldset>
           <label className="af-form-field">

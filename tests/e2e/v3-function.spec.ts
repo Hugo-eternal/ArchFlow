@@ -17,7 +17,7 @@ test('function: starter template, then a blank design, then save', async ({ page
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
 
-  await expect(page.getByRole('radio', { name: '功能方塊圖' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: '方塊圖', exact: true })).toBeChecked();
   await expect(page.getByRole('radio', { name: '範本：入門方塊圖' })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.getByRole('button', { name: /入門方塊圖/ })).toHaveAttribute('aria-current', 'page');
@@ -141,5 +141,53 @@ test('function: LCD module template and connector settings', async ({ page }) =>
   await expect(page.locator('svg.af-canvas .af-conn-num')).toHaveCount(8);
   d = await data(page);
   expect(d.wires.length).toBeLessThan(9);       // wires on the removed left side are gone
+  expect(errors).toEqual([]);
+});
+
+test('function: switch between the function and power views (Shift+V), export in a view', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const sw = page.getByRole('group', { name: '檢視' });
+  await expect(sw.getByRole('button', { name: '功能檢視' })).toHaveAttribute('aria-pressed', 'true');
+  const view = () => page.evaluate(() => (window as unknown as { archflow: { view: string } }).archflow.view);
+  const unsaved = page.locator('.af-project-name');
+  await expect(unsaved).not.toContainText('•');
+
+  // the button, then Shift+V on the canvas
+  await sw.getByRole('button', { name: '電源檢視' }).click();
+  expect(await view()).toBe('power');
+  await expect(sw.getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(unsaved).toContainText('•');
+  // the starter's wires that are not power wires step back in the power view
+  const notPower = await page.evaluate(() => (window as unknown as { archflow: { data(): { wires: { kind: string }[] } } }).archflow.data().wires.filter(w => w.kind !== 'power').length);
+  expect(notPower).toBeGreaterThan(0);
+  await expect(page.locator('svg.af-canvas .af-wire-muted')).toHaveCount(notPower);
+  await page.locator('svg.af-canvas').focus();
+  await page.keyboard.press('Shift+V');
+  expect(await view()).toBe('function');
+  await expect(page.locator('svg.af-canvas .af-wire-muted')).toHaveCount(0);
+  // not an undo step: undo is still unavailable after switching back and forth
+  await expect(page.getByRole('button', { name: '復原' })).toBeDisabled();
+
+  // export in the other view
+  await page.getByRole('button', { name: '匯出' }).click();
+  const dlg = page.getByRole('dialog');
+  await expect(dlg.getByRole('radio', { name: '功能檢視' })).toBeChecked();
+  await dlg.getByRole('radio', { name: '電源檢視' }).check();
+  const source = await page.evaluate(async () => {
+    const proto = HTMLAnchorElement.prototype, click = proto.click, make = URL.createObjectURL;
+    let blob: Blob | null = null;
+    URL.createObjectURL = (b: Blob | MediaSource) => { blob = b as Blob; return make.call(URL, b); };
+    proto.click = function () { /* no real download */ };
+    try {
+      (document.querySelector('.af-modal-actions .is-primary') as HTMLButtonElement).click();
+      for (let i = 0; i < 50 && !blob; i++) await new Promise(r => setTimeout(r, 20));
+      return blob ? await (blob as Blob).text() : '';
+    } finally { proto.click = click; URL.createObjectURL = make; }
+  });
+  expect(source).toContain('opacity="0.35"');
+  expect(await view()).toBe('function');
   expect(errors).toEqual([]);
 });

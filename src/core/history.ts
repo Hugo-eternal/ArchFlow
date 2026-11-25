@@ -96,6 +96,24 @@ export class History<T> {
     return true;
   }
 
+  /**
+   * Change a presentation setting (e.g. a block diagram's view) in the present state and in
+   * every undo / redo snapshot, without an undo step: undo / redo then never switch it back.
+   * Marks the history dirty when anything changed. Not allowed inside a batch.
+   */
+  patchAll(fn: (state: T) => void): boolean {
+    if (this.batching) throw new Error('patchAll inside a batch');
+    const patch = (s: string) => { const v = JSON.parse(s) as T; fn(v); return JSON.stringify(v); };
+    const next = patch(this.current);
+    if (next === this.current) return false;
+    this.current = next;
+    this.past = this.past.map(patch);
+    this.future = this.future.map(patch);
+    this.dirty = true;
+    this.emit();
+    return true;
+  }
+
   /** Replace the state without an undo step (loading a file); clears history. */
   reset(state: T): void {
     this.current = JSON.stringify(state);

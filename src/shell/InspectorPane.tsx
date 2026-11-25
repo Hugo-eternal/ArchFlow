@@ -21,6 +21,7 @@ export function InspectorPane({ shell }: { shell: Shell }) {
   const ref = useRef<HTMLDivElement>(null);
   const insp = useRef<BlockInspector | null>(null);
   useVersion(shell.ui);
+  useVersion(shell.store);
   const designId = shell.store.activeDesignId;
 
   useEffect(() => {
@@ -32,10 +33,12 @@ export function InspectorPane({ shell }: { shell: Shell }) {
 
   const sel = shell.gestures.selection;
   const key = sel.length === 1 ? JSON.stringify(sel[0]) : `n${sel.length}`;
+  // the fields depend on the view (3.27a): rebuild when it changes
+  const view = shell.isBlockDiagram ? shell.view : '';
   useEffect(() => {
     const one = sel.length === 1 ? sel[0] : null;
     insp.current?.show(one, one && shell.module?.inspectorFields ? shell.module.inspectorFields(one, shell.data()) : []);
-  }, [key, designId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [key, designId, view]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <aside className="af-inspector-pane" aria-label={t('inspector.title')} hidden={!shell.inspectorOpen}>

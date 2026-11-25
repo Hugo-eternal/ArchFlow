@@ -84,7 +84,8 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
   const lines = blockLines(b), lay = titleLayout(b);
   const titleSize = b.style.titleSize ?? opts.theme?.title;
   const subSize = b.font?.subtitle ?? opts.theme?.subtitle;
-  const metrics = METRIC_ORDER.map(k => (b.metrics[k]?.show ? metricText(k, b.metrics[k]!) : '')).filter(Boolean);
+  // measurements belong to the power view; the function view keeps the data but hides it (3.27a)
+  const metrics = d.view === 'power' ? METRIC_ORDER.map(k => (b.metrics[k]?.show ? metricText(k, b.metrics[k]!) : '')).filter(Boolean) : [];
   const rows: { text: string; cls: string; size: number | undefined; height: number }[] = [];
   const sub = subSize ?? 13;
   if (lines.title) rows.push({ text: lines.title, cls: 'af-block-title', size: titleSize, height: (titleSize ?? 20) * 1.25 });
