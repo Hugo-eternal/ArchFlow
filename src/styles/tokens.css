@@ -1,0 +1,170 @@
+/* ArchFlow V3 design tokens — the only place raw values are allowed (scripts/check-tokens.mjs).
+   Sources: V2 af15-theme ("drafting ink + copper trace", legacy L2361), af20-shell-css (L4654)
+   and the editors' palette (L5328). Duplicates across those layers are merged here. */
+:root {
+  color-scheme: light;
+
+  /* surfaces */
+  --color-board: #ECEFED;        /* canvas background */
+  --color-surface: #FFFFFF;      /* panels, blocks */
+  --color-surface-2: #F6F7F9;    /* subtle panel fill */
+  --color-hover: #EEF2F1;
+  --color-rule: #D2D9D5;         /* borders */
+  --color-rule-2: #E4E9E6;       /* hairlines */
+
+  /* text (contrast on --color-surface: text 15.2:1, muted 5.4:1, faint 5.7:1 — npm run check:tokens) */
+  --color-text: #1B2733;
+  --color-muted: #5F6C77;
+  --color-faint: #5C6872;
+  --color-on-accent: #FFFFFF;
+
+  /* chrome (app bar) */
+  --color-ink: #14202C;
+  --color-ink-2: #1F2E3D;
+  --color-on-ink: #E9EEF2;
+  --color-on-ink-2: #9FB0BF;
+
+  /* accents */
+  --color-accent: #1D5C99;       /* "trace" blue: primary actions, focus, selection */
+  --color-accent-hover: #174C80;
+  --color-accent-tint: #E6EEF7;
+  --color-copper: #C7832F;       /* brand highlight */
+  --color-copper-tint: #F3E3CF;
+  --color-success: #2F7D5B;
+  --color-success-tint: #E3F1EA;
+  --color-danger: #B4362B;
+  --color-selection: #CFE0F1;
+
+  /* wire kinds (V2 L285 styles) */
+  --wire-signal: #334E70;
+  --wire-power: #A14D0A;
+  --wire-clock: #6D28D9;
+  --wire-bus: #0F766E;
+  --wire-width-signal: 2.2px;
+  --wire-width-power: 2.6px;
+  --wire-width-clock: 2.2px;
+  --wire-width-bus: 3.6px;
+
+  /* schedule task status (V2 L3378) */
+  --status-todo: #5F6C77;
+  --status-doing: #2B5C8A;
+  --status-done: #2E6E62;
+
+  /* typography */
+  --font-ui: "Source Han Sans TC", "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;   /* default UI text (V2 body) */
+  --text-lg: 15px;
+  --text-xl: 18px;
+  --text-2xl: 26px;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+
+  /* spacing (4 px scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* shape */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --border-width: 1px;
+  --focus-ring: 2px solid var(--color-accent);
+  --focus-offset: 2px;
+
+  /* elevation */
+  --shadow-1: 0 1px 2px rgba(20, 32, 44, .08);
+  --shadow-pop: 0 1px 2px rgba(20, 32, 44, .08), 0 14px 36px -10px rgba(20, 32, 44, .30);
+
+  /* motion */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+
+  /* layout */
+  --appbar-height: 50px;
+  --toolbar-height: 44px;
+  --statusbar-height: 28px;
+  --touch-target: 44px;
+  --z-panel: 10;
+  --z-menu: 100;
+  --z-dialog: 1000;
+  --z-toast: 1100;
+}
+
+/* dark mode: follows the system unless the page forces light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-board: #10171E;
+    --color-surface: #18222C;
+    --color-surface-2: #1E2933;
+    --color-hover: #233040;
+    --color-rule: #34424F;
+    --color-rule-2: #2A3743;
+    --color-text: #E6ECF1;
+    --color-muted: #A7B4BF;
+    --color-faint: #9AA8B4;
+    --color-ink: #0B1117;
+    --color-ink-2: #131C25;
+    --color-accent: #6FA8E0;
+    --color-accent-hover: #8DBBE8;
+    --color-accent-tint: #1C3247;
+    --color-on-accent: #0B1117;
+    --color-copper-tint: #3A2A16;
+    --color-danger: #F08A7E;
+    --color-success: #5CC495;
+    --color-success-tint: #17322A;
+    --color-selection: #2A4561;
+    --wire-signal: #9DB6D3;
+    --wire-power: #E39A57;
+    --wire-clock: #B79CF2;
+    --wire-bus: #5CC4B8;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow-pop: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 36px -10px rgba(0, 0, 0, .7);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-board: #10171E;
+  --color-surface: #18222C;
+  --color-surface-2: #1E2933;
+  --color-hover: #233040;
+  --color-rule: #34424F;
+  --color-rule-2: #2A3743;
+  --color-text: #E6ECF1;
+  --color-muted: #A7B4BF;
+  --color-faint: #9AA8B4;
+  --color-ink: #0B1117;
+  --color-ink-2: #131C25;
+  --color-accent: #6FA8E0;
+  --color-accent-hover: #8DBBE8;
+  --color-accent-tint: #1C3247;
+  --color-on-accent: #0B1117;
+  --color-copper-tint: #3A2A16;
+  --color-danger: #F08A7E;
+  --color-success: #5CC495;
+  --color-success-tint: #17322A;
+  --color-selection: #2A4561;
+  --wire-signal: #9DB6D3;
+  --wire-power: #E39A57;
+  --wire-clock: #B79CF2;
+  --wire-bus: #5CC4B8;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-pop: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 36px -10px rgba(0, 0, 0, .7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-normal: 0ms; }
+}

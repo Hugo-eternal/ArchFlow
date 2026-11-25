@@ -1,0 +1,13 @@
+/* Base element styles — tokens only. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--color-board);
+  color: var(--color-text);
+  font: var(--weight-regular) var(--text-md) / var(--leading-normal) var(--font-ui);
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+::selection { background: var(--color-selection); }
+:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }

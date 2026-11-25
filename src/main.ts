@@ -1,4 +1,6 @@
 // V3 entry point. Modules are added step by step (docs/v3-progress.md, stage 3).
+import './styles/tokens.css';
+import './styles/base.css';
 import { APP_VERSION } from './version';
 import { initLocale, onLocaleChange, t } from './core/i18n';
 
