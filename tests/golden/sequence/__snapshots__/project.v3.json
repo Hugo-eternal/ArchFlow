@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 3,
+  "app": "ArchFlow 3.0.0",
+  "locale": "zh-Hant",
+  "project": {
+    "name": "Test"
+  },
+  "activeDesignId": "xplm4cdcbq",
+  "customStyles": [],
+  "designs": [
+    {
+      "id": "xplm4cdcbq",
+      "name": "車用顯示控制器",
+      "camera": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      },
+      "type": "sequence",
+      "data": {
+        "name": "車用顯示控制器 上電／斷電順序",
+        "rails": [
+          {
+            "id": "vbat",
+            "name": "VBAT（KL30）",
+            "kind": "rail",
+            "v": 12,
+            "color": "#5B6876",
+            "note": "常電，系統最先存在",
+            "on": {
+              "after": null,
+              "delay": 0,
+              "ramp": 2
+            },
+            "off": {
+              "after": "v5",
+              "delay": 20,
+              "ramp": 5
+            },
+            "tk": "display.vbat"
+          },
+          {
+            "id": "kl15",
+            "name": "KL15 點火",
+            "kind": "signal",
+            "v": "",
+            "color": "#5B6876",
+            "note": "點火開／關，觸發上電與斷電",
+            "on": {
+              "after": null,
+              "delay": 20,
+              "ramp": 0
+            },
+            "off": {
+              "after": null,
+              "delay": 0,
+              "ramp": 0
+            },
+            "tk": "display.kl15"
+          },
+          {
+            "id": "wake",
+            "name": "WAKE 喚醒",
+            "kind": "pulse",
+            "v": "",
+            "color": "#2E6E62",
+            "note": "SoC 接手供電後可能被拉低",
+            "on": {
+              "after": "kl15",
+              "delay": 1,
+              "ramp": 0,
+              "fall": {
+                "label": "",
+                "after": "por",
+                "edge": "end",
+                "delay": 5,
+                "maybe": true
+              }
+            },
+            "off": {
+              "after": "kl15",
+              "delay": 0,
+              "ramp": 0
+            },
+            "tk": "display.wake"
+          },
+          {
+            "id": "v5",
+            "name": "5V0 預穩壓",
+            "kind": "rail",
+            "v": 5,
+            "color": "#9A6A26",
+            "note": "",
+            "on": {
+              "after": "kl15",
+              "delay": 5,
+              "ramp": 1.5
+            },
+            "off": {
+              "after": "v3ao",
+              "delay": 1,
+              "ramp": 2
+            },
+            "tk": "display.v5"
+          },
+          {
+            "id": "v3ao",
+            "name": "3V3_AO",
+            "kind": "rail",
+            "v": 3.3,
+            "color": "#9A6A26",
+            "note": "",
+            "on": {
+              "after": "v5",
+              "delay": 1,
+              "ramp": 1
+            },
+            "off": {
+              "after": "v18",
+              "delay": 1,
+              "ramp": 1.5
+            },
+            "tk": "display.v3ao"
+          },
+          {
+            "id": "v18",
+            "name": "1V8_IO",
+            "kind": "rail",
+            "v": 1.8,
+            "color": "#2B5C8A",
+            "note": "",
+            "on": {
+              "after": "v3ao",
+              "delay": 1,
+              "ramp": 1
+            },
+            "off": {
+              "after": "v11",
+              "delay": 0.5,
+              "ramp": 1
+            },
+            "tk": "display.v18"
+          },
+          {
+            "id": "v11",
+            "name": "1V1_DDR",
+            "kind": "rail",
+            "v": 1.1,
+            "color": "#5B5394",
+            "note": "",
+            "on": {
+              "after": "v18",
+              "delay": 1,
+              "ramp": 1
+            },
+            "off": {
+              "after": "v08",
+              "delay": 0.5,
+              "ramp": 1
+            },
+            "tk": "display.v11"
+          },
+          {
+            "id": "v08",
+            "name": "0V8_CORE",
+            "kind": "rail",
+            "v": 0.8,
+            "color": "#2B5C8A",
+            "note": "",
+            "on": {
+              "after": "v11",
+              "delay": 1,
+              "ramp": 0.8
+            },
+            "off": {
+              "after": "por",
+              "delay": 0.5,
+              "ramp": 1
+            },
+            "tk": "display.v08"
+          },
+          {
+            "id": "por",
+            "name": "POR_B 重置釋放",
+            "kind": "signal",
+            "v": "",
+            "color": "#A33A32",
+            "note": "全部 PG 後釋放",
+            "on": {
+              "after": "v08",
+              "delay": 10,
+              "ramp": 0
+            },
+            "off": {
+              "after": "lvds",
+              "delay": 1,
+              "ramp": 0
+            },
+            "tk": "display.por"
+          },
+          {
+            "id": "lvds",
+            "name": "LVDS 影像輸出",
+            "kind": "data",
+            "v": "",
+            "color": "#2B5C8A",
+            "note": "SoC 開機後輸出影像",
+            "on": {
+              "after": "por",
+              "delay": 50,
+              "ramp": 0
+            },
+            "off": {
+              "after": "panel",
+              "delay": 5,
+              "ramp": 0
+            },
+            "tk": "display.lvds"
+          },
+          {
+            "id": "panel",
+            "name": "面板 AVDD／VGH／VGL",
+            "kind": "rail",
+            "v": 10.6,
+            "color": "#2E6E62",
+            "note": "影像訊號穩定後開啟",
+            "on": {
+              "after": "lvds",
+              "delay": 10,
+              "ramp": 3
+            },
+            "off": {
+              "after": "blen",
+              "delay": 200,
+              "ramp": 5
+            },
+            "tk": "display.panel"
+          },
+          {
+            "id": "blen",
+            "name": "BL_EN 背光致能",
+            "kind": "signal",
+            "v": "",
+            "color": "#2A6F8C",
+            "note": "斷電時最先關閉",
+            "on": {
+              "after": "panel",
+              "delay": 200,
+              "ramp": 0
+            },
+            "off": {
+              "after": "kl15",
+              "delay": 1,
+              "ramp": 0
+            },
+            "tk": "display.blen"
+          }
+        ],
+        "tk": "display"
+      }
+    }
+  ]
+}

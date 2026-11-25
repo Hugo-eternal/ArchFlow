@@ -1,0 +1,972 @@
+{
+  "schemaVersion": 3,
+  "app": "ArchFlow 3.0.0",
+  "locale": "zh-Hant",
+  "project": {
+    "name": "Test"
+  },
+  "activeDesignId": "xwihpr65ho",
+  "customStyles": [],
+  "designs": [
+    {
+      "id": "xwihpr65ho",
+      "name": "入門方塊圖",
+      "camera": {
+        "x": 103.74545454545455,
+        "y": 284.19272727272727,
+        "z": 0.7963636363636364
+      },
+      "type": "function",
+      "data": {
+        "blocks": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 60,
+            "w": 200,
+            "h": 180,
+            "title": "",
+            "subtitle": "",
+            "partNumber": "主機板",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xcl144al2u",
+                "name": "PWR",
+                "side": "r",
+                "t": 0.2777777777777778,
+                "type": "power",
+                "label": "inside",
+                "locked": false
+              },
+              {
+                "id": "ximk77udab",
+                "name": "LVDS",
+                "side": "r",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              },
+              {
+                "id": "xln465qfe5",
+                "name": "BL_EN",
+                "side": "r",
+                "t": 0.7777777777777778,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center"
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 220,
+            "y": 70,
+            "w": 30,
+            "h": 140,
+            "title": "FPC / FFC",
+            "subtitle": "",
+            "partNumber": "CN1",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xybch890vc",
+                "name": "VDD",
+                "side": "l",
+                "t": 0.14285714285714285,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 0,
+                "end": "l"
+              },
+              {
+                "id": "xh1lg9rzi6",
+                "name": "VDD",
+                "side": "r",
+                "t": 0.14285714285714285,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 0,
+                "end": "r"
+              },
+              {
+                "id": "x2wfa96000",
+                "name": "GND",
+                "side": "l",
+                "t": 0.2857142857142857,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 1,
+                "end": "l"
+              },
+              {
+                "id": "xjeplpt4y3",
+                "name": "GND",
+                "side": "r",
+                "t": 0.2857142857142857,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 1,
+                "end": "r"
+              },
+              {
+                "id": "xa05cl71j1",
+                "name": "LVDS+",
+                "side": "l",
+                "t": 0.42857142857142855,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 2,
+                "end": "l"
+              },
+              {
+                "id": "xpxzh8f45m",
+                "name": "LVDS+",
+                "side": "r",
+                "t": 0.42857142857142855,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 2,
+                "end": "r"
+              },
+              {
+                "id": "x7cb10p7sn",
+                "name": "LVDS−",
+                "side": "l",
+                "t": 0.5714285714285714,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 3,
+                "end": "l"
+              },
+              {
+                "id": "xhh5sw5izx",
+                "name": "LVDS−",
+                "side": "r",
+                "t": 0.5714285714285714,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 3,
+                "end": "r"
+              },
+              {
+                "id": "xwp6wsirzt",
+                "name": "BL_EN",
+                "side": "l",
+                "t": 0.7142857142857143,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 4,
+                "end": "l"
+              },
+              {
+                "id": "xl9aieb0rd",
+                "name": "BL_EN",
+                "side": "r",
+                "t": 0.7142857142857143,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 4,
+                "end": "r"
+              },
+              {
+                "id": "xgqlydr5y0",
+                "name": "BL_PWM",
+                "side": "l",
+                "t": 0.8571428571428571,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 5,
+                "end": "l"
+              },
+              {
+                "id": "x46vxudclk",
+                "name": "BL_PWM",
+                "side": "r",
+                "t": 0.8571428571428571,
+                "type": "io",
+                "label": "hidden",
+                "locked": false,
+                "pin": 5,
+                "end": "r"
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center",
+            "part": {
+              "kind": "conn",
+              "rot": 0,
+              "size": "M"
+            },
+            "connector": {
+              "kind": "fpc",
+              "side": "both",
+              "pins": [
+                "VDD",
+                "GND",
+                "LVDS+",
+                "LVDS−",
+                "BL_EN",
+                "BL_PWM"
+              ],
+              "only": false,
+              "mpn": "",
+              "visibleRows": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hiddenRows": 0
+            }
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 350,
+            "y": 10,
+            "w": 200,
+            "h": 160,
+            "title": "",
+            "subtitle": "",
+            "partNumber": "TCON",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xpaaasqdp8",
+                "name": "LVDS",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              },
+              {
+                "id": "xkdu4gdc2f",
+                "name": "SRC",
+                "side": "r",
+                "t": 0.375,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              },
+              {
+                "id": "xymf87c32p",
+                "name": "GATE",
+                "side": "r",
+                "t": 0.625,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center"
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 710,
+            "y": -20,
+            "w": 260,
+            "h": 100,
+            "title": "",
+            "subtitle": "",
+            "partNumber": "Source IC ×4",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xqs31ybnf2",
+                "name": "IN",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center"
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 710,
+            "y": 120,
+            "w": 260,
+            "h": 100,
+            "title": "",
+            "subtitle": "",
+            "partNumber": "Gate IC ×2",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xpfstxusym",
+                "name": "IN",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center"
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 350,
+            "y": 250,
+            "w": 200,
+            "h": 120,
+            "title": "",
+            "subtitle": "",
+            "partNumber": "背光驅動",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xzi91y4dz4",
+                "name": "EN",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              },
+              {
+                "id": "xwh04psm12",
+                "name": "OUT",
+                "side": "r",
+                "t": 0.5,
+                "type": "io",
+                "label": "inside",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center"
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 650,
+            "y": 290,
+            "w": 100,
+            "h": 40,
+            "title": "LED",
+            "subtitle": "",
+            "partNumber": "",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xumwp7dziq",
+                "name": "A",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              },
+              {
+                "id": "xwsgn3orw6",
+                "name": "K",
+                "side": "r",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center",
+            "part": {
+              "kind": "led",
+              "rot": 0,
+              "size": "M"
+            }
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 810,
+            "y": 290,
+            "w": 100,
+            "h": 40,
+            "title": "LED",
+            "subtitle": "",
+            "partNumber": "",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xrgocaifet",
+                "name": "A",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              },
+              {
+                "id": "xwuyyjhanu",
+                "name": "K",
+                "side": "r",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center",
+            "part": {
+              "kind": "led",
+              "rot": 0,
+              "size": "M"
+            }
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 920,
+            "y": -340,
+            "w": 100,
+            "h": 40,
+            "title": "電阻",
+            "subtitle": "",
+            "partNumber": "",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xbp7leuv5h",
+                "name": "1",
+                "side": "l",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              },
+              {
+                "id": "xt5qo6rqhd",
+                "name": "2",
+                "side": "r",
+                "t": 0.5,
+                "type": "io",
+                "label": "hidden",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center",
+            "part": {
+              "kind": "res",
+              "rot": 0,
+              "size": "M"
+            }
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 950,
+            "y": -90,
+            "w": 40,
+            "h": 40,
+            "title": "接地",
+            "subtitle": "",
+            "partNumber": "",
+            "ref": "",
+            "ports": [
+              {
+                "id": "xinysjrm37",
+                "name": "GND",
+                "side": "t",
+                "t": 0.5,
+                "type": "gnd",
+                "label": "hidden",
+                "locked": false
+              }
+            ],
+            "style": {
+              "fill": "#eaf0f6",
+              "border": "#8fa5bc",
+              "accent": "#355c82",
+              "text": "#243d56",
+              "titleSize": 20
+            },
+            "sizing": "auto",
+            "showTitle": true,
+            "locked": false,
+            "metrics": {},
+            "titleAlign": "center-center",
+            "part": {
+              "kind": "gnd",
+              "rot": 0,
+              "size": "M"
+            }
+          }
+        ],
+        "wires": [
+          {
+            "id": "xi1pfpfzrv",
+            "a": {
+              "block": "x9g9kv1npx",
+              "port": "xcl144al2u"
+            },
+            "b": {
+              "block": "xreqvga5y2",
+              "port": "xybch890vc"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": false
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 130,
+                "y": 110
+              },
+              {
+                "x": 210,
+                "y": 110
+              },
+              {
+                "x": 210,
+                "y": 90
+              },
+              {
+                "x": 220,
+                "y": 90
+              }
+            ]
+          },
+          {
+            "id": "xy3rp5x0o4",
+            "a": {
+              "block": "x9g9kv1npx",
+              "port": "ximk77udab"
+            },
+            "b": {
+              "block": "xreqvga5y2",
+              "port": "xa05cl71j1"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 130,
+                "y": 150
+              },
+              {
+                "x": 210,
+                "y": 150
+              },
+              {
+                "x": 210,
+                "y": 130
+              },
+              {
+                "x": 220,
+                "y": 130
+              }
+            ]
+          },
+          {
+            "id": "xhxgyxejap",
+            "a": {
+              "block": "x9g9kv1npx",
+              "port": "xln465qfe5"
+            },
+            "b": {
+              "block": "xreqvga5y2",
+              "port": "xwp6wsirzt"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 130,
+                "y": 200
+              },
+              {
+                "x": 140,
+                "y": 200
+              },
+              {
+                "x": 140,
+                "y": 170
+              },
+              {
+                "x": 220,
+                "y": 170
+              }
+            ]
+          },
+          {
+            "id": "x25l1brpot",
+            "a": {
+              "block": "xreqvga5y2",
+              "port": "xpxzh8f45m"
+            },
+            "b": {
+              "block": "xuokrxpp0p",
+              "port": "xpaaasqdp8"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 250,
+                "y": 130
+              },
+              {
+                "x": 260,
+                "y": 130
+              },
+              {
+                "x": 260,
+                "y": 90
+              },
+              {
+                "x": 350,
+                "y": 90
+              }
+            ]
+          },
+          {
+            "id": "xp3zibqxyr",
+            "a": {
+              "block": "xreqvga5y2",
+              "port": "xl9aieb0rd"
+            },
+            "b": {
+              "block": "x49tf8uc1q",
+              "port": "xzi91y4dz4"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 250,
+                "y": 170
+              },
+              {
+                "x": 260,
+                "y": 170
+              },
+              {
+                "x": 260,
+                "y": 310
+              },
+              {
+                "x": 350,
+                "y": 310
+              }
+            ]
+          },
+          {
+            "id": "x1e8hx1g5p",
+            "a": {
+              "block": "xuokrxpp0p",
+              "port": "xkdu4gdc2f"
+            },
+            "b": {
+              "block": "xbcb9jm20h",
+              "port": "xqs31ybnf2"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 550,
+                "y": 70
+              },
+              {
+                "x": 700,
+                "y": 70
+              },
+              {
+                "x": 700,
+                "y": 30
+              },
+              {
+                "x": 710,
+                "y": 30
+              }
+            ]
+          },
+          {
+            "id": "xk4vyjq478",
+            "a": {
+              "block": "xuokrxpp0p",
+              "port": "xymf87c32p"
+            },
+            "b": {
+              "block": "xxwhev2fmn",
+              "port": "xpfstxusym"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": true
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 550,
+                "y": 110
+              },
+              {
+                "x": 700,
+                "y": 110
+              },
+              {
+                "x": 700,
+                "y": 170
+              },
+              {
+                "x": 710,
+                "y": 170
+              }
+            ]
+          },
+          {
+            "id": "xyub3j1esu",
+            "a": {
+              "block": "x49tf8uc1q",
+              "port": "xwh04psm12"
+            },
+            "b": {
+              "block": "xhz0f2z7n5",
+              "port": "xumwp7dziq"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": false
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 550,
+                "y": 310
+              },
+              {
+                "x": 650,
+                "y": 310
+              }
+            ]
+          },
+          {
+            "id": "xm138omk5z",
+            "a": {
+              "block": "xhz0f2z7n5",
+              "port": "xwsgn3orw6"
+            },
+            "b": {
+              "block": "xux4fhcz1f",
+              "port": "xrgocaifet"
+            },
+            "name": "",
+            "kind": "signal",
+            "line": {
+              "color": "#536b8c",
+              "width": 2,
+              "dash": "solid",
+              "arrow": false
+            },
+            "locked": false,
+            "route": [
+              {
+                "x": 750,
+                "y": 310
+              },
+              {
+                "x": 810,
+                "y": 310
+              }
+            ]
+          }
+        ],
+        "junctions": [],
+        "texts": [
+          {
+            "id": "goldtext1",
+            "text": "Golden: LCD module",
+            "x": 40,
+            "y": -80,
+            "w": 400,
+            "size": 18,
+            "color": "#14202C",
+            "bold": true,
+            "italic": false,
+            "align": "left",
+            "background": "transparent"
+          }
+        ],
+        "frames": [
+          {
+            "id": "frame1",
+            "title": "LCD 面板",
+            "x": 230,
+            "y": -70,
+            "w": 800,
+            "h": 480,
+            "style": "dash",
+            "color": "teal"
+          }
+        ],
+        "grid": {
+          "size": 10,
+          "show": true,
+          "snap": true
+        },
+        "wirePresets": [],
+        "presentationClean": false
+      }
+    }
+  ]
+}

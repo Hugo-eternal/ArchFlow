@@ -46,7 +46,7 @@
 - [x] 3.4 `styles/tokens.css` design token 骨架（L1）
 - [x] 3.5 `scripts/extract-vendor.mjs`：從 V2.10.1 逐字抽出 vendor 檔、產生 `VENDOR.md` 與 SHA-256；CI 驗證雜湊（L4）
 ### 3B 測試轉接
-- [ ] 3.6 `tests/tools/v2-to-v3.ts`：golden 專案轉 V3 格式（只在測試使用）（L3）
+- [x] 3.6 `tests/tools/v2-to-v3.ts`：golden 專案轉 V3 格式（只在測試使用）（L3）
 - [ ] 3.7 結構化 SVG 比對工具（容差、token 顏色）（L3）
 - [ ] 3.8 `docs/v3-port-checklist.md`：由 audit §1.4 產生逐層移植清單（L0）
 ### 3C 底層
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.6 `tests/tools/v2-to-v3.ts`：把 `tests/golden/<type>/project.json`（V2 格式）轉成 V3 schema（`docs/v3-plan.md` §2）的測試專用轉換器；只在測試中使用、不打包。V3 schema 型別要先有：可在此步先寫 `src/io/schema-types.ts`（純型別，3.13 再補驗證），轉換器產出要能通過型別檢查；為五種 golden 各寫一個轉換測試（欄位對應依 audit §2 處置表：合併 / 刪除 / 改名）。
+- **下一步**：3.7 結構化 SVG 比對工具（plan R2）：`tests/tools/svg-compare.ts`，比較 V2 golden 的 `export.svg.json` 與 V3 匯出的結構：元素種類 / 數量、文字、座標容差（預設 ±1 px）、顏色以「同一 token 角色」比對（例如 V2 `#334e70` ≙ `--wire-signal`），輸出可讀的差異報告；附單元測試（同一份 SVG 比對為相同、位移 0.6 px 視為相同、少一個元素 / 文字不同視為不同）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -130,7 +130,8 @@
 - i18n（3.3）：`src/core/i18n.ts` 的 `t(key, vars)`，key 為扁平字串（`area.item`），型別由 `i18n/zh-Hant.json` 推導；文字一律放 `i18n/*.json`，`npm run check:i18n` 會擋 `src/` 中的中日韓字元與兩語系 key / 佔位符不一致。localStorage 鍵為 `archflow:locale`（plan：統一 `archflow:` 前綴）。V3 原始碼的單元測試直接 import TS，不需要瀏覽器。
 - design token（3.4）：`src/styles/tokens.css` 是唯一可寫裸色碼的檔案（亮色 + 深色兩組，深色同時有 `@media` 與 `[data-theme="dark"]`），其餘 CSS 只能用 `var(--…)`；`npm run check:tokens` 檢查未定義 token、裸色碼與 18 組文字 / 背景對比（亮、暗各一次）。
 - vendor（3.5）：`vendor/` 9 個檔案逐字取自 V2.10.1 shell（電源時序 / 流程圖 / RSI BOM 各 bundle.js + style.css，EDID / Hex / Pattern 各一個 html），`vendor/manifest.json` 記 SHA-256；`npm run check:vendor` 重新抽取比對，任何修改都會失敗；`tests/unit/vendor.test.js` 確認與 V2 執行時注入 iframe 的 srcdoc 完全相同。iframe 組裝方式與 host 介面寫在各目錄 `VENDOR.md`。
+- V3 存檔型別（3.6）：`src/io/schema-types.ts`（純型別，依 plan §2 並對照實際 V2 欄位修正：連接器為 `{kind, side, pins[], only, mpn, visibleRows, hiddenRows}`，接腳有 `pin`/`end`）。`tests/tools/v2-to-v3.ts` 是只給測試用的 V2→V3 轉換器，五種 golden 轉換結果存在 `tests/golden/<type>/__snapshots__/project.v3.json`（之後 V3 載入 golden 用這份）。`tsconfig` 的 include 加了 `tests/tools`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4（3.5：`npm run test:all` 全數通過，Vitest 14 檔 79 項；`check:vendor` 以竄改檔案確認會失敗）
+- **最後通過的驗證層級**：L3（3.6：`npm run test:all` 全數通過，Vitest 15 檔 90 項；轉換結果經型別檢查、無任何 V2 專用欄位殘留（掃描器本身有保護測試））
