@@ -119,6 +119,9 @@
   --appbar-height: 50px;
   --toolbar-height: 44px;
   --statusbar-height: 28px;
+  --grid-size: 10px;             /* canvas dot grid; set at run time from the camera (shell/Canvas.tsx) */
+  --grid-x: 0px;
+  --grid-y: 0px;
   --touch-target: 44px;
   --z-panel: 10;
   --z-menu: 100;

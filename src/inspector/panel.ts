@@ -25,6 +25,8 @@ export interface PanelOptions<D, S> {
   /** Called with the outcome and the selection when a commit is refused. */
   onRefused?: (outcome: CommitOutcome, sel: S) => void;
   debounceMs?: number;
+  /** Where open / closed groups are remembered (default: in this panel only). */
+  groupState?: { get(key: string): boolean | undefined; set(key: string, open: boolean): void };
   doc?: Document;
   setTimer?: (fn: () => void, ms: number) => unknown;
   clearTimer?: (handle: unknown) => void;
@@ -153,8 +155,8 @@ export class InspectorPanel<D, S> {
         const key = path + f.key;
         const details = this.el('details', 'af-field-group');
         details.dataset.group = f.key;
-        details.open = this.openGroups.get(key) ?? f.open ?? true;
-        details.addEventListener('toggle', () => this.openGroups.set(key, details.open));
+        details.open = this.openGroups.get(key) ?? this.o.groupState?.get(key) ?? f.open ?? true;
+        details.addEventListener('toggle', () => { this.openGroups.set(key, details.open); this.o.groupState?.set(key, details.open); });
         const summary = this.el('summary');
         summary.textContent = t(f.label);
         details.append(summary);

@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 209　☑ 63　✂ 34　⤳ 21
+合計 327 層：☐ 204　☑ 68　✂ 34　⤳ 21
 
 ## core / interaction
 
@@ -127,11 +127,11 @@
 | `exportSvgDocument` | 1674 |  | script#2 | RC：移除選取高亮 | ☑ | 3.22 匯出不傳選取，無需移除 |
 | `exportSvgDocument` | 1744 |  | script#2 | 移除統一標籤引線 | ☑ | 3.22 V3 沒有標籤引線元素 |
 | `exportSvgDocument` | 1856 |  | script#2 | 移除標記外框、保留標記旋轉與位置 | ☑ | 3.22 V3 沒有標記外框元素；標記位置由 render 處理 |
-| `$('#exportBtn').onclick` | 400 | `*` 取代 | script#1 |  | ☐ |  |
-| `$('#exportBtn').onclick` | 708 |  | script#1 | Export and preview live together in one dialog. No external library or connection required. | ☐ |  |
+| `$('#exportBtn').onclick` | 400 | `*` 取代 | script#1 |  | ☑ | 3.23 命令 `export.open` → `ExportDialog` |
+| `$('#exportBtn').onclick` | 708 |  | script#1 | Export and preview live together in one dialog. No external library or connection required. | ☑ | 3.23 匯出與可讀性在同一個對話框 |
 | `appendFreeTextExport` | 4125 |  | af15-ux2 | ---------- exports draw the badges and icons ---------- | ☐ |  |
 | `appendFreeTextExport` | 4433 |  | af15-ux2 | exports: frames go first so they sit behind blocks and wires | ☐ |  |
-| `$('#doExport').onclick` | 488 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☐ |  |
+| `$('#doExport').onclick` | 488 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☑ | 3.23 `ExportDialog` 的「下載」 |
 | `appendHeadingExport` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `headingBounds` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 | `readabilityReport` | 611 |  | script#1 | Preserve the discriminator even for a newly created empty schedule. | ☐ |  |
@@ -381,6 +381,6 @@
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `notify` | 3126 |  | af15-ux2 |  | ☐ |  |
+| `notify` | 3126 |  | af15-ux2 |  | ☑ | 3.23 `Shell.notify` + i18n（V2 只修正文字，V3 文字直接寫對） |
 | `updateWorkspaceUI` | 595 |  | script#1 |  | ☐ |  |
-| `window.alert` | 2332 |  | archflow-known-fixes-v3 |  | ☐ |  |
+| `window.alert` | 2332 |  | archflow-known-fixes-v3 |  | ☑ | 3.23 開檔錯誤以 `openMessage` 顯示在狀態列，不再暫時替換 alert |

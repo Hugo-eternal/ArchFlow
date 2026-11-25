@@ -1,0 +1,208 @@
+// Shell state and commands, without React: the open screen, messages, dialogs, the canvas
+// gestures and the command registry. React components (shell/*.tsx) only read this and call
+// `run(commandId)`; every edit goes through core/commands → model → interaction/commit
+// (plan §1.2 rule 5 — V2 clicked hidden buttons instead, audit §4.1).
+import { CommandRegistry, type Command } from '../core/commands';
+import { Store } from '../core/store';
+import { t, type MessageKey, type Vars } from '../core/i18n';
+import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
+import { GridError, snapIfOn } from '../core/grid';
+import type { BlockDiagram, Camera } from '../io/schema-types';
+import { ModelError } from '../model/types';
+import { addBlock, addPort, addText, BLOCK_DEFAULT, emptyDiagram, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { routeAll, type Route } from '../router/full-path';
+import { estimateWidth, type Measure } from '../render/texts';
+import { Gestures } from '../interaction/gestures';
+import { canvasCommands } from '../interaction/commands';
+import { commitEdit, type CommitResult } from '../interaction/commit';
+import { downloadText, openMessage, readProjectBlob, saveProject, type OpenResult } from '../io/project-file';
+import { Emitter } from './use-store';
+
+export type Screen = 'start' | 'workspace';
+export interface Message { key: MessageKey; vars?: Vars; tone: 'info' | 'error' }
+export type Dialog =
+  | null
+  | { kind: 'export' }
+  | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
+  | { kind: 'confirm'; title: MessageKey; message: MessageKey; vars?: Vars; ok: () => void };
+
+type Refusal = Extract<CommitResult, { ok: false }>;
+
+export const isMac = () => typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+
+/** i18n text for a refused edit. */
+export function refusalText(r: Refusal): string {
+  const code = r.error instanceof GridError || r.error instanceof ModelError ? r.error.code : '';
+  const known: Record<string, MessageKey> = {
+    'locked-block': 'canvas.refused.locked-block', 'locked-port': 'canvas.refused.locked-port', 'locked-wire': 'canvas.refused.locked-wire',
+  };
+  const reason: MessageKey = known[code] ?? (code.startsWith('limit') ? 'canvas.refused.limit' : 'canvas.refused.other');
+  return t('canvas.refused', { reason: t(reason) });
+}
+
+export class Shell {
+  readonly store = new Store();
+  readonly registry = new CommandRegistry<Shell>();
+  readonly ui = new Emitter();
+  readonly gestures: Gestures;
+  screen: Screen = 'start';
+  message: Message | null = null;
+  dialog: Dialog = null;
+  inspectorOpen = true;
+  viewport: Viewport = { w: 800, h: 600 };
+  measure: Measure = estimateWidth;
+  /** Set by the canvas: open the browser's file picker. */
+  pickFile: () => void = () => {};
+  private routeCache: { data: BlockDiagram | null; routes: Map<string, Route> } = { data: null, routes: new Map() };
+
+  constructor() {
+    this.gestures = new Gestures({
+      store: this.store,
+      camera: () => this.camera,
+      setCamera: c => this.store.setCamera(c),
+      routes: () => this.routesFor(this.gestures.draft()),
+      flavour: () => (this.store.activeDesign?.type === 'power' ? 'power' : 'function'),
+      measure: this.measure,
+      changed: () => this.ui.emit(),
+      refused: r => this.refused(r),
+    });
+    this.registry.registerAll(canvasCommands() as unknown as Command<Shell>[]);
+    this.registry.registerAll(shellCommands());
+  }
+
+  // ------------------------------------------------------------------ reading
+  get camera(): Camera { return this.store.activeDesign?.camera ?? IDENTITY; }
+  get isBlockDiagram(): boolean { const t = this.store.activeDesign?.type; return t === 'function' || t === 'power'; }
+  data(): BlockDiagram { return this.store.data(this.store.activeDesignId) as BlockDiagram; }
+  routesFor(d: BlockDiagram): Map<string, Route> {
+    if (this.routeCache.data !== d) this.routeCache = { data: d, routes: routeAll(d) };
+    return this.routeCache.routes;
+  }
+
+  // ------------------------------------------------------------------ actions
+  run(id: string, arg?: unknown): Promise<boolean> { return this.registry.run(id, this, arg); }
+  enabled(id: string): boolean { return this.registry.isEnabled(id, this); }
+
+  notify(key: MessageKey, vars?: Vars, tone: Message['tone'] = 'info'): void { this.message = { key, vars, tone }; this.ui.emit(); }
+  refused(r: Refusal): void { this.message = { key: 'canvas.refused.text', vars: { text: refusalText(r) }, tone: 'error' }; this.ui.emit(); }
+  openDialog(d: Dialog): void { this.dialog = d; this.ui.emit(); }
+  closeDialog(): void { this.dialog = null; this.ui.emit(); }
+  setViewport(v: Viewport): void { this.viewport = v; }
+
+  /** A new project with one empty function design. */
+  newProject(name: string, designName = t('design.defaultName', { n: 1 })): void {
+    this.store.newProject(name.trim() || t('project.untitled'), { type: 'function', name: designName, data: emptyDiagram() });
+    this.gestures.select([]);
+    this.screen = 'workspace';
+    this.message = null;
+    this.ui.emit();
+  }
+
+  async openBlob(file: Blob): Promise<OpenResult> {
+    const r = await readProjectBlob(file);
+    if (r.ok) {
+      this.store.load(r.file);
+      this.gestures.select([]);
+      this.screen = 'workspace';
+      this.notify('file.opened');
+    } else {
+      this.notify(openMessage(r), r.reason === 'invalid' ? { count: r.errors.length } : undefined, 'error');
+    }
+    return r;
+  }
+
+  /** Centre of the visible canvas in diagram coordinates. */
+  viewCentre(): { x: number; y: number } { return toWorld(this.camera, { x: this.viewport.w / 2, y: this.viewport.h / 2 }); }
+
+  fitView(): void {
+    if (!this.isBlockDiagram) return;
+    const d = this.data();
+    const rects = [...d.blocks, ...d.frames, ...d.texts.map(x => ({ x: x.x, y: x.y, w: x.w, h: 40 }))];
+    const c = fit(unionBounds(rects, d.junctions), this.viewport);
+    if (c) this.store.setCamera(c);
+  }
+
+  edit(fn: (d: BlockDiagram) => BlockDiagram): CommitResult {
+    const r = commitEdit(this.store, fn);
+    if (!r.ok) this.refused(r);
+    return r;
+  }
+}
+
+const hasProject = (s: Shell) => s.screen === 'workspace' && !!s.store.activeDesign;
+const canEdit = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
+
+function confirmDiscard(s: Shell, then: () => void): void {
+  if (!s.store.dirty) { then(); return; }
+  s.openDialog({ kind: 'confirm', title: 'project.discard.title', message: 'project.discard.message', ok: then });
+}
+
+export function shellCommands(): Command<Shell>[] {
+  return [
+    { id: 'project.new', label: 'cmd.projectNew', group: 'project', run: s => confirmDiscard(s, () => { s.screen = 'start'; s.dialog = null; s.ui.emit(); }) },
+    { id: 'project.open', label: 'cmd.projectOpen', group: 'project', shortcut: 'Mod+O', run: s => confirmDiscard(s, () => { s.closeDialog(); s.pickFile(); }) },
+    {
+      id: 'project.save', label: 'cmd.projectSave', group: 'project', shortcut: 'Mod+S', enabled: hasProject,
+      run: s => { const f = saveProject(s.store); downloadText(f.name, f.text); s.notify('file.saved', { name: f.name }); },
+    },
+    {
+      id: 'design.add', label: 'cmd.designAdd', group: 'design', enabled: hasProject,
+      run: s => s.openDialog({
+        kind: 'prompt', title: 'cmd.designAdd', label: 'design.name', value: t('design.defaultName', { n: s.store.designs.length + 1 }),
+        ok: name => { s.store.addDesign('function', name.trim() || t('design.defaultName', { n: s.store.designs.length + 1 }), emptyDiagram(), { activate: true }); s.gestures.select([]); s.closeDialog(); },
+      }),
+    },
+    {
+      id: 'design.rename', label: 'cmd.designRename', group: 'design', enabled: hasProject,
+      run: s => {
+        const d = s.store.activeDesign!;
+        s.openDialog({ kind: 'prompt', title: 'cmd.designRename', label: 'design.name', value: d.name, ok: name => { if (name.trim()) s.store.renameDesign(d.id, name.trim()); s.closeDialog(); } });
+      },
+    },
+    {
+      id: 'design.delete', label: 'cmd.designDelete', group: 'design', enabled: s => hasProject(s) && s.store.designs.length > 1,
+      run: s => {
+        const d = s.store.activeDesign!;
+        s.openDialog({ kind: 'confirm', title: 'cmd.designDelete', message: 'design.deleteConfirm', vars: { name: d.name }, ok: () => { s.store.removeDesign(d.id); s.gestures.select([]); s.closeDialog(); } });
+      },
+    },
+    {
+      id: 'design.switch', label: 'cmd.designSwitch', group: 'design', enabled: hasProject,
+      run: (s, id) => { if (typeof id === 'string' && id !== s.store.activeDesignId) { s.gestures.cancel(); s.gestures.select([]); s.store.activate(id); } },
+    },
+    {
+      id: 'block.add', label: 'cmd.blockAdd', group: 'insert', shortcut: 'B', enabled: canEdit,
+      run: s => {
+        const d = s.data(), c = s.viewCentre();
+        const at = { x: snapIfOn(c.x - BLOCK_DEFAULT.w / 2, d.grid), y: snapIfOn(c.y - BLOCK_DEFAULT.h / 2, d.grid) };
+        let id = '';
+        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at, s.store.activeDesign!.type === 'power' ? 'power' : 'function')); id = out.id; return out.data; });
+        if (r.ok) s.gestures.select([{ kind: 'block', id }]);
+      },
+    },
+    {
+      id: 'port.add', label: 'cmd.portAdd', group: 'insert', shortcut: 'P',
+      enabled: s => canEdit(s) && s.gestures.selection.length === 1 && s.gestures.selection[0].kind === 'block',
+      run: s => {
+        const block = s.gestures.selection[0].id;
+        let id = '';
+        const r = s.edit(x => { const out = addPort(x, block, 'io'); id = out.id; return out.data; });
+        if (r.ok) s.gestures.select([{ kind: 'port', block, id }]);
+      },
+    },
+    {
+      id: 'text.add', label: 'cmd.textAdd', group: 'insert', shortcut: 'T', enabled: canEdit,
+      run: s => {
+        const c = s.viewCentre();
+        let id = '';
+        const r = s.edit(x => { const out = addText(x, { x: c.x - TEXT_DEFAULT.w / 2, y: c.y - 20 }, t('text.placeholder')); id = out.id; return out.data; });
+        if (r.ok) s.gestures.select([{ kind: 'text', id }]);
+      },
+    },
+    { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },
+    { id: 'view.zoomIn', label: 'cmd.zoomIn', group: 'view', shortcut: 'Mod+=', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1.2, s.viewport)) },
+    { id: 'view.zoomOut', label: 'cmd.zoomOut', group: 'view', shortcut: 'Mod+-', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1 / 1.2, s.viewport)) },
+    { id: 'view.toggleInspector', label: 'cmd.toggleInspector', group: 'view', enabled: hasProject, run: s => { s.inspectorOpen = !s.inspectorOpen; s.ui.emit(); } },
+    { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'export' }) },
+  ];
+}

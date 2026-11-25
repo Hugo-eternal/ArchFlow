@@ -7,6 +7,8 @@ export default defineConfig({
   root: 'src',
   base: './',
   plugins: [viteSingleFile({ removeViteModuleLoader: true })],
+  // React 19 automatic JSX runtime for src/shell/*.tsx (no React plugin: no fast refresh needed)
+  esbuild: { jsx: 'automatic' },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
