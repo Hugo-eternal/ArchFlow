@@ -99,6 +99,20 @@ describe('model/diagram matches V2', () => {
     expect([b.x, b.y, b.w, b.partNumber]).toEqual([10, 20, 200, 'IC']);
     expect(m.makeBlock(base, { x: 0, y: 0 }, 'power').role).toBe('converter');
   });
+
+  it('defaults for new blocks and wires follow the diagram view (3.26c)', () => {
+    const fnView = m.emptyDiagram(), pwView = m.emptyDiagram('power');
+    expect([fnView.view, pwView.view]).toEqual(['function', 'power']);
+    expect(m.makeBlock(fnView, { x: 0, y: 0 }).role).toBeUndefined();
+    expect(m.makeBlock(pwView, { x: 0, y: 0 })).toMatchObject({ role: 'converter', metrics: { voltage: { value: '', show: false }, current: { value: '', show: false } } });
+    for (const [d, kind, arrow] of [[fnView, 'signal', false], [pwView, 'power', true]] as const) {
+      let x = d; const A = m.makeBlock(x, { x: 0, y: 0 }); x = m.addBlock(x, A).data;
+      const B = m.makeBlock(x, { x: 400, y: 0 }); x = m.addBlock(x, B).data;
+      const w = m.connect(x, { block: A.id, port: A.ports[1].id }, { block: B.id, port: B.ports[0].id });
+      const wire = w.data.wires.find(v => v.id === w.id)!;
+      expect([wire.kind, wire.line.arrow, !!wire.electrical]).toEqual([kind, arrow, kind === 'power']);
+    }
+  });
 });
 
 describe('model/diagram', () => {

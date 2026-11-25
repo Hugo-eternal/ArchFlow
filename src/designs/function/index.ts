@@ -180,7 +180,7 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   schema: DATA_SCHEMAS.function,
   templates: [{ id: 'starter', label: 'template.function.starter.name' }],
   editor: 'canvas',
-  blockDiagram: { flavour: 'function' },
+  blockDiagram: true,
   create({ template } = {}) {
     if (!template) return { name: '', data: emptyDiagram() };
     const tpl = TEMPLATES[template as keyof typeof TEMPLATES];

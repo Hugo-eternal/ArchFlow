@@ -68,7 +68,6 @@ export class Shell {
       camera: () => this.camera,
       setCamera: c => this.store.setCamera(c),
       routes: () => this.routesFor(this.gestures.draft()),
-      flavour: () => this.module?.blockDiagram?.flavour ?? 'function',
       measure: this.measure,
       changed: () => this.ui.emit(),
       adjustMove: (d, ids) => this.module?.afterMove?.(d, ids) ?? d,
@@ -200,8 +199,7 @@ export function shellCommands(): Command<Shell>[] {
         const d = s.data(), c = s.viewCentre();
         const at = freeSpot(d, BLOCK_DEFAULT.w, BLOCK_DEFAULT.h, c, d.grid.snap ? gridSize(d.grid) : 1);
         let id = '';
-        const flavour = s.module?.blockDiagram?.flavour ?? 'function';
-        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at, flavour)); id = out.id; return out.data; });
+        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at)); id = out.id; return out.data; });
         if (r.ok) s.gestures.select([{ kind: 'block', id }]);
       },
     },

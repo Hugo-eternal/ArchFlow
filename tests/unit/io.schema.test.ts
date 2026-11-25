@@ -8,7 +8,7 @@ import { Store } from '../../src/core/store';
 import * as m from '../../src/model/diagram';
 import { LIMITS } from '../../src/model/types';
 
-const TYPES = ['function', 'power', 'schedule', 'sequence', 'flowchart'] as const;
+const TYPES = ['function', 'power', 'schedule', 'sequence', 'flowchart'] as const;   // golden fixture names
 const golden = (t: string): ProjectFile => JSON.parse(fs.readFileSync(`tests/golden/${t}/__snapshots__/project.v3.json`, 'utf8'));
 const errorsOf = (f: unknown): SchemaError[] => { const r = validateProject(f); return r.ok ? [] : r.errors; };
 const codes = (f: unknown) => errorsOf(f).map(e => `${e.path} ${e.code}`);
@@ -33,6 +33,40 @@ describe('io/schema accepts valid files', () => {
     s.newProject('P', { type: 'function', name: 'D', data: d });
     const r = parseProject(JSON.stringify(s.toFile()));
     expect(r.ok).toBe(true);
+  });
+});
+
+describe('io/schema: one block-diagram type with two views (3.26c)', () => {
+  it("'power' is no longer a design type; the golden power project is a function design in the power view", () => {
+    const f = golden('power');
+    expect([f.designs[0].type, (f.designs[0].data as BlockDiagram).view]).toEqual(['function', 'power']);
+    expect(validateData('power' as never, f.designs[0].data)).toEqual([{ path: 'type', code: 'enum' }]);
+    (f.designs[0] as { type: string }).type = 'power';
+    expect(codes(f)).toEqual(['designs[0].type enum']);
+  });
+
+  it('view is required and is function | power', () => {
+    const f = fn(), d = f.designs[0].data as Partial<BlockDiagram>;
+    (d as { view: string }).view = 'schedule';
+    expect(codes(f)).toEqual(['designs[0].data.view enum']);
+    delete d.view;
+    expect(codes(f)).toEqual(['designs[0].data.view required']);
+  });
+
+  it('reserved UI fields are optional and validated (block size / style.color, wire routing / waypoints / labelOffset, groups)', () => {
+    const f = fn(), d = f.designs[0].data as BlockDiagram, b = d.blocks[0], w = d.wires[0];
+    b.size = 'M'; b.style.color = 'teal';
+    w.routing = 'manual'; w.waypoints = [{ x: 10, y: 20 }]; w.labelOffset = { x: 4, y: -6 };
+    d.groups = [{ id: 'grp1', name: 'Power stage', members: [b.id], bounds: { x: 0, y: 0, w: 300, h: 200 } }];
+    expect(codes(f)).toEqual([]);
+    expect(validateProject(JSON.parse(JSON.stringify(f))).ok).toBe(true);
+    (b as { size: string }).size = 'XL'; (w as { routing: string }).routing = 'smart';
+    d.groups[0].members.push('nope1');
+    expect(codes(f)).toEqual(['designs[0].data.blocks[0].size enum', 'designs[0].data.wires[0].routing enum']);
+    b.size = 'S'; w.routing = 'auto';
+    expect(codes(f)).toEqual(['designs[0].data.groups[0].members[1] missing-ref']);
+    d.groups[0].members.pop(); d.groups[0].id = b.id;
+    expect(codes(f)).toEqual(['designs[0].data.groups[0].id duplicate-id']);
   });
 });
 

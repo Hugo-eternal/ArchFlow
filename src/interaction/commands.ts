@@ -16,7 +16,7 @@ export interface CanvasContext {
   refused?(r: Extract<CommitResult, { ok: false }>): void;
 }
 
-const isBlockDiagram = (c: CanvasContext) => c.store.activeDesign?.type === 'function' || c.store.activeDesign?.type === 'power';
+const isBlockDiagram = (c: CanvasContext) => c.store.activeDesign?.type === 'function';
 const data = (c: CanvasContext) => c.store.data(c.store.activeDesignId) as BlockDiagram;
 const editable = (c: CanvasContext) => isBlockDiagram(c) && !c.gestures.busy;
 

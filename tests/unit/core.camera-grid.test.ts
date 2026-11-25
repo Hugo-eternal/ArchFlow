@@ -134,7 +134,7 @@ describe('core/grid', () => {
           ports: [{ id: 'p2', name: '', side: 'l', t: 0.5, type: 'io', label: 'inside', locked: false }] },
       ],
       wires: [{ id: 'w', a: { block: 'A', port: 'p1' }, b: { block: 'B', port: 'p2' }, name: '', kind: 'signal', line: { color: '', width: 2, dash: 'solid', arrow: false }, locked: false }],
-      junctions: [], texts: [], frames: [], grid: { size: 10, show: true, snap: true }, wirePresets: [], presentationClean: false,
+      view: 'function', junctions: [], texts: [], frames: [], grid: { size: 10, show: true, snap: true }, wirePresets: [], presentationClean: false,
     };
     expect(() => grid.normalize(d, 7)).toThrow(grid.GridError);
     expect(grid.normalize(d, 10)).toEqual(d);                          // already on the grid: no change

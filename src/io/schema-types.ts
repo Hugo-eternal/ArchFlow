@@ -7,7 +7,9 @@
 export const SCHEMA_VERSION = 3;
 
 export type Locale = 'zh-Hant' | 'en';
-export type DesignType = 'function' | 'power' | 'schedule' | 'sequence' | 'flowchart';
+// 'function' is the one block-diagram type ("block diagram"); V2's separate power design is the same data
+// shown in the power view (BlockDiagram.view, step 3.26c).
+export type DesignType = 'function' | 'schedule' | 'sequence' | 'flowchart';
 
 export interface Point { x: number; y: number }
 export interface Camera { x: number; y: number; z: number }
@@ -24,7 +26,6 @@ export interface ProjectFile {
 
 export type Design =
   | DesignOf<'function', BlockDiagram>
-  | DesignOf<'power', BlockDiagram>
   | DesignOf<'schedule', ScheduleData>
   | DesignOf<'sequence', SequenceDoc>
   | DesignOf<'flowchart', FlowchartDoc>;
@@ -37,9 +38,13 @@ export interface DesignOf<T extends DesignType, D> {
   data: D;                           // V2: diagram
 }
 
-// ---------------------------------------------------------------- block diagrams (function / power)
+// ---------------------------------------------------------------- block diagrams ('function', function / power view)
+
+/** How a block diagram is shown. Switching changes presentation only, never the data. */
+export type BlockView = 'function' | 'power';
 
 export interface BlockDiagram {
+  view: BlockView;                   // current view, saved with the file (V2: power designs → 'power')
   blocks: Block[];                   // V2: nodes
   wires: Wire[];                     // V2: edges
   junctions: Junction[];
@@ -51,6 +56,14 @@ export interface BlockDiagram {
   wireDefaults?: LineFormat;         // V2: afLineDefaults
   wirePresets: LineFormat[];         // V2: afLinePresets
   presentationClean: boolean;        // V2: afPresentation === 'clean'
+  groups?: Group[];                  // reserved (3.26c): group boxes, no editing UI yet
+}
+
+/** Reserved (3.26c): a named group of blocks with its own outline. */
+export interface Group {
+  id: string; name: string;
+  members: string[];                 // block ids
+  bounds: { x: number; y: number; w: number; h: number };
 }
 
 export interface Grid { size: number; show: boolean; snap: boolean }  // V2: enabled → snap
@@ -65,6 +78,7 @@ export interface Theme {
 export interface BlockStyle {
   fill?: string; border?: string; accent?: string; text?: string; subtitle?: string;
   titleSize?: number;
+  color?: string;                    // reserved (3.26c): palette name or colour for one-click block colouring
   name?: string;                     // custom styles only
 }
 
@@ -87,9 +101,10 @@ export interface Block {
   titleAlign?: TitleAlign;           // V2: afLayout
   font?: { subtitle?: number; label?: number; metric?: number };  // V2: afFont
   sizing: 'auto' | 'free';           // V2: afFree
+  size?: 'S' | 'M' | 'L';            // reserved (3.26c): size preset for "same size" alignment tools
   showTitle: boolean;                // V2: !afNoName
   locked: boolean;                   // V2: afLocked
-  role?: string;                     // power: source / converter / distribution / load
+  role?: string;                     // power view: source / converter / distribution / load
   metrics: Partial<Record<MetricKey, Metric>>;  // V2: voltage/current/power/efficiency + showMetrics + afCurrentUnit
   rails?: string[];                  // voltage badges on the top-right edge, up to 4 (V2: afRails)
   part?: Part;
@@ -139,10 +154,13 @@ export interface Wire {
   id: string;
   a: WireEnd; b: WireEnd;
   name: string;
-  kind: string;                      // signal / power / clock / bus
+  kind: string;                      // signal / power / clock / bus (power wires: power view)
   line: LineFormat;                  // V2: afLineFormat, merged with color / arrow / arrowSize
   route?: Point[];                   // V2: manual, or afRouteOnly.points
   locked: boolean;                   // V2: afGridLocked | afLocked | locked
+  routing?: 'auto' | 'manual';       // reserved (3.26c): default 'auto'; today `route` alone decides
+  waypoints?: Point[];               // reserved (3.26c): user bend points for the future routing UI
+  labelOffset?: Point;               // reserved (3.26c): label offset from its automatic position
   electrical?: { voltage: string; current: string; unit?: 'A' | 'mA' | 'uA'; show: boolean };
   label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } };
 }

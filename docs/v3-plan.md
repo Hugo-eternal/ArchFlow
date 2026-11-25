@@ -49,8 +49,8 @@ src/
   shell/                  V3 介面（React + TS）：app bar、命令列、指令面板、
                           設計清單、屬性面板外框、狀態列、啟動畫面、Tools 中心
   designs/
-    function/             功能方塊：零件庫、符號、外框、連接器、LCD 範本
-    power/                電源架構：角色、量測、需求 vs 額定
+    function/             方塊圖（功能檢視 / 電源檢視，3.26c 合併）：零件庫、符號、外框、連接器、
+                          LCD 範本；電源檢視的角色、量測、需求 vs 額定、入門電源樹範本
     schedule/             專案時程：時間軸版面、任務、間隔、外觀
     sequence/             電源時序：vendor 轉接（afSeqHost ↔ schema）
     flowchart/            流程圖：vendor 轉接（afFlowHost ↔ schema）
@@ -93,7 +93,7 @@ main → app → shell
 ### 1.3 design 策略的分派方式
 - `designs/<type>/index.ts` 匯出一個 `DesignModule` 物件（介面在 1.10 定義），內容包括：schema、預設資料 / 範本、render 擴充、inspector 欄位、命令、匯出擴充、自動排列策略。
 - 共用模組遇到差異時呼叫 `registry.get(design.type).xxx(...)`，**不寫 `if (isSchedule())`**，也不覆寫函式。
-- function 與 power 共用「方塊圖」能力（方塊、接腳、繞線），差異（角色、量測、電源接腳預設）由各自的策略提供；共用部分放在 `render` / `router` / `inspector`，不放在任一 design 中，以免互相 import。
+- **方塊圖只有一種設計類型 `function`（介面名稱「方塊圖」）**，V2 的「功能方塊圖」與「電源架構」合併為同一份資料的兩種檢視（`BlockDiagram.view`，3.26c，見 §2.2.1）。共用能力（方塊、接腳、繞線、外框）放在 `render` / `router` / `inspector` / `interaction`；電源檢視的呈現與欄位（角色配色、量測、需求 vs 額定）放在 `designs/function` 內，依 `view` 提供，不另設 design 模組。
 - schedule 使用自己的版面（時間軸），不使用 router；sequence / flowchart 完全交給 vendor 編輯器，共用模組只負責專案層級的存檔、設計清單與 Tools 中心。
 
 ### 1.4 現行程式 → V3 模組對照
@@ -111,7 +111,7 @@ main → app → shell
 | L388–445 匯出、各層匯出後處理 | `export/` |
 | L1474 格線 | `core/grid` |
 | L904–1037 語系、兩份原始碼的寫死字串 | `core/i18n` + `i18n/*.json` |
-| L349–351、L366、L3794 電源 | `designs/power` |
+| L349–351、L366、L3794 電源 | `designs/function`（電源檢視） |
 | L573–860、L2185–2350、L3374–3709 時程 | `designs/schedule` |
 | L3870–4653 零件庫、外框、連接器、LCD 範本 | `designs/function` |
 | af15-theme、af20-shell-css 等 CSS | `styles/` |
@@ -144,8 +144,7 @@ interface ProjectFile {
 }
 
 type Design =
-  | DesignOf<'function', BlockDiagram>
-  | DesignOf<'power', BlockDiagram>
+  | DesignOf<'function', BlockDiagram>     // 方塊圖：功能 / 電源兩種檢視（V2 'power' → 'function' + view: 'power'）
   | DesignOf<'schedule', ScheduleData>
   | DesignOf<'sequence', SequenceDoc>     // vendor 編輯器格式，原樣保存
   | DesignOf<'flowchart', FlowchartDoc>;  // vendor 編輯器格式，原樣保存
@@ -159,10 +158,13 @@ interface DesignOf<T extends string, D> {
 
 刪除（audit §2.6）：`version`、`archflowLocalization`（含 `bindings`、`catalog`）、`wiringMode`、頂層 `camera` / `cameras`、`applicationVersion`（改為 `app`）。
 
-### 2.2 方塊圖（function / power）
+### 2.2 方塊圖（`function`，功能 / 電源檢視）
+
+以下為原始規劃；實際欄位以 `src/io/schema-types.ts` 為準（3.6、3.25、3.26c 已修正：`rails` 在方塊、`bothEnds` 在線路、連接器為 `{kind, side, pins, only, mpn, visibleRows, hiddenRows}`）。
 
 ```ts
 interface BlockDiagram {
+  view: 'function' | 'power';                  // 目前檢視，存在檔案裡（3.26c）
   blocks: Block[];  wires: Wire[];  junctions: Junction[];
   texts: TextBox[]; frames: Frame[];           // frames 只在 function 使用
   theme: Theme;                                // 字型、字級
@@ -170,6 +172,7 @@ interface BlockDiagram {
   portLabels: 'inside' | 'outside' | 'hidden'; // 原 afPinLabels
   wireDefaults?: LineFormat; wirePresets: LineFormat[];
   presentationClean: boolean;                  // 原 afPresentation==='clean'
+  groups?: { id: string; name: string; members: string[]; bounds: Rect }[];  // 預留（3.26c）：群組框
 }
 
 interface Block {
@@ -180,9 +183,11 @@ interface Block {
   titleAlign: TitleAlign;         // 原 afLayout（9 宮格）
   font?: { subtitle?: number; label?: number; metric?: number };  // 原 afFont
   sizing: 'auto' | 'free';        // 原 afFree
+  size?: 'S' | 'M' | 'L';         // 預留（3.26c）：尺寸預設，給「統一大小」
+                                  // style 另預留 color?: string（3.26c：一鍵配色）
   showTitle: boolean;             // 原 afNoName 取反
   locked: boolean;                // 原 afLocked
-  role?: string;                  // power：source / converter / distribution / load
+  role?: string;                  // 電源檢視：source / converter / distribution / load
   metrics?: Partial<Record<'voltage'|'current'|'power'|'efficiency', { value: string; unit?: string; show: boolean }>>;
                                   // 合併 voltage/current/power/efficiency/showMetrics/afCurrentUnit
   part?: { kind: string; rot: 0|90|180|270; size: 'S'|'M'|'L'; rails?: string[]; bothSides?: boolean }; // 原 afPart/afSym/afRot/afSize/afRails/afBoth
@@ -202,12 +207,35 @@ interface Wire {
   line: LineFormat;               // 合併 afLineFormat + color + arrow + arrowSize
   route?: Point[];                // 合併 manual + afRouteOnly
   locked: boolean;                // 合併 afGridLocked / afLocked / locked
+  routing?: 'auto' | 'manual';    // 預留（3.26c），預設 auto；目前仍只由 route 決定
+  waypoints?: Point[];            // 預留（3.26c）：使用者轉折點（之後的走線 UI；實作時與 route 合併並寫 migrate）
+  labelOffset?: Point;            // 預留（3.26c）：標籤相對自動位置的偏移
   electrical?: { voltage?: string; current?: string; unit?: 'A'|'mA'|'uA'; show: boolean };
   label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } }; // afLabelSize/afLabelPreset/afLabelMark
 }
 ```
 
 刪除（audit §2.1–2.3、§4.5）：`heading`、`afNeedsPortAlignment`、`afUnifiedLabel`、`afCleanRoute`、`afGridOffset`（衍生）、`ioConfig`（待階段 2 確認可衍生）、`review`、`note` / `showNote`、舊 `color`。
+
+### 2.2.1 兩種檢視（3.26c）
+
+同一張圖、同一份資料，畫布上方兩段式切換「功能檢視 / 電源檢視」。規則：
+
+| 項目 | 功能檢視 | 電源檢視 |
+|---|---|---|
+| 電源標註（電壓 / 電流 / 效率、角色配色、需求 vs 額定） | 隱藏 | 顯示 |
+| 電源線 | 照畫，不顯示數值標籤 | 顯示電壓 / 電流標籤 |
+| 訊號線 | 正常 | 變淡 |
+| 屬性面板電源欄位 | 不顯示（資料保留） | 顯示 |
+| 新增線路預設 | 訊號線、無箭頭 | 電源線、帶箭頭、`electrical` |
+| 新增方塊預設 | 無角色 | 角色「轉換器」、電壓 / 電流欄位 |
+| 匯出 | 依目前檢視；對話框可另選 | 同左 |
+| 範本 | 「入門方塊圖」 | 「入門電源樹」 |
+
+- 切換只改呈現、不改資料，**不記一步復原**；但 `view` 存在檔案裡（開檔回到上次的檢視），所以切換會標記未存檔。
+- 預設值由 `model/diagram` 的 `makeBlock` / `connect` 讀 `d.view` 決定（取代 3.12–3.26 的 `BlockFlavour` 參數與 `DesignModule.blockDiagram.flavour`）。
+- 格線 / 吸附屬於使用者偏好（localStorage），不寫進檔案（`grid` 欄位維持現狀，之後若改為偏好需寫 migrate）。
+- 預留欄位（方塊 `size`、`style.color`；線路 `routing`、`waypoints`、`labelOffset`；`groups`）都是選填、未實作功能；schema 驗證其形狀，`groups[].members` 必須指向存在的方塊。
 
 ### 2.3 時程
 
@@ -247,6 +275,9 @@ interface DesignModule<D = unknown> {
   editor: 'canvas' | 'embedded';
 
   // 以下僅 editor === 'canvas'
+  blockDiagram?: true;                         // 使用共用方塊圖畫布與 router；新方塊 / 線路的預設值依 data.view（3.26c）
+  // 方塊圖的檢視相關擴充（decorate / renderExtras / inspectorFields / exportExtras）都收到含 view 的 data，
+  // 依 data.view 決定要畫 / 列出什麼；不另設 power 模組
   layout?(data: D): void;                      // 例：時程軸排版（schedule 不使用 router）
   renderExtras?(ctx: RenderContext, data: D): void;          // 徽章、外框、時間軸…
   inspectorFields?(sel: Selection, data: D): FieldSpec[];    // 一次回傳完整欄位描述
@@ -299,7 +330,7 @@ interface ToolModule {
 4. **繞線**：`router`（find-path、full-path、junctions）——以階段 2 的 router unit test 驗證。
 5. **畫面**：`render` → `interaction` → `inspector` 框架 → `export`。
 6. **最小殼層**：只有啟動畫面、設計清單、畫布、屬性面板外框，足以操作 function 設計。
-7. **設計類型**：`designs/function` → `designs/power` → `designs/schedule` → `designs/sequence` → `designs/flowchart`。
+7. **設計類型**：`designs/function`（含 3.26c 合併後的電源檢視）→ `designs/schedule` → `designs/sequence` → `designs/flowchart`。
 8. **工具**：`tools/bom` → `edid` → `hex` → `pattern`。
 9. **自動整理**：`layout/`（autoArrange + RC4 預覽）。
 10. **完整殼層**：app bar、命令列、指令面板、快捷鍵、Tools 中心、狀態列、提示。

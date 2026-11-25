@@ -8,7 +8,7 @@ import type { Block, Port, WireEnd } from '../io/schema-types';
 
 export type Side = Port['side'];
 export type PortType = 'in' | 'out' | 'io' | 'power' | 'gnd' | string;
-export type BlockFlavour = 'function' | 'power';
+export type { BlockView } from '../io/schema-types';
 
 /** Limits of one block diagram (V2 validateDiagram L358 and afAddFunctionPort L1239). */
 export const LIMITS = Object.freeze({ blocks: 100, wires: 400, portsPerBlock: 100, text: 20000 });

@@ -111,7 +111,7 @@ const theme = obj({
 });
 const blockStyle = obj({
   fill: opt(str()), border: opt(str()), accent: opt(str()), text: opt(str()), subtitle: opt(str()),
-  titleSize: opt(num({ min: 0, max: 400 })), name: opt(str(FILE_LIMITS.name)),
+  titleSize: opt(num({ min: 0, max: 400 })), color: opt(str()), name: opt(str(FILE_LIMITS.name)),
 });
 const lineFormat = obj({ color: str(), width: num({ min: 0, max: 100 }), dash: str(), arrow: bool, arrowSize: opt(num({ min: 0, max: 100 })), bothEnds: opt(bool) });
 const metric = obj({ value: str(), show: bool, unit: opt(unit) });
@@ -127,7 +127,7 @@ const block = obj<Block>({
   style: blockStyle,
   titleAlign: opt(oneOf('top-left', 'top-center', 'top-right', 'center-left', 'center-center', 'center-right')),
   font: opt(obj({ subtitle: opt(num({ min: 0, max: 400 })), label: opt(num({ min: 0, max: 400 })), metric: opt(num({ min: 0, max: 400 })) })),
-  sizing: oneOf('auto', 'free'), showTitle: bool, locked: bool, role: opt(str()),
+  sizing: oneOf('auto', 'free'), size: opt(oneOf('S', 'M', 'L')), showTitle: bool, locked: bool, role: opt(str()),
   metrics: obj({ voltage: opt(metric), current: opt(metric), power: opt(metric), efficiency: opt(metric) }),
   rails: opt(arr(str(10), 4)),
   part: opt(obj({ kind: str(), rot: oneOf(0, 90, 180, 270), size: oneOf('S', 'M', 'L') })),
@@ -140,6 +140,7 @@ const wireEnd = union(obj({ block: id, port: id }), obj({ junction: id }));
 const wire = obj({
   id, a: wireEnd, b: wireEnd, name: str(), kind: str(), line: lineFormat,
   route: opt(arr(point, FILE_LIMITS.route)), locked: bool,
+  routing: opt(oneOf('auto', 'manual')), waypoints: opt(arr(point, FILE_LIMITS.route)), labelOffset: opt(point),
   electrical: opt(obj({ voltage: str(), current: str(), unit: opt(unit), show: bool })),
   label: opt(obj({ size: opt(num({ min: 0, max: 400 })), preset: opt(str()), mark: opt(obj({ x: coord, y: coord, angle: num({ min: -360, max: 360 }) })) })),
 });
@@ -149,14 +150,17 @@ const textBox = obj({
   align: oneOf('left', 'center', 'right'), background: str(),
 });
 const frame = obj({ id, title: str(), x: coord, y: coord, w: extent, h: extent, style: str(), color: str() });
+const group = obj({ id, name: str(FILE_LIMITS.name), members: arr(id, LIMITS.blocks), bounds: obj({ x: coord, y: coord, w: extent, h: extent }) });
 
 export const blockDiagramSchema: Schema<BlockDiagram> = obj<BlockDiagram>({
+  view: oneOf('function', 'power'),
   blocks: arr(block, LIMITS.blocks), wires: arr(wire, LIMITS.wires), junctions: arr(junction, FILE_LIMITS.junctions),
   texts: arr(textBox, FILE_LIMITS.texts), frames: arr(frame, FILE_LIMITS.frames),
   theme: opt(theme),
   grid: obj({ size: num({ min: 5, max: 40, int: true }), show: bool, snap: bool }),
   portLabels: opt(portLabel), wireDefaults: opt(lineFormat), wirePresets: arr(lineFormat, FILE_LIMITS.wirePresets),
   presentationClean: bool,
+  groups: opt(arr(group, FILE_LIMITS.frames)),
 });
 
 const date = (v: unknown, p: string, out: SchemaError[]) => {
@@ -191,7 +195,7 @@ export const flowchartSchema: Schema<FlowchartDoc> = vendorDoc({
 
 /** Data schema of each design type (design modules expose the same object as `schema`). */
 export const DATA_SCHEMAS: Record<DesignType, Schema> = {
-  function: blockDiagramSchema, power: blockDiagramSchema, schedule: scheduleSchema, sequence: sequenceSchema, flowchart: flowchartSchema,
+  function: blockDiagramSchema, schedule: scheduleSchema, sequence: sequenceSchema, flowchart: flowchartSchema,
 };
 
 const camera = obj({ x: coord, y: coord, z: num({ min: 0.01, max: 10 }) });
@@ -223,6 +227,7 @@ function blockRefs(d: BlockDiagram, p: string, out: SchemaError[]) {
   unique(d.junctions, join(p, 'junctions'), out, seen);
   unique(d.texts, join(p, 'texts'), out, seen);
   unique(d.frames, join(p, 'frames'), out, seen);
+  unique(d.groups ?? [], join(p, 'groups'), out, seen);
   const ports = new Map(d.blocks.map(b => [b.id, new Set(b.ports.map(x => x.id))]));
   d.blocks.forEach((b, i) => unique(b.ports, join(join(join(p, 'blocks'), i), 'ports'), out));
   const junctions = new Set(d.junctions.map(j => j.id));
@@ -233,6 +238,9 @@ function blockRefs(d: BlockDiagram, p: string, out: SchemaError[]) {
       if (!ok) push(out, at, 'missing-ref', 'junction' in e ? e.junction : `${e.block}/${e.port}`);
     }
   });
+  (d.groups ?? []).forEach((g, i) => g.members.forEach((m, j) => {
+    if (!ports.has(m)) push(out, join(join(join(join(p, 'groups'), i), 'members'), j), 'missing-ref', m);
+  }));
 }
 
 function scheduleRefs(d: ScheduleData, p: string, out: SchemaError[]) {
@@ -251,7 +259,7 @@ export function validateData(type: DesignType, data: unknown, path = 'data'): Sc
   const s = DATA_SCHEMAS[type];
   if (!s) return [{ path: 'type', code: 'enum' }];
   s(data, path, out);
-  if (!out.length && (type === 'function' || type === 'power')) blockRefs(data as BlockDiagram, path, out);
+  if (!out.length && type === 'function') blockRefs(data as BlockDiagram, path, out);
   if (!out.length && type === 'schedule') scheduleRefs(data as ScheduleData, path, out);
   return out;
 }
@@ -271,7 +279,7 @@ export function validateProject(raw: unknown): Result<ProjectFile> {
     if (!file.designs.some(d => d.id === file.activeDesignId)) push(out, 'activeDesignId', 'missing-ref', file.activeDesignId);
     file.designs.forEach((d, i) => {
       const p = join(join('designs', i), 'data');
-      if (d.type === 'function' || d.type === 'power') blockRefs(d.data, p, out);
+      if (d.type === 'function') blockRefs(d.data, p, out);
       else if (d.type === 'schedule') scheduleRefs(d.data, p, out);
     });
   }

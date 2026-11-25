@@ -78,7 +78,7 @@ export function makeConnector(kind: ConnKind, at: { x: number; y: number }, ref:
     part: { kind: 'conn', rot: 0, size: 'M' },
     connector: { kind, side, pins: [...pins], only: false, mpn: '', visibleRows: [], hiddenRows: 0 },
   };
-  const laid = layoutConnector({ blocks: [b], wires: [], junctions: [], texts: [], frames: [], grid: { size: 10, show: false, snap: false }, wirePresets: [], presentationClean: false }, b.id);
+  const laid = layoutConnector({ view: 'function', blocks: [b], wires: [], junctions: [], texts: [], frames: [], grid: { size: 10, show: false, snap: false }, wirePresets: [], presentationClean: false }, b.id);
   return laid.data.blocks[0];
 }
 

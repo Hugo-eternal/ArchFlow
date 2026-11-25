@@ -92,7 +92,7 @@ describe('gestures', () => {
     const store = new Store();
     store.newProject('P', { type: 'function', name: 'D', data: d });
     let camera: Camera = { x: 0, y: 0, z: 1 };
-    const h: GestureHost = { store, camera: () => camera, setCamera: c => { camera = c; }, routes: () => new Map(), flavour: () => 'function' };
+    const h: GestureHost = { store, camera: () => camera, setCamera: c => { camera = c; }, routes: () => new Map() };
     return { store, g: new Gestures(h), data: () => store.data(store.activeDesignId) as BlockDiagram };
   }
 

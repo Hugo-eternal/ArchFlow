@@ -16,8 +16,9 @@
         "y": 276.22131147540983,
         "z": 0.7065573770491803
       },
-      "type": "power",
+      "type": "function",
       "data": {
+        "view": "power",
         "blocks": [
           {
             "id": "x0w2ye1gr1",

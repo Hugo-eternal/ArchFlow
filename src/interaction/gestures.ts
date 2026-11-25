@@ -16,7 +16,7 @@
 //
 // V2: view / block / port / junction pointer handlers L317–321, finish L319, zoomAt L322–323.
 import type { BlockDiagram, Camera, WireEnd } from '../io/schema-types';
-import type { BlockFlavour, ItemRef } from '../model/types';
+import type { ItemRef } from '../model/types';
 import type { Point } from '../core/geometry';
 import type { Store } from '../core/store';
 import { routeWire, type Route } from '../router/full-path';
@@ -42,7 +42,6 @@ export interface GestureHost {
   camera(): Camera;
   setCamera(c: Camera): void;
   routes(): ReadonlyMap<string, Route>;
-  flavour(): BlockFlavour;
   measure?: Measure;
   /** Called whenever selection, preview or draft change (the canvas re-renders). */
   changed?(): void;
@@ -205,9 +204,8 @@ export class Gestures {
       }
       case 'wire': {
         if (!s.target) break;
-        const flavour = this.host.flavour();
         let id = '';
-        const r = commitEdit(this.host.store, d => { const c = connect(d, s.from, s.target!.end, {}, flavour); id = c.id; return c.data; });
+        const r = commitEdit(this.host.store, d => { const c = connect(d, s.from, s.target!.end); id = c.id; return c.data; });
         if (!r.ok) this.host.refused?.(r);
         else if (this.data().wires.some(w => w.id === id)) this.select([{ kind: 'wire', id }]);
         break;

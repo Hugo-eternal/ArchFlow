@@ -21,7 +21,7 @@ import canvasCss from '../../src/styles/canvas.css?raw';
 const ROOT = path.resolve(__dirname, '../..');
 const golden = (type: 'function' | 'power'): BlockDiagram => {
   const p = JSON.parse(fs.readFileSync(path.join(ROOT, `tests/golden/${type}/__snapshots__/project.v3.json`), 'utf8'));
-  return p.designs.find((d: { type: string }) => d.type === type).data;
+  return p.designs.find((d: { type: string; data: { view?: string } }) => d.type === 'function' && d.data.view === type).data;
 };
 const v2Export = (type: string) =>
   JSON.parse(fs.readFileSync(path.join(ROOT, `tests/golden/${type}/__snapshots__/export.svg.json`), 'utf8')).elements as Record<string, string>[];

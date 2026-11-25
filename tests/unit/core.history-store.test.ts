@@ -95,7 +95,7 @@ describe('History', () => {
   });
 });
 
-const emptyDiagram = (): BlockDiagram => ({ blocks: [], wires: [], junctions: [], texts: [], frames: [], grid: { size: 10, show: true, snap: true }, wirePresets: [], presentationClean: false });
+const emptyDiagram = (): BlockDiagram => ({ view: 'function', blocks: [], wires: [], junctions: [], texts: [], frames: [], grid: { size: 10, show: true, snap: true }, wirePresets: [], presentationClean: false });
 
 describe('Store', () => {
   const make = () => {
@@ -115,7 +115,7 @@ describe('Store', () => {
     const s = make();
     const f = s.activeDesignId;
     s.update(d => { (d as BlockDiagram).texts.push({ id: 't', text: 'a', x: 0, y: 0, w: 10, size: 12, color: '#000', bold: false, italic: false, align: 'left', background: 'transparent' }); });
-    const p = s.addDesign('power', 'P1', emptyDiagram(), { activate: true });
+    const p = s.addDesign('function', 'P1', emptyDiagram(), { activate: true });
     expect(s.activeDesignId).toBe(p);
     s.select({ kind: 'block', id: 'x' });
     s.activate(f);
@@ -152,7 +152,7 @@ describe('Store', () => {
   it('toFile → load round-trips and starts without undo history', () => {
     const s = make();
     s.update(d => { (d as BlockDiagram).grid.size = 20; });
-    s.addDesign('power', 'P1', emptyDiagram());
+    s.addDesign('function', 'P1', emptyDiagram());
     const file = s.toFile();
     expect(file.schemaVersion).toBe(3);
     expect(file.app).toMatch(/^ArchFlow 3\./);

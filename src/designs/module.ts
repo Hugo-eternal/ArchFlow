@@ -7,7 +7,7 @@ import { t } from '../core/i18n';
 import type { Command } from '../core/commands';
 import type { Camera, Design, DesignType } from '../io/schema-types';
 import type { Schema } from '../io/schema';
-import type { BlockFlavour, ItemRef } from '../model/types';
+import type { ItemRef } from '../model/types';
 import type { BlockDiagram, Block } from '../model/types';
 import type { FieldSpec } from '../inspector/fields';
 import type { VNode } from '../render/vnode';
@@ -44,9 +44,10 @@ export interface DesignModule<D = Design['data']> {
   /** 'canvas' = the shared canvas / inspector; 'embedded' = a vendor editor in an iframe (3.30–3.31). */
   editor: 'canvas' | 'embedded';
 
-  // ---- canvas designs that are block diagrams (function, power)
-  /** Present when the design uses the shared block-diagram canvas and router. */
-  blockDiagram?: { flavour: BlockFlavour };
+  // ---- canvas designs that are block diagrams ('function'; function / power view in BlockDiagram.view)
+  /** True when the design uses the shared block-diagram canvas and router. Defaults for new
+   *  blocks / wires follow the diagram's `view` (3.26c), not the design type. */
+  blockDiagram?: true;
   /** Extra drawing on a block (part symbols, connector pins …), used by render/blocks `decorate`. */
   decorate?(b: Block, d: BlockDiagram): VNode | null;
   /** Drawing below / above the shared layers (frames, badges …), on the canvas and in exports. */

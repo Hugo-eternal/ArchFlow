@@ -73,7 +73,9 @@
 - [x] 3.25 `designs/function`：零件庫、符號、電壓徽章（L2）
 - [x] 3.26a 區域外框（3.26 拆成兩步：外框屬於所有方塊圖共用，放在 model / render / interaction / inspector）（L3）
 - [x] 3.26b `designs/function`：連接器、LCD 範本（L2）
-- [ ] 3.27 `designs/power`（L2）
+- [x] 3.26c 方塊圖合併（規劃步驟）：「功能方塊圖」與「電源架構」合併為一種設計類型 `function`（介面名稱「方塊圖」），同一份資料以 `BlockDiagram.view`（`'function' | 'power'`）切換「功能檢視 / 電源檢視」；只改計畫與存檔格式，不寫新功能（L4）
+- [ ] 3.27a `designs/function` 檢視切換：畫布上方兩段式切換「功能檢視 / 電源檢視」（只改呈現、不改資料、不記復原，`view` 存檔）；依檢視呈現（功能檢視：隱藏電壓 / 電流 / 效率、角色配色、需求 vs 額定，電源線照畫但無數值標籤；電源檢視：顯示上述標註與電源線電壓 / 電流標籤，訊號線變淡）；屬性面板依檢視列欄位（資料兩邊都保留）；新方塊 / 新線路預設值跟著檢視（model 已在 3.26c 改為讀 `view`）；匯出依目前檢視、對話框可另選檢視（L3：會改到 render / inspector / shell / export）
+- [ ] 3.27b `designs/function` 電源檢視的電源功能（V2 電源架構全部移植）：角色（source / converter / distribution / load）與角色配色、量測欄位（電壓 / 電流 + 單位 / 功率 / 效率、顯示開關）與量測表繪製、線路電氣欄位（`wire.electrical`）、需求 vs 額定警示、「入門電源樹」範本（以電源檢視開啟）；golden power 在電源檢視下與 V2 匯出比對，golden function 在功能檢視下的比對維持不變（L2）
 - [ ] 3.28 `designs/schedule`：時間軸版面與渲染（L2）
 - [ ] 3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（L2）
 - [ ] 3.30 `designs/sequence` vendor 轉接（L2）
@@ -108,8 +110,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.27 `designs/power`（L2）。先讀 audit / 移植清單中電源相關列（inspector 1998 電源欄位分組、2060 電流單位、3843 需求 vs 額定 `af24-load`、3244 角色配色、render 的電源量測表，以及 V2「入門電源樹」範本，golden power 有 metrics / role）。建立 `src/designs/power/index.ts`（`blockDiagram: { flavour: 'power' }`、範本：用 V2 引擎產生「入門電源樹 / Starter power tree」並轉成 V3，同 3.24 的作法）、量測欄位（電壓 / 電流 + 單位 / 功率 / 效率、顯示開關）、角色（source / converter / distribution / load，角色配色）、需求 vs 額定（負載加總對比額定電流）、線路的電氣欄位（`wire.electrical`）；在 `src/app.ts` 註冊。golden power 的量測表繪製要與 V2 匯出比對（V2 power 匯出的量測是表格：「電壓 / 電流 / 效率」標籤 + 數值 + 單位文字）。啟動畫面的設計類型清單會自動出現「電源架構」。L2。
+- **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成；3.26c（方塊圖合併規劃）已完成
+- **下一步**：3.27a 檢視切換（L3）。**不建立 `src/designs/power/`**（3.26c 決定：電源架構是方塊圖的電源檢視，全部放在 `src/designs/function/` 內）。做法建議：檢視切換為殼層命令（例如 `view.mode.function` / `view.mode.power`，以 `store` 直接改目前設計的 `data.view`，不經 `commitEdit`、不進 History，但要標記未存檔——需在 `core/store` 加一個不記復原的設定方法）；render / inspector / export 的擴充點都已收到含 `view` 的 data，依 `d.view` 決定；`render/wires` 的電源線數值標籤與訊號線變淡要能由檢視控制；匯出對話框加「檢視」選項。設計類型名稱 i18n 改為「方塊圖 / Block diagram」。之後 3.27b 再做電源功能：先讀 audit / 移植清單中電源相關列（inspector 1998 電源欄位分組、2060 電流單位、3843 需求 vs 額定 `af24-load`、3244 角色配色、render 3857 電源設計新方塊預設電源接腳、render 的電源量測表，以及 V2「入門電源樹」範本，golden power 有 metrics / role）；範本用 V2 引擎產生「入門電源樹 / Starter power tree」並轉成 V3（同 3.24，`data.view: 'power'`），加到 `functionDesign.templates`；golden power 的量測表繪製要與 V2 匯出比對（V2 power 匯出的量測是表格：「電壓 / 電流 / 效率」標籤 + 數值 + 單位文字）。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -180,7 +182,7 @@
   - `App.tsx`（啟動畫面、app bar 工具列、設計清單、狀態列；全域鍵盤走 `registry.handleKey`；`beforeunload` 提醒未存檔）、`Canvas.tsx`（一個 `<svg>`，每次變更以 `vnode.mount` 重畫，拖曳中畫 `gestures.draft()`；指標 → `Gestures`，滾輪縮放；點狀格線用 `--grid-size/x/y`）、`InspectorPane.tsx`（`blockInspector`；群組開合存 `archflow:inspector-groups`，`InspectorPanel` 新增 `groupState` 選項）、`Dialogs.tsx`（prompt / confirm / 匯出；焦點鎖在對話框、Escape 關閉、關閉後焦點回原處）、`use-store.ts`（`useSyncExternalStore`）。樣式 `src/styles/shell.css`（token；900 px 以下改為上下排列）。
   - `window.archflow` 掛著 `Shell`，**只給測試 / 除錯讀取**。
   - 測試：`tests/unit/shell.controller.test.ts`、`tests/e2e/v3-shell.spec.ts`（對 `dist/ArchFlow.html`，需先 `npm run build`；`test.use({ locale: 'zh-TW' })`；下載檔名用掛勾 `HTMLAnchorElement.prototype.click` 取得程式要求的名稱）。
-  - 目前只有 function 可建立（啟動畫面只列這一種）；power / schedule / sequence / flowchart 在 3.27 起接上。dist 現為 322 KB（含 React）。
+  - 目前只有 function 可建立（啟動畫面只列這一種）；電源檢視在 3.27a / 3.27b（3.26c 起不再有 power 設計類型），schedule / sequence / flowchart 在 3.28 起接上。dist 現為 322 KB（含 React）。
   - **3.13 / 3.14 的人工驗收**：E2E 已自動確認開 V2 檔顯示「不支援舊版格式」且畫面不變；仍請使用者在實際 Chrome / Edge 開 `dist/ArchFlow.html`（`npm run build` 後）試開一個 V2 專案檔確認，並試用新增方塊、拉線、改名、存檔、匯出。
 - designs（3.24）：`src/designs/module.ts`——`DesignModule`（plan §2.5：type、label、schema、templates、`create({ template })` → `{ name, data, camera? }`、`editor`、`blockDiagram?: { flavour }`、`decorate`、`renderExtras`、`inspectorFields(sel, d)`、`commands`、`exportExtras`）、`DesignRegistry`（`register` / `get` / `require` / `list`）、`localize`（範本 JSON 中 `"@i18n:key"` 字串換成目前語言文字）、`templateKeys`。`src/app.ts` 是唯一 import 所有 design 並註冊的地方（`createRegistry()`）；`Shell` 建構子改為 `new Shell(registry)`，`isBlockDiagram` / flavour / 新專案 / 新增設計 / canvas 的 decorate 與 extras / inspector 的 extra 欄位 / 匯出的 decorate 與 extras 全部經 `shell.module`（不再判斷 type 字串）。
   - `src/designs/function/index.ts` + `templates/starter.json`：V2.10.1「入門方塊圖 / Starter block diagram」範本（用 V2 引擎產生、經 `tests/tools/v2-to-v3.ts` 轉換；中英文幾何相同，文字為 `template.function.starter.*`）。建立時鏡頭改為 `pendingFit`（canvas 量到尺寸後 fit），不沿用 V2 依其視窗算的鏡頭。
@@ -196,8 +198,58 @@
   - 測試：`tests/golden/function.connector.test.ts`（連接器規則、golden FPC 與 V2 匯出比對圖形 / 標籤；LCD 範本與 V2 引擎現場執行 `afTpl.lcd()` 的結果比對，中英兩語系，經 `prepare` 提交流程後方塊 / 接腳 / 外框 / 連線完全相同）、`v3-function.spec.ts` 第 4 項。
   - **已知問題**：golden function 的完整逐元素 `compareSvg` 仍無法通過——V2 匯出的文字 x 是字形左緣（HTML 量測），V3 用 `text-anchor`；V2 線路路徑有重複點、群組層數不同。需要在 `tests/tools/svg-compare.ts` 加正規化（文字依錨點與估計寬度換算左緣、路徑去重複點）後再做，建議在 3.44（測試改對 dist）一併處理。目前已逐項比對：線路、方塊外框、符號、徽章、外框、連接器、線路標籤。
   - 變更連接器造成線被刪除時沒有提示（V2 有），已記入 CHANGELOG。
+- 方塊圖合併（3.26c，規劃 + 存檔格式）：
+  - `DesignType` 移除 `'power'`，`DATA_SCHEMAS` 只剩 function / schedule / sequence / flowchart；`BlockDiagram.view: 'function' | 'power'`（必填）；`BlockView` 由 `io/schema-types` 匯出、`model/types` 轉出。schemaVersion 維持 3、無遷移（V3 未發版）。
+  - 預留欄位（選填、未實作）：方塊 `size`（S / M / L）、`style.color`；線路 `routing`（auto / manual）、`waypoints`、`labelOffset`；`groups`（id、name、members（方塊 id，schema 檢查存在）、bounds；id 與其他項目共用命名空間）。
+  - `BlockFlavour` 刪除：`makeBlock(d, at, view = d.view)`、`connect(d, a, b, opts, view = d.view)`、`emptyDiagram(view = 'function')`；`GestureHost.flavour()` 刪除；`DesignModule.blockDiagram` 改為 `true`。`commitEdit` / 畫布命令 / schema 參照檢查只認 `'function'`。
+  - 轉換器：V2 power → `type: 'function'`、`view: 'power'`；V2 function → `view: 'function'`。golden function / power 的 `project.v3.json` 已重新產生（只多 `view`、power 的 `type` 改為 `function`），寫入 CHANGELOG「專案檔」。
+  - 測試裡的 `golden('power')` 指的是 golden **目錄名稱**（`tests/golden/power/`），目錄維持不變；`export.test` / `export.png.test` 改以 `type === 'function' && data.view === <name>` 取設計。
+  - 計畫：`docs/v3-plan.md` §1.1、§1.3、§1.4、§2.1、§2.2（新增 §2.2.1「兩種檢視」對照表）、§2.5、§3.2 已更新；3.28 之後的步驟沒有引用 `'power'` 設計類型，不需修改。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.26b 屬 L2，但改到 interaction / shell，跑全套：模組標註、型別、i18n、token（122 個、92 組對比）、vendor、建置、產物檢查、Vitest 37 檔 279 項、Playwright 17 項（`--workers=1`）全數通過；移植清單 ☑ 81、✂ 34）。前一步 3.26a：模組標註、型別、i18n、token（120 個、88 組對比）、vendor、建置、產物檢查、Vitest 36 檔 269 項、Playwright 16 項（`--workers=1`）全數通過；移植清單 ☑ 80、✂ 34）。前一步 3.25 屬 L2，但改到 render / inspector / export / io / shell，跑全套：模組標註、型別、i18n、token（108 個、72 組對比）、vendor、建置、產物檢查、Vitest 35 檔 261 項、Playwright 15 項（`--workers=1`）全數通過；移植清單 ☑ 78、✂ 34）。前一步 3.24 屬 L2，但同時改了 shell / export，跑全套：模組標註、型別、i18n、token、vendor、建置（330 KB）、產物檢查、Vitest 34 檔 251 項、Playwright 14 項（`--workers=1`）全數通過；移植清單 ☑ 75、✂ 34）。前一步 3.23：模組標註、型別、i18n（155 個 key）、token（98 個）、vendor、建置（322 KB）、產物檢查、Vitest 33 檔 246 項、Playwright 13 項（`--workers=1`）全數通過；移植清單 ☑ 68、✂ 34）。前一步 3.22：模組標註、型別、i18n（共 104 個 key）、token、vendor、建置、產物檢查、Vitest 32 檔 239 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 63、✂ 34）。前一步 3.21：模組標註、型別、i18n（新增 62 個 key，共 88 個）、token、vendor、建置、產物檢查、Vitest 30 檔 224 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 57、✂ 34）。前一步 3.20：型別、i18n、token、vendor、建置、產物檢查、Vitest 29 檔 204 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 50、✂ 34）。前一步 3.19：L3（型別、i18n、token（95 個、54 組對比）、vendor、建置、產物檢查、Vitest 28 檔 194 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 47、✂ 34）。前一步 3.18：L3（型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L4 自動項目（3.26c：模組標註、i18n、token（122 個、92 組對比）、vendor、型別、建置、產物檢查、Vitest 37 檔 283 項、Playwright 17 項（`--workers=1`）全數通過；遷移測試：`io/migrate` 仍為空、schemaVersion 維持 3，`io.project-file` 的 legacy / newer 版本測試通過）。**人工驗收待使用者確認**：`npm run build` 後在 Chrome / Edge 開 `dist/ArchFlow.html`，建立「入門方塊圖」→ 存檔 → 重新開啟，確認可開且畫面不變；用文字編輯器看存檔，方塊圖設計為 `"type": "function"` 且有 `"view": "function"`；把 `type` 改成 `"power"` 後開啟應顯示格式錯誤。前一步 3.26b：L3（3.26b 屬 L2，但改到 interaction / shell，跑全套：模組標註、型別、i18n、token（122 個、92 組對比）、vendor、建置、產物檢查、Vitest 37 檔 279 項、Playwright 17 項（`--workers=1`）全數通過；移植清單 ☑ 81、✂ 34）。前一步 3.26a：模組標註、型別、i18n、token（120 個、88 組對比）、vendor、建置、產物檢查、Vitest 36 檔 269 項、Playwright 16 項（`--workers=1`）全數通過；移植清單 ☑ 80、✂ 34）。前一步 3.25 屬 L2，但改到 render / inspector / export / io / shell，跑全套：模組標註、型別、i18n、token（108 個、72 組對比）、vendor、建置、產物檢查、Vitest 35 檔 261 項、Playwright 15 項（`--workers=1`）全數通過；移植清單 ☑ 78、✂ 34）。前一步 3.24 屬 L2，但同時改了 shell / export，跑全套：模組標註、型別、i18n、token、vendor、建置（330 KB）、產物檢查、Vitest 34 檔 251 項、Playwright 14 項（`--workers=1`）全數通過；移植清單 ☑ 75、✂ 34）。前一步 3.23：模組標註、型別、i18n（155 個 key）、token（98 個）、vendor、建置（322 KB）、產物檢查、Vitest 33 檔 246 項、Playwright 13 項（`--workers=1`）全數通過；移植清單 ☑ 68、✂ 34）。前一步 3.22：模組標註、型別、i18n（共 104 個 key）、token、vendor、建置、產物檢查、Vitest 32 檔 239 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 63、✂ 34）。前一步 3.21：模組標註、型別、i18n（新增 62 個 key，共 88 個）、token、vendor、建置、產物檢查、Vitest 30 檔 224 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 57、✂ 34）。前一步 3.20：型別、i18n、token、vendor、建置、產物檢查、Vitest 29 檔 204 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 50、✂ 34）。前一步 3.19：L3（型別、i18n、token（95 個、54 組對比）、vendor、建置、產物檢查、Vitest 28 檔 194 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 47、✂ 34）。前一步 3.18：L3（型別、i18n、token（91 個、50 組對比）、vendor、建置、產物檢查、Vitest 27 檔 188 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 41、✂ 33）。前一步 3.17：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
+
+### V3.0.0 之後的待辦
+（3.26c 記錄；不在 V3.0.0 範圍內。存檔已預留對應欄位，實作時不需改格式，除非另有註明。）
+
+#### 方塊圖 UI/UX 優化
+- **P1**
+  - 雙擊空白處新增方塊並直接進入改名。
+  - 方塊四邊「＋」：快速延伸出新方塊並自動接線。
+  - 接點吸附與正交自動走線（使用預留的 `wire.routing` / `waypoints`；實作時把現有 `route` 合併進來並寫 migrate）。
+  - 原地改名（畫布上直接編輯標題）。
+  - 對齊參考線與格線吸附（格線 / 吸附改為使用者偏好，不寫進檔案；屆時 `BlockDiagram.grid` 需要 migrate）。
+  - 空白狀態引導（沒有內容時的說明與動作）。
+- **P2**
+  - 多選浮動工具列：對齊 / 分布 / 統一大小（使用預留的 `block.size`）。
+  - 精簡右鍵選單。
+  - 統一搜尋與最近使用（零件、命令）。
+  - 快捷鍵：F2 改名、切換檢視、Ctrl+D 複製、方向鍵微調（方向鍵移動已在 3.20 完成）。
+- **P3**
+  - 角色配色圖例。
+  - 超過額定的 ⚠ 徽章與狀態列警示統計。
+  - 電源預算面板（只計算、不存檔）。
+- **通用**：WCAG AA、可用鍵盤完整操作、tooltip、小螢幕收合面板。
+- 群組框（預留 `groups`）、一鍵配色（預留 `style.color`）、標籤拖曳偏移（預留 `wire.labelOffset`）。
+
+#### 其他
+- 零件拖到方塊上自動接線（V2 `attach`，L4240）。
+- 最近使用零件清單。
+- 變更連接器而刪除線路時的提示（V2 會顯示刪除條數，3.26b 未移植）。
+- `tests/tools/svg-compare.ts` 正規化（文字依錨點換算左緣、路徑去重複點），讓 golden function 可做完整逐元素比對（建議在 3.44 一併處理；若 3.44 未做則留到此處）。
+
+#### ui-ux-pro-max 檢查建議（只列建議，不擴大範圍）
+以 `python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux` 對照上列清單：
+1. **「Tab 切換檢視」與鍵盤導覽衝突**（Keyboard Navigation，High）：Tab 是瀏覽器移動焦點的鍵，拿來切換檢視會讓鍵盤使用者無法離開畫布。建議改用不衝突的組合（例如 `Mod+1` / `Mod+2` 或 `Shift+V`），或只在畫布取得焦點且無選取時才攔截並提供跳出方式。
+2. **角色配色不可只靠顏色**（Color Only，High）：角色配色要搭配圖例與文字 / 圖示（例如方塊上的角色縮寫）；超過額定用 ⚠ 圖示 + 文字（清單中的做法正確），不要只把邊框變紅。
+3. **拖曳要有替代操作**（Dragging Movements，WCAG 2.5.7，High）：四邊「＋」、對齊參考線、接點吸附都是拖曳操作，需保留鍵盤 / 按鈕替代（屬性面板座標、方向鍵、命令「延伸方塊」）。
+4. **點擊目標至少 24 × 24 CSS px**（Target Size，WCAG 2.2 AA，High）：「＋」把手與外框四角把手（目前 `FRAME_HANDLE` 8 px）的**命中範圍**應放大到 24 px，畫出來的大小可以較小。
+5. **tooltip 不可只靠 hover**（Hover vs Tap，High）：鍵盤取得焦點時也要顯示、可用 Escape 關閉，觸控裝置有替代說明。
+6. **右鍵選單要有鍵盤入口**：支援 ContextMenu 鍵 / Shift+F10，且選單內可用方向鍵移動。
+7. **空白狀態**（Empty States，Medium）：說明 + 明確的動作按鈕（新增方塊 / 套用範本），可略過、不要強迫導覽。
+8. **刪除用復原取代確認**（Undo for Reversible Actions，Medium）：連接器變更刪除線路時，建議用「已刪除 N 條線路・復原」的提示，而不是事前確認框。
+9. **動畫尊重 `prefers-reduced-motion`**（High）：自動走線、參考線、面板收合的動畫在減少動態時關閉。
+10. **小螢幕收合面板**：以 320 / 768 / 1024 / 1440 寬度測試，不可出現水平捲軸（Horizontal Scroll，High）。
+

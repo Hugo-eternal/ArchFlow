@@ -36,12 +36,13 @@ describe('save ↔ open round trip', () => {
     }
   });
 
-  it('a project with all five design types keeps all of them and the active one', () => {
+  it('a project with every golden design keeps all of them and the active one', () => {
     const all = golden('function');
     all.designs = TYPES.map(t => golden(t).designs[0]);
     all.activeDesignId = all.designs[3].id;
     const back = readProjectText(saveProject(loaded(all)).text);
-    expect(back.ok && back.file.designs.map(d => d.type)).toEqual([...TYPES]);
+    // the golden power project is a 'function' design in the power view (3.26c)
+    expect(back.ok && back.file.designs.map(d => d.type)).toEqual(['function', 'function', 'schedule', 'sequence', 'flowchart']);
     expect(back.ok && back.file.activeDesignId).toBe(all.designs[3].id);
   });
 

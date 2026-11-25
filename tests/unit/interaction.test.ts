@@ -29,7 +29,7 @@ function setup(grid = true) {
   const host: GestureHost = {
     store, camera: () => camera, setCamera: c => { camera = c; },
     routes: () => routeAll(store.data(store.activeDesignId) as BlockDiagram),
-    flavour: () => 'function', changed: () => changes.push(1), refused: r => refusals.push(r.error.message),
+    changed: () => changes.push(1), refused: r => refusals.push(r.error.message),
   };
   const g = new Gestures(host);
   const data = () => store.data(store.activeDesignId) as BlockDiagram;

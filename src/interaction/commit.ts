@@ -40,7 +40,7 @@ export function prepare(before: BlockDiagram, after: BlockDiagram): CommitResult
  */
 export function commitEdit(store: Store, edit: (d: BlockDiagram) => BlockDiagram): CommitResult {
   const active = store.activeDesign;
-  if (!active || (active.type !== 'function' && active.type !== 'power')) throw new Error('commitEdit needs a block diagram');
+  if (!active || active.type !== 'function') throw new Error('commitEdit needs a block diagram');
   const before = store.data(active.id) as BlockDiagram;
   let after: BlockDiagram;
   try { after = edit(before); } catch (e) {

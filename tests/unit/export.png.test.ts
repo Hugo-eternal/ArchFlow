@@ -12,7 +12,7 @@ import type { BlockDiagram } from '../../src/io/schema-types';
 const ROOT = path.resolve(__dirname, '../..');
 const golden = (type: 'function' | 'power'): BlockDiagram => {
   const p = JSON.parse(fs.readFileSync(path.join(ROOT, `tests/golden/${type}/__snapshots__/project.v3.json`), 'utf8'));
-  return p.designs.find((d: { type: string }) => d.type === type).data;
+  return p.designs.find((d: { type: string; data: { view?: string } }) => d.type === 'function' && d.data.view === type).data;
 };
 
 describe('PNG', () => {

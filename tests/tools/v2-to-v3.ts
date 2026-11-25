@@ -6,7 +6,7 @@
 // Mapping follows docs/v3-audit.md §2: fields are renamed, merged or dropped; layout caches
 // and legacy-only fields are not carried over.
 import type {
-  Block, BlockDiagram, BlockStyle, Connector, Design, FlowchartDoc, Frame, Junction, LineFormat,
+  Block, BlockDiagram, BlockStyle, BlockView, Connector, Design, FlowchartDoc, Frame, Junction, LineFormat,
   Link, Locale, Metric, MetricKey, Part, Point, Port, PortLabelMode, ProjectFile, ScheduleData,
   SequenceDoc, Task, TaskTime, TextBox, Theme, TitleAlign, Wire, WireEnd,
 } from '../../src/io/schema-types';
@@ -42,8 +42,9 @@ function convertDesign(d: Raw): Design {
   const base = { id: str(d.id), name: str(d.name), camera: { x: num(d.camera?.x), y: num(d.camera?.y), z: num(d.camera?.z, 1) } };
   const g = d.diagram ?? {};
   switch (d.type) {
-    case 'function': return { ...base, type: 'function', data: convertBlockDiagram(g) };
-    case 'power': return { ...base, type: 'power', data: convertBlockDiagram(g) };
+    // V2 had two block-diagram types; V3 has one with two views (3.26c)
+    case 'function': return { ...base, type: 'function', data: convertBlockDiagram(g, 'function') };
+    case 'power': return { ...base, type: 'function', data: convertBlockDiagram(g, 'power') };
     case 'schedule': return { ...base, type: 'schedule', data: convertSchedule(g) };
     case 'sequence': return { ...base, type: 'sequence', data: (g.sequence ?? { name: '', rails: [] }) as SequenceDoc };
     case 'flowchart': return { ...base, type: 'flowchart', data: (g.flowchart ?? { title: '', lanes: [], nodes: [], edges: [] }) as FlowchartDoc };
@@ -165,8 +166,9 @@ const convertText = (t: Raw): TextBox => ({
 
 const convertFrame = (f: Raw): Frame => ({ id: str(f.id), title: str(f.title), x: num(f.x), y: num(f.y), w: num(f.w), h: num(f.h), style: str(f.style, 'solid'), color: str(f.color) });
 
-function convertBlockDiagram(g: Raw): BlockDiagram {
+function convertBlockDiagram(g: Raw, view: BlockView): BlockDiagram {
   const d: BlockDiagram = {
+    view,
     blocks: arr(g.nodes).map(convertBlock),
     wires: arr(g.edges).map(convertWire),
     junctions: arr(g.junctions).map(convertJunction),

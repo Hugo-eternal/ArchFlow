@@ -32,7 +32,8 @@ describe('V2 → V3 converter', () => {
       expect(v3.schemaVersion).toBe(3);
       expect(v3.project.name).toBe(v2.project.name);
       expect(v3.activeDesignId).toBe(v2.activeDesignId);
-      expect(v3.designs.map(d => [d.id, d.name, d.type])).toEqual(v2.designs.map((d: { id: string; name: string; type: string }) => [d.id, d.name, d.type]));
+      // V2 power designs become 'function' designs in the power view (3.26c)
+    expect(v3.designs.map(d => [d.id, d.name, d.type])).toEqual(v2.designs.map((d: { id: string; name: string; type: string }) => [d.id, d.name, d.type === 'power' ? 'function' : d.type]));
       // vendor documents (sequence / flowchart) are stored untouched, so only check the rest
       const scan = { ...v3, designs: v3.designs.map(d => (d.type === 'sequence' || d.type === 'flowchart' ? { ...d, data: {} } : d)) };
       expect(v2Keys(scan)).toEqual([]);
@@ -59,6 +60,8 @@ describe('V2 → V3 converter', () => {
 
   it('power: metrics, roles and wire electrical values', () => {
     const d = convertProject(load('power')).designs[0].data as BlockDiagram;
+    expect([convertProject(load('power')).designs[0].type, d.view]).toEqual(['function', 'power']);
+    expect((convertProject(load('function')).designs[0].data as BlockDiagram).view).toBe('function');
     expect(new Set(d.blocks.map(b => b.role))).toEqual(new Set(['source', 'converter', 'load']));
     const neg = d.blocks.find(b => b.metrics.voltage?.value === '-12')!;
     expect(neg.metrics.voltage).toEqual({ value: '-12', show: true });

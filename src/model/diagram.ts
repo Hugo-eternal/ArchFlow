@@ -6,12 +6,12 @@
 // afSpreadPorts L1237–1239, port-count sizing L1257, newFreeText L497, wire creation in pointerup L319.
 // Route validity (does a wire find a path?) is the router's job (3.15) and not checked here.
 import { clone, uid } from '../core/ids';
-import type { Block, BlockDiagram, Frame, Junction, LineFormat, Point, Port, TextBox, Wire, WireEnd } from '../io/schema-types';
-import { LIMITS, ModelError, isJunctionEnd, type BlockFlavour, type BlockPatch, type ItemRef, type Side } from './types';
+import type { Block, BlockDiagram, BlockView, Frame, Junction, LineFormat, Point, Port, TextBox, Wire, WireEnd } from '../io/schema-types';
+import { LIMITS, ModelError, isJunctionEnd, type BlockPatch, type ItemRef, type Side } from './types';
 import { DEFAULT_GRID } from '../core/grid';
 
-export function emptyDiagram(): BlockDiagram {
-  return { blocks: [], wires: [], junctions: [], texts: [], frames: [], grid: { ...DEFAULT_GRID }, wirePresets: [], presentationClean: false };
+export function emptyDiagram(view: BlockView = 'function'): BlockDiagram {
+  return { view, blocks: [], wires: [], junctions: [], texts: [], frames: [], grid: { ...DEFAULT_GRID }, wirePresets: [], presentationClean: false };
 }
 
 // ------------------------------------------------------------------ lookups
@@ -54,8 +54,8 @@ export function makePort(name: string, side: Side, t: number, type = 'io'): Port
   return { id: uid(), name, side, t, type, label: 'inside', locked: false };
 }
 
-/** A new block as V2's "add block" made it; `at` is its top-left corner. */
-export function makeBlock(d: BlockDiagram, at: Point, flavour: BlockFlavour = 'function'): Block {
+/** A new block as V2's "add block" made it; `at` is its top-left corner. Defaults follow the view. */
+export function makeBlock(d: BlockDiagram, at: Point, view: BlockView = d.view): Block {
   const b: Block = {
     id: uid(), x: at.x, y: at.y, w: BLOCK_DEFAULT.w, h: BLOCK_DEFAULT.h,
     title: '', subtitle: '', partNumber: 'IC', ref: nextRef(d),
@@ -63,7 +63,7 @@ export function makeBlock(d: BlockDiagram, at: Point, flavour: BlockFlavour = 'f
     style: { titleSize: BLOCK_DEFAULT.titleSize },
     sizing: 'auto', showTitle: true, locked: false, metrics: {},
   };
-  if (flavour === 'power') {
+  if (view === 'power') {
     b.role = 'converter';
     b.metrics = { voltage: { value: '', show: false }, current: { value: '', show: false } };
   }
@@ -162,13 +162,13 @@ export const WIRE_LINE_DEFAULT: Readonly<LineFormat> = Object.freeze({ color: ''
 
 /**
  * Connect two ends. Refuses a wire from an end to itself, unknown ends and the 400-wire limit.
- * Power designs default to power wires with an arrow (V2 L319).
+ * In the power view new wires default to power wires with an arrow (V2 L319).
  */
-export function connect(d: BlockDiagram, a: WireEnd, b: WireEnd, opts: WireOptions = {}, flavour: BlockFlavour = 'function'): { data: BlockDiagram; id: string } {
+export function connect(d: BlockDiagram, a: WireEnd, b: WireEnd, opts: WireOptions = {}, view: BlockView = d.view): { data: BlockDiagram; id: string } {
   if (sameEnd(a, b)) throw new ModelError('same-end');
   for (const e of [a, b]) if (!endExists(d, e)) throw new ModelError('missing', isJunctionEnd(e) ? e.junction : e.port);
   if (d.wires.length >= LIMITS.wires) throw new ModelError('limit-wires');
-  const power = flavour === 'power';
+  const power = view === 'power';
   const w: Wire = {
     id: uid(), a: { ...a }, b: { ...b }, name: opts.name ?? '', kind: opts.kind ?? (power ? 'power' : 'signal'),
     line: { ...WIRE_LINE_DEFAULT, arrow: power, ...opts.line }, locked: false,
