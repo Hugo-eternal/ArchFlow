@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hex/Bin Editor & Compare</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232B5C8A' stroke-width='2' stroke-linecap='round'%3E%3Crect x='3' y='4' width='18' height='16' rx='2'/%3E%3Cpath d='M7 9h2M11 9h2M15 9h2M7 13h2M11 13h2M7 17h6'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+/* tool icon and close button, the same as RSI BOM Converter */
+.tool-icon{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:#EFEBF8;color:#5E4A9C;flex:none;align-self:center}
+.tool-icon svg{width:16px;height:16px}
+.ib.close{width:32px;height:32px;display:inline-grid;place-items:center;border:0;border-radius:6px;background:transparent;cursor:pointer;color:#5B6B7C;flex:none;margin-left:2px}
+.ib.close:hover{background:#EEF2F6;color:#14202C}
+.ib.close svg{width:18px;height:18px}
+
+html,body{height:100%}
+body{margin:0;font:14px/1.45 "Noto Sans TC","Microsoft JhengHei","PingFang TC","Segoe UI",system-ui,sans-serif;color:#14202C;background:#F3F5F8;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,"SFMono-Regular",monospace}
+button,input,select{font:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid #DCE3EA;border-radius:8px;background:#fff;cursor:pointer;white-space:nowrap}
+.btn:hover:not(:disabled){border-color:#B9C6D3;background:#FAFBFC}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:#2B5C8A;border-color:#2B5C8A;color:#fff;font-weight:600}
+.btn.pri:hover:not(:disabled){background:#244E76}
+.btn.sm{height:28px;padding:0 9px;font-size:13px}
+.btn:focus-visible,.tab:focus-visible,input:focus-visible,select:focus-visible,.view:focus-visible,.menu button:focus-visible,.dl button:focus-visible{outline:2px solid #2B5C8A;outline-offset:1px}
+input.txt,select{height:30px;border:1px solid #CBD5DF;border-radius:7px;padding:0 9px;background:#fff}
+input.txt.bad{border-color:#C2412D;background:#FFF6F4}
+/* header */
+header.top{height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 18px;background:#fff;border-bottom:1px solid #E1E7EE}
+.brand{display:flex;align-items:center;gap:8px;margin-right:6px}
+.brand strong{font-size:18px;letter-spacing:-.2px}
+.brand .tag{font-size:11px;color:#5B6B7C;border:1px solid #DCE3EA;border-radius:5px;padding:0 6px}
+.grow{flex:1}
+.tabs{display:flex;gap:2px;background:#EEF2F6;border-radius:9px;padding:3px}
+.tab{border:0;background:none;height:28px;padding:0 14px;border-radius:7px;cursor:pointer;color:#4A5B6C}
+.tab[aria-selected=true]{background:#fff;color:#14202C;font-weight:600;box-shadow:0 1px 2px rgba(15,24,33,.12)}
+.lang{display:flex;border:1px solid #DCE3EA;border-radius:8px;overflow:hidden}
+.lang button{border:0;background:#fff;height:30px;padding:0 10px;cursor:pointer;font-size:13px;color:#5B6B7C}
+.lang button[aria-pressed=true]{background:#EEF2F6;color:#14202C;font-weight:600}
+.menu-wrap{position:relative}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:250px;background:#fff;border:1px solid #DCE3EA;border-radius:10px;box-shadow:0 14px 34px -14px rgba(15,24,33,.35);padding:5px}
+.menu button{display:block;width:100%;text-align:left;border:0;background:none;border-radius:7px;padding:7px 10px;cursor:pointer}
+.menu button:hover:not(:disabled){background:#F1F4F8}
+.menu button:disabled{opacity:.45;cursor:not-allowed}
+.menu b{display:block;font-weight:600;font-size:13.5px}.menu small{color:#5B6B7C;font-size:12px}
+/* layout */
+main{flex:1;min-height:0;display:grid;grid-template-columns:300px 1fr}
+aside.side{background:#fff;border-right:1px solid #E1E7EE;overflow:auto;padding:16px 16px 24px}
+.side h3{font-size:12.5px;color:#5B6B7C;font-weight:600;margin:16px 0 6px}
+.side h3:first-child{margin-top:0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}
+.kv dt{color:#5B6B7C}.kv dd{margin:0;text-align:right;word-break:break-all}
+.fname{font-weight:600;font-size:14.5px;word-break:break-all;margin-bottom:2px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:9px;background:#EEF2F6;color:#3E4F60;margin-right:4px}
+.pill.ok{background:#E6F4EC;color:#1D6B43}.pill.bad{background:#FDECEA;color:#A3321F}.pill.warn{background:#FFF4DC;color:#7A5400}
+.list{display:flex;flex-direction:column;gap:2px;max-height:240px;overflow:auto;margin:0 -6px}
+.list button{display:flex;justify-content:space-between;gap:8px;border:0;background:none;text-align:left;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:12.5px}
+.list button:hover{background:#F1F4F8}
+.list button.on{background:#E7EFF7}
+.list button span:last-child{color:#5B6B7C}
+.errs{font-size:12.5px;color:#A3321F;margin:0;padding-left:16px;max-height:140px;overflow:auto}
+.note{font-size:12px;color:#5B6B7C;margin:6px 0 0}
+section.work{display:flex;flex-direction:column;min-width:0;min-height:0}
+.bar{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 16px;background:#fff;border-bottom:1px solid #E1E7EE}
+.bar .sep{width:1px;height:22px;background:#E1E7EE;margin:0 2px}
+.bar label{font-size:13px;color:#4A5B6C;display:flex;align-items:center;gap:6px}
+.status{font-size:12.5px;color:#5B6B7C;margin-left:auto}
+.status.bad{color:#A3321F}
+/* hex view */
+.view{flex:1;min-height:0;overflow:auto;position:relative;background:#fff;font:13px/22px ui-monospace,"Cascadia Mono",Consolas,"SFMono-Regular",monospace;outline:none}
+.spacer{position:relative}
+.row{position:absolute;left:0;right:0;height:22px;display:flex;white-space:pre;padding-left:16px}
+.row:nth-child(even){background:#FAFBFC}
+.off{width:96px;color:#8193A6;flex:none;user-select:none}
+.hx{display:flex;flex:none}
+.head .hx i{color:#8193A6;cursor:default}
+.hx i{font-style:normal;width:25px;text-align:center;cursor:text;border-radius:3px}
+.hx i:nth-child(8){margin-right:8px}
+.asc{display:flex;margin-left:18px;padding-left:12px;border-left:1px solid #EEF2F6;flex:none}
+.asc i{font-style:normal;width:9px;text-align:center;cursor:text;color:#3E4F60}
+i.g{color:#C0CAD4}
+i.m{background:#FFF1C9;color:#6B4A00;font-weight:600}
+i.hit{background:#D7E6F5}
+i.sel{background:#CFE0F1}
+i.cur{outline:2px solid #2B5C8A;outline-offset:-2px;background:#E7EFF7}
+.view:not(:focus) i.cur{outline-color:#9DB8D3}
+i.pend{background:#2B5C8A;color:#fff}
+/* compare */
+.cmp .hx i{width:23px}
+.cmp .hx.b{margin-left:22px;padding-left:14px;border-left:1px solid #EEF2F6}
+i.d{background:#FDECEA;color:#A3321F;font-weight:600}
+i.o{background:repeating-linear-gradient(135deg,#F6E7C8 0 3px,#FFF8E8 3px 6px);color:#7A5400}
+.row.dc{background:#FFF9F8!important}
+.row.jump{border-top:1px dashed #C9D3DD}
+.row.dc.focus{box-shadow:inset 3px 0 0 #C2412D}
+.head{position:sticky;top:0;z-index:2;height:24px;white-space:pre;display:flex;padding-left:16px;background:#F7F9FB;border-bottom:1px solid #E1E7EE;color:#5B6B7C;font-size:12px;line-height:24px}
+.verdict{font-size:15px;font-weight:700;margin:2px 0 4px}
+.verdict.same{color:#1D6B43}.verdict.diff{color:#A3321F}
+/* empty */
+.empty{flex:1;display:grid;place-items:center;padding:24px}
+.drop{width:min(560px,100%);border:1.5px dashed #B9C6D3;border-radius:14px;background:#fff;padding:34px 28px;text-align:center}
+.drop h2{margin:0 0 6px;font-size:18px}.drop p{margin:0 0 16px;color:#5B6B7C}
+.drop .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cmpslots{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(640px,100%)}
+.slot{border:1.5px dashed #B9C6D3;border-radius:12px;background:#fff;padding:20px;text-align:center}
+.slot.filled{border-style:solid;border-color:#DCE3EA}
+.slot b{display:block;font-size:13px;color:#5B6B7C;margin-bottom:4px}
+.slot .nm{font-weight:600;margin-bottom:10px;word-break:break-all}
+#dropAll{position:fixed;inset:0;z-index:50;background:rgba(43,92,138,.10);border:3px dashed #2B5C8A;display:grid;place-items:center;font-size:18px;font-weight:600;color:#2B5C8A;pointer-events:none}
+#toast{position:fixed;left:50%;bottom:22px;translate:-50% 0;z-index:60;background:#14202C;color:#fff;padding:9px 16px;border-radius:9px;font-size:13.5px;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.on{opacity:1}
+dialog{border:0;border-radius:12px;padding:20px;box-shadow:0 20px 50px -20px rgba(15,24,33,.45);max-width:420px}
+dialog::backdrop{background:rgba(15,24,33,.3)}
+dialog h4{margin:0 0 8px;font-size:15px}dialog p{margin:0 0 16px;color:#4A5B6C}
+dialog .acts{display:flex;justify-content:flex-end;gap:8px}
+kbd{font:11.5px ui-monospace,Consolas,monospace;border:1px solid #DCE3EA;border-bottom-width:2px;border-radius:4px;padding:0 4px;background:#fff}
+@media (max-width:900px){main{grid-template-columns:1fr}aside.side{max-height:34vh;border-right:0;border-bottom:1px solid #E1E7EE}.brand .tag{display:none}}
+.chips{display:contents}
+.chip{display:inline-flex;align-items:stretch;border:1px solid #DCE3EA;border-radius:8px;background:#fff;overflow:hidden;max-width:280px}
+.chip.on{border-color:#2B5C8A;background:#E7EFF7}
+.chip button{border:0;background:none;cursor:pointer;font-size:13px;height:28px;color:inherit}
+.chip-n{padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.chip-n b{color:#2B5C8A;margin-right:6px}
+.chip-n:hover{background:#F1F4F8}
+.chip-x{width:30px;flex:none;color:#5B6B7C;border-left:1px solid #E1E7EE!important}
+.chip-x:hover{background:#FDECEA;color:#A3321F}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#D99A00;margin-left:6px;vertical-align:middle}
+.chip button:focus-visible{outline:2px solid #2B5C8A;outline-offset:-2px}
+.cmp .hx i{cursor:pointer}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="14" width="4" height="6" rx="2"/><rect x="6" y="4" width="4" height="6" rx="2"/><path d="M6 20h4"/><path d="M14 10h4"/><path d="M6 14h2v6"/><path d="M14 4h2v6"/></svg></span><strong>Hex/Bin Editor &amp; Compare</strong><span class="tag">Demo</span></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabView" aria-selected="true" data-t="解析／編輯|Inspect / edit"></button>
+    <button class="tab" role="tab" id="tabCmp" aria-selected="false" data-t="比對|Compare"></button>
+  </div>
+  <span class="grow"></span>
+  <button class="btn" id="bOpen" data-t="開啟檔案|Open file"></button>
+  <div class="menu-wrap">
+    <button class="btn" id="bExportBtn" aria-haspopup="true" aria-expanded="false" data-t="匯出 ▾|Export ▾"></button>
+    <div class="menu" id="mExport" role="menu" hidden>
+      <button role="menuitem" id="xBin"><b data-t="Binary（.bin）|Binary (.bin)"></b><small data-t="從起始位址到結尾，空隙補 0xFF|From the start address to the end; gaps filled with 0xFF"></small></button>
+      <button role="menuitem" id="xIhex"><b data-t="Intel HEX（.hex）|Intel HEX (.hex)"></b><small data-t="保留原位址與空隙，含檢查碼|Keeps addresses and gaps, with checksums"></small></button>
+      <button role="menuitem" id="xText"><b data-t="文字 Hex（.txt）|Text hex (.txt)"></b><small data-t="0x00, 0x01 … 每行 16 個|0x00, 0x01 … 16 per line"></small></button>
+    </div>
+  </div>
+  <div class="lang" id="lang"><button data-l="zh">中文</button><button data-l="en">EN</button></div>
+  <button class="ib close" id="bClose" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  <input type="file" id="fA" hidden><input type="file" id="fB" hidden>
+</header>
+
+<main>
+  <aside class="side" id="side"></aside>
+  <section class="work" id="work"></section>
+</main>
+
+<div id="dropAll" hidden data-t="放開以開啟檔案|Drop to open the file"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg"><h4 id="dlgT"></h4><p id="dlgP"></p><div class="acts"><button class="btn" id="dlgNo"></button><button class="btn pri" id="dlgYes"></button></div></dialog>
+
+<script>
+'use strict';
+/* =====================================================================
+   Hex/Bin Editor & Compare: open .bin, Intel HEX or text hex; inspect,
+   edit in place, export; compare two files address by address.
+   Everything stays in this page; nothing is uploaded.
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const HOST = (() => { try { return window.parent !== window && window.parent.afHexHost ? window.parent.afHexHost : null; } catch { return null; } })();
+let LANG = HOST ? (HOST.lang === 'en' ? 'en' : 'zh') : (() => { try { return localStorage.getItem('hexbin-lang') || 'zh'; } catch { return 'zh'; } })();
+const T = (zh, en) => (LANG === 'en' ? en : zh);
+const MAX = 64 * 1024 * 1024;
+const ROW = 22;
+
+/* ---------- small helpers ---------- */
+const h2 = n => n.toString(16).toUpperCase().padStart(2, '0');
+const hx = (n, w = 8) => '0x' + n.toString(16).toUpperCase().padStart(w, '0');
+const addrW = img => (img && img.base + img.data.length > 0x10000 ? 8 : 4);
+const fmtN = n => n.toLocaleString('en-US');
+const nB = n => (LANG === 'en' && n === 1 ? '1 byte' : `${fmtN(n)} bytes`);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function toast(msg) {
+  if (HOST) { try { HOST.toast(msg); return; } catch { /* fall back */ } }
+  const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600);
+}
+function download(name, data, type = 'application/octet-stream') {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name;
+  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function ask(title, text, yes, no) {
+  return new Promise(res => {
+    const d = $('dlg'); $('dlgT').textContent = title; $('dlgP').textContent = text; $('dlgYes').textContent = yes; $('dlgNo').textContent = no;
+    const done = v => { d.close(); res(v); }; $('dlgYes').onclick = () => done(true); $('dlgNo').onclick = () => done(false); d.oncancel = e => { e.preventDefault(); done(false); };
+    d.showModal(); $('dlgNo').focus();
+  });
+}
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8, from = 0, to = u8.length) { let c = 0xFFFFFFFF; for (let i = from; i < to; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function sum8(u8, from = 0, to = u8.length) { let s = 0; for (let i = from; i < to; i++) s = (s + u8[i]) & 0xFF; return s; }
+async function sha256(u8) { try { const d = await crypto.subtle.digest('SHA-256', u8); return [...new Uint8Array(d)].map(h2).join('').toLowerCase(); } catch { return null; } }
+
+/* ---------- parsers ----------
+   An image is { name, fmt, base, data: Uint8Array, known: Uint8Array | null (null = every byte present),
+   records, errors[], start }. Addresses in the hex view are base + index. */
+function parseIntelHex(text, name) {
+  const chunks = [], errors = []; let upper = 0, seg = 0, records = 0, start = null, eof = false, lo = Infinity, hi = -1;
+  const lines = text.split(/\r?\n/);
+  for (let ln = 0; ln < lines.length; ln++) {
+    const l = lines[ln].trim(); if (!l) continue;
+    const where = T(`第 ${ln + 1} 行`, `line ${ln + 1}`);
+    if (eof) { errors.push(T(`${where}：結束記錄 (01) 之後還有資料，已忽略`, `${where}: data after the end-of-file record (01), ignored`)); break; }
+    if (l[0] !== ':' || !/^:[0-9A-Fa-f]+$/.test(l) || l.length % 2 === 0) { errors.push(T(`${where}：不是 Intel HEX 記錄`, `${where}: not an Intel HEX record`)); continue; }
+    const b = l.slice(1).match(/../g).map(x => parseInt(x, 16));
+    const [n, ah, al, type] = b;
+    if (b.length !== n + 5) { errors.push(T(`${where}：長度欄位 ${n} 與實際資料不符`, `${where}: the length field ${n} does not match the data`)); continue; }
+    if (b.reduce((s, x) => s + x, 0) & 0xFF) { errors.push(T(`${where}：檢查碼錯誤（應為 ${h2((256 - b.slice(0, -1).reduce((s, x) => s + x, 0) % 256) % 256)}）`, `${where}: checksum error (expected ${h2((256 - b.slice(0, -1).reduce((s, x) => s + x, 0) % 256) % 256)})`)); continue; }
+    records++;
+    const d = b.slice(4, 4 + n);
+    if (type === 0) { const a = upper + seg + (ah << 8 | al); chunks.push([a, d]); lo = Math.min(lo, a); hi = Math.max(hi, a + n - 1); }
+    else if (type === 1) eof = true;
+    else if (type === 2) seg = (d[0] << 8 | d[1]) * 16;
+    else if (type === 4) upper = (d[0] << 8 | d[1]) * 65536;
+    else if (type === 3 || type === 5) start = d.reduce((s, x) => s * 256 + x, 0);
+    else errors.push(T(`${where}：不支援的記錄類型 ${h2(type)}`, `${where}: unsupported record type ${h2(type)}`));
+  }
+  if (!eof && records) errors.push(T('缺少結束記錄 (:00000001FF)', 'Missing the end-of-file record (:00000001FF)'));
+  if (hi < 0) throw Error(errors[0] || T('檔案裡沒有資料記錄', 'The file has no data records'));
+  if (hi - lo + 1 > MAX) throw Error(T(`位址範圍 ${fmtN(hi - lo + 1)} bytes 超過 64 MB 上限`, `The address range ${fmtN(hi - lo + 1)} bytes is over the 64 MB limit`));
+  const data = new Uint8Array(hi - lo + 1).fill(0xFF), known = new Uint8Array(hi - lo + 1);
+  let overlaps = 0;
+  for (const [a, d] of chunks) for (let i = 0; i < d.length; i++) { const k = a - lo + i; if (known[k] && data[k] !== d[i]) overlaps++; data[k] = d[i]; known[k] = 1; }
+  if (overlaps) errors.push(T(`${overlaps} 個位址被不同記錄寫了不同的值（以最後一筆為準）`, `${overlaps} addresses were written twice with different values (the last one wins)`));
+  return { name, fmt: 'ihex', base: lo, data, known: known.every(x => x) ? null : known, records, errors, start };
+}
+function parseTextHex(text, name) {
+  const toks = text.replace(/\/\/.*|#.*|\/\*[\s\S]*?\*\//g, ' ').split(/[\s,;]+/).filter(Boolean);
+  const bad = toks.filter(t => !/^(0x)?[0-9A-Fa-f]{1,2}$/i.test(t));
+  if (bad.length) throw Error(T(`無法辨識的值：${bad.slice(0, 3).join('、')}${bad.length > 3 ? ' …' : ''}（每個位元組寫 00～FF 或 0x00～0xFF）`, `Values that are not bytes: ${bad.slice(0, 3).join(', ')}${bad.length > 3 ? ' …' : ''} (write 00 to FF or 0x00 to 0xFF)`));
+  if (!toks.length) throw Error(T('檔案是空的', 'The file is empty'));
+  return { name, fmt: 'text', base: 0, data: Uint8Array.from(toks, t => parseInt(t.replace(/^0x/i, ''), 16)), known: null, records: 0, errors: [], start: null };
+}
+async function readFile(f) {
+  if (f.size > MAX) throw Error(T(`檔案 ${fmtN(f.size)} bytes 超過 64 MB 上限`, `The file is ${fmtN(f.size)} bytes, over the 64 MB limit`));
+  const buf = new Uint8Array(await f.arrayBuffer());
+  const head = new TextDecoder().decode(buf.slice(0, 64)).trimStart();
+  const texty = buf.length && !buf.slice(0, 4096).some(b => b === 0 || (b < 9));
+  if (/\.(hex|ihx|ihex|mcs|h86)$/i.test(f.name) || (texty && head[0] === ':')) {
+    if (head[0] === ':') return parseIntelHex(new TextDecoder().decode(buf), f.name);
+    if (texty) return parseTextHex(new TextDecoder().decode(buf), f.name);
+  }
+  if (/\.txt$/i.test(f.name) && texty) return parseTextHex(new TextDecoder().decode(buf), f.name);
+  if (!buf.length) throw Error(T('檔案是空的', 'The file is empty'));
+  return { name: f.name, fmt: 'bin', base: 0, data: buf, known: null, records: 0, errors: [], start: null };
+}
+
+/* ---------- serializers ---------- */
+function toIntelHex(img) {
+  const out = [], rec = (type, addr, bytes) => { const r = [bytes.length, (addr >> 8) & 0xFF, addr & 0xFF, type, ...bytes]; out.push(':' + r.map(h2).join('') + h2((256 - r.reduce((s, x) => s + x, 0) % 256) % 256)); };
+  let upper = -1;
+  const has = i => !img.known || img.known[i];
+  for (let i = 0; i < img.data.length;) {
+    if (!has(i)) { i++; continue; }
+    const a = img.base + i, up = Math.floor(a / 65536);
+    if (up !== upper) { rec(4, 0, [(up >> 8) & 0xFF, up & 0xFF]); upper = up; }
+    const bytes = [];
+    // a record stops at 16 bytes, a gap, or a 64 KB boundary
+    while (bytes.length < 16 && i < img.data.length && has(i) && Math.floor((img.base + i) / 65536) === up) bytes.push(img.data[i++]);
+    rec(0, a & 0xFFFF, bytes);
+  }
+  if (img.start != null) rec(5, 0, [(img.start >>> 24) & 0xFF, (img.start >> 16) & 0xFF, (img.start >> 8) & 0xFF, img.start & 0xFF]);
+  out.push(':00000001FF');
+  return out.join('\r\n') + '\r\n';
+}
+function toText(img) { const r = []; for (let i = 0; i < img.data.length; i += 16) r.push([...img.data.slice(i, i + 16)].map(b => '0x' + h2(b)).join(', ')); return r.join(',\n') + '\n'; }
+
+/* ---------- state ---------- */
+const S = {
+  mode: 'view', a: null, b: null, ed: 'A',
+  cur: 0, anchor: null, pane: 'hex', pend: false, hit: null,
+  diff: null, onlyDiff: true, di: -1
+};
+/* A and B keep their own edit state (img.st), so switching files or swapping never loses edits.
+   In Inspect / edit, S.A is the file being edited (S.ed picks A or B); in Compare, S.A / S.B are the two slots. */
+const edB = () => S.mode === 'view' && S.ed === 'B';
+Object.defineProperty(S, 'A', { get: () => (edB() ? S.b : S.a), set: v => { if (edB()) S.b = v; else S.a = v; } });
+Object.defineProperty(S, 'B', { get: () => (edB() ? S.a : S.b), set: v => { if (edB()) S.a = v; else S.b = v; } });
+const NOST = { orig: null, origKnown: null, undo: [], redo: [], mods: new Set(), sha: null };
+for (const k of ['orig', 'origKnown', 'undo', 'redo', 'mods', 'sha']) Object.defineProperty(S, k, { get: () => (S.A && S.A.st ? S.A.st : NOST)[k], set: v => { if (S.A && S.A.st) S.A.st[k] = v; } });
+function initSt(img) {
+  if (img.st) return img;
+  img.st = { orig: img.data.slice(), origKnown: img.known ? img.known.slice() : null, undo: [], redo: [], mods: new Set(), sha: null };
+  sha256(img.data).then(h => { img.st.sha = h; if (S.mode === 'view' && S.A === img) renderSide(); });
+  return img;
+}
+function setA(img) { S.A = initSt(img); S.cur = 0; S.anchor = null; S.pend = false; S.hit = null; S.diff = null; }
+function setB(img) { S.B = initSt(img); S.diff = null; }
+
+/* ---------- analysis ---------- */
+function segments(img) {
+  if (!img.known) return [[0, img.data.length]];
+  const out = []; let s = -1;
+  for (let i = 0; i <= img.data.length; i++) { const k = i < img.data.length && img.known[i]; if (k && s < 0) s = i; if (!k && s >= 0) { out.push([s, i]); s = -1; } }
+  return out;
+}
+function edidCheck(img) {
+  const d = img.data; if (img.base !== 0 || (d.length !== 128 && d.length !== 256 && d.length !== 384 && d.length !== 512)) return null;
+  if (![0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00].every((v, i) => d[i] === v)) return null;
+  const blocks = []; for (let b = 0; b < d.length / 128; b++) blocks.push(sum8(d, b * 128, b * 128 + 128) === 0);
+  const m = String.fromCharCode(((d[8] >> 2) & 31) + 64, (((d[8] & 3) << 3) | (d[9] >> 5)) + 64, (d[9] & 31) + 64);
+  let name = ''; for (let o = 54; o < 126; o += 18) if (d[o] === 0 && d[o + 1] === 0 && d[o + 3] === 0xFC) name = String.fromCharCode(...d.slice(o + 5, o + 18)).replace(/\n[\s\S]*$/, '').trim();
+  return { blocks, maker: m, product: d[10] | d[11] << 8, name, ver: `${d[18]}.${d[19]}`, ext: d[126] };
+}
+
+/* ---------- side panel ---------- */
+function infoBlock(img, label) {
+  const segs = segments(img), present = img.known ? img.known.reduce((s, x) => s + x, 0) : img.data.length;
+  const fmt = { bin: 'Binary', ihex: 'Intel HEX', text: T('文字 Hex', 'Text hex') }[img.fmt];
+  return `<div class="fname">${label ? `<span class="pill">${label}</span>` : ''}${esc(img.name)}</div>
+    <div style="margin:4px 0 10px"><span class="pill">${fmt}</span>${img.errors.length ? `<span class="pill warn">${T(`${img.errors.length} 個警告`, `${img.errors.length} warnings`)}</span>` : `<span class="pill ok">${T('格式正確', 'Valid')}</span>`}</div>
+    <dl class="kv"><dt>${T('資料量', 'Data')}</dt><dd class="mono">${fmtN(present)} bytes</dd>
+    <dt>${T('位址範圍', 'Address range')}</dt><dd class="mono">${hx(img.base, addrW(img))}–${hx(img.base + img.data.length - 1, addrW(img))}</dd>
+    ${img.fmt === 'ihex' ? `<dt>${T('記錄數', 'Records')}</dt><dd class="mono">${fmtN(img.records)}</dd><dt>${T('區段', 'Segments')}</dt><dd class="mono">${segs.length}</dd>` : ''}
+    ${img.start != null ? `<dt>${T('起始執行位址', 'Start address')}</dt><dd class="mono">${hx(img.start)}</dd>` : ''}</dl>`;
+}
+function renderSide() {
+  syncChips();
+  const el = $('side'), A = S.A;
+  if (S.mode === 'cmp') return renderCmpSide();
+  if (!A) { el.innerHTML = `<h3>${T('支援的格式', 'Formats')}</h3><p class="note">${T('Binary（任何副檔名）、Intel HEX（.hex／.ihx／.mcs，含 02／04 延伸位址）、文字 Hex（00 FF 或 0x00, 0xFF）。檔案只在這個頁面內處理，不會上傳。', 'Binary (any extension), Intel HEX (.hex / .ihx / .mcs, with 02 / 04 extended addresses), text hex (00 FF or 0x00, 0xFF). Files are handled inside this page and never uploaded.')}</p>
+    <h3>${T('編輯快捷鍵', 'Editing keys')}</h3><p class="note">${T('點選位元組後直接打 0–9／A–F 覆寫；在右側 ASCII 欄打字則寫入字元。方向鍵移動，Shift 加方向鍵或 Shift 點選可選取範圍，', 'Click a byte and type 0–9 / A–F to overwrite it; typing in the ASCII column writes characters. Arrow keys move; Shift with arrows or Shift-click selects a range; ')}<kbd>Ctrl</kbd>+<kbd>Z</kbd>／<kbd>Ctrl</kbd>+<kbd>Y</kbd> ${T('復原／重做', 'undo / redo')}，<kbd>Ctrl</kbd>+<kbd>G</kbd> ${T('跳到位址', 'go to address')}，<kbd>Ctrl</kbd>+<kbd>F</kbd> ${T('搜尋', 'find')}。</p>`; return; }
+  const segs = segments(A), e = edidCheck(A);
+  const [s0, s1] = selRange(); const selN = s1 - s0 + 1;
+  let h = infoBlock(A, '');
+  h += `<h3>${T('校驗', 'Checks')}</h3><dl class="kv"><dt>CRC-32</dt><dd class="mono" id="vCrc">${hx(crc32(A.data))}</dd><dt>Sum8</dt><dd class="mono">0x${h2(sum8(A.data))}</dd><dt>SHA-256</dt><dd class="mono" style="font-size:11px">${S.sha ? S.sha : T('計算中…', 'computing…')}</dd></dl>
+    ${A.known ? `<p class="note">${T('校驗以整段位址計算，空隙以 0xFF 計。', 'Checks cover the whole address range, with gaps counted as 0xFF.')}</p>` : ''}`;
+  if (e) h += `<h3>EDID</h3><div>${e.blocks.map((ok, i) => `<span class="pill ${ok ? 'ok' : 'bad'}">${T(`區塊 ${i}`, `Block ${i}`)} ${ok ? T('檢查碼正確', 'checksum OK') : T('檢查碼錯誤', 'bad checksum')}</span>`).join(' ')}</div>
+    <dl class="kv" style="margin-top:6px"><dt>${T('製造商', 'Maker')}</dt><dd class="mono">${esc(e.maker)}</dd><dt>${T('產品碼', 'Product')}</dt><dd class="mono">${hx(e.product, 4)}</dd>${e.name ? `<dt>${T('名稱', 'Name')}</dt><dd>${esc(e.name)}</dd>` : ''}<dt>${T('版本', 'Version')}</dt><dd class="mono">${e.ver}</dd><dt>${T('延伸區塊', 'Extensions')}</dt><dd class="mono">${e.ext}</dd></dl>`;
+  if (segs.length > 1) h += `<h3>${T(`區段（${segs.length}）`, `Segments (${segs.length})`)}</h3><div class="list">${segs.map(([a, b]) => `<button data-go="${a}"><span class="mono">${hx(A.base + a, addrW(A))}</span><span>${fmtN(b - a)} B</span></button>`).join('')}</div>`;
+  h += `<h3>${T('選取', 'Selection')}</h3><dl class="kv"><dt>${T('範圍', 'Range')}</dt><dd class="mono">${hx(A.base + s0, addrW(A))}${selN > 1 ? '–' + hx(A.base + s1, addrW(A)) : ''}</dd><dt>${T('長度', 'Length')}</dt><dd class="mono">${fmtN(selN)} B</dd>
+    <dt>Sum8</dt><dd class="mono">0x${h2(sum8(A.data, s0, s1 + 1))}</dd><dt>CRC-32</dt><dd class="mono">${hx(crc32(A.data, s0, s1 + 1))}</dd>
+    ${selN <= 4 ? `<dt>${T('數值 (LE)', 'Value (LE)')}</dt><dd class="mono">${fmtN([...A.data.slice(s0, s1 + 1)].reverse().reduce((s, x) => s * 256 + x, 0))}</dd>` : ''}</dl>`;
+  h += `<h3>${T('修改', 'Changes')}</h3><p class="note" id="vMods">${S.mods.size ? T(`已修改 ${nB(S.mods.size)}（黃色標示），記得匯出。`, `${nB(S.mods.size)} changed (yellow); export to keep them.`) : T('尚未修改。', 'No changes yet.')}</p>
+    ${S.mods.size ? `<button class="btn sm" id="bRevert" style="margin-top:6px">${T('全部還原', 'Revert all')}</button>` : ''}`;
+  if (A.errors.length) h += `<h3>${T('警告', 'Warnings')}</h3><ul class="errs">${A.errors.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  el.innerHTML = h;
+  el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { moveTo(+b.dataset.go, false); focusView(); });
+  if ($('bRevert')) $('bRevert').onclick = async () => { if (await ask(T('全部還原？', 'Revert all changes?'), T(`${S.mods.size} 個已修改的位元組會改回開檔時的值，此動作無法復原。`, `${S.mods.size} changed bytes go back to the values the file was opened with. This cannot be undone.`), T('全部還原', 'Revert all'), T('取消', 'Cancel'))) { S.A.data.set(S.orig); if (S.origKnown) S.A.known.set(S.origKnown); S.mods.clear(); S.undo = []; S.redo = []; refresh(); toast(T('已還原所有修改。', 'All changes reverted.')); } };
+}
+
+/* ---------- view mode ---------- */
+let VIEW = null;
+function selRange() { const a = S.anchor == null ? S.cur : S.anchor; return [Math.min(a, S.cur), Math.max(a, S.cur)]; }
+function renderWork() {
+  const w = $('work');
+  if (S.mode === 'cmp') return renderCmpWork();
+  if (!S.A) {
+    w.innerHTML = `<div class="empty"><div class="drop"><h2>${T('開啟 .bin 或 .hex 檔', 'Open a .bin or .hex file')}</h2><p>${T('拖放檔案到這裡，或選擇檔案。支援 Binary、Intel HEX、文字 Hex。', 'Drop a file here or pick one. Binary, Intel HEX and text hex are supported.')}</p>
+      <div class="row2"><button class="btn pri" id="eOpen">${T('選擇檔案', 'Choose a file')}</button><button class="btn" id="eCmp">${T('比對兩個檔案', 'Compare two files')}</button></div></div></div>`;
+    $('eOpen').onclick = () => pick('A'); $('eCmp').onclick = () => setMode('cmp'); VIEW = null; return;
+  }
+  w.innerHTML = `<div class="bar">
+      <label>${T('位址', 'Address')} <input class="txt mono" id="iGo" style="width:130px" placeholder="${hx(S.A.base, addrW(S.A))}" aria-label="${T('跳到位址', 'Go to address')}"></label><button class="btn sm" id="bGo">${T('前往', 'Go')}</button>
+      <span class="sep"></span>
+      <select id="sFind" aria-label="${T('搜尋類型', 'Search type')}"><option value="hex">Hex</option><option value="ascii">ASCII</option></select>
+      <input class="txt mono" id="iFind" style="width:170px" placeholder="${T('例：DE AD BE EF', 'e.g. DE AD BE EF')}" aria-label="${T('搜尋', 'Find')}"><button class="btn sm" id="bFind">${T('找下一個', 'Find next')}</button>
+      <span class="sep"></span>
+      <button class="btn sm" id="bUndo" title="Ctrl+Z">${T('復原', 'Undo')}</button><button class="btn sm" id="bRedo" title="Ctrl+Y">${T('重做', 'Redo')}</button>
+      <span class="status" id="st"></span></div>
+    <div class="view" id="view" tabindex="0" aria-label="${T('十六進位內容', 'Hex content')}"><div class="head"><span class="off">${T('位址', 'Address')}</span><span class="hx">${[...Array(16)].map((_, i) => `<i>${h2(i)}</i>`).join('')}</span><span class="asc" style="border-color:transparent">ASCII</span></div><div class="spacer" id="sp"></div></div>`;
+  VIEW = $('view');
+  VIEW.onscroll = () => drawRows();
+  new ResizeObserver(() => drawRows()).observe(VIEW);
+  VIEW.addEventListener('pointerdown', e => {
+    const t = e.target.closest('[data-a]'); if (!t) return;
+    e.preventDefault(); VIEW.focus({ preventScroll: true });
+    S.pane = t.parentElement.classList.contains('asc') ? 'asc' : 'hex';
+    moveTo(+t.dataset.a, e.shiftKey);
+    // drag to select: extend while the button is held
+    const onMove = ev => { const u = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('#sp [data-a]'); if (u && +u.dataset.a !== S.cur) moveTo(+u.dataset.a, true); };
+    const onUp = () => { removeEventListener('pointermove', onMove); removeEventListener('pointerup', onUp); };
+    addEventListener('pointermove', onMove); addEventListener('pointerup', onUp);
+  });
+  VIEW.addEventListener('keydown', onKey);
+  $('bGo').onclick = goAddr; $('iGo').onkeydown = e => { if (e.key === 'Enter') goAddr(); };
+  $('bFind').onclick = find; $('iFind').onkeydown = e => { if (e.key === 'Enter') find(); };
+  $('bUndo').onclick = () => history(-1); $('bRedo').onclick = () => history(1);
+  w.querySelector('.bar').insertAdjacentHTML('afterbegin', fileChips() + '<span class="sep"></span>'); bindChips(w);
+  drawRows(); syncButtons(); status();
+}
+function drawRows() {
+  if (!VIEW || !VIEW.isConnected || !S.A || S.mode !== 'view') return;
+  const A = S.A, rows = Math.ceil((A.base % 16 + A.data.length) / 16), first = A.base - A.base % 16, w = addrW(A);
+  $('sp').style.height = rows * ROW + 'px';
+  const top = Math.max(0, Math.floor(VIEW.scrollTop / ROW) - 4), n = Math.ceil(VIEW.clientHeight / ROW) + 8;
+  const [s0, s1] = selRange(), sel = S.anchor != null && s1 > s0, hit = S.hit;
+  let h = '';
+  for (let r = top; r < Math.min(rows, top + n); r++) {
+    const ra = first + r * 16; let hxs = '', as = '';
+    for (let c = 0; c < 16; c++) {
+      const i = ra + c - A.base;
+      if (i < 0 || i >= A.data.length) { hxs += '<i> </i>'; as += '<i> </i>'; continue; }
+      const k = !A.known || A.known[i], v = A.data[i];
+      let cl = k ? '' : 'g';
+      if (S.mods.has(i)) cl += ' m';
+      if (hit && i >= hit[0] && i < hit[1]) cl += ' hit';
+      if (sel && i >= s0 && i <= s1) cl += ' sel';
+      if (i === S.cur) cl += S.pend && S.pane === 'hex' ? ' cur pend' : ' cur';
+      hxs += `<i data-a="${i}" class="${cl}">${k ? h2(v) : '··'}</i>`;
+      as += `<i data-a="${i}" class="${cl}">${k ? (v >= 32 && v < 127 ? esc(String.fromCharCode(v)) : '.') : ' '}</i>`;
+    }
+    h += `<div class="row" style="top:${r * ROW}px"><span class="off">${ra.toString(16).toUpperCase().padStart(w, '0')}</span><span class="hx">${hxs}</span><span class="asc">${as}</span></div>`;
+  }
+  $('sp').innerHTML = h;
+}
+function moveTo(i, extend) {
+  const A = S.A; i = Math.max(0, Math.min(A.data.length - 1, i));
+  if (extend) { if (S.anchor == null) S.anchor = S.cur; } else S.anchor = null;
+  S.cur = i; S.pend = false;
+  const r = Math.floor((A.base % 16 + i) / 16), y = r * ROW;   // y inside the rows; the sticky column header takes 24 px
+  if (y < VIEW.scrollTop) VIEW.scrollTop = Math.max(0, y - ROW);
+  else if (y + ROW > VIEW.scrollTop + VIEW.clientHeight - ROW) VIEW.scrollTop = y - VIEW.clientHeight + ROW * 2;
+  drawRows(); renderSideSoon(); status();
+}
+let sideT = 0; function renderSideSoon() { cancelAnimationFrame(sideT); sideT = requestAnimationFrame(renderSide); }
+const focusView = () => VIEW && VIEW.focus({ preventScroll: true });
+function status(msg, bad) {
+  const st = $('st'); if (!st) return;
+  st.className = 'status' + (bad ? ' bad' : '');
+  const [a0, a1] = selRange();
+  st.textContent = msg || (a1 > a0 ? T(`已選取 ${nB(a1 - a0 + 1)}（Ctrl+C 複製）`, `${nB(a1 - a0 + 1)} selected (Ctrl+C copies)`) : `${T('游標', 'Cursor')} ${hx(S.A.base + S.cur, addrW(S.A))} · ${S.pane === 'hex' ? T('Hex 欄：打 0–9／A–F 覆寫', 'hex column: type 0–9 / A–F to overwrite') : T('ASCII 欄：直接打字覆寫', 'ASCII column: type to overwrite')}`);
+}
+function setByte(i, v, mergeNibble) {
+  const A = S.A, old = A.data[i], oldK = A.known ? A.known[i] : 1;
+  const last = S.undo[S.undo.length - 1];
+  if (mergeNibble && last && last.i === i) last.nv = v; else S.undo.push({ i, ov: old, ok: oldK, nv: v });
+  S.redo = [];
+  A.data[i] = v; if (A.known) A.known[i] = 1;
+  markMod(i);
+}
+function markMod(i) {
+  const A = S.A, same = A.data[i] === S.orig[i] && (!A.known || A.known[i] === S.origKnown[i]);
+  if (same) S.mods.delete(i); else S.mods.add(i);
+  S.diff = null;
+}
+function history(dir) {
+  const from = dir < 0 ? S.undo : S.redo, to = dir < 0 ? S.redo : S.undo, e = from.pop(); if (!e) return;
+  to.push(e); const A = S.A;
+  if (dir < 0) { A.data[e.i] = e.ov; if (A.known) A.known[e.i] = e.ok; } else { A.data[e.i] = e.nv; if (A.known) A.known[e.i] = 1; }
+  markMod(e.i); S.pend = false; S.anchor = null; moveTo(e.i, false); syncButtons();
+  status(dir < 0 ? T(`已復原 ${hx(A.base + e.i, addrW(A))}`, `Undid ${hx(A.base + e.i, addrW(A))}`) : T(`已重做 ${hx(A.base + e.i, addrW(A))}`, `Redid ${hx(A.base + e.i, addrW(A))}`));
+}
+function syncButtons() { if ($('bUndo')) { $('bUndo').disabled = !S.undo.length; $('bRedo').disabled = !S.redo.length; } }
+function onKey(e) {
+  const A = S.A; if (!A) return;
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); history(e.shiftKey ? 1 : -1); return; }
+  if (mod && (e.key === 'y' || e.key === 'Y')) { e.preventDefault(); history(1); return; }
+  if (mod && (e.key === 'c' || e.key === 'C')) {
+    e.preventDefault(); const [a0, a1] = selRange(), sl = [...A.data.slice(a0, a1 + 1)];
+    const text = S.pane === 'asc' ? sl.map(v => (v >= 32 && v < 127 ? String.fromCharCode(v) : '.')).join('') : sl.map(h2).join(' ');
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(() => status(T(`已複製 ${nB(sl.length)}`, `Copied ${nB(sl.length)}`)), () => status(T('瀏覽器不允許複製', 'The browser blocked copying'), true));
+    return;
+  }
+  const page = Math.max(1, Math.floor(VIEW.clientHeight / ROW) - 1) * 16;
+  const mv = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -16, ArrowDown: 16, PageUp: -page, PageDown: page }[e.key];
+  if (mv != null) { e.preventDefault(); moveTo(S.cur + mv, e.shiftKey); return; }
+  if (e.key === 'Home') { e.preventDefault(); moveTo(mod ? 0 : S.cur - ((A.base + S.cur) % 16), e.shiftKey); return; }
+  if (e.key === 'End') { e.preventDefault(); moveTo(mod ? A.data.length - 1 : S.cur + 15 - ((A.base + S.cur) % 16), e.shiftKey); return; }
+  if (e.key === 'Tab') { e.preventDefault(); S.pane = S.pane === 'hex' ? 'asc' : 'hex'; S.pend = false; drawRows(); status(); return; }
+  if (e.key === 'Escape' && (S.anchor != null || S.pend)) { e.preventDefault(); S.anchor = null; S.pend = false; drawRows(); renderSideSoon(); return; }
+  if (mod || e.altKey || e.key.length !== 1) return;
+  if (S.pane === 'hex') {
+    if (!/[0-9a-f]/i.test(e.key)) { status(T('Hex 欄只接受 0–9、A–F（按 Tab 切到 ASCII 欄）', 'The hex column takes 0–9 and A–F only (Tab switches to the ASCII column)'), true); return; }
+    e.preventDefault();
+    const d = parseInt(e.key, 16), k = !A.known || A.known[S.cur], v = k ? A.data[S.cur] : 0;
+    S.anchor = null;
+    if (!S.pend) { setByte(S.cur, (d << 4) | (v & 0x0F), false); S.pend = true; drawRows(); }
+    else { setByte(S.cur, (A.data[S.cur] & 0xF0) | d, true); S.pend = false; if (S.cur < A.data.length - 1) S.cur++; drawRows(); }
+  } else {
+    const c = e.key.charCodeAt(0); if (c < 32 || c > 126) return;
+    e.preventDefault(); S.anchor = null; setByte(S.cur, c, false); if (S.cur < A.data.length - 1) S.cur++; drawRows();
+  }
+  syncButtons(); renderSideSoon(); status();
+}
+function parseAddr(s) { s = s.trim().replace(/_/g, ''); if (!/^(0x)?[0-9a-f]+$/i.test(s)) return null; return parseInt(s.replace(/^0x/i, ''), 16); }
+function goAddr() {
+  const A = S.A, a = parseAddr($('iGo').value);
+  if (a == null) { $('iGo').classList.add('bad'); status(T('位址請用十六進位，例如 0x1F0 或 1F0', 'Write the address in hex, e.g. 0x1F0 or 1F0'), true); return; }
+  if (a < A.base || a >= A.base + A.data.length) { $('iGo').classList.add('bad'); status(T(`${hx(a, addrW(A))} 不在檔案範圍 ${hx(A.base, addrW(A))}–${hx(A.base + A.data.length - 1, addrW(A))}`, `${hx(a, addrW(A))} is outside ${hx(A.base, addrW(A))}–${hx(A.base + A.data.length - 1, addrW(A))}`), true); return; }
+  $('iGo').classList.remove('bad'); moveTo(a - A.base, false); focusView();
+}
+function find() {
+  const A = S.A, q = $('iFind').value; let pat;
+  if ($('sFind').value === 'hex') {
+    const t = q.replace(/0x/gi, '').replace(/[\s,]/g, '');
+    if (!t || t.length % 2 || !/^[0-9a-f]+$/i.test(t)) { $('iFind').classList.add('bad'); status(T('Hex 搜尋請輸入成對的 0–9／A–F，例如 DE AD', 'Enter hex pairs to search, e.g. DE AD'), true); return; }
+    pat = t.match(/../g).map(x => parseInt(x, 16));
+  } else { if (!q) { $('iFind').classList.add('bad'); return; } pat = [...new TextEncoder().encode(q)]; }
+  $('iFind').classList.remove('bad');
+  const d = A.data, n = d.length, start = S.hit && S.hit[0] === S.cur ? S.cur + 1 : S.cur;
+  for (let k = 0; k < n; k++) {
+    const i = (start + k) % n; if (i + pat.length > n) continue;
+    let ok = true; for (let j = 0; j < pat.length; j++) if (d[i + j] !== pat[j] || (A.known && !A.known[i + j])) { ok = false; break; }
+    if (ok) { S.hit = [i, i + pat.length]; moveTo(i, false); status(T(`找到於 ${hx(A.base + i, addrW(A))}${start + k >= n ? '（已從頭繞回）' : ''}`, `Found at ${hx(A.base + i, addrW(A))}${start + k >= n ? ' (wrapped)' : ''}`)); return; }
+  }
+  S.hit = null; drawRows(); status(T('找不到', 'Not found'), true);
+}
+
+/* ---------- compare mode ---------- */
+function computeDiff() {
+  const A = S.A, B = S.B, lo = Math.min(A.base, B.base), hi = Math.max(A.base + A.data.length, B.base + B.data.length);
+  const ranges = []; let s = -1, cnt = 0, onlyA = 0, onlyB = 0;
+  for (let a = lo; a <= hi; a++) {
+    let d = false;
+    if (a < hi) {
+      const ia = a - A.base, ib = a - B.base;
+      const ka = ia >= 0 && ia < A.data.length && (!A.known || !!A.known[ia]), kb = ib >= 0 && ib < B.data.length && (!B.known || !!B.known[ib]); // booleans: 0 !== false
+      if (ka !== kb) { d = true; if (ka) onlyA++; else onlyB++; } else if (ka && A.data[ia] !== B.data[ib]) { d = true; cnt++; }
+    }
+    if (d && s < 0) s = a; if (!d && s >= 0) { ranges.push([s, a]); s = -1; }
+  }
+  const first = lo - lo % 16, rows = Math.ceil((hi - first) / 16);
+  const rowSet = new Set(); for (const [a, b] of ranges) for (let r = Math.floor((a - first) / 16); r <= Math.floor((b - 1 - first) / 16); r++) rowSet.add(r);
+  S.diff = { lo, hi, first, rows, ranges, cnt, onlyA, onlyB, diffRows: [...rowSet].sort((x, y) => x - y) };
+  S.di = ranges.length ? 0 : -1;
+}
+let CV = null;
+function renderCmpSide() {
+  const el = $('side');
+  let h = S.A ? infoBlock(S.A, 'A') : '';
+  h += S.B ? `<div style="height:12px"></div>` + infoBlock(S.B, 'B') : '';
+  if (S.A && S.B) {
+    if (!S.diff) computeDiff();
+    const D = S.diff, same = !D.ranges.length;
+    h += `<h3>${T('比對結果', 'Result')}</h3><div class="verdict ${same ? 'same' : 'diff'}">${same ? T('內容完全相同', 'Identical') : T(`${nB(D.cnt + D.onlyA + D.onlyB)} 不同，${D.ranges.length} 段`, `${nB(D.cnt + D.onlyA + D.onlyB)} differ in ${D.ranges.length} range${D.ranges.length > 1 ? 's' : ''}`)}</div>
+      <dl class="kv"><dt>${T('值不同', 'Different values')}</dt><dd class="mono">${fmtN(D.cnt)}</dd><dt>${T('只有 A 有', 'Only in A')}</dt><dd class="mono">${fmtN(D.onlyA)}</dd><dt>${T('只有 B 有', 'Only in B')}</dt><dd class="mono">${fmtN(D.onlyB)}</dd>
+      <dt>CRC-32 A</dt><dd class="mono">${hx(crc32(S.A.data))}</dd><dt>CRC-32 B</dt><dd class="mono">${hx(crc32(S.B.data))}</dd></dl>
+      <p class="note">${T('依位址對齊比對；紅色＝值不同，斜線＝只有一邊有資料。', 'Aligned by address; red = different value, stripes = data on one side only.')}</p>`;
+    if (D.ranges.length) h += `<h3>${T(`差異（${D.ranges.length}）`, `Differences (${D.ranges.length})`)}</h3><div class="list" id="dl">${D.ranges.slice(0, 2000).map(([a, b], i) => `<button data-di="${i}" class="${i === S.di ? 'on' : ''}"><span class="mono">${hx(a, 8)}</span><span>${fmtN(b - a)} B</span></button>`).join('')}</div>${D.ranges.length > 2000 ? `<p class="note">${T('只列前 2000 段', 'First 2000 ranges listed')}</p>` : ''}`;
+  }
+  el.innerHTML = h || `<p class="note">${T('開啟兩個檔案（A、B）即可比對。A 就是「解析／編輯」裡的檔案，編輯後的內容會直接拿來比。', 'Open two files (A and B) to compare. A is the file in Inspect / edit; your edits are compared as they are.')}</p>`;
+  if (S.A && S.B) el.insertAdjacentHTML('beforeend', '<p class="note">' + T('雙擊比對畫面中的位元組，可到「解析／編輯」修改該檔。', 'Double-click a byte in the comparison to edit that file in Inspect / edit.') + '</p>');
+  el.querySelectorAll('[data-di]').forEach(b => b.onclick = () => goDiff(+b.dataset.di));
+}
+function renderCmpWork() {
+  const w = $('work');
+  if (!S.A || !S.B) {
+    w.innerHTML = `<div class="empty"><div><div class="cmpslots">
+      ${['A', 'B'].map(k => `<div class="slot ${S[k] ? 'filled' : ''}"><b>${k}</b><div class="nm">${S[k] ? esc(S[k].name) : T('尚未開啟', 'Not opened')}</div><button class="btn ${S[k] ? '' : 'pri'}" data-pick="${k}">${S[k] ? T('換一個', 'Replace') : T('選擇檔案', 'Choose a file')}</button></div>`).join('')}
+      </div><p class="note" style="text-align:center;margin-top:12px">${T('也可以把兩個檔案一起拖進來（第一個是 A，第二個是 B）。', 'You can also drop two files at once (the first is A, the second B).')}</p></div></div>`;
+    w.querySelectorAll('[data-pick]').forEach(b => { b.onclick = () => pick(b.dataset.pick); const k = b.dataset.pick; if (S[k]) b.insertAdjacentHTML('afterend', ' <button class="btn" data-rm="' + k + '">' + T('移除', 'Remove') + '</button>'); }); bindChips(w); CV = null; return;
+  }
+  if (!S.diff) computeDiff();
+  const D = S.diff;
+  w.innerHTML = `<div class="bar">
+      <button class="btn sm" id="bPrev" title="Shift+F3">${T('↑ 上一個差異', '↑ Previous')}</button><button class="btn sm" id="bNext" title="F3">${T('↓ 下一個差異', '↓ Next')}</button>
+      <label><input type="checkbox" id="cOnly" ${S.onlyDiff ? 'checked' : ''}> ${T('只顯示有差異的列', 'Show only rows with differences')}</label>
+      <span class="sep"></span><button class="btn sm" id="bSwap">${T('A／B 對調', 'Swap A / B')}</button><button class="btn sm" id="bPickA">${T('換 A 檔', 'Replace A')}</button><button class="btn sm" id="bPickB">${T('換 B 檔', 'Replace B')}</button>
+      <span class="status" id="st"></span></div>
+    <div class="view cmp" id="cview" tabindex="0" aria-label="${T('比對內容', 'Comparison')}"><div class="head"><span class="off">${T('位址', 'Address')}</span><span class="hx" style="width:${16 * 23 + 8}px">A · ${esc(S.A.name)}</span><span class="hx b">B · ${esc(S.B.name)}</span></div><div class="spacer" id="csp"></div></div>`;
+  CV = $('cview'); CV.onscroll = drawCmp; new ResizeObserver(drawCmp).observe(CV);
+  $('bPrev').onclick = () => goDiff(S.di - 1); $('bNext').onclick = () => goDiff(S.di + 1);
+  $('cOnly').onchange = e => { S.onlyDiff = e.target.checked; CV.scrollTop = 0; drawCmp(); if (S.di >= 0) goDiff(S.di); };
+  $('bSwap').onclick = () => { const a = S.a; S.a = S.b; S.b = a; S.ed = S.ed === 'A' ? 'B' : 'A'; S.diff = null; refresh(); toast(T('已對調 A／B（各自的修改都保留）', 'Swapped A / B (each keeps its changes)')); };
+  $('bPickB').onclick = () => pick('B'); $('bPickA').onclick = () => pick('A');
+  CV.addEventListener('keydown', e => { if (e.key === 'n' && !e.ctrlKey) { e.preventDefault(); goDiff(S.di + (e.shiftKey ? -1 : 1)); } else if (e.key === 'p') { e.preventDefault(); goDiff(S.di - 1); } });
+  w.querySelector('.bar').insertAdjacentHTML('afterbegin', fileChips() + '<span class="sep"></span>'); bindChips(w);
+  CV.title = T('雙擊位元組：到「解析／編輯」修改該檔的這個位址', 'Double-click a byte to edit that file at this address');
+  CV.addEventListener('dblclick', e => {
+    const t = e.target.closest('.hx i'), row = t && t.closest('.row'); if (!row) return;
+    const hxEl = t.parentElement, k = hxEl.classList.contains('b') ? 'B' : 'A', img = k === 'A' ? S.a : S.b;
+    const addr = parseInt(row.querySelector('.off').textContent, 16) + [...hxEl.children].indexOf(t);
+    if (addr < img.base || addr >= img.base + img.data.length) { toast(T(k + ' 檔在這個位址沒有資料', 'File ' + k + ' has no data at this address')); return; }
+    S.ed = k; S.anchor = null; S.pend = false; setMode('view'); moveTo(addr - img.base, false); focusView();
+    toast(T('正在編輯 ' + k + '：' + img.name + ' · ' + hx(addr, addrW(img)), 'Editing ' + k + ': ' + img.name + ' at ' + hx(addr, addrW(img))));
+  });
+  drawCmp(); cmpStatus();
+}
+function cmpRows() { const D = S.diff; return S.onlyDiff ? D.diffRows : null; }
+function drawCmp() {
+  if (!CV || !CV.isConnected || !S.diff || !S.A || !S.B) return;
+  const D = S.diff, A = S.A, B = S.B, list = cmpRows(), total = list ? list.length : D.rows;
+  $('csp').style.height = Math.max(total * ROW, 1) + 'px';
+  if (!total) { $('csp').innerHTML = `<div style="padding:18px 16px;color:#1D6B43;font-family:inherit">${T('沒有差異。', 'No differences.')}</div>`; return; }
+  const top = Math.max(0, Math.floor(CV.scrollTop / ROW) - 4), n = Math.ceil(CV.clientHeight / ROW) + 8;
+  const fr = S.di >= 0 ? D.ranges[S.di] : null;
+  const cell = (img, a, other) => {
+    const i = a - img.base, k = i >= 0 && i < img.data.length && (!img.known || img.known[i]);
+    const j = a - other.base, ko = j >= 0 && j < other.data.length && (!other.known || other.known[j]);
+    if (!k) return ko ? '<i class="o">··</i>' : '<i class="g">  </i>';
+    const cl = !ko ? 'o' : img.data[i] !== other.data[j] ? 'd' : '';
+    return `<i class="${cl}">${h2(img.data[i])}</i>`;
+  };
+  let h = '';
+  for (let p = top; p < Math.min(total, top + n); p++) {
+    const r = list ? list[p] : p, ra = D.first + r * 16; let ha = '', hb = '', dc = false;
+    for (let c = 0; c < 16; c++) { const ca = cell(A, ra + c, B), cb = cell(B, ra + c, A); if (/class="(d|o)"/.test(ca + cb)) dc = true; ha += ca; hb += cb; }
+    const focus = fr && ra < fr[1] && ra + 16 > fr[0], jump = list && p > 0 && list[p - 1] !== r - 1;   // rows skipped above
+    h += `<div class="row${dc ? ' dc' : ''}${focus ? ' focus' : ''}${jump ? ' jump' : ''}" style="top:${p * ROW}px"><span class="off">${ra.toString(16).toUpperCase().padStart(8, '0')}</span><span class="hx">${ha}</span><span class="hx b">${hb}</span></div>`;
+  }
+  $('csp').innerHTML = h;
+}
+function goDiff(i) {
+  const D = S.diff; if (!D || !D.ranges.length) { cmpStatus(); return; }
+  S.di = (i + D.ranges.length) % D.ranges.length;
+  const r = Math.floor((D.ranges[S.di][0] - D.first) / 16), list = cmpRows(), p = list ? list.indexOf(r) : r;
+  if (CV) { CV.scrollTop = Math.max(0, p * ROW - CV.clientHeight / 3); drawCmp(); CV.focus({ preventScroll: true }); }
+  document.querySelectorAll('#dl [data-di]').forEach(b => b.classList.toggle('on', +b.dataset.di === S.di));
+  document.querySelector(`#dl [data-di="${S.di}"]`)?.scrollIntoView({ block: 'nearest' });
+  cmpStatus();
+}
+function cmpStatus() {
+  const st = $('st'), D = S.diff; if (!st || !D) return;
+  st.className = 'status';
+  st.textContent = !D.ranges.length ? T('A 與 B 內容相同', 'A and B are identical') : T(`差異 ${S.di + 1} / ${D.ranges.length}：${hx(D.ranges[S.di][0], 8)}，${nB(D.ranges[S.di][1] - D.ranges[S.di][0])}（F3／N 下一個）`, `Difference ${S.di + 1} / ${D.ranges.length}: ${hx(D.ranges[S.di][0], 8)}, ${nB(D.ranges[S.di][1] - D.ranges[S.di][0])} (F3 / N for next)`);
+}
+
+/* ---------- file chips: which file you edit, remove a file ---------- */
+function fileChips() {
+  return ['A', 'B'].map(k => {
+    const img = k === 'A' ? S.a : S.b;
+    if (!img) return S.mode === 'view' && k === 'B' && S.a ? '<button class="btn sm" data-addb="1">＋ ' + T('加入 B 檔比對', 'Add file B to compare') + '</button>' : '';
+    const on = S.mode === 'view' && S.ed === k, mod = img.st && img.st.mods.size;
+    return '<span class="chip' + (on ? ' on' : '') + '"><button class="chip-n" data-ed="' + k + '" title="' + esc(img.name) + (S.mode === 'view' ? '' : ' · ' + T('到「解析／編輯」', 'open in Inspect / edit')) + '"><b>' + k + '</b>' + esc(img.name) + (mod ? '<i class="dot" title="' + T('有未匯出的修改', 'has unexported changes') + '"></i>' : '') + '</button>'
+      + '<button class="chip-x" data-rm="' + k + '" title="' + T('移除 ', 'Remove ') + k + '" aria-label="' + T('移除 ', 'Remove ') + k + ' · ' + esc(img.name) + '">✕</button></span>';
+  }).join('');
+}
+function bindChips(root) {
+  root.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => { S.ed = b.dataset.ed; S.cur = 0; S.anchor = null; S.pend = false; S.hit = null; if (S.mode !== 'view') setMode('view'); else refresh(); focusView(); });
+  root.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => removeSlot(b.dataset.rm));
+  root.querySelectorAll('[data-addb]').forEach(b => b.onclick = () => { setMode('cmp'); pick('B'); });
+}
+function syncChips() {
+  const bar = $('work').querySelector('.bar'); if (!bar || !bar.querySelector('.chip,[data-addb]')) return;
+  bar.querySelectorAll('.chip,[data-addb]').forEach(x => x.remove());
+  bar.insertAdjacentHTML('afterbegin', fileChips()); bindChips(bar);
+}
+async function removeSlot(k) {
+  const img = k === 'A' ? S.a : S.b; if (!img) return;
+  if (img.st && img.st.mods.size && !await ask(T('移除 ' + k + ' 檔？', 'Remove file ' + k + '?'), T(img.name + ' 有 ' + img.st.mods.size + ' bytes 修改尚未匯出，移除後會失去這些修改。', img.name + ' has ' + img.st.mods.size + ' changed bytes that are not exported; removing it loses them.'), T('移除', 'Remove'), T('取消', 'Cancel'))) return;
+  if (k === 'A') S.a = null; else S.b = null;
+  if (S.ed === k) S.ed = S.a ? 'A' : S.b ? 'B' : 'A';
+  S.diff = null; S.di = -1; S.cur = 0; S.anchor = null; S.pend = false; S.hit = null;
+  refresh(); toast(T('已移除 ' + img.name, 'Removed ' + img.name));
+}
+
+/* ---------- open, export ---------- */
+let want = 'A';
+function pick(slot) { want = slot; const f = $(slot === 'A' ? 'fA' : 'fB'); f.value = ''; f.click(); }
+async function openFiles(files, slot) {
+  for (const [k, f] of files.map((f, i) => [i === 0 ? slot : 'B', f])) {
+    try {
+      const cur = k === 'A' ? S.A : S.B, kk = cur === S.a ? 'A' : 'B';
+      if (cur && cur.st && cur.st.mods.size && !await ask(T('取代目前的 ' + kk + ' 檔？', 'Replace file ' + kk + '?'), T(`${cur.name} 有 ${cur.st.mods.size} bytes 修改尚未匯出，開啟新檔會失去這些修改。`, `${cur.name} has ${cur.st.mods.size} changed bytes that are not exported; opening another file loses them.`), T('開啟新檔', 'Open the new file'), T('取消', 'Cancel'))) return;
+      const img = await readFile(f);
+      if (k === 'A') setA(img); else setB(img);
+      toast(img.errors.length ? T(`已開啟 ${f.name}，有 ${img.errors.length} 個警告（見左側）`, `Opened ${f.name} with ${img.errors.length} warnings (see the left panel)`) : T(`已開啟 ${f.name}`, `Opened ${f.name}`));
+    } catch (err) { toast(T(`無法開啟 ${f.name}：${err.message}`, `Cannot open ${f.name}: ${err.message}`)); }
+  }
+  refresh(); if (S.mode === 'view') focusView();
+}
+$('fA').onchange = () => { const f = [...$('fA').files]; if (f.length) openFiles(f.slice(0, 2), want); };
+$('fB').onchange = () => { const f = [...$('fB').files]; if (f.length) openFiles(f, 'B'); };
+$('bOpen').onclick = () => { $('fA').multiple = S.mode === 'cmp'; pick(S.mode === 'cmp' && S.A ? 'B' : 'A'); };
+const stem = () => (S.A ? S.A.name.replace(/\.[^.]+$/, '') : 'data') + (S.mods.size ? '_edited' : '');
+const EXPORTS = {
+  xBin: () => download(stem() + '.bin', S.A.data),
+  xIhex: () => download(stem() + '.hex', toIntelHex(S.A), 'text/plain'),
+  xText: () => download(stem() + '.txt', toText(S.A), 'text/plain')
+};
+for (const [id, run] of Object.entries(EXPORTS)) $(id).onclick = () => { closeMenu(); if (!S.A) { toast(T('請先開啟檔案。', 'Open a file first.')); return; } run(); toast(T(`已匯出 ${stem()}`, `Exported ${stem()}`)); };
+function closeMenu() { $('mExport').hidden = true; $('bExportBtn').setAttribute('aria-expanded', 'false'); }
+$('bExportBtn').onclick = e => {
+  e.stopPropagation(); const open = $('mExport').hidden; closeMenu(); if (!open) return;
+  $('mExport').hidden = false; $('bExportBtn').setAttribute('aria-expanded', 'true');
+  $('mExport').querySelectorAll('button').forEach(b => { b.disabled = !S.A; });
+  $('mExport').querySelector('button:not(:disabled)')?.focus();
+};
+document.addEventListener('click', e => { if (!e.target.closest('.menu-wrap')) closeMenu(); });
+
+/* ---------- tabs, keys, drag and drop, language ---------- */
+function setMode(m) { S.mode = m; if (m === 'view') { if (!S.a && S.b) S.ed = 'B'; if (!S.b && S.ed === 'B') S.ed = 'A'; } $('tabView').setAttribute('aria-selected', String(m === 'view')); $('tabCmp').setAttribute('aria-selected', String(m === 'cmp')); if (m === 'cmp') S.diff = null; refresh(); }
+$('tabView').onclick = () => setMode('view'); $('tabCmp').onclick = () => setMode('cmp');
+function refresh() { renderWork(); renderSide(); }
+document.addEventListener('keydown', e => {
+  const mod = e.ctrlKey || e.metaKey;
+  if (e.key === 'Escape' && !$('mExport').hidden) { e.preventDefault(); closeMenu(); $('bExportBtn').focus(); return; }
+  if (mod && (e.key === 'g' || e.key === 'G') && $('iGo')) { e.preventDefault(); $('iGo').focus(); $('iGo').select(); return; }
+  if (mod && (e.key === 'f' || e.key === 'F') && $('iFind')) { e.preventDefault(); $('iFind').focus(); $('iFind').select(); return; }
+  if (mod && (e.key === 'o' || e.key === 'O')) { e.preventDefault(); $('bOpen').click(); return; }
+  if (e.key === 'F3' && S.mode === 'cmp' && S.diff) { e.preventDefault(); goDiff(S.di + (e.shiftKey ? -1 : 1)); return; }
+  if (HOST && e.key === 'Escape' && !e.defaultPrevented && !$('dlg').open && !(e.target.closest && e.target.closest('input,select')) && S.anchor == null && !S.pend) { try { HOST.close(); } catch { /* ignore */ } }
+});
+let dragDepth = 0;
+document.addEventListener('dragenter', e => { if ([...e.dataTransfer.types].includes('Files')) { dragDepth++; $('dropAll').hidden = false; } });
+document.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; $('dropAll').hidden = true; } });
+document.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+document.addEventListener('drop', e => {
+  e.preventDefault(); dragDepth = 0; $('dropAll').hidden = true;
+  const fs = [...e.dataTransfer.files]; if (!fs.length) return;
+  // in Compare: two files fill A and B; one file fills whichever slot is empty (B when A is already open)
+  const slot = S.mode === 'cmp' && fs.length === 1 && S.A ? 'B' : 'A';
+  openFiles(fs.slice(0, 2), slot);
+});
+function applyLang() {
+  document.documentElement.lang = LANG === 'en' ? 'en' : 'zh-Hant';
+  document.querySelectorAll('[data-t]').forEach(el => { const [zh, en] = el.dataset.t.split('|'); el.textContent = T(zh, en); });
+  document.querySelectorAll('#lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === LANG)));
+  refresh();
+}
+document.querySelectorAll('#lang button').forEach(b => b.onclick = () => { LANG = b.dataset.l; try { localStorage.setItem('hexbin-lang', LANG); } catch { /* ignore */ } applyLang(); });
+window.addEventListener('beforeunload', e => { if (S.mods.size && !HOST) { e.preventDefault(); e.returnValue = ''; } });
+if (HOST) { $('bClose').hidden = false; $('bClose').title = T('關閉（Esc）', 'Close (Esc)'); $('bClose').setAttribute('aria-label', T('關閉 Hex/Bin Editor & Compare', 'Close Hex/Bin Editor & Compare')); $('bClose').onclick = () => { try { HOST.close(); } catch { /* ignore */ } }; $('lang').hidden = true; document.querySelector('.brand .tag').hidden = true; }
+applyLang();
+window.__hex = { S, parseIntelHex, parseTextHex, toIntelHex, toText, crc32, sum8, computeDiff };
+</script>
+</body>
+</html>

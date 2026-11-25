@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EDID Generator · Web Demo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%232B5C8A%22 stroke-width=%222%22%3E%3Crect x=%222%22 y=%224%22 width=%2220%22 height=%2213%22 rx=%222%22/%3E%3Cpath d=%22M8 21h8M12 17v4%22/%3E%3C/svg%3E">
+<style>
+[hidden]{display:none !important}
+/* tool icon and close button, the same as RSI BOM Converter */
+.tool-icon{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:#E7EFF7;color:#2B5C8A;flex:none;align-self:center}
+.tool-icon svg{width:16px;height:16px}
+.ib.close{width:32px;height:32px;display:inline-grid;place-items:center;border:0;border-radius:6px;background:transparent;cursor:pointer;color:#5B6B7C;flex:none;margin-left:2px}
+.ib.close:hover{background:#EEF2F6;color:#14202C}
+.ib.close svg{width:18px;height:18px}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Segoe UI",system-ui,sans-serif;font-size:14px;color:#14202C;background:#F3F5F8;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,"SFMono-Regular",monospace}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;height:56px;padding:0 18px;background:#fff;border-bottom:1px solid #E1E7EE}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:30px;height:30px;border-radius:7px}
+.brand b{font-size:17px;letter-spacing:.01em}
+.tag{font-size:12px;color:#405366;background:#EEF2F6;border-radius:6px;padding:2px 8px}
+.grow{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid #DCE3EA;border-radius:8px;background:#fff;cursor:pointer;white-space:nowrap}
+.btn:hover:not(:disabled){background:#F4F7FA;border-color:#C9D5E2}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.seg button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.byte:focus-visible,summary:focus-visible{outline:2px solid #2B5C8A;outline-offset:1px}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover:not(:disabled){background:#F1F4F8}
+.btn.primary{background:#2B5C8A;border-color:#2B5C8A;color:#fff;font-weight:600}
+.btn.primary:hover:not(:disabled){background:#244E76}
+.btn.big{height:44px;padding:0 20px;font-size:15px}
+.tpl{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:-4px 0 14px;font-size:12.5px;color:#5B6B7C}
+.tpl b{color:#1F2D3A;font-weight:600}
+.tpl .tag2{font-size:11px;padding:1px 7px;border-radius:9px;background:#EEF2F6;color:#4A5B6C}
+.tpl .tag2.mine{background:#E7EFF7;color:#2B5C8A}
+.tpl .tag2.warn{background:#FFF4DC;color:#7A5400}
+.linkbtn{border:0;background:none;padding:2px 4px;margin:0 -4px;color:#2B5C8A;font:inherit;cursor:pointer;border-radius:4px;text-decoration:underline;text-underline-offset:2px;text-decoration-color:#A9C0D6}
+.linkbtn:hover{text-decoration-color:currentColor}
+.linkbtn:focus-visible{outline:2px solid #2B5C8A;outline-offset:1px}
+.tpl .hint2{flex-basis:100%;color:#647282;font-size:12px}
+.tpl code{font:12px ui-monospace,Consolas,monospace;background:#F1F4F8;padding:0 4px;border-radius:3px;color:#1F2D3A}
+.btn svg{width:16px;height:16px;flex:none}
+.menu-wrap{position:relative}
+.menu{position:absolute;top:calc(100% + 6px);right:0;z-index:40;min-width:270px;background:#fff;border:1px solid #DCE3EA;border-radius:10px;box-shadow:0 12px 32px rgba(20,32,44,.16);padding:6px}
+.menu[hidden]{display:none}
+.menu button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;border:0;background:transparent;border-radius:7px;padding:8px 10px;cursor:pointer;text-align:left}
+.menu button:hover:not(:disabled),.menu button:focus-visible{background:#F1F4F8;outline:0}
+.menu button:disabled{opacity:.45;cursor:not-allowed}
+.menu button b{font-weight:600;font-size:13.5px}.menu button small{font-size:12px;color:#5F7082}
+.menu-sep{display:block;height:1px;background:#EDF1F4;margin:4px 2px}
+.stale{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:0 0 12px;border-radius:9px;background:#FFF4E0;color:#6B4612;font-size:13px}
+.stale[hidden]{display:none}
+.stale .btn{height:28px;font-size:12.5px;padding:0 10px;margin-left:auto}
+.count{font-size:12px;color:#5F7082;text-align:right}
+.count.over{color:#9B3344;font-weight:700}
+.drop{position:fixed;inset:0;z-index:90;background:rgba(43,92,138,.10);border:3px dashed #2B5C8A;display:grid;place-items:center;font-size:18px;font-weight:700;color:#1E3F6B;pointer-events:none}
+.drop[hidden]{display:none}
+.lang{display:inline-flex;padding:2px;border-radius:8px;background:#EEF2F6}
+.lang button{border:0;background:transparent;border-radius:6px;height:28px;min-width:36px;cursor:pointer;color:#405366}
+.lang button[aria-pressed=true]{background:#fff;color:#14202C;font-weight:600;box-shadow:0 1px 2px rgba(20,32,44,.12)}
+main{max-width:1440px;margin:0 auto;padding:18px;display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:1100px){main{grid-template-columns:1fr}}
+@media (max-width:640px){header.top{flex-wrap:wrap;height:auto;padding:8px 12px;row-gap:6px}header.top .grow{flex-basis:100%;height:0;order:1}header.top .brand{order:0}header.top>*:not(.brand):not(.grow){order:2}header.top .brand .tag{display:none}.menu{right:auto;left:0}}
+.card{background:#fff;border:1px solid #E1E7EE;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.card h2{margin:0 0 4px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card h2 small{font-size:12px;font-weight:400;color:#5F7082}
+.card p.sub{margin:0 0 12px;color:#5A6B7D;font-size:12.5px;line-height:1.5}
+.row{display:grid;grid-template-columns:150px minmax(0,1fr) 44px;align-items:center;gap:10px;margin:8px 0}
+.row label{color:#33414F;font-size:13px}
+.row .unit{color:#5F7082;font-size:12.5px}
+.row input,.row select{width:100%;height:34px;border:1px solid #D5DEE8;border-radius:8px;padding:0 10px;background:#fff;text-align:right;font-variant-numeric:tabular-nums}
+.row input[type=text]{text-align:left}
+.row input.bad{border-color:#B3402E;background:#FFF7F7}
+.row input:focus{border-color:#2B5C8A;box-shadow:0 0 0 3px rgba(43,92,138,.14);outline:0}
+.err{grid-column:2/4;color:#9B3344;font-size:12px;margin-top:-4px}
+.seg{display:inline-flex;padding:3px;gap:2px;border-radius:8px;background:#EEF2F6;flex-wrap:wrap}
+.seg button{border:0;background:transparent;height:28px;padding:0 12px;border-radius:6px;cursor:pointer;color:#405366;font-size:13px}
+.seg button[aria-checked=true]{background:#fff;color:#14202C;font-weight:600;box-shadow:0 1px 2px rgba(20,32,44,.14)}
+.segrow{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center;gap:10px;margin:8px 0}
+.segrow label{color:#33414F;font-size:13px}
+.total{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed #E1E7EE;font-size:12.5px;color:#5A6B7D}
+.total b{color:#14202C;font-variant-numeric:tabular-nums}
+.calc{display:flex;align-items:center;gap:8px;margin:2px 0 6px 160px;font-size:12.5px;color:#5A6B7D}
+.calc button{height:28px;font-size:12.5px;padding:0 10px}
+details.adv summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;display:flex;align-items:center;gap:8px}
+details.adv summary::before{content:"▸";color:#5F7082;font-size:12px;transition:transform .15s}
+details.adv[open] summary::before{transform:rotate(90deg)}
+details.adv summary small{font-weight:400;font-size:12px;color:#5F7082}
+.timing{display:grid;gap:10px;margin-top:6px}
+.tbar{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;font-size:12px;color:#5A6B7D}
+.tbar .bar{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid #E1E7EE}
+.tbar .bar span{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;font-size:11.5px;min-width:2px}
+.s-sync{background:#2B5C8A;color:#fff}.s-bp{background:#BCD0E6;color:#1E3F6B}.s-act{background:#E6F3EF;color:#1F6B57}.s-fp{background:#F6E6CC;color:#6B4612}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#5A6B7D}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.gen{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.gen .note{font-size:12.5px;color:#5A6B7D}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:9px;margin-bottom:12px;font-size:13px;line-height:1.5}
+.banner.err{background:#FBEBEE;color:#7A2333;border:1px solid #F1C8CF}
+.banner b{display:block}
+.blocks{display:grid;gap:14px}
+.blk h3{margin:0 0 6px;font-size:13px;display:flex;align-items:center;gap:8px}
+.ok{color:#1F6B57;background:#E6F3EF;border-radius:10px;padding:1px 8px;font-size:11.5px;font-weight:700}
+.bad{color:#9B3344;background:#FBEBEE;border-radius:10px;padding:1px 8px;font-size:11.5px;font-weight:700}
+.grid{display:grid;grid-template-columns:34px repeat(16,minmax(0,1fr));gap:2px;font-size:12px}
+.grid .hd{color:#687685;text-align:center;font-size:11px;padding:2px 0}
+.byte{border:0;border-radius:4px;padding:4px 0;text-align:center;cursor:default;font-variant-numeric:tabular-nums;background:#F4F7FA;color:#22313F}
+.byte.r-hdr{background:#E8ECF0}.byte.r-ven{background:#EDE8F7}.byte.r-basic{background:#E0EAF6}.byte.r-color{background:#F1F4F8}.byte.r-std{background:#F4F7FA;color:#647282}
+.byte.r-dtd{background:#E6F3EF;color:#0F5148}.byte.r-name{background:#FFF4E0;color:#6B4612}.byte.r-range{background:#FBEBEE;color:#7A2333}.byte.r-sum{background:#2B5C8A;color:#fff;font-weight:700}.byte.r-ext{background:#DCE3EA}
+.byte.r-cea{background:#EEF2F6}.byte.r-pad{background:transparent;color:#B4BEC9}
+.byte.hl{outline:2px solid #2563EB;outline-offset:-1px}
+.inspect{min-height:20px;font-size:12.5px;color:#405366;margin-top:8px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #E1E7EE;margin:0 0 10px}
+.tabs button{border:0;background:transparent;padding:8px 12px;cursor:pointer;color:#5A6B7D;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:#14202C;font-weight:700;border-bottom-color:#2B5C8A}
+textarea.code{width:100%;min-height:200px;border:1px solid #D5DEE8;border-radius:9px;padding:10px 12px;resize:vertical;font-size:12.5px;line-height:1.55;background:#FBFCFD;white-space:pre;overflow:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+dl.dec{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;margin:0;font-size:13px}
+dl.dec dt{color:#5A6B7D}dl.dec dd{margin:0;font-variant-numeric:tabular-nums}
+.toast{position:fixed;right:22px;bottom:22px;z-index:60;background:#1E2935;color:#F1F5F9;padding:10px 16px;border-radius:10px;box-shadow:0 10px 26px rgba(15,23,42,.25);font-size:13px;max-width:min(640px,90vw)}
+.toast[hidden]{display:none}
+.modal{position:fixed;inset:0;z-index:80;background:rgba(15,23,42,.45);display:grid;place-items:center;padding:20px}
+.modal[hidden]{display:none}
+.dialog{background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.3);width:min(420px,94vw);padding:20px}
+.dialog h3{margin:0 0 8px;font-size:16px}
+.dialog p{margin:0 0 16px;color:#405366;line-height:1.55}
+.dialog .actions{justify-content:flex-end}
+footer{max-width:1440px;margin:0 auto;padding:0 18px 22px;display:flex;gap:16px;align-items:center;color:#687685;font-size:12px}
+footer a{color:#2B5C8A}
+.hint{font-size:12px;color:#5F7082;line-height:1.5;margin:8px 0 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="tool-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg></span><b>EDID Generator</b><span class="tag" data-t="Web Demo|Web Demo"></span></div>
+  <div class="grow"></div>
+  <div class="menu-wrap"><button class="btn ghost" id="mOpenBtn" type="button" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg><span data-t="開啟|Open"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="menu" id="mOpen" role="menu" hidden>
+      <button type="button" role="menuitem" id="bExample"><b data-t="載入範例 example.ini|Load example.ini"></b><small data-t="Demo · 1920×1080 · 60 Hz|Demo · 1920×1080 · 60 Hz"></small></button>
+      <button type="button" role="menuitem" id="bImportIni"><b data-t="匯入設定 .ini|Import settings (.ini)"></b><small data-t="時序與進階欄位|Timing and advanced fields"></small></button>
+      <button type="button" role="menuitem" id="bImportTpl"><b data-t="上傳 Python 範本|Upload a Python template"></b><small data-t="取代內建 origin.py，產生 main.py 時使用|Replaces the built-in origin.py for main.py"></small></button>
+      <button type="button" role="menuitem" id="bImportBin"><b data-t="匯入 EDID 檔|Import an EDID file"></b><small data-t=".bin、.hex（文字或 Intel HEX）|.bin, .hex (text or Intel HEX)"></small></button>
+    </div></div>
+  <div class="menu-wrap"><button class="btn ghost" id="mExportBtn" type="button" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M4 21h16"/></svg><span data-t="匯出|Export"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="menu" id="mExport" role="menu" hidden>
+      <button type="button" role="menuitem" id="bExportIni"><b data-t="設定 .ini|Settings (.ini)"></b><small data-t="可再匯入，桌面版也能讀|Re-importable; the desktop tool reads it too"></small></button>
+      <span class="menu-sep" role="separator"></span>
+      <button type="button" role="menuitem" data-need="edid" id="xBin"><b>EDID .bin</b><small data-t="二進位，燒錄器與 EEPROM 工具用|Binary, for programmers and EEPROM tools"></small></button>
+      <button type="button" role="menuitem" data-need="edid" id="xHex"><b data-t="EDID .hex（文字）|EDID .hex (text)"></b><small data-t="0x 逗號格式，與匯入相容|0x, comma-separated; re-importable"></small></button>
+      <button type="button" role="menuitem" data-need="edid" id="xIhex"><b>Intel HEX (.hex)</b><small data-t="燒錄器常用的位址＋檢查碼格式|Address + checksum records used by programmers"></small></button>
+      <button type="button" role="menuitem" data-need="edid" id="xC"><b data-t="C 陣列 (.h)|C array (.h)"></b><small data-t="韌體直接 #include|Ready to #include in firmware"></small></button>
+      <span class="menu-sep" role="separator"></span>
+      <button type="button" role="menuitem" data-need="edid" id="xPy"><b data-t="Python 程式碼（main.py）|Python code (main.py)"></b><small data-t="同「產生 Python 程式碼」|Same as Generate Python Code"></small></button>
+    </div></div>
+  <button class="btn ghost" id="bReset" type="button" data-t="全部重設|Reset all"></button>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="zh">中</button><button type="button" data-lang="en">EN</button></div>
+  <button class="ib close" id="bClose" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  <input type="file" id="fIni" accept=".ini" hidden><input type="file" id="fBin" accept=".bin,.hex" hidden><input type="file" id="fTpl" accept=".py,.txt" hidden>
+</header>
+
+<main>
+  <section aria-label="Inputs">
+    <div class="card">
+      <h2 data-t="基本資訊|General"></h2>
+      <p class="sub" data-t="產生 EDID 基本區塊（128 bytes）與 CEA 擴充區塊（128 bytes），並產出燒錄用的 Python 程式碼。|Builds the EDID base block (128 bytes) and a CEA extension block (128 bytes), and the Python code that writes them."></p>
+      <div class="row"><label for="model_name" data-t="型號 Model Name|Model Name"></label><input type="text" id="model_name" data-p="選填，例如 Demo|Optional, e.g. Demo"><span></span></div>
+      <div class="row"><label for="display_name" data-t="顯示器名稱（EDID）|Display name (EDID)"></label><input type="text" id="display_name" maxlength="13" spellcheck="false" data-p="空白＝使用型號|Empty = model name"><span class="count" id="dnCount">0/12</span></div>
+      <div class="segrow"><label data-t="輸出格式|Output Format"></label><div class="seg" id="sFormat" role="radiogroup"><button type="button" role="radio" data-v="OLDI">OLDI</button><button type="button" role="radio" data-v="VESA">VESA</button></div></div>
+      <div class="segrow"><label data-t="LVDS 埠數|LVDS Ports"></label><div class="seg" id="sPorts" role="radiogroup"><button type="button" role="radio" data-v="1_port" data-t="1 埠|1 port"></button><button type="button" role="radio" data-v="2_port" data-t="2 埠|2 ports"></button></div></div>
+      <div class="segrow"><label data-t="A／B 埠交換|A/B ports"></label><div class="seg" id="sSwap" role="radiogroup"><button type="button" role="radio" data-v="Ports A and B not Swapped" data-t="不交換|Normal"></button><button type="button" role="radio" data-v="Ports A and B Swapped" data-t="交換 A／B|Swapped"></button></div></div>
+    </div>
+
+    <div class="card">
+      <h2 data-t="水平時序|Horizontal Timings"></h2>
+      <div class="row"><label for="h_active" data-t="有效像素 Active|Horizontal Active"></label><input id="h_active" inputmode="numeric" data-p="H.Active|H.Active"><span class="unit">px</span></div>
+      <div class="row"><label for="h_fp" data-t="前廊 Front Porch|Front Porch"></label><input id="h_fp" inputmode="numeric" data-p="H.Front_Porch|H.Front_Porch"><span class="unit">px</span></div>
+      <div class="row"><label for="h_bp" data-t="後廊 Back Porch|Back Porch"></label><input id="h_bp" inputmode="numeric" data-p="H.Back_Porch|H.Back_Porch"><span class="unit">px</span></div>
+      <div class="row"><label for="h_sync" data-t="同步寬度 Sync Width|Sync Width"></label><input id="h_sync" inputmode="numeric" data-p="H.Sync_Width|H.Sync_Width"><span class="unit">px</span></div>
+      <div class="total" id="hTotal"></div>
+    </div>
+
+    <div class="card">
+      <h2 data-t="垂直時序|Vertical Timings"></h2>
+      <div class="row"><label for="v_active" data-t="有效行數 Active|Vertical Active"></label><input id="v_active" inputmode="numeric" data-p="V.Active|V.Active"><span class="unit" data-t="行|lines"></span></div>
+      <div class="row"><label for="v_fp" data-t="前廊 Front Porch|Front Porch"></label><input id="v_fp" inputmode="numeric" data-p="V.Front_Porch|V.Front_Porch"><span class="unit" data-t="行|lines"></span></div>
+      <div class="row"><label for="v_bp" data-t="後廊 Back Porch|Back Porch"></label><input id="v_bp" inputmode="numeric" data-p="V.Back_Porch|V.Back_Porch"><span class="unit" data-t="行|lines"></span></div>
+      <div class="row"><label for="v_sync" data-t="同步寬度 Sync Width|Sync Width"></label><input id="v_sync" inputmode="numeric" data-p="V.Sync_Width|V.Sync_Width"><span class="unit" data-t="行|lines"></span></div>
+      <div class="total" id="vTotal"></div>
+    </div>
+
+    <div class="card">
+      <h2 data-t="EDID 一般資訊|EDID General Info"></h2>
+      <div class="row"><label for="frame_rate" data-t="更新率 Frame Rate|Frame Rate"></label><input id="frame_rate" inputmode="decimal" data-p="Frame Rate|Frame Rate"><span class="unit">Hz</span></div>
+      <div class="row"><label for="pixel_clock" data-t="像素時脈 Pixel Clock|Pixel Clock"></label><input id="pixel_clock" inputmode="decimal" data-p="Pixel Clock|Pixel Clock"><span class="unit">MHz</span></div>
+      <div class="calc" id="calcRow"><span id="calcText"></span><button class="btn" id="bCalc" type="button" data-t="計算 Pixel Clock|Calculate Pixel Clock"></button></div>
+    </div>
+
+    <div class="card">
+      <details class="adv" id="adv">
+        <summary><span data-t="進階欄位|Advanced fields"></span><small data-t="原程式只能由 .ini 設定，這裡可直接修改|Set only through .ini in the desktop tool; editable here"></small></summary>
+        <div class="row"><label for="week_number" data-t="生產週 Week|Week Number"></label><input id="week_number" inputmode="numeric"><span class="unit">0–52</span></div>
+        <div class="row"><label for="year_number" data-t="生產年 Year|Year Number"></label><input id="year_number" inputmode="numeric"><span class="unit">1990–2245</span></div>
+        <div class="row"><label for="max_h_image_size" data-t="水平尺寸 H Size|Max H Image Size"></label><input id="max_h_image_size" inputmode="numeric"><span class="unit">mm</span></div>
+        <div class="row"><label for="max_v_image_size" data-t="垂直尺寸 V Size|Max V Image Size"></label><input id="max_v_image_size" inputmode="numeric"><span class="unit">mm</span></div>
+        <div class="row"><label for="interlaced" data-t="交錯 Interlaced|Interlaced"></label><input id="interlaced" inputmode="numeric"><span class="unit">0/1</span></div>
+        <div class="row"><label for="sound" data-t="立體聲 Sound|Sound"></label><input id="sound" inputmode="numeric"><span class="unit">0–3</span></div>
+        <div class="row"><label for="output_type" data-t="同步類型 Output Type|Output Type"></label><input id="output_type" inputmode="numeric"><span class="unit">0–3</span></div>
+        <div class="row"><label for="vsync_polarity" data-t="V 同步極性|VSync Polarity"></label><input id="vsync_polarity" inputmode="numeric"><span class="unit">0/1</span></div>
+        <div class="row"><label for="hsync_polarity" data-t="H 同步極性|HSync Polarity"></label><input id="hsync_polarity" inputmode="numeric"><span class="unit">0/1</span></div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-label="Output">
+    <div class="card">
+      <h2 data-t="時序示意|Timing at a glance"></h2>
+      <div class="timing"><div class="tbar"><span>H</span><div class="bar" id="hBar"></div></div><div class="tbar"><span>V</span><div class="bar" id="vBar"></div></div></div>
+      <div class="legend" style="margin-top:10px"><span><i class="s-sync"></i><span data-t="同步|Sync"></span></span><span><i class="s-bp"></i><span data-t="後廊|Back porch"></span></span><span><i class="s-act"></i><span data-t="有效區|Active"></span></span><span><i class="s-fp"></i><span data-t="前廊|Front porch"></span></span></div>
+    </div>
+
+    <div class="gen">
+      <button class="btn primary big" id="bGen" type="button" data-t="產生 EDID|Generate EDID"></button>
+      <button class="btn big" id="bPy" type="button" disabled data-t="產生 Python 程式碼|Generate Python Code"></button>
+      <span class="note" id="genNote" data-t="Ctrl+Enter 也可產生 EDID|Ctrl+Enter also generates the EDID"></span>
+    </div>
+    <div class="tpl" id="tpl" aria-live="polite">
+      <span data-t="Python 範本|Python template"></span><b id="tplName">origin.py</b><span class="tag2" id="tplTag"></span>
+      <button type="button" class="linkbtn" id="bTpl" data-t="上傳自己的版本|Upload your own"></button>
+      <button type="button" class="linkbtn" id="bTplDefault" hidden data-t="改回內建|Use the built-in one"></button>
+      <button type="button" class="linkbtn" id="bTplDl" data-t="下載目前範本|Download this template"></button>
+      <span class="hint2" id="tplHint"></span>
+    </div>
+    <div id="errBox"></div>
+
+    <div class="card">
+      <h2><span data-t="EDID 資料|EDID Data"></span><small id="edidLen"></small></h2>
+      <div class="stale" id="stale" role="status" hidden><span data-t="輸入已變更，下方 EDID 還是舊的。|The inputs changed; the EDID below is out of date."></span><button class="btn" type="button" id="bRegen" data-t="重新產生|Regenerate"></button></div>
+      <div class="tabs" role="tablist"><button type="button" role="tab" id="tMap" aria-selected="true" data-t="位元組圖|Byte map"></button><button type="button" role="tab" id="tText" aria-selected="false" data-t="文字（可編輯）|Text (editable)"></button><button type="button" role="tab" id="tDec" aria-selected="false" data-t="解析|Decoded"></button></div>
+      <div id="pMap"><div class="blocks" id="blocks"></div><div class="legend" id="mapLegend" style="margin-top:10px"></div><div class="inspect" id="inspect" aria-live="polite"></div></div>
+      <div id="pText" hidden><textarea class="code mono" id="edidText" spellcheck="false" data-p="EDID 資料|EDID Data"></textarea><p class="hint" id="textWarn" style="color:#9B3344" hidden></p><p class="hint" data-t="與桌面版相同：「產生 Python 程式碼」讀取的是這裡的文字，可直接修改位元組。|As in the desktop tool, Generate Python Code reads this text, so bytes can be edited here."></p></div>
+      <div id="pDec" hidden><dl class="dec" id="dec"></dl></div>
+      <div class="actions"><button class="btn" id="bCopyEdid" type="button" data-t="複製 EDID 文字|Copy EDID text"></button><button class="btn" id="bBin" type="button" data-t="下載 .bin|Download .bin"></button><button class="btn" id="bHex" type="button" data-t="下載 .hex|Download .hex"></button><button class="btn" id="bC" type="button" data-t="下載 C 陣列|Download C array"></button></div>
+    </div>
+
+    <div class="card" id="codeCard" hidden>
+      <h2 data-t="產生的程式碼|Generated code"></h2>
+      <div class="tabs" role="tablist"><button type="button" role="tab" id="tMain" aria-selected="true">main.py</button><button type="button" role="tab" id="tOut" aria-selected="false">output.txt</button></div>
+      <textarea class="code mono" id="codeView" readonly spellcheck="false" style="min-height:320px"></textarea>
+      <div class="actions"><button class="btn primary" id="bDlMain" type="button" data-t="下載 main.py|Download main.py"></button><button class="btn" id="bDlOut" type="button" data-t="下載 output.txt|Download output.txt"></button><button class="btn" id="bCopyCode" type="button" data-t="複製目前分頁|Copy this tab"></button></div>
+      <p class="hint" data-t="桌面版會寫入 output/main.py 與 output/output.txt；網頁版改為下載。|The desktop tool writes output/main.py and output/output.txt; the web version downloads them instead."></p>
+    </div>
+  </section>
+</main>
+<footer><span>EDID Generator · Web Demo</span><a href="https://people.freedesktop.org/~imirkin/edid-decode/" target="_blank" rel="noopener" data-t="EDID Decoder Web（另開分頁）|EDID Decoder Web (new tab)"></a><span class="grow"></span><span>GuoWei Chiu</span></footer>
+
+<div class="drop" id="drop" hidden data-t="放開以匯入 .ini、.bin 或 .hex|Drop to import a .ini, .bin or .hex file"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="modal" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="mTitle"><h3 id="mTitle"></h3><p id="mText"></p><div class="actions"><button class="btn" id="mNo" type="button"></button><button class="btn primary" id="mYes" type="button"></button></div></div></div>
+
+<script>
+const ORIGIN = "from machine import Pin, I2C, Timer, PWM\nimport time\nimport utime\nimport sys\n\nPWM_DIM = Pin(2, Pin.OUT)\nKey_Up = Pin(13, Pin.IN, Pin.PULL_UP)\nKey_Down = Pin(14, Pin.IN, Pin.PULL_UP)\n\nSW1 = Pin(3, Pin.IN, Pin.PULL_DOWN)\nSW2 = Pin(4, Pin.IN, Pin.PULL_DOWN)\nSW3 = Pin(5, Pin.IN, Pin.PULL_DOWN)\nSW4 = Pin(6, Pin.IN, Pin.PULL_DOWN)\n\n# I2C Initialize\ni2c = I2C(1, scl=Pin(27), sda=Pin(26), freq=300000)  # 300KHz\n\n# Define Address\nTX_WriteDeviceAddress = 0x80\nTX_ReadDeviceAddress = 0x81\nRX_WriteDeviceAddress = 0x90\nRX_ReadDeviceAddress = 0x91\n\n# Define Global Parameters.\nLVDS_Port = 2\n\n# Mode Paramerter.\nflag_upstep = False\nflag_downstep = False\n\n# Interrupt Handler\ndef handle_key_up(pin):\n    global flag_upstep\n    flag_upstep = True\n\ndef handle_key_down(pin):\n    global flag_downstep\n    flag_downstep = True\n\n# Setting Button Interrupt\nKey_Up.irq(trigger=Pin.IRQ_FALLING, handler=handle_key_up)\nKey_Down.irq(trigger=Pin.IRQ_FALLING, handler=handle_key_down)\n\n# Delay Function\ndef delay_ms(ms):\n    time.sleep_ms(ms)\n\ndef i2c_write(address, data):\n    i2c.writeto(address, bytes(data))\n    delay_ms(10)\n\ndef i2c_read(address, num):\n    return i2c.readfrom(address, num)\n\n\ndef write_data(device_addr, register_addr, data):\n    try:\n        i2c.writeto_mem(device_addr, register_addr, bytes(data))\n        return True\n    except:\n        return False\n\ndef read_data(device_addr, register_addr, num):\n    try:\n        return i2c.readfrom_mem(device_addr, register_addr, num)\n    except:\n        return None\n\n# Main Function.\ni2c_scan=1\ndef main():\n\n    delay_ms(100) # Waiting Power-Up\n    \n    if i2c_scan:\n        print('Scan i2c bus...')\n        devices = i2c.scan()              # scan for devices(7bit)\n        if len(devices) == 0:\n            print(\"No i2c device !\")\n            print(\"Exit !\")\n            sys.exit(1)\n        else:\n            print('i2c devices found:',len(devices))\n            for device in devices:  \n                print(\"Hex address(8bit): \",hex(device*2),\" | Hex address(7bit): \",hex(device))\n    else:\n        pass\n\n    \n    # Initialize.\n    print('Dual Link Initialize...')\n    Dual_Link_Initial()\n    delay_ms(100)\n    print('TX Initialize...')\n    TX_Initial()\n    delay_ms(100)\n    \n    print('EDID Initialize...')\n    EDID_Init()\n    delay_ms(100)\n    \n    print('RX Initialize...')\n    RX_Forward_Init()\n    print('Initing Done')\n    delay_ms(100)\n    print('EDID Initialize...')\n    EDID_Init()\n    delay_ms(10)\n    \n    PWMI_Feq=200\n    PWMI_Duty=100\n    PWM2(PWMI_Feq,PWMI_Duty)\n    \n    while True:\n        for button in buttons:\n            event,BTN_ID=button.check()\n            if event is None:\n                utime.sleep_ms(10)\n            else:   \n                if BTN_ID==3 and event==1:\n                    PWMI_Duty=PWMI_Duty-10\n                    if PWMI_Duty>100:\n                        PWMI_Duty=100\n                    elif PWMI_Duty<0:\n                        PWMI_Duty=0\n                    PWM2(PWMI_Feq,PWMI_Duty) \n\n                          \n                elif BTN_ID==4 and event==1:\n                    PWMI_Duty=PWMI_Duty+10\n                    if PWMI_Duty>100:\n                        PWMI_Duty=100\n                    elif PWMI_Duty<0:\n                        PWMI_Duty=0\n                    PWM2(PWMI_Feq,PWMI_Duty)\n\n#Dual_Link_Initialize   \ndef Dual_Link_Initial():\n    \n    # Initialize TX/RX Address\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x00,0x80]))\n    i2c.writeto_mem(0x90>>1,0x00,bytearray([0x00,0x90]))\n    # Set TX/RX Speed 6Gbps\n    i2c.writeto_mem(0x90>>1,0x00,bytearray([0x01,0x02]))\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x01,0x48]))\n    # Set RX Dual Link\n    i2c.writeto_mem(0x90>>1,0x00,bytearray([0x10,0x00]))\n    # Set TX Dual Link\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x10,0x00]))\n    # Reset One Shot\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x10,0x20]))\n\n    delay_ms(20)\n\n# Tx_Initialize\ndef TX_Initial():\n    \n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x02,0x43]))\n    i2c.writeto_mem(0x80>>1,0x01,bytearray([0x40,0x20]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x12,0xA3]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x06,0xa3]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x18,0x84])) \n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x1b,0xa3]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x27,0xA3]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x1e,0xa3]))\n    i2c.writeto_mem(0x80>>1,0x01,bytearray([0x17,0xa3]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x15,0xa3]))\n    \n    pass\n\n#Rx_Initialize\ndef RX_Forward_Init():\n    \n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x21,0x81]))\n    i2c.writeto_mem(0x90>>1,0x00,bytearray([0x02,0x43]))\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0x40,0x20]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x27,0x80]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x18,0xa3]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x22,0xab]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x23,0x49]))\n    \n    #LANE SELECT\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xD0,0x00])) #00\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xD1,0x11])) #11\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xD2,0x44])) #44\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xD3,0x33])) #33\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xD4,0x22])) #22\n\n    # Generate code - OLDI Setting\n    # ====================================================== #\n    \n    # ====================================================== #\n    i2c.writeto_mem(0x90>>1,0x01,bytearray([0xcf,0x00]))\n    i2c.writeto_mem(0x90>>1,0x04,bytearray([0x58,0x28]))\n    i2c.writeto_mem(0x90>>1,0x04,bytearray([0x59,0x68]))\n    i2c.writeto_mem(0x90>>1,0x04,bytearray([0x3E,0xB3]))\n    i2c.writeto_mem(0x90>>1,0x04,bytearray([0x3F,0x72]))\n    i2c.writeto_mem(0x90>>1,0x05,bytearray([0x58,0x28]))\n    i2c.writeto_mem(0x90>>1,0x05,bytearray([0x59,0x68]))\n    i2c.writeto_mem(0x90>>1,0x05,bytearray([0x3E,0xB3]))\n    i2c.writeto_mem(0x90>>1,0x05,bytearray([0x3F,0x72]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x12,0x80]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x1e,0x80]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x21,0x80]))\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x15,0x80]))\n    \n    \n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x09,0x90]))  # LED_EN Open GPIO3 - 0x209\n    delay_ms(10)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x0C,0x90]))  # GRB Open GPIO4 - 0x20C \n    delay_ms(10)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x0C,0x80]))  # GRB Close GPIO4 - 0x20C \n    delay_ms(1)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x0C,0x90]))  # GRB Open GPIO4 - 0x20C \n    delay_ms(10)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x21,0x90]))  # MUTE/STBYB Open GPIO11 - 0x221\n    delay_ms(10)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x06,0x90]))  # BIST Open GPIO2 - 0x206\n    delay_ms(500)\n    i2c.writeto_mem(0x90>>1,0x02,bytearray([0x06,0x80]))  # BIST Close GPIO2 - 0x206\n    delay_ms(10)\n\n    pass\n\n#EDID_Initialize\ndef EDID_Init():\n\n    i2c.writeto_mem(0x80>>1,0x20,bytearray([0xf5,0x00]))\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x01,0x88]))\n    i2c.writeto_mem(0x80>>1,0x02,bytearray([0x06,0xa3]))\n    i2c.writeto_mem(0x80>>1,0x20,bytearray([0xf5,0x01]))\n    i2c.writeto_mem(0x80>>1,0x00,bytearray([0x1a,0x03]))\n\n    # ========================================================================= #\n    # === EDID Data Begin ===\n    \n\n\nDEBOUNCE_TIME = 0.02           \nLONG_PRESS_TIME = 1            \nDOUBLE_PRESS_INTERVAL = 0.5    \n\nclass Button:\n    def __init__(self, pin_number, button_id, single_press_callback, double_press_callback, long_press_callback):\n        \"\"\"\n        initial the button object\n        :param pin_number: button pin number\n        :param button_id: button id\n        :param single_press_callback: single press callback function\n        :param double_press_callback: double press callback function\n        :param long_press_callback: long press callback function\n        \"\"\"\n        self.pin = Pin(pin_number, Pin.IN, Pin.PULL_UP)\n        self.button_id = button_id\n        self.single_press_callback = single_press_callback\n        self.double_press_callback = double_press_callback\n        self.long_press_callback = long_press_callback\n        \n        # status variables\n        self.press_count = 0\n        self.last_press_time = 0\n        self.press_time = 0\n        self.pressed = False\n        self.waiting_for_double = False\n\n    def debounce(self):\n        \"\"\"\n        debounce function to filter the button noise\n        :return: True if the button is pressed\n        \"\"\"\n\n        time.sleep(DEBOUNCE_TIME)\n        return not self.pin.value()\n\n    def reset_press(self):\n        \"\"\"\n        reset the press status\n        \"\"\"\n        self.press_count = 0\n        self.last_press_time = 0\n        self.press_time = 0\n        self.pressed = False\n        self.waiting_for_double = False\n\n    def check(self):\n        \"\"\"\n        button check function:\n        - detect button press and release\n        - judge single press, double press and long press event\n        - return event type and button id\n        \"\"\"\n        current_time = time.time()\n        \n        # check button press\n        if not self.pin.value():  # button pressed\n            if not self.pressed:  # button pressed first time\n                if self.debounce():  # debounce\n                    self.pressed = True\n                    self.press_time = current_time\n                    self.press_count += 1\n                    self.last_press_time = self.press_time\n\n        else:  # button released\n            if self.pressed:\n                self.pressed = False\n                '''\n                press_duration = current_time - self.press_time\n                if press_duration >= LONG_PRESS_TIME:\n                    # long press event\n                    self.long_press_callback(self.button_id)\n                    self.reset_press()\n                    return 10, self.button_id\n                else:\n                    self.waiting_for_double = True  # wait for double press\n                    self.press_time = current_time  # update press time\n                '''\n                self.single_press_callback(self.button_id)\n                self.reset_press()\n                return 1, self.button_id\n        # check double press\n        if self.waiting_for_double:\n            if (current_time - self.last_press_time) > DOUBLE_PRESS_INTERVAL:\n                '''\n                if self.press_count >= 2:\n                    # double press event\n                    self.double_press_callback(self.button_id)\n                    self.reset_press()\n                    return 2, self.button_id\n                elif self.press_count == 1:\n                    # single press event\n                    self.single_press_callback(self.button_id)\n                    self.reset_press()\n                    return 1, self.button_id\n                '''\n                self.single_press_callback(self.button_id)\n                self.reset_press()\n                return 1, self.button_id\n        # if no event detected return None\n        return None, None\n\n\n# event callback functions\ndef single_press_action(button_id):\n    #print(\"Button {} single press triggered!\".format(button_id))\n    print(\"Button {}:\".format(button_id))\ndef double_press_action(button_id):\n    #print(\"Button {} double press triggered!\".format(button_id))\n    print(\"Button {}:\".format(button_id))\ndef long_press_action(button_id):\n    #print(\"Button {} long press triggered!\".format(button_id))\n    print(\"Button {}:\".format(button_id))\n# create button objects\nbuttons = [\n    Button(pin_number=7, button_id=1, \n           single_press_callback=single_press_action,\n           double_press_callback=double_press_action,\n           long_press_callback=long_press_action),\n    Button(pin_number=13, button_id=2, \n           single_press_callback=single_press_action,\n           double_press_callback=double_press_action,\n           long_press_callback=long_press_action),\n    Button(pin_number=14, button_id=3, \n           single_press_callback=single_press_action,\n           double_press_callback=double_press_action,\n           long_press_callback=long_press_action),\n    Button(pin_number=15, button_id=4, \n           single_press_callback=single_press_action,\n           double_press_callback=double_press_action,\n           long_press_callback=long_press_action),\n    # add more buttons here if needed\n]\n\ndef PWM2(freq,value):\n    pwm2 = PWM(Pin(2)) # Backlight Output.\n    pwm2.freq(freq)\n    if value>=100:\n        value=100\n    data=int (value*65536/100)       \n    pwm2.duty_u16(data)\n\n# Run Main\nmain()\n\n\n\n";
+const EXAMPLE_INI = "[EDID]\nmodel_name = Demo\npixel_clock = 141.37\nframe_rate = 60\nhorizontal_active = 1920\nhorizontal_front_porch = 60\nhorizontal_back_porch = 60\nhorizontal_sync_width = 60\nvertical_active = 1080\nvertical_front_porch = 32\nvertical_back_porch = 8\nvertical_sync_width = 2\nweek_number = 8\nyear_number = 2025\nmax_h_image_size = 330  \nmax_v_image_size = 270\n\n        ";
+(() => {
+'use strict';
+// Inside ArchFlow (as a small tool) the host gives the language, closes the dialog and shows notices.
+const HOST = (() => { try { return window.parent !== window && window.parent.afEdidHost ? window.parent.afEdidHost : null; } catch { return null; } })();
+let LANG = HOST ? (HOST.lang === 'en' ? 'en' : 'zh') : (() => { try { return localStorage.getItem('edid-web-lang') || (navigator.language.startsWith('zh') ? 'zh' : 'en'); } catch { return 'zh'; } })();
+const T = (zh, en) => (LANG === 'en' ? en : zh);
+const $ = id => document.getElementById(id);
+const FIELDS = ['model_name', 'display_name', 'h_active', 'h_fp', 'h_bp', 'h_sync', 'v_active', 'v_fp', 'v_bp', 'v_sync', 'frame_rate', 'pixel_clock'];
+const ADV = { week_number: 1, year_number: new Date().getFullYear(), max_h_image_size: 165, max_v_image_size: 100, interlaced: 0, sound: 0, output_type: 3, vsync_polarity: 0, hsync_polarity: 0 };
+const state = { tpl: null, format: 'OLDI', ports: '1_port', swap: 'Ports A and B not Swapped', edid: null, code: null, codeTab: 'main', canPy: false };
+
+/* ---------- language ---------- */
+function applyLang() {
+  document.documentElement.lang = LANG === 'en' ? 'en' : 'zh-Hant';
+  for (const el of document.querySelectorAll('[data-t]')) { const [zh, en] = el.dataset.t.split('|'); el.textContent = T(zh, en); }
+  for (const el of document.querySelectorAll('[data-p]')) { const [zh, en] = el.dataset.p.split('|'); el.placeholder = T(zh, en); }
+  for (const b of document.querySelectorAll('.lang button')) b.setAttribute('aria-pressed', String(b.dataset.lang === LANG));
+  updateLive(); renderMap(); renderDecoded(); if (typeof showTpl === 'function' && $('tpl')) showTpl();
+}
+document.querySelectorAll('.lang button').forEach(b => b.onclick = () => { LANG = b.dataset.lang; try { localStorage.setItem('edid-web-lang', LANG); } catch { /* private mode */ } applyLang(); });
+
+/* ---------- small helpers ---------- */
+let toastT;
+function toast(msg) { if (HOST) { try { HOST.toast(msg); return; } catch { /* fall back */ } } const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3600); }
+function showErrors(list) {
+  const box = $('errBox'); box.innerHTML = '';
+  if (!list.length) return;
+  const d = document.createElement('div'); d.className = 'banner err'; d.setAttribute('role', 'alert');
+  d.innerHTML = `<div><b>${T('無法產生 EDID', 'Cannot generate the EDID')}</b></div>`;
+  const ul = document.createElement('div'); ul.textContent = list.join(' · '); d.firstChild.append(ul); box.append(d);
+}
+function confirmBox(title, text, yes, no) {
+  return new Promise(res => {
+    const m = $('modal'); $('mTitle').textContent = title; $('mText').textContent = text; $('mYes').textContent = yes; $('mNo').textContent = no; m.hidden = false; $('mNo').focus();
+    const done = v => { m.hidden = true; $('mYes').onclick = $('mNo').onclick = null; document.removeEventListener('keydown', esc, true); res(v); };
+    const esc = e => { if (e.key === 'Escape') { e.preventDefault(); done(false); } };
+    $('mYes').onclick = () => done(true); $('mNo').onclick = () => done(false); document.addEventListener('keydown', esc, true);
+  });
+}
+function download(name, data, type = 'text/plain') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+async function copy(text) { try { await navigator.clipboard.writeText(text); } catch { const t = document.createElement('textarea'); t.value = text; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); } toast(T('已複製。', 'Copied.')); }
+const pyFloat = v => (Number.isInteger(v) ? v.toFixed(1) : String(v));            // str(float) in Python
+const intOr0 = s => { const t = String(s ?? '').trim(); return /^[+-]?\d+$/.test(t) ? parseInt(t, 10) : 0; };   // int(text) or 0, as the desktop tool
+const floatOr0 = s => { const t = String(s ?? '').trim(); return t !== '' && Number.isFinite(Number(t)) && /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(t) ? Number(t) : 0; };
+const hex2 = v => '0x' + v.toString(16).toUpperCase().padStart(2, '0');
+
+/* ---------- segmented choices ---------- */
+function seg(id, key) {
+  const g = $(id);
+  const paint = () => g.querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.v === state[key])));
+  g.querySelectorAll('button').forEach(b => b.onclick = () => { state[key] = b.dataset.v; paint(); });
+  paint(); return paint;
+}
+const paintFormat = seg('sFormat', 'format'), paintPorts = seg('sPorts', 'ports'), paintSwap = seg('sSwap', 'swap');
+
+/* ---------- input data (views/main_window.py get_input_data) ---------- */
+function inputData() {
+  const v = id => $(id).value;
+  const advInt = (id, def) => { const t = v(id).trim(); return /^[+-]?\d+$/.test(t) ? parseInt(t, 10) : def; };
+  return {
+    pixel_clock: floatOr0(v('pixel_clock')), frame_rate: floatOr0(v('frame_rate')),
+    horizontal_active: intOr0(v('h_active')), horizontal_front_porch: intOr0(v('h_fp')), horizontal_back_porch: intOr0(v('h_bp')), horizontal_sync_width: intOr0(v('h_sync')),
+    vertical_active: intOr0(v('v_active')), vertical_front_porch: intOr0(v('v_fp')), vertical_back_porch: intOr0(v('v_bp')), vertical_sync_width: intOr0(v('v_sync')),
+    week_number: advInt('week_number', 1), year_number: advInt('year_number', 2025), max_h_image_size: advInt('max_h_image_size', 165), max_v_image_size: advInt('max_v_image_size', 100),
+    interlaced: advInt('interlaced', 0), sound: advInt('sound', 0), output_type: advInt('output_type', 3), vsync_polarity: advInt('vsync_polarity', 0), hsync_polarity: advInt('hsync_polarity', 0),
+    model_name: v('model_name'), display_name: v('display_name')
+  };
+}
+
+/* ---------- models/monitor_timing.py validate ---------- */
+const CHECKS = [
+  ['pixel_clock', d => d.pixel_clock <= 0, ['Pixel Clock 必須大於 0', 'Pixel Clock must be greater than 0']],
+  ['frame_rate', d => d.frame_rate <= 0, ['Frame Rate 必須大於 0', 'Frame Rate must be greater than 0']],
+  ['h_active', d => d.horizontal_active <= 0, ['Horizontal Active 必須大於 0', 'Horizontal Active must be greater than 0']],
+  ['h_fp', d => d.horizontal_front_porch < 0, ['Horizontal Front Porch 不可為負', 'Horizontal Front Porch not be negative']],
+  ['h_bp', d => d.horizontal_back_porch < 0, ['Horizontal Back Porch 不可為負', 'Horizontal Back Porch not be negative']],
+  ['h_sync', d => d.horizontal_sync_width <= 0, ['Horizontal Sync Width 必須大於 0', 'Horizontal Sync Width must be greater than 0']],
+  ['v_active', d => d.vertical_active <= 0, ['Vertical Active 必須大於 0', 'Vertical Active must be greater than 0']],
+  ['v_fp', d => d.vertical_front_porch < 0, ['Vertical Front Porch 不可為負', 'Vertical Front Porch not be negative']],
+  ['v_bp', d => d.vertical_back_porch < 0, ['Vertical Back Porch 不可為負', 'Vertical Back Porch not be negative']],
+  ['v_sync', d => d.vertical_sync_width <= 0, ['Vertical Sync Width 必須大於 0', 'Vertical Sync Width must be greater than 0']],
+  ['pixel_clock', d => d.pixel_clock > 0 && (d.pixel_clock < 0.01 || d.pixel_clock > 655.35), ['Pixel Clock 必須在 0.01～655.35 MHz 之間（EDID 以 10 kHz 為單位、16 位元）', 'Pixel Clock must be between 0.01 and 655.35 MHz (16 bits in 10 kHz units)']],
+  ['h_active', d => d.horizontal_active > 4095, ['Horizontal Active 最大 4095（EDID 為 12 位元）', 'Horizontal Active can be at most 4095 (12 bits in EDID)']],
+  ['v_active', d => d.vertical_active > 4095, ['Vertical Active 最大 4095（EDID 為 12 位元）', 'Vertical Active can be at most 4095 (12 bits in EDID)']],
+  ['h_fp', d => d.horizontal_front_porch > 1023, ['Horizontal Front Porch 最大 1023（EDID 為 10 位元）', 'Horizontal Front Porch can be at most 1023 (10 bits in EDID)']],
+  ['h_sync', d => d.horizontal_sync_width > 1023, ['Horizontal Sync Width 最大 1023（EDID 為 10 位元）', 'Horizontal Sync Width can be at most 1023 (10 bits in EDID)']],
+  ['h_bp', d => d.horizontal_front_porch >= 0 && d.horizontal_back_porch >= 0 && d.horizontal_front_porch + d.horizontal_sync_width + d.horizontal_back_porch > 4095, ['Horizontal 遮沒（Front Porch + Sync + Back Porch）最大 4095', 'Horizontal blanking (front porch + sync + back porch) can be at most 4095']],
+  ['v_fp', d => d.vertical_front_porch > 63, ['Vertical Front Porch 最大 63（EDID 為 6 位元）', 'Vertical Front Porch can be at most 63 (6 bits in EDID)']],
+  ['v_sync', d => d.vertical_sync_width > 63, ['Vertical Sync Width 最大 63（EDID 為 6 位元）', 'Vertical Sync Width can be at most 63 (6 bits in EDID)']],
+  ['v_bp', d => d.vertical_front_porch >= 0 && d.vertical_back_porch >= 0 && d.vertical_front_porch + d.vertical_sync_width + d.vertical_back_porch > 4095, ['Vertical 遮沒（Front Porch + Sync + Back Porch）最大 4095', 'Vertical blanking (front porch + sync + back porch) can be at most 4095']],
+  ['max_h_image_size', d => d.max_h_image_size < 0 || d.max_h_image_size > 4095, ['影像寬度必須在 0～4095 mm 之間', 'Image width must be between 0 and 4095 mm']],
+  ['max_v_image_size', d => d.max_v_image_size < 0 || d.max_v_image_size > 4095, ['影像高度必須在 0～4095 mm 之間', 'Image height must be between 0 and 4095 mm']],
+  ['interlaced', d => d.interlaced < 0 || d.interlaced > 1, ['Interlaced 只能是 0 或 1', 'Interlaced must be 0 or 1']],
+  ['sound', d => d.sound < 0 || d.sound > 3, ['Sound 必須在 0～3 之間', 'Sound must be between 0 and 3']],
+  ['output_type', d => d.output_type < 0 || d.output_type > 3, ['Output Type 必須在 0～3 之間', 'Output Type must be between 0 and 3']],
+  ['vsync_polarity', d => d.vsync_polarity < 0 || d.vsync_polarity > 1, ['VSync Polarity 只能是 0 或 1', 'VSync Polarity must be 0 or 1']],
+  ['hsync_polarity', d => d.hsync_polarity < 0 || d.hsync_polarity > 1, ['HSync Polarity 只能是 0 或 1', 'HSync Polarity must be 0 or 1']],
+  ['week_number', d => d.week_number < 0 || d.week_number > 52, ['Week Number 必須在 0～52 之間', 'Week Number must be between 0 and 52']],
+  ['year_number', d => d.year_number < 1990 || d.year_number > 2245, ['Year Number 必須在 1990～2245 之間（EDID 以 1990 起算的一個位元組）', 'Year Number must be between 1990 and 2245 (one byte counted from 1990)']],
+  ['display_name', d => !/^[\x20-\x7E]*$/.test(nameOf(d)), ['顯示器名稱只能用英數與一般符號（ASCII）', 'The display name can only use ASCII letters, digits and symbols']],
+  ['display_name', d => nameOf(d).length > 12, ['顯示器名稱最多 12 個字元', 'The display name can be at most 12 characters']]
+];
+// the name written into the monitor-name descriptor: the display name, else the model name
+const nameOf = d => (d.display_name.trim() || d.model_name.trim() || 'Display').replace(/\s+$/, '');
+function validate(d) {
+  document.querySelectorAll('input.bad').forEach(i => i.classList.remove('bad'));
+  const out = [];
+  for (const [id, bad, msg] of CHECKS) if (bad(d)) { out.push(T(msg[0], msg[1])); $(id).classList.add('bad'); }
+  if (document.querySelector('#adv input.bad')) $('adv').open = true;
+  return out;
+}
+
+/* ---------- models/edid_model.py ---------- */
+const BASE = [0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00, 0x55,0x6E,0x00,0x00,0x00,0x00,0x90,0x00, 0x00,0x00,0x01,0x03,0x80,0x00,0x00,0x78, 0x0A,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x00,0x00,0x00,0x01,0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
+  0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x10,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00];
+const CEA = [0x02,0x03,0x24,0xB2,0x42,0x61,0x01,0x67, 0x03,0x0C,0x00,0x00,0x00,0x00,0x44,0x6D, 0xD8,0x5D,0xC4,0x01,0x46,0x80,0x00,0x00, 0x00,0x00,0x00,0x00,0x00,0xE2,0x00,0x4F, 0xE3,0x0D,0x82,0x61,0x00,0x00,0x00,0x00, ...new Array(88).fill(0)];
+function buildEdid(t) {
+  const e = BASE.slice(), c = CEA.slice();
+  e[16] = t.week_number;
+  e[17] = t.year_number - 1990;
+  e[21] = Math.floor(t.max_h_image_size / 10) % 256;
+  e[22] = Math.floor(t.max_v_image_size / 10) % 256;
+  const pc = Math.floor(t.pixel_clock * 100 + 1e-6);   // 138.7 * 100 is 13869.999… in floating point; plain truncation lost 10 kHz
+  e[54] = pc & 0xFF; e[55] = pc >> 8;
+  e[56] = t.horizontal_active & 0xFF;
+  const hb = t.horizontal_front_porch + t.horizontal_sync_width + t.horizontal_back_porch;
+  e[57] = hb & 0xFF;
+  e[58] = (((t.horizontal_active >> 8) & 0x0F) << 4) | ((hb >> 8) & 0x0F);
+  e[59] = t.vertical_active & 0xFF;
+  const vb = t.vertical_front_porch + t.vertical_back_porch + t.vertical_sync_width;
+  e[60] = vb & 0xFF;
+  e[61] = (((t.vertical_active >> 8) & 0x0F) << 4) | ((vb >> 8) & 0x0F);      // fixed: the source masked with 0xFF
+  e[62] = t.horizontal_front_porch & 0xFF;
+  e[63] = t.horizontal_sync_width & 0xFF;
+  e[64] = (t.vertical_front_porch & 0x0F) * 16 + (t.vertical_sync_width & 0x0F);
+  e[65] = (((t.horizontal_front_porch >> 8) & 0x03) << 6) | (((t.horizontal_sync_width >> 8) & 0x03) << 4) | (((t.vertical_front_porch >> 4) & 0x03) << 2) | ((t.vertical_sync_width >> 4) & 0x03);
+  e[66] = t.max_h_image_size & 0xFF;
+  e[67] = t.max_v_image_size & 0xFF;
+  e[68] = (((t.max_h_image_size >> 8) & 0x0F) << 4) | ((t.max_v_image_size >> 8) & 0x0F);
+  e[69] = 0; e[70] = 0;
+  e[71] = (t.interlaced << 7) + (t.sound << 5) + (t.output_type << 3) + (t.vsync_polarity << 2) + (t.hsync_polarity << 1);
+  // add_display_name(): 19 bytes over the 18 at 90..107 (the list grows by one, as in Python)
+  const name = [...nameOf(t).slice(0, 12)].map(ch => ch.charCodeAt(0));
+  name.push(0x0A); while (name.length < 13) name.push(0x20);
+  e.splice(90, 18, 0x00, 0x00, 0x00, 0xFC, 0x00, ...name, 0x0A);
+  // add_range_limits(): 18 bytes over the 19 at 108..126 (the list shrinks back)
+  e.splice(108, 19, 0x00, 0x00, 0x00, 0xFD, 0x00, 30, 75, 10, 195, Math.floor(600 / 10), 0x00, 0x0A, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20);
+  const sum = a => a.reduce((s, x) => s + x, 0);
+  e[127] = (256 - (sum(e.slice(0, 127)) % 256)) % 256;
+  const shift = c[2];
+  c.splice(shift, 18, ...e.slice(54, 72));
+  c[127] = (256 - sum(c.slice(0, 127)) % 256) % 256;
+  return e.concat(c).map(hex2);
+}
+const displayText = arr => { const rows = []; for (let i = 0; i < arr.length; i += 16) rows.push(arr.slice(i, i + 16).join(', ')); return rows.join(',\n'); };
+
+/* ---------- live hints: totals, pixel clock, timing bars ---------- */
+function updateLive() {
+  const d = inputData();
+  const ht = d.horizontal_active + d.horizontal_front_porch + d.horizontal_back_porch + d.horizontal_sync_width;
+  const vt = d.vertical_active + d.vertical_front_porch + d.vertical_back_porch + d.vertical_sync_width;
+  $('hTotal').innerHTML = `<span>${T('總寬', 'Total')} <b>${ht}</b> px</span><span>${T('遮沒', 'Blanking')} <b>${ht - d.horizontal_active}</b> px</span>${d.pixel_clock > 0 && ht ? `<span>${T('水平頻率', 'H freq')} <b>${(d.pixel_clock * 1000 / ht).toFixed(2)}</b> kHz</span>` : ''}`;
+  $('vTotal').innerHTML = `<span>${T('總行數', 'Total')} <b>${vt}</b> ${T('行', 'lines')}</span><span>${T('遮沒', 'Blanking')} <b>${vt - d.vertical_active}</b> ${T('行', 'lines')}</span>${d.pixel_clock > 0 && ht && vt ? `<span>${T('實際更新率', 'Actual refresh')} <b>${(d.pixel_clock * 1e6 / ht / vt).toFixed(2)}</b> Hz</span>` : ''}`;
+  const pc = ht && vt && d.frame_rate > 0 ? (ht * vt * d.frame_rate / 1e6).toFixed(2) : null;
+  $('calcText').textContent = pc ? T(`依時序計算為 ${pc} MHz`, `From the timing: ${pc} MHz`) + (Number($('pixel_clock').value) && $('pixel_clock').value.trim() !== pc ? T('（與目前值不同）', ' (differs from the value above)') : '') : T('填入時序與更新率即可計算。', 'Fill in the timing and frame rate to calculate.');
+  bar('hBar', [[d.horizontal_sync_width, 's-sync', 'Sync'], [d.horizontal_back_porch, 's-bp', 'BP'], [d.horizontal_active, 's-act', 'Active'], [d.horizontal_front_porch, 's-fp', 'FP']]);
+  bar('vBar', [[d.vertical_sync_width, 's-sync', 'Sync'], [d.vertical_back_porch, 's-bp', 'BP'], [d.vertical_active, 's-act', 'Active'], [d.vertical_front_porch, 's-fp', 'FP']]);
+}
+function bar(id, parts) {
+  const el = $(id), total = parts.reduce((s, p) => s + Math.max(0, p[0]), 0);
+  el.innerHTML = '';
+  if (!total) { el.innerHTML = `<span style="flex:1;color:#687685">${T('尚未輸入', 'Nothing entered yet')}</span>`; return; }
+  for (const [v, cls, lab] of parts) { if (v <= 0) continue; const s = document.createElement('span'); s.className = cls; s.style.flex = String(Math.max(v / total, 0.012)); s.title = `${lab}: ${v}`; s.textContent = v / total > 0.06 ? `${lab} ${v}` : ''; el.append(s); }
+}
+document.querySelectorAll('main input').forEach(i => i.addEventListener('input', () => { i.classList.remove('bad'); updateLive(); setStale(true); }));
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { if (state.code) setStale(true); }));
+$('bRegen').onclick = () => generate();
+const calcClock = () => { const v = id => $(id).value.trim(), ints = ['h_active', 'h_fp', 'h_bp', 'h_sync', 'v_active', 'v_fp', 'v_bp', 'v_sync']; if (ints.some(id => !/^[+-]?\d+$/.test(v(id))) || !(parseFloat(v('frame_rate')) > 0)) return null; const n = id => parseInt(v(id), 10); return ((n('h_active') + n('h_fp') + n('h_bp') + n('h_sync')) * (n('v_active') + n('v_fp') + n('v_bp') + n('v_sync')) * parseFloat(v('frame_rate')) / 1e6).toFixed(2); };
+const dnCount = () => { const d = inputData(), n = nameOf(d); $('dnCount').textContent = `${n.length}/12`; $('dnCount').classList.toggle('over', n.length > 12 || !/^[\x20-\x7E]*$/.test(n)); $('dnCount').title = T(`寫入 EDID 的名稱：${n}`, `Name written to the EDID: ${n}`); };
+['display_name', 'model_name'].forEach(id => $(id).addEventListener('input', dnCount));
+
+$('bCalc').onclick = () => {   // controllers/edid_controller.py handle_calculate_pixel_clock
+  const v = id => $(id).value.trim();
+  const ints = ['h_active', 'h_fp', 'h_bp', 'h_sync', 'v_active', 'v_fp', 'v_bp', 'v_sync'];
+  const bad = ints.find(id => !/^[+-]?\d+$/.test(v(id))) || (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(v('frame_rate')) ? 'frame_rate' : null);
+  if (bad) { showErrors([T('無法計算 Pixel Clock：請先填入所有水平／垂直時序與更新率（整數）。', 'Error calculating Pixel Clock: fill in every horizontal / vertical timing and the frame rate.')]); $(bad).classList.add('bad'); $(bad).focus(); return; }
+  const n = id => parseInt(v(id), 10);
+  const th = n('h_active') + n('h_fp') + n('h_bp') + n('h_sync'), tv = n('v_active') + n('v_fp') + n('v_bp') + n('v_sync');
+  $('pixel_clock').value = (th * tv * parseFloat(v('frame_rate')) / 1e6).toFixed(2);
+  showErrors([]); updateLive(); toast(T(`Pixel Clock = ${$('pixel_clock').value} MHz`, `Pixel Clock = ${$('pixel_clock').value} MHz`));
+};
+
+/* ---------- generate ---------- */
+function setStale(on) { state.stale = !!on && !!state.edid && state.fromInputs; $('stale').hidden = !state.stale; }
+function setEdid(arr, src) {
+  state.fromInputs = src === T('由時序產生', 'generated'); setStale(false); $('textWarn').hidden = true;
+  state.edid = arr; $('edidText').value = displayText(arr);
+  state.canPy = true; $('bPy').disabled = false;
+  renderMap(); renderDecoded();
+  $('edidLen').textContent = T(`${arr.length} bytes · ${src}`, `${arr.length} bytes · ${src}`);
+}
+function generate() {
+  // Pixel Clock left empty: work it out from the timing instead of stopping with an error
+  if (!$('pixel_clock').value.trim()) { const c = calcClock(); if (c) { $('pixel_clock').value = c; toast(T(`Pixel Clock 未填，已依時序算出 ${c} MHz。`, `Pixel Clock was empty; calculated ${c} MHz from the timing.`)); updateLive(); } }
+  const d = inputData(), errs = validate(d);
+  showErrors(errs);
+  if (errs.length) { document.querySelector('input.bad')?.focus(); return; }
+  setEdid(buildEdid(d), T('由時序產生', 'generated'));
+  if ($('pixel_clock').value.trim()) toast(T('已產生 EDID（256 bytes，含 CEA 擴充區塊）。', 'EDID generated (256 bytes with the CEA extension).'));
+}
+$('bGen').onclick = generate;
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); generate(); } });
+$('edidText').addEventListener('input', () => { const arr = parseHexText($('edidText').value); $('textWarn').hidden = !!arr; if (!arr) $('textWarn').textContent = T('有無法辨識的值（每個位元組請寫 0x00～0xFF，以逗號或空白分隔）；位元組圖暫不更新。', 'Some values are not bytes (write 0x00 to 0xFF, separated by commas or spaces); the byte map is paused.'); if (arr) { state.edid = arr.map(hex2); renderMap(); renderDecoded(); $('edidLen').textContent = T(`${arr.length} bytes · 手動修改`, `${arr.length} bytes · edited`); } });
+const parseHexText = text => { const parts = text.replace(/,/g, ' ').replace(/0x/gi, '').split(/\s+/).filter(Boolean); if (!parts.length || parts.some(p => !/^[0-9a-f]{1,2}$/i.test(p))) return null; return parts.map(p => parseInt(p, 16)); };
+
+/* ---------- byte map ---------- */
+const REG0 = i => i < 8 ? ['r-hdr', '固定表頭', 'Header'] : i < 18 ? ['r-ven', '廠商／產品／週／年', 'Vendor, product, week, year'] : i < 20 ? ['r-ven', 'EDID 版本', 'EDID version'] : i < 25 ? ['r-basic', '基本顯示參數（尺寸 cm）', 'Basic display parameters (size in cm)'] : i < 35 ? ['r-color', '色度座標', 'Colour characteristics'] : i < 38 ? ['r-std', '既定時序', 'Established timings'] : i < 54 ? ['r-std', '標準時序', 'Standard timings'] : i < 72 ? ['r-dtd', '詳細時序 DTD 1', 'Detailed timing 1'] : i < 90 ? ['r-std', '描述元 2', 'Descriptor 2'] : i < 108 ? ['r-name', '顯示器名稱 (FC)', 'Monitor name (FC)'] : i < 126 ? ['r-range', '範圍限制 (FD)', 'Range limits (FD)'] : i === 126 ? ['r-ext', '擴充區塊數', 'Extension count'] : ['r-sum', '檢查碼', 'Checksum'];
+const DTDF = ['Pixel clock L', 'Pixel clock H', 'H active L', 'H blanking L', 'H active/blank H', 'V active L', 'V blanking L', 'V active/blank H', 'H sync offset L', 'H sync width L', 'V sync offset/width L', 'Sync high bits', 'H size L (mm)', 'V size L (mm)', 'Size H bits', 'H border', 'V border', 'Flags'];
+const REG1 = (i, d) => i < 4 ? ['r-hdr', 'CEA 表頭', 'CEA header'] : i < d ? ['r-cea', 'CEA 資料區塊', 'CEA data blocks'] : i < d + 18 ? ['r-dtd', '詳細時序（複製自 DTD 1）', 'Detailed timing (copy of DTD 1)'] : i === 127 ? ['r-sum', '檢查碼', 'Checksum'] : ['r-pad', '填充', 'Padding'];
+function renderMap() {
+  const box = $('blocks'); box.innerHTML = '';
+  if (!state.edid) { box.innerHTML = `<p class="hint">${T('按「產生 EDID」或匯入 .bin／.hex 後，這裡會顯示每個位元組與它的用途。', 'Generate an EDID or import a .bin / .hex file to see every byte and what it is for.')}</p>`; $('mapLegend').innerHTML = ''; return; }
+  const bytes = state.edid.map(s => parseInt(s, 16));
+  for (let b = 0; b * 128 < bytes.length; b++) {
+    const blk = bytes.slice(b * 128, b * 128 + 128), ok = blk.length === 128 && blk.reduce((s, x) => s + x, 0) % 256 === 0;
+    const wrap = document.createElement('div'); wrap.className = 'blk';
+    wrap.innerHTML = `<h3>${b === 0 ? T('區塊 0：EDID 基本區塊', 'Block 0: EDID base block') : T(`區塊 ${b}：CEA 擴充`, `Block ${b}: CEA extension`)} <span class="${ok ? 'ok' : 'bad'}">${ok ? T('檢查碼正確', 'Checksum OK') : T('檢查碼錯誤', 'Checksum wrong')}</span></h3>`;
+    const g = document.createElement('div'); g.className = 'grid mono';
+    g.append(Object.assign(document.createElement('span'), { className: 'hd' }));
+    for (let c = 0; c < 16; c++) g.append(Object.assign(document.createElement('span'), { className: 'hd', textContent: c.toString(16).toUpperCase() }));
+    for (let r = 0; r < 8; r++) {
+      g.append(Object.assign(document.createElement('span'), { className: 'hd', textContent: ((b * 128 + r * 16).toString(16).toUpperCase().padStart(3, '0')) }));
+      for (let c = 0; c < 16; c++) {
+        const i = r * 16 + c, v = blk[i]; if (v === undefined) { g.append(document.createElement('span')); continue; }
+        const reg = b === 0 ? REG0(i) : REG1(i, blk[2] || 4);
+        const el = document.createElement('button'); el.type = 'button'; el.className = 'byte ' + reg[0]; el.textContent = v.toString(16).toUpperCase().padStart(2, '0');
+        const fld = b === 0 && i >= 54 && i < 72 ? ` · ${DTDF[i - 54]}` : '';
+        el.dataset.info = `0x${(b * 128 + i).toString(16).toUpperCase().padStart(3, '0')} (${b * 128 + i}) = 0x${el.textContent} (${v}) · ${T(reg[1], reg[2])}${fld}`;
+        el.setAttribute('aria-label', el.dataset.info);
+        el.onmouseenter = el.onfocus = () => { $('inspect').textContent = el.dataset.info; document.querySelectorAll('.byte.hl').forEach(x => x.classList.remove('hl')); el.classList.add('hl'); };
+        g.append(el);
+      }
+    }
+    wrap.append(g); box.append(wrap);
+  }
+  $('mapLegend').innerHTML = [['r-hdr', '表頭', 'Header'], ['r-ven', '廠商／版本', 'Vendor / version'], ['r-basic', '基本參數', 'Basic'], ['r-dtd', '詳細時序', 'Detailed timing'], ['r-name', '名稱', 'Name'], ['r-range', '範圍限制', 'Range'], ['r-sum', '檢查碼', 'Checksum']].map(([c, zh, en]) => `<span><i class="byte ${c}" style="display:inline-block;width:12px;height:12px;padding:0"></i>${T(zh, en)}</span>`).join('');
+  $('inspect').textContent = T('滑過或用 Tab 走到位元組，可看位址與用途。', 'Hover or tab onto a byte to see its address and meaning.');
+}
+
+/* ---------- decoded view (helps check an imported file) ---------- */
+function renderDecoded() {
+  const dl = $('dec'); dl.innerHTML = '';
+  if (!state.edid) { dl.innerHTML = `<dt></dt><dd>${T('尚無資料。', 'No data yet.')}</dd>`; return; }
+  const b = state.edid.map(s => parseInt(s, 16)), rows = [];
+  const hdr = b.slice(0, 8).join(',') === '0,255,255,255,255,255,255,0';
+  rows.push([T('表頭', 'Header'), hdr ? T('正確', 'Valid') : T('不正確', 'Not valid')]);
+  if (b.length >= 128) {
+    const id = ((b[8] << 8) | b[9]), mfr = [10, 5, 0].map(s => String.fromCharCode(((id >> s) & 0x1F) + 64)).join('');
+    rows.push([T('廠商代碼', 'Manufacturer'), `${mfr} · ${T('產品', 'product')} 0x${((b[11] << 8) | b[10]).toString(16).toUpperCase().padStart(4, '0')}`]);
+    rows.push([T('生產週／年', 'Week / year'), `${b[16]} / ${b[17] + 1990}`]);
+    rows.push([T('EDID 版本', 'EDID version'), `${b[18]}.${b[19]}`]);
+    rows.push([T('影像尺寸', 'Image size'), `${b[21]} × ${b[22]} cm`]);
+    const d = b.slice(54, 72), pc = (d[0] | (d[1] << 8)) / 100;
+    const ha = d[2] | ((d[4] >> 4) << 8), hb = d[3] | ((d[4] & 0x0F) << 8), va = d[5] | ((d[7] >> 4) << 8), vb = d[6] | ((d[7] & 0x0F) << 8);
+    const hso = d[8] | (((d[11] >> 6) & 3) << 8), hsw = d[9] | (((d[11] >> 4) & 3) << 8), vso = (d[10] >> 4) | (((d[11] >> 2) & 3) << 4), vsw = (d[10] & 0x0F) | ((d[11] & 3) << 4);
+    const hs = d[12] | ((d[14] >> 4) << 8), vs = d[13] | ((d[14] & 0x0F) << 8);
+    rows.push([T('DTD 像素時脈', 'DTD pixel clock'), `${pc.toFixed(2)} MHz`]);
+    rows.push([T('DTD 水平', 'DTD horizontal'), `${T('有效', 'active')} ${ha} · ${T('遮沒', 'blanking')} ${hb} · ${T('前廊', 'front porch')} ${hso} · ${T('同步', 'sync')} ${hsw} · ${T('後廊', 'back porch')} ${hb - hso - hsw}`]);
+    rows.push([T('DTD 垂直', 'DTD vertical'), `${T('有效', 'active')} ${va} · ${T('遮沒', 'blanking')} ${vb} · ${T('前廊', 'front porch')} ${vso} · ${T('同步', 'sync')} ${vsw} · ${T('後廊', 'back porch')} ${vb - vso - vsw}`]);
+    if (ha + hb && va + vb && pc) rows.push([T('換算更新率', 'Refresh rate'), `${(pc * 1e6 / (ha + hb) / (va + vb)).toFixed(2)} Hz`]);
+    rows.push([T('DTD 影像尺寸', 'DTD image size'), `${hs} × ${vs} mm`]);
+    for (const off of [72, 90, 108]) {
+      const t = b[off + 3];
+      if (b[off] === 0 && b[off + 1] === 0 && t === 0xFC) rows.push([T('顯示器名稱', 'Monitor name'), String.fromCharCode(...b.slice(off + 5, off + 18)).split('\n')[0]]);
+      if (b[off] === 0 && b[off + 1] === 0 && t === 0xFD) rows.push([T('範圍限制', 'Range limits'), `V ${b[off + 5]}–${b[off + 6]} Hz · H ${b[off + 7]}–${b[off + 8]} kHz · ${T('最大時脈', 'max clock')} ${b[off + 9] * 10} MHz`]);
+    }
+    rows.push([T('擴充區塊數', 'Extensions'), String(b[126])]);
+    for (let k = 0; k * 128 < b.length; k++) { const s = b.slice(k * 128, k * 128 + 128); rows.push([T(`區塊 ${k} 檢查碼`, `Block ${k} checksum`), s.length === 128 && s.reduce((x, y) => x + y, 0) % 256 === 0 ? T('正確', 'OK') : T('錯誤', 'Wrong')]); }
+  }
+  for (const [k, v] of rows) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
+}
+function tabs(ids, panes) { ids.forEach((id, i) => { $(id).onclick = () => { ids.forEach((x, j) => { $(x).setAttribute('aria-selected', String(i === j)); $(panes[j]).hidden = i !== j; }); }; }); }
+tabs(['tMap', 'tText', 'tDec'], ['pMap', 'pText', 'pDec']);
+
+/* ---------- controllers/edid_controller.py handle_generate_python_code ---------- */
+const stamp = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; };
+// The template: the built-in origin.py, or one the user uploaded (kept only while the page is open).
+// An uploaded one may mark where the code goes with a line "# @OLDI" and a line "# @EDID";
+// without markers the code goes in at the desktop tool's line numbers (191 and 236).
+const MARK = { oldi: /^\s*#\s*@OLDI\b/i, edid: /^\s*#\s*@EDID\b/i };
+const tplText = () => state.tpl ? state.tpl.text : ORIGIN;
+function place(lines, re, at, text) { const i = state.tpl ? lines.findIndex(l => re.test(l)) : -1; if (i >= 0) lines.splice(i, 1, text); else lines.splice(at, 0, text); }
+function generateCode(quiet) {
+  const lines = tplText().match(/[^\n]*\n|[^\n]+$/g) || [];                 // readlines(): keeps the newlines
+  const model = $('model_name').value;
+  lines.splice(0, 0, `# Model: ${model} - Generated on ${stamp()}\n`);
+  let data = 0x07;
+  if (state.format === 'VESA') data |= 0x40;
+  if (state.ports === '2_port') data |= 0x08;
+  if (state.swap === 'Ports A and B Swapped') data |= 0x10;
+  const oldi = `    i2c.writeto_mem(0x90>>1, 0x01, bytearray([0xce, 0x${data.toString(16).toUpperCase().padStart(2, '0')}]))`;
+  place(lines, MARK.oldi, 191, oldi + '\n');     // fixed: the source inserted it without a new line
+  let vals = $('edidText').value.replace(/\n/g, ' ').split(', ');
+  vals = vals.flatMap(v => v.split(/\s+/).filter(Boolean));
+  while (vals.length < 256) vals.push('0x00');
+  let py = `    # Generate Code ...... ${stamp()}\n`;
+  vals.forEach((v, i) => { py += `    i2c.writeto_mem(0x80>>1, 0x2E, bytearray([0x${i.toString(16).toUpperCase().padStart(2, '0')}, ${v}]))\n`; });
+  place(lines, MARK.edid, 236, py);
+  state.code = { main: lines.join(''), out: `${oldi}\n${py}` };
+  $('codeCard').hidden = false; showCode();
+  if (quiet) return;
+  $('codeCard').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  toast(T('已產生 Python 程式碼，可下載 main.py 與 output.txt。', 'Python code generated. Download main.py and output.txt.'));
+}
+function showCode() { $('codeView').value = state.codeTab === 'main' ? state.code.main : state.code.out; $('tMain').setAttribute('aria-selected', String(state.codeTab === 'main')); $('tOut').setAttribute('aria-selected', String(state.codeTab !== 'main')); }
+$('bPy').onclick = () => generateCode();
+function showTpl() {
+  const t = state.tpl, text = tplText(), n = (text.match(/\n/g) || []).length + (text.endsWith('\n') ? 0 : 1);
+  const marks = t ? ['oldi', 'edid'].filter(k => text.split('\n').some(l => MARK[k].test(l))) : [];
+  $('tplName').textContent = t ? t.name : 'origin.py';
+  $('tplTag').textContent = t ? T(`你的版本 · ${n} 行`, `yours · ${n} lines`) : T(`內建 · ${n} 行`, `built-in · ${n} lines`);
+  $('tplTag').className = 'tag2' + (t ? (marks.length === 2 || n >= 236 ? ' mine' : ' warn') : '');
+  $('bTplDefault').hidden = !t;
+  $('tplHint').innerHTML = !t
+    ? T('可上傳自己的 origin.py：在要插入的位置放一行 <code># @OLDI</code> 與 <code># @EDID</code>；沒有標記時，照桌面版插在第 191、236 行。', 'You can upload your own origin.py: put a line <code># @OLDI</code> and a line <code># @EDID</code> where the code should go; without them it goes in at lines 191 and 236 like the desktop tool.')
+    : marks.length === 2 ? T('依標記插入：<code># @OLDI</code>、<code># @EDID</code> 這兩行會換成產生的程式碼。', 'Using the markers: the <code># @OLDI</code> and <code># @EDID</code> lines are replaced with the generated code.')
+    : (marks.length ? T(`只找到 <code># @${marks[0].toUpperCase()}</code>；另一段照桌面版行號插入。`, `Only <code># @${marks[0].toUpperCase()}</code> found; the other part goes in at the desktop line number.`) : T('沒有 <code># @OLDI</code>／<code># @EDID</code> 標記，照桌面版插在第 191、236 行。', 'No <code># @OLDI</code> / <code># @EDID</code> markers: the code goes in at lines 191 and 236 like the desktop tool.'))
+      + (marks.length < 2 && n < 236 ? T(`這個範本只有 ${n} 行，未標記的部分會接在檔案最後。`, ` This template has only ${n} lines, so an unmarked part ends up at the end of the file.`) : '');
+}
+function setTpl(t) { state.tpl = t; showTpl(); if (state.code) { generateCode(true); toast(T('已用新的範本重新產生 Python 程式碼。', 'Python code regenerated with the new template.')); } }
+async function loadTpl(f) {
+  if (f.size > 1024 * 1024) { showErrors([T(`範本太大：${f.name}（上限 1 MB）`, `Template too large: ${f.name} (1 MB at most)`)]); return; }
+  const text = await f.text();
+  if (!text.trim() || text.includes('\0')) { showErrors([T(`${f.name} 不是文字檔或是空的，請選 Python 原始碼（.py）。`, `${f.name} is empty or not text; pick a Python source file (.py).`)]); return; }
+  showErrors([]); setTpl({ name: f.name, text: text.replace(/\r\n/g, '\n') });
+  if (!state.code) toast(T(`已使用 ${f.name} 作為 Python 範本。`, `Using ${f.name} as the Python template.`));
+}
+$('bTpl').onclick = $('bImportTpl').onclick = () => { closeMenus(); $('fTpl').value = ''; $('fTpl').click(); };
+$('fTpl').onchange = () => { const f = $('fTpl').files[0]; if (f) loadTpl(f); };
+$('bTplDefault').onclick = () => { setTpl(null); if (!state.code) toast(T('已改回內建 origin.py。', 'Back to the built-in origin.py.')); };
+$('bTplDl').onclick = () => download(state.tpl ? state.tpl.name : 'origin.py', tplText(), 'text/x-python');
+$('tMain').onclick = () => { state.codeTab = 'main'; showCode(); };
+$('tOut').onclick = () => { state.codeTab = 'out'; showCode(); };
+$('bDlMain').onclick = () => download('main.py', state.code.main, 'text/x-python');
+$('bDlOut').onclick = () => download('output.txt', state.code.out);
+$('bCopyCode').onclick = () => copy($('codeView').value);
+$('bCopyEdid').onclick = () => { if (!state.edid) return toast(T('還沒有 EDID。', 'No EDID yet.')); copy($('edidText').value); };
+const baseName = () => ($('model_name').value.trim() || nameOf(inputData()) || 'edid').replace(/[\\/:*?"<>|\s]+/g, '_');
+const edidBytes = () => state.edid.map(s => parseInt(s, 16) & 0xFF);
+function intelHex(bytes) {
+  const out = [], h2 = n => n.toString(16).toUpperCase().padStart(2, '0');
+  for (let a = 0; a < bytes.length; a += 16) {
+    const chunk = bytes.slice(a, a + 16), rec = [chunk.length, (a >> 8) & 0xFF, a & 0xFF, 0x00, ...chunk];
+    const sum = (256 - rec.reduce((s, x) => s + x, 0) % 256) % 256;
+    out.push(':' + rec.map(h2).join('') + h2(sum));
+  }
+  out.push(':00000001FF');
+  return out.join('\r\n') + '\r\n';
+}
+function cArray(bytes) {
+  const name = baseName().replace(/[^A-Za-z0-9_]/g, '_').replace(/^(\d)/, '_$1');
+  const rows = []; for (let i = 0; i < bytes.length; i += 16) rows.push('    ' + bytes.slice(i, i + 16).map(b => '0x' + b.toString(16).toUpperCase().padStart(2, '0')).join(', ') + (i + 16 < bytes.length ? ',' : '') + `  /* 0x${i.toString(16).toUpperCase().padStart(3, '0')} */`);
+  return `/* ${baseName()} EDID, ${bytes.length} bytes */\n#include <stdint.h>\n\nstatic const uint8_t edid_${name.toLowerCase()}[${bytes.length}] = {\n${rows.join('\n')}\n};\n`;
+}
+const needEdid = () => { if (state.edid) return true; toast(T('請先產生或匯入 EDID。', 'Generate or import an EDID first.')); return false; };
+const EXPORTS = {
+  xBin: () => download(`${baseName()}.bin`, new Uint8Array(edidBytes()), 'application/octet-stream'),
+  xHex: () => download(`${baseName()}.hex`, displayText(state.edid)),
+  xIhex: () => download(`${baseName()}_intel.hex`, intelHex(edidBytes())),
+  xC: () => download(`${baseName()}_edid.h`, cArray(edidBytes())),
+  xPy: () => { generateCode(); download('main.py', state.code.main, 'text/x-python'); }
+};
+for (const [id, run] of Object.entries(EXPORTS)) $(id).onclick = () => { closeMenus(); if (needEdid()) run(); };
+$('bC').onclick = () => { if (needEdid()) EXPORTS.xC(); };
+$('bBin').onclick = () => { if (!state.edid) return toast(T('還沒有 EDID。', 'No EDID yet.')); download(`${($('model_name').value || 'edid').replace(/[\\/:*?"<>|]+/g, '_')}.bin`, new Uint8Array(state.edid.map(s => parseInt(s, 16) & 0xFF)), 'application/octet-stream'); };
+$('bHex').onclick = () => { if (!state.edid) return toast(T('還沒有 EDID。', 'No EDID yet.')); download(`${($('model_name').value || 'edid').replace(/[\\/:*?"<>|]+/g, '_')}.hex`, displayText(state.edid)); };
+
+/* ---------- .ini import / export (views/main_window.py) ---------- */
+const INI_MAP = { model_name: 'model_name', display_name: 'display_name', pixel_clock: 'pixel_clock', frame_rate: 'frame_rate', horizontal_active: 'h_active', horizontal_front_porch: 'h_fp', horizontal_back_porch: 'h_bp', horizontal_sync_width: 'h_sync', vertical_active: 'v_active', vertical_front_porch: 'v_fp', vertical_back_porch: 'v_bp', vertical_sync_width: 'v_sync' };
+function parseIni(text) {
+  const out = {}; let sec = null;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim(); if (!line || line[0] === ';' || line[0] === '#') continue;
+    const m = /^\[(.+)\]$/.exec(line); if (m) { sec = m[1].trim(); out[sec] = out[sec] || {}; continue; }
+    const kv = /^([^=:]+)[=:](.*)$/.exec(line); if (kv && sec) out[sec][kv[1].trim().toLowerCase()] = kv[2].trim();
+  }
+  return out;
+}
+function loadIni(text, name) {
+  const ini = parseIni(text), e = ini.EDID;
+  if (!e) { showErrors([T(`讀取 INI 失敗：找不到 [EDID] 區段（${name}）`, `Error reading INI file: no [EDID] section (${name})`)]); return; }
+  const missing = [];
+  for (const [k, id] of Object.entries(INI_MAP)) { if (k in e) $(id).value = e[k]; else if (k === 'display_name') $(id).value = ''; else missing.push(k); }
+  for (const k of Object.keys(ADV)) $(k).value = k in e ? e[k] : '';
+  showErrors(missing.length ? [T(`讀取 INI 時缺少欄位：${missing.join(', ')}`, `Error reading INI file: missing ${missing.join(', ')}`)] : []);
+  if (Object.keys(ADV).some(k => k in e)) $('adv').open = true;
+  updateLive(); dnCount();
+  if (missing.length) { setStale(true); return; }
+  // a complete .ini goes straight to the EDID: no extra click on Generate
+  if (!$('pixel_clock').value.trim()) { const c = calcClock(); if (c) $('pixel_clock').value = c; }
+  const errs = validate(inputData());
+  if (errs.length) { showErrors(errs); setStale(true); document.querySelector('input.bad')?.focus(); return; }
+  setEdid(buildEdid(inputData()), T('由時序產生', 'generated'));
+  if (state.code) generateCode(true);
+  toast(T(`已匯入 ${name} 並產生 EDID。`, `Imported ${name} and generated the EDID.`));
+}
+$('bExample').onclick = () => loadIni(EXAMPLE_INI, 'example.ini');
+$('bImportIni').onclick = () => { $('fIni').value = ''; $('fIni').click(); };
+$('fIni').onchange = () => { const f = $('fIni').files[0]; if (!f) return; f.text().then(t => loadIni(t, f.name)); };
+$('bExportIni').onclick = () => {
+  const d = inputData();
+  const lines = ['[EDID]', `model_name = ${d.model_name}`, `display_name = ${d.display_name}`, `pixel_clock = ${pyFloat(d.pixel_clock)}`, `frame_rate = ${pyFloat(d.frame_rate)}`,
+    `horizontal_active = ${d.horizontal_active}`, `horizontal_front_porch = ${d.horizontal_front_porch}`, `horizontal_back_porch = ${d.horizontal_back_porch}`, `horizontal_sync_width = ${d.horizontal_sync_width}`,
+    `vertical_active = ${d.vertical_active}`, `vertical_front_porch = ${d.vertical_front_porch}`, `vertical_back_porch = ${d.vertical_back_porch}`, `vertical_sync_width = ${d.vertical_sync_width}`,
+    `week_number = ${d.week_number}`, `year_number = ${d.year_number}`, `max_h_image_size = ${d.max_h_image_size}`, `max_v_image_size = ${d.max_v_image_size}`,
+    `interlaced = ${d.interlaced}`, `sound = ${d.sound}`, `output_type = ${d.output_type}`, `vsync_polarity = ${d.vsync_polarity}`, `hsync_polarity = ${d.hsync_polarity}`, '', ''];
+  download(`${(d.model_name || 'edid').replace(/[\\/:*?"<>|]+/g, '_')}.ini`, lines.join('\n'));
+  toast(T('已匯出 .ini（含生產週）。', 'Exported the .ini (including the week number).'));
+};
+
+/* ---------- .bin / .hex import ---------- */
+$('bImportBin').onclick = () => { $('fBin').value = ''; $('fBin').click(); };
+$('fBin').onchange = () => { const f = $('fBin').files[0]; if (f) importEdidFile(f); };
+async function importEdidFile(f) {
+  try {
+    let bytes;
+    if (/\.bin$/i.test(f.name)) bytes = [...new Uint8Array(await f.arrayBuffer())];
+    else if (/\.hex$/i.test(f.name) && /^\s*:/.test(await f.text())) bytes = parseIntelHex(await f.text());
+    else if (/\.hex$/i.test(f.name)) {
+      const parts = (await f.text()).trim().replace(/,/g, ' ').replace(/0x/g, '').replace(/\n/g, ' ').split(/\s+/).filter(Boolean);
+      bytes = parts.map(p => { if (!/^[0-9a-f]+$/i.test(p) || parseInt(p, 16) > 255) throw Error(T(`檔案中有無效的十六進位值：${p}`, `Invalid hex value in the file: ${p}`)); return parseInt(p, 16); });
+    } else throw Error(T('只接受 .bin 或 .hex 檔。', 'Only .bin or .hex files are accepted.'));
+    if (!bytes.length) throw Error(T('檔案是空的。', 'The file is empty.'));
+    showErrors([]); setEdid(bytes.map(hex2), f.name); toast(T(`已匯入 EDID 檔：${f.name}`, `Imported EDID file: ${f.name}`));
+  } catch (err) { showErrors([T(`讀取 EDID 檔失敗：${err.message}`, `Error reading EDID file: ${err.message}`)]); }
+}
+
+function parseIntelHex(text) {
+  const mem = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const l = raw.trim(); if (!l) continue;
+    if (!/^:[0-9A-F]+$/i.test(l) || l.length < 11) throw Error(T(`Intel HEX 格式不正確：${l.slice(0, 20)}`, `Not valid Intel HEX: ${l.slice(0, 20)}`));
+    const b = l.slice(1).match(/../g).map(x => parseInt(x, 16));
+    if (b.reduce((s, x) => s + x, 0) % 256 !== 0) throw Error(T(`Intel HEX 檢查碼錯誤：${l.slice(0, 20)}`, `Intel HEX checksum error: ${l.slice(0, 20)}`));
+    const [n, hi, lo, type] = b;
+    if (type === 1) break;
+    if (type === 0) for (let i = 0; i < n; i++) mem[(hi << 8 | lo) + i] = b[4 + i];
+  }
+  return Array.from(mem, v => v ?? 0);
+}
+
+/* ---------- menus ---------- */
+function closeMenus() { for (const [b, m] of [['mOpenBtn', 'mOpen'], ['mExportBtn', 'mExport']]) { $(m).hidden = true; $(b).setAttribute('aria-expanded', 'false'); } }
+for (const [b, m] of [['mOpenBtn', 'mOpen'], ['mExportBtn', 'mExport']]) $(b).onclick = e => {
+  e.stopPropagation(); const open = $(m).hidden; closeMenus(); if (!open) return;
+  $(m).hidden = false; $(b).setAttribute('aria-expanded', 'true');
+  $(m).querySelectorAll('[data-need=edid]').forEach(x => { x.disabled = !state.edid; x.title = state.edid ? '' : T('請先產生或匯入 EDID', 'Generate or import an EDID first'); });
+  $(m).querySelector('button:not(:disabled)')?.focus();
+};
+document.addEventListener('click', e => { if (!e.target.closest('.menu-wrap')) closeMenus(); });
+document.addEventListener('keydown', e => {
+  const m = document.querySelector('.menu:not([hidden])'); if (!m) return;
+  if (e.key === 'Escape') { e.preventDefault(); const btn = m.previousElementSibling; closeMenus(); btn.focus(); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const items = [...m.querySelectorAll('button:not(:disabled)')], i = items.indexOf(document.activeElement); items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus(); }
+});
+['bExample', 'bImportIni', 'bImportBin', 'bExportIni'].forEach(id => $(id).addEventListener('click', closeMenus));
+// drop a file anywhere on the page
+let dragDepth = 0;
+document.addEventListener('dragenter', e => { if ([...e.dataTransfer.types].includes('Files')) { dragDepth++; $('drop').hidden = false; } });
+document.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; $('drop').hidden = true; } });
+document.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+document.addEventListener('drop', e => {
+  e.preventDefault(); dragDepth = 0; $('drop').hidden = true;
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  if (/\.ini$/i.test(f.name)) f.text().then(t => loadIni(t, f.name));
+  else if (/\.(bin|hex)$/i.test(f.name)) importEdidFile(f);
+  else if (/\.(py|txt)$/i.test(f.name)) loadTpl(f);
+  else showErrors([T(`不支援的檔案：${f.name}（請用 .ini、.bin、.hex 或 .py 範本）`, `Unsupported file: ${f.name} (use .ini, .bin, .hex or a .py template)`)]);
+});
+// Inside ArchFlow, Esc closes the tool once nothing in it (menu, confirm dialog) wants Esc itself.
+if (HOST) window.addEventListener('keydown', e => { if (e.key === 'Escape' && !e.defaultPrevented && $('modal').hidden && !document.querySelector('.menu:not([hidden])')) { try { HOST.close(); } catch { /* ignore */ } } });
+if (HOST) { $('bClose').hidden = false; $('bClose').title = T('關閉（Esc）', 'Close (Esc)'); $('bClose').setAttribute('aria-label', T('關閉 EDID Generator', 'Close EDID Generator')); $('bClose').onclick = () => { try { HOST.close(); } catch { /* ignore */ } }; document.querySelector('.lang').hidden = true; document.querySelector('.brand .tag').hidden = true; }
+
+/* ---------- reset ---------- */
+$('bReset').onclick = async () => {
+  if (!await confirmBox(T('全部重設？', 'Reset all fields?'), T('所有欄位、EDID 資料與產生的程式碼都會清除。', 'Every field, the EDID data and the generated code will be cleared.'), T('全部重設', 'Reset all'), T('取消', 'Cancel'))) return;
+  for (const id of FIELDS) $(id).value = '';
+  for (const [k, v] of Object.entries(ADV)) $(k).value = v;
+  state.format = 'OLDI'; state.ports = '1_port'; state.swap = 'Ports A and B not Swapped'; paintFormat(); paintPorts(); paintSwap();
+  state.edid = null; state.code = null; setStale(false); $('textWarn').hidden = true; $('edidText').value = ''; dnCount(); $('bPy').disabled = true; $('codeCard').hidden = true; $('edidLen').textContent = '';
+  showErrors([]); renderMap(); renderDecoded(); updateLive(); $('h_active').focus();
+  toast(T('已將所有欄位重設為預設值。', 'All fields have been reset to default values.'));
+};
+
+for (const [k, v] of Object.entries(ADV)) $(k).value = v;
+applyLang(); dnCount();
+$('h_active').focus();
+window.__edid = { buildEdid, inputData, state, parseIni, intelHex, parseIntelHex, cArray };
+})();
+</script>
+</body>
+</html>

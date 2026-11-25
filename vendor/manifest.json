@@ -1,0 +1,69 @@
+{
+  "source": "ArchFlow V2.10.1, legacy/app.zh-Hant.html (identical in legacy/app.en.html)",
+  "generatedBy": "scripts/extract-vendor.mjs",
+  "files": {
+    "sequence-editor/bundle.js": {
+      "variable": "Bf",
+      "lines": "5327-5327",
+      "bytes": 294424,
+      "sha256": "87764a33ea2ea69e41e69d33914b0a1b31ae0e9ff56ba5af23e1efd6b2c23a3a",
+      "what": "Power-sequence editor (React 19.2.8 bundle)"
+    },
+    "sequence-editor/style.css": {
+      "variable": "Ef",
+      "lines": "5327-5563",
+      "bytes": 16206,
+      "sha256": "27be3365cadf5220f2f371de1fa78f7fd2b44b02209f8565155b6c92653b71a4",
+      "what": "Power-sequence editor styles"
+    },
+    "flowchart-editor/bundle.js": {
+      "variable": "$f",
+      "lines": "5563-5563",
+      "bytes": 297335,
+      "sha256": "7c1f9442f79d16cb5a0dd605f0633377300ab3969f46bb889d5a83e7aa170f72",
+      "what": "Flowchart editor (React 19.2.8 bundle)"
+    },
+    "flowchart-editor/style.css": {
+      "variable": "Hf",
+      "lines": "5563-5765",
+      "bytes": 17419,
+      "sha256": "53fcb5fea5d7f4c2f139360af86400fbf8aaafe06d1ce108708a6973281fa87a",
+      "what": "Flowchart editor styles"
+    },
+    "rsi-bom/bundle.js": {
+      "variable": "fg",
+      "lines": "5766-5766",
+      "bytes": 368271,
+      "sha256": "276c9b43c23122b5399b4d6db46b39ef4d3873fa97c766c627227cf80db0c1bd",
+      "what": "RSI BOM Converter (React 19.2.8 + JSZip 3.10.1 bundle)"
+    },
+    "rsi-bom/style.css": {
+      "variable": "gg",
+      "lines": "5766-5992",
+      "bytes": 17363,
+      "sha256": "0e990cbb19dbc3e17c9f3ec2bc4a2103ce2a9e3af3cbca5a195bd264be7820c1",
+      "what": "RSI BOM Converter styles"
+    },
+    "tools/edid.html": {
+      "variable": "mg",
+      "lines": "5992-6763",
+      "bytes": 89883,
+      "sha256": "ae632b3fd915bd67092a0ed8b1030c591b8a45b6f3482acd5d840f1dab1c588b",
+      "what": "EDID Generator (standalone page)"
+    },
+    "tools/hex.html": {
+      "variable": "vg",
+      "lines": "6763-7486",
+      "bytes": 60441,
+      "sha256": "ac37fb251525ef58025fac6c3a8d8de97fa1494d99a7150f1a0385c38f4d3307",
+      "what": "Hex/Bin Editor & Compare (standalone page)"
+    },
+    "tools/pattern.html": {
+      "variable": "xg",
+      "lines": "7486-10374",
+      "bytes": 247142,
+      "sha256": "0c42bfaf68cc9f4cdcb21b54dd105056359b9ea5879f9899a0715b6240a957b9",
+      "what": "Pattern Generator (standalone page)"
+    }
+  }
+}
