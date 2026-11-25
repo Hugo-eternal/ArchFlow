@@ -45,6 +45,10 @@ const PAIRS = [
   ['--color-text', '--color-accent-tint', 4.5], ['--color-text', '--color-selection', 4.5],
   ['--wire-signal', '--color-board', 3], ['--wire-power', '--color-board', 3], ['--wire-clock', '--color-board', 3], ['--wire-bus', '--color-board', 3],
   ['--color-rule', '--color-surface', 1.2],
+  // diagram blocks / ports (3.18)
+  ['--block-text', '--block-fill', 4.5], ['--block-subtitle', '--block-fill', 4.5], ['--port-label', '--block-fill', 4.5],
+  ['--port-label', '--color-board', 4.5], ['--block-border', '--block-fill', 1.5], ['--port-stroke', '--port-fill', 3],
+  ['--selection-stroke', '--color-board', 3],
 ];
 const rows = [];
 for (const [theme, t] of [['light', light], ['dark', dark]]) for (const [fg, bg, min] of PAIRS) {

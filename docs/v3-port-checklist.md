@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 237　☑ 39　✂ 30　⤳ 21
+合計 327 層：☐ 232　☑ 41　✂ 33　⤳ 21
 
 ## core / interaction
 
@@ -292,14 +292,14 @@
 | `render` | 735 |  | script#1 | 時程外觀套用 | ☐ |  |
 | `render` | 759 |  | script#1 | 時程主題 / 字型；移除節點清單的 ref | ☐ |  |
 | `render` | 794 |  | script#1 | 時程分支配色 CSS 變數 | ☐ |  |
-| `render` | 1122 |  | script#2 | 非拖曳時先清理接點拓撲 | ☐ |  |
+| `render` | 1122 |  | script#2 | 非拖曳時先清理接點拓撲 | ☑ | `router/junctions.cleanJunctions` 移到提交流程（3.17）；render 不修改資料 |
 | `render` | 1205 |  | script#2 | 重繪後套用時程配色（afPaintSchedule） | ☐ |  |
-| `render` | 1257 |  | script#2 | 功能設計的多接腳版面（af-function-multi） | ☐ | 依接腳數加大方塊的規則已移到 `model/diagram.growForPorts`（3.12）；`af-function-multi` 樣式 → render（3.18） |
+| `render` | 1257 |  | script#2 | 功能設計的多接腳版面（af-function-multi） | ☑ | 加大規則 → `model/diagram.growForPorts`（3.12）；多接腳方塊繪製 → `render/blocks`（3.18） |
 | `render` | 1401 |  | script#2 | 同步線條樣式面板 | ☐ |  |
 | `render` | 1534 |  | script#2 | 格線：新設計自動啟用格線並正規化座標 | ☐ |  |
-| `render` | 1745 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ☐ |  |
-| `render` | 1779 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ☐ |  |
-| `render` | 1858 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ☐ |  |
+| `render` | 1745 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ✂ | 版本字樣改為 `src/version.ts` 單一常數，render 不再改寫 |
+| `render` | 1779 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ✂ | 版本字樣改為 `src/version.ts` 單一常數，render 不再改寫 |
+| `render` | 1858 |  | script#2 | 每次重繪把 `.af-brand-version` 改寫為 V2.10.1（3 層重複） | ✂ | 版本字樣改為 `src/version.ts` 單一常數，render 不再改寫 |
 | `render` | 1864 |  | script#2 | 版本頁尾 | ☐ |  |
 | `render` | 2199 |  | script#9 | 時程文字對齊 | ☐ |  |
 | `render` | 2248 |  | schedule-release-patch | 時程樣式（microtask） | ☐ |  |

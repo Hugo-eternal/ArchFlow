@@ -1,0 +1,45 @@
+/* Diagram canvas (render/*). Tokens only; per-block colours arrive as custom properties set by
+   render/blocks.ts from the block's style. */
+.af-block-body {
+  fill: var(--block-fill);
+  stroke: var(--block-border);
+  stroke-width: var(--block-border-width);
+}
+.af-block-accent {
+  stroke: var(--block-accent);
+  stroke-width: var(--block-accent-width);
+}
+.af-block text { font-family: var(--font-ui); }
+.af-block-title {
+  fill: var(--block-text);
+  font-size: var(--block-title-size);
+  font-weight: 600;
+}
+.af-block-subtitle, .af-block-metric {
+  fill: var(--block-subtitle);
+  font-size: var(--block-subtitle-size);
+}
+.af-block-ref {
+  fill: var(--block-subtitle);
+  font-size: var(--block-ref-size);
+  font-weight: var(--weight-medium);
+}
+.af-port-dot {
+  fill: var(--port-fill);
+  stroke: var(--port-stroke);
+  stroke-width: var(--border-width);
+}
+.af-port[data-connected="true"] .af-port-dot { fill: var(--port-stroke); }
+.af-port-label {
+  fill: var(--port-label);
+  font-size: var(--port-label-size);
+  font-weight: var(--weight-medium);
+}
+.af-block-selection {
+  fill: none;
+  stroke: var(--selection-stroke);
+  stroke-width: 2px;
+  stroke-dasharray: 5 4;
+  pointer-events: none;
+}
+.af-block.is-locked .af-block-body { stroke-dasharray: 6 3; }

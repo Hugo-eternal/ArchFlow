@@ -50,6 +50,25 @@
   --status-doing: #2B5C8A;
   --status-done: #2E6E62;
 
+  /* diagram blocks and ports (V2 default appearance, legacy export / L305 placePorts) */
+  --block-fill: #EAF0F6;
+  --block-border: #8FA5BC;
+  --block-accent: #355C82;
+  --block-text: #243D56;
+  --block-subtitle: #405775;
+  --block-radius: 7px;
+  --block-border-width: 2px;
+  --block-accent-width: 4px;
+  --block-title-size: 20px;
+  --block-subtitle-size: 13px;
+  --block-ref-size: 11px;
+  --port-fill: #FFFFFF;
+  --port-stroke: #5C8298;
+  --port-label: #334E70;
+  --port-radius: 3.5px;
+  --port-label-size: 11px;
+  --selection-stroke: #1D5C99;
+
   /* typography */
   --font-ui: "Source Han Sans TC", "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
   --font-mono: "Cascadia Mono", Consolas, "SF Mono", ui-monospace, monospace;
@@ -108,6 +127,15 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --color-board: #10171E;
+    --block-fill: #1F2D3B;
+    --block-border: #4F6680;
+    --block-accent: #6FA8E0;
+    --block-text: #E1E9F0;
+    --block-subtitle: #B3C2CF;
+    --port-fill: #18222C;
+    --port-stroke: #8FB0C4;
+    --port-label: #B9CCE0;
+    --selection-stroke: #6FA8E0;
     --color-surface: #18222C;
     --color-surface-2: #1E2933;
     --color-hover: #233040;
@@ -138,6 +166,15 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --color-board: #10171E;
+  --block-fill: #1F2D3B;
+  --block-border: #4F6680;
+  --block-accent: #6FA8E0;
+  --block-text: #E1E9F0;
+  --block-subtitle: #B3C2CF;
+  --port-fill: #18222C;
+  --port-stroke: #8FB0C4;
+  --port-label: #B9CCE0;
+  --selection-stroke: #6FA8E0;
   --color-surface: #18222C;
   --color-surface-2: #1E2933;
   --color-hover: #233040;
