@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 297　☑ 1　✂ 8　⤳ 21
+合計 327 層：☐ 293　☑ 4　✂ 9　⤳ 21
 
 ## core / interaction
 
@@ -14,14 +14,14 @@
 |---|---|---|---|---|---|---|
 | `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☐ | 提交前清理接點 → 移到 router/junctions（3.17），不放在 history |
 | `commit` | 1348 | `*` 取代 | script#2 |  | ✂ | 由 `history.batch()`（src/core/history.ts）取代暫時把 commit 換成空函式 |
-| `commit` | 1535 |  | script#2 |  | ☐ | 提交前格線正規化 → core/grid（3.11） |
+| `commit` | 1535 |  | script#2 |  | ☑ | `core/grid` 的 `normalize` / `protect`（3.11）；提交流程在 3.20 由命令呼叫 |
 | `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ✂ | 由 `history.batch()` 取代；失敗時自動回滾 |
 | `commit` | 3564 | `*` 取代 | af15-ux2 | run fn as one undoable step even if it calls commit() internally | ✂ | 由 `history.batch()` 取代 |
-| `fit` | 601 |  | script#1 |  | ☐ |  |
-| `fit` | 632 |  | script#1 |  | ☐ |  |
-| `fit` | 669 |  | script#1 |  | ☐ |  |
-| `fit` | 3587 | `*` 取代 | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ☐ |  |
-| `fit` | 4445 |  | af15-ux2 | "Fit to screen" also takes frames into account (they may reach past the blocks) | ☐ |  |
+| `fit` | 601 |  | script#1 |  | ☐ | 時程 fit → `designs/schedule` 提供 `FitOptions` / 外框（3.28）；共用計算為 `core/camera.fit` |
+| `fit` | 632 |  | script#1 |  | ☐ | 同上（3.28） |
+| `fit` | 669 |  | script#1 |  | ☐ | 同上（3.28） |
+| `fit` | 3587 | `*` 取代 | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ✂ | 暫停 fit 的技巧不需要：V3 的 fit 只在命令 `view.fit` 執行時才呼叫 |
+| `fit` | 4445 |  | af15-ux2 | "Fit to screen" also takes frames into account (they may reach past the blocks) | ☐ | 外框納入 fit 範圍 → `designs/function` 的外框（3.26），共用 `core/camera.unionBounds` |
 | `select` | 646 |  | script#1 | Edit interval days directly beside the clicked axis segment. | ☐ |  |
 | `select` | 842 |  | script#1 | Remove now-empty containers, keeping all existing input handlers intact. | ☐ |  |
 | `select` | 893 |  | script#2 |  | ☐ |  |
@@ -315,7 +315,7 @@
 | `render` | 10480 |  | af-v280-ux | V2.8：接腳名稱位置 | ☐ |  |
 | `render` | 10565 |  | af-v290-free | V2.9：自由尺寸 / 無名稱方塊 | ☐ |  |
 | `render` | 10617 |  | af-v2100-scale | V2.10：名稱置中 | ☐ |  |
-| `applyCamera` | 1510 |  | script#2 |  | ☐ |  |
+| `applyCamera` | 1510 |  | script#2 |  | ☐ | 格線背景 → render（3.18）；位移 / 尺寸由 `core/camera.backgroundOf` |
 | `applyCamera` | 3100 |  | af15-ux2 |  | ☐ |  |
 | `applyCamera` | 4425 |  | af15-ux2 | ---------- engine hooks ---------- | ☐ |  |
 | `drawJunctions` | 1081 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ☐ |  |
@@ -334,7 +334,7 @@
 | `ensureBlockWidth` | 1506 |  | script#2 |  | ☐ |  |
 | `normalizeSlots` | 1507 |  | script#2 |  | ☐ |  |
 | `placePorts` | 1299 |  | script#2 | Keep the original schema version; restore only validated boolean lock flags. | ☐ |  |
-| `project` | 1505 |  | script#2 |  | ☐ |  |
+| `project` | 1505 |  | script#2 |  | ☑ | `core/grid.portAt`（3.11） |
 | `renderHeading` | 1197 | `*` 取代 | script#2 | Heading creation is retired. Legacy data stays readable but no heading is rendered/exported. | ✂ |  |
 
 ## router
@@ -371,7 +371,7 @@
 | `fullPath` | 1591 |  | script#2 |  | ☐ |  |
 | `afNormalizeSharedBranches` | 1294 |  | script#2 | Drag gestures are captured before the legacy connect gesture. | ☐ |  |
 | `afNormalizeSharedBranches` | 1304 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
-| `anchor` | 1504 |  | script#2 |  | ☐ |  |
+| `anchor` | 1504 |  | script#2 |  | ☑ | `core/grid.portPoint` / `endPoint`（3.11） |
 | `beginCornerBranch` | 1306 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
 | `ggRoute` | 1592 |  | script#2 |  | ☐ |  |
 | `repairJunctionGeometry` | 1109 | `*` 取代 | script#2 | The old alignment helper moved a junction without moving its saved wire bends. | ☐ |  |
