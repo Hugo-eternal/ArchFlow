@@ -6,13 +6,13 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 247　☑ 35　✂ 24　⤳ 21
+合計 327 層：☐ 237　☑ 39　✂ 30　⤳ 21
 
 ## core / interaction
 
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
-| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☐ | 提交前清理接點 → 移到 router/junctions（3.17），不放在 history |
+| `commit` | 1123 |  | script#2 | Discard fixed trunk waypoints: the orthogonal router owns geometry after normalization. | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次 |
 | `commit` | 1348 | `*` 取代 | script#2 |  | ✂ | 由 `history.batch()`（src/core/history.ts）取代暫時把 commit 換成空函式 |
 | `commit` | 1535 |  | script#2 |  | ☑ | `core/grid` 的 `normalize` / `protect`（3.11）；提交流程在 3.20 由命令呼叫 |
 | `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ✂ | 由 `history.batch()` 取代；失敗時自動回滾 |
@@ -202,7 +202,7 @@
 | `validateDiagram` | 798 |  | script#1 | 時程：`engineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
 | `validateDiagram` | 817 |  | script#1 | 時程：`savedEngineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
 | `validateDiagram` | 850 |  | script#1 | 時程：兩種 style 的 `lineWidth` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
-| `validateDiagram` | 1125 |  | script#2 | 清理孤立接點 | ☐ | 清理孤立接點 → router/junctions（3.17）；schema 只檢查線的兩端存在 |
+| `validateDiagram` | 1125 |  | script#2 | 清理孤立接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次 |
 | `validateDiagram` | 1199 |  | script#2 | `afCleanRoute`；heading 停用但仍讀得進來 | ✂ | `afCleanRoute` 與 heading 刪除（audit §4.2） |
 | `validateDiagram` | 1297 |  | script#2 | `afLocked`（方塊 / 接腳） | ☑ | `io/schema`（3.13）：方塊 / 接腳 `locked` |
 | `validateDiagram` | 1332 |  | script#2 | 舊圖轉 direct-ports 接線（afDirectConnections） | ✂ | 舊圖轉換，V3 不相容舊檔 |
@@ -226,7 +226,7 @@
 | `projectData` | 555 | `*` 取代 | script#1 | 多設計格式 `version:5`：**整個取代**（內含 customStyles，所以 520 失效但不影響結果） | ☑ | `core/store.toFile` + `io/project-file.saveProject`（3.14） |
 | `projectData` | 1008 |  | script#2 | `archflowLocalization`（語系、綁定、範本目錄） | ✂ | `archflowLocalization` 刪除；只保留 `locale`（plan §2.1） |
 | `projectData` | 1057 |  | script#2 | `applicationVersion='V2.10.1'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
-| `projectData` | 1126 |  | script#2 | 存檔前清理每張設計的接點 | ☐ | 存檔前清理接點 → router/junctions（3.17）在提交時處理，存檔不另外改資料 |
+| `projectData` | 1126 |  | script#2 | 存檔前清理每張設計的接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次；存檔不另外改資料 |
 | `projectData` | 1359 |  | script#2 | `wiringMode='direct-ports'` | ✂ | `wiringMode` 刪除（plan §2.1） |
 | `projectData` | 1471 |  | script#2 | `applicationVersion='1.3'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
 | `projectData` | 1540 |  | script#2 | `applicationVersion='1.4'` | ✂ | `applicationVersion` 改為 `app`，由 `src/version.ts` 單一常數產生 |
@@ -348,8 +348,8 @@
 | `drawEdges` | 733 |  | script#1 | 時程連線主題、軸點標示 | ☐ |  |
 | `drawEdges` | 795 |  | script#1 | 時程分支顏色 | ☐ |  |
 | `drawEdges` | 849 |  | script#1 | 時程線寬 | ☐ |  |
-| `drawEdges` | 1124 |  | script#2 | 繪製前清理接點 | ☐ |  |
-| `drawEdges` | 1171 |  | script#2 | 共用線段合併（afNormalizeSharedBranches） | ☐ |  |
+| `drawEdges` | 1124 |  | script#2 | 繪製前清理接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次；繪製時不再修改資料 |
+| `drawEdges` | 1171 |  | script#2 | 共用線段合併（afNormalizeSharedBranches） | ✂ | 共用線段合併（afNormalizeSharedBranches）已在 V2 停用 |
 | `drawEdges` | 1187 |  | script#2 | 範本依實際接腳位置對齊 | ☐ |  |
 | `drawEdges` | 1212 |  | script#2 | 成本式最短正交繞線的快取重置 | ☐ |  |
 | `drawEdges` | 1400 |  | script#2 | 新連線套用預設線條格式 | ☐ |  |
@@ -369,13 +369,13 @@
 | `fullPath` | 1211 |  | script#2 | Wire routing: shortest orthogonal paths with a cost for bends, crossings and overlaps. | ☑ | `router/full-path` 格線關閉模式（3.15 搜尋 + 3.16 stub / 手動 / 退回）；快取由 render 每格處理 |
 | `fullPath` | 1529 |  | script#2 |  | ☑ | `router/full-path` 格線模式（ggRoute + ggPathLegal，3.16） |
 | `fullPath` | 1591 |  | script#2 |  | ☑ | `route` 合併 `afRouteOnly`：從端點開始的 `route` 視為完整路徑（3.16） |
-| `afNormalizeSharedBranches` | 1294 |  | script#2 | Drag gestures are captured before the legacy connect gesture. | ☐ |  |
-| `afNormalizeSharedBranches` | 1304 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
+| `afNormalizeSharedBranches` | 1294 |  | script#2 | Drag gestures are captured before the legacy connect gesture. | ✂ | L1304 已換成 `return 0`，自動共用接點停用 |
+| `afNormalizeSharedBranches` | 1304 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ✂ | 直接接到端點：不自動建立共用接點；V3 不移植 |
 | `anchor` | 1504 |  | script#2 |  | ☑ | `core/grid.portPoint` / `endPoint`（3.11） |
-| `beginCornerBranch` | 1306 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ☐ |  |
+| `beginCornerBranch` | 1306 | `*` 取代 | script#2 | Direct endpoint wiring: no automatic shared junction creation. | ✂ | V2 已換成空函式 |
 | `ggRoute` | 1592 |  | script#2 |  | ☑ | 同上；格線模式下 `simplify([a, ...route, b])` 對完整路徑與轉折點都成立 |
-| `repairJunctionGeometry` | 1109 | `*` 取代 | script#2 | The old alignment helper moved a junction without moving its saved wire bends. | ☐ |  |
-| `splitAtCorner` | 1080 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ☐ |  |
+| `repairJunctionGeometry` | 1109 | `*` 取代 | script#2 | The old alignment helper moved a junction without moving its saved wire bends. | ✂ | V2 已換成空函式 |
+| `splitAtCorner` | 1080 |  | script#2 | Branching at a bend first splits the original wire and creates a real shared junction. | ✂ | V2 沒有任何呼叫者（`beginCornerBranch` L1306 為空函式），死碼 |
 
 ## shell
 

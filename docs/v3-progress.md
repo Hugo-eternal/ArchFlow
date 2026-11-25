@@ -59,7 +59,7 @@
 ### 3D 繞線
 - [x] 3.15 `router/find-path`（A* + 成本）（L3）
 - [x] 3.16 `router/full-path`（stub、手動路徑、共用線段）（L3）
-- [ ] 3.17 `router/junctions`（分支、T 型正規化）（L3）
+- [x] 3.17 `router/junctions`（分支、T 型正規化）（L3）
 ### 3E 畫面
 - [ ] 3.18 `render`：方塊、接腳（L3）
 - [ ] 3.19 `render`：連線、接點、文字框（L3）
@@ -108,7 +108,7 @@
 
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成
-- **下一步**：3.17 `src/router/junctions.ts`（分支、T 型正規化）。先確認 V2 最後生效的行為：`afNormalizeSharedBranches` 在 L1304 被換成 `return 0`、`beginCornerBranch` L1306 與 `repairJunctionGeometry` L1109 都是空函式（「Direct endpoint wiring: no automatic shared junction creation」），所以實際剩下的是：`splitAtCorner` L1080（在轉角分支時先把原線拆成兩段並建立真正的共用接點）、提交 / 繪製前清理孤立接點（`commit` L1123、`drawEdges` L1124、`validateDiagram` L1125、`projectData` L1126）。寫成純函式：`splitWireAt(diagram, wireId, point)` → 新接點 + 兩條線、`pruneJunctions(diagram)`（少於 2 條線的接點移除；剛好 2 條且共線時合併回一條線——先確認 V2 是否這樣做）。與 V2 同輸入比對。L3。
+- **下一步**：3E 畫面，從 3.18 `render`：方塊與接腳開始。這是第一個碰 DOM 的模組：`src/render/` 只讀 model、不修改（plan 規則 2）；輸出 SVG（或 HTML + SVG，先讀 plan §1 與 audit 對 V2 方塊 DOM 的描述再決定，並在交接寫明）。方塊尺寸一律用 `w` / `h`（3.16 起的規則），接腳位置用 `core/grid.portPoint`，依接腳數加大由 `model/diagram.growForPorts` 在資料層處理。顏色只能用 `styles/tokens.css` 的 token（`npm run check:tokens`）。測試：在 Chromium 中渲染 golden function / power 的方塊與接腳，和 V2 畫面用 `tests/tools/svg-compare.ts` 結構化比對方塊外框與接腳座標（容差 1 px）。L3。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -154,8 +154,10 @@
   - `route` 的意義：第一點等於起點 → 完整路徑（V2 `afRouteOnly`）；否則為轉折點（V2 `manual`）。
   - **有意修正**（已寫入 CHANGELOG）：不合法且未鎖定的 `route` 一律改回自動繞線（V2 只在格線模式這樣做）；格線關閉時以存檔的 `w` / `h` 繞線（V2 用 DOM 量測尺寸）。
   - 與 V2 比對：golden function / power 每條線，格線開啟時**直接**完全相同；格線關閉時，在套用 V2 量測尺寸後完全相同。
+- 接點（3.17）：`src/router/junctions.ts`——`cleanJunctions(diagram)` → `{ data, changed }`（V2 afCleanJunctions：刪除無效 / 自接的線；少於 2 條線的接點連線刪除；剛好 2 條時合併回一條線，保留第一條的 id 與格式、取第二條的箭頭、捨棄 route；刪除沒連到方塊的接點孤島）、`junctionDegrees`。與 V2 原始碼在 300 組隨機拓撲上完全相同。V3 只在提交（3.20 的命令流程）與載入時呼叫一次，render 不得修改資料（V2 在 render / 繪製 / 存檔時都會改資料）。
+  - V2 的轉角分支（`splitAtCorner`）沒有任何呼叫者，自動共用接點也已停用，都標 ✂ 不移植。目前使用者無法自行新增接點（V2 也一樣，接點只來自範本 / 檔案）。若之後要提供「從線上分支」，屬於新功能，需另外規劃。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.16：型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
+- **最後通過的驗證層級**：L3（3.17：型別、i18n、token、vendor、建置、產物檢查、Vitest 26 檔 184 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 39、✂ 30）。前一步 3.16：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 25 檔 180 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 35、✂ 24）。前一步 3.15：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 24 檔 173 項、Playwright 10 項（`--workers=1`）全數通過）。前一步 3.14：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 23 檔 166 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 31、✂ 23）。前一步 3.13：L4 自動項目（型別、i18n、token、vendor、建置、產物檢查、Vitest 22 檔 154 項、Playwright 10 項（`--workers=1`）全數通過；人工驗收與遷移測試見上方說明；移植清單見表頭）。前一步 3.12：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 21 檔 140 項、Playwright 10 項（`--workers=1`）全數通過；移植清單 ☑ 6、✂ 9）。前一步 3.11：L3（型別、i18n、token、vendor、建置、產物檢查、Vitest 20 檔 133 項全數通過；Playwright 10 項以 `--workers=1` 全數通過；移植清單 ☑ 4、✂ 9）
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
