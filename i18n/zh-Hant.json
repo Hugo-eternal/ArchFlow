@@ -789,5 +789,13 @@
   "appbar.open": "開啟",
   "appbar.export": "匯出",
   "appbar.save": "儲存",
-  "cmd.toggleExplorer": "專案內容面板"
+  "cmd.toggleExplorer": "專案內容面板",
+  "outline.title": "專案內容",
+  "outline.search": "搜尋任務或元件",
+  "outline.empty": "找不到符合的項目",
+  "outline.blocks": "功能方塊",
+  "outline.powerBlocks": "電源方塊",
+  "outline.junctions": "分支接點",
+  "outline.tasks": "任務",
+  "outline.unnamed": "未命名"
 }

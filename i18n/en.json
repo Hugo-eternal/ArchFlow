@@ -789,5 +789,13 @@
   "appbar.open": "Open",
   "appbar.export": "Export",
   "appbar.save": "Save",
-  "cmd.toggleExplorer": "Project contents panel"
+  "cmd.toggleExplorer": "Project contents panel",
+  "outline.title": "Project contents",
+  "outline.search": "Search tasks or parts",
+  "outline.empty": "No matching items",
+  "outline.blocks": "Function blocks",
+  "outline.powerBlocks": "Power blocks",
+  "outline.junctions": "Junctions",
+  "outline.tasks": "Tasks",
+  "outline.unnamed": "Unnamed"
 }

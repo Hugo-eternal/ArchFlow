@@ -42,6 +42,7 @@
   --chrome-disabled: #A7B1B8;
   --chrome-disabled-icon: #BCC5CB;
   --led-saved: #3E9B6E;
+  --side-panel: #FAFBFA;      /* project contents panel (V2 .navigator) */
   --led-dirty: #B7832F;
   --dirty-text: #7A5418;
   --tip-bg: #14202C;
@@ -328,6 +329,7 @@
     --chrome-disabled: #66737F;
     --chrome-disabled-icon: #56636F;
     --led-saved: #5CC495;
+    --side-panel: #18222B;
     --led-dirty: #E0A85A;
     --dirty-text: #F1D3AC;
     --tip-bg: #E9EEF2;
@@ -436,6 +438,7 @@
   --chrome-disabled: #66737F;
   --chrome-disabled-icon: #56636F;
   --led-saved: #5CC495;
+  --side-panel: #18222B;
   --led-dirty: #E0A85A;
   --dirty-text: #F1D3AC;
   --tip-bg: #E9EEF2;

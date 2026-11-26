@@ -20,7 +20,7 @@ test('function: starter template, then a blank design, then save', async ({ page
   await expect(page.getByRole('radio', { name: '方塊圖', exact: true })).toBeChecked();
   await expect(page.getByRole('radio', { name: '範本：入門方塊圖' })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
-  await expect(page.getByRole('button', { name: /入門方塊圖/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.af-design-trigger')).toContainText(/入門方塊圖/);
   const d = await data(page);
   expect(d.blocks.map(b => b.partNumber)).toEqual(['感測器', '微控制器', '無線模組', '電源']);
   expect(d.wires).toHaveLength(3);
@@ -30,12 +30,13 @@ test('function: starter template, then a blank design, then save', async ({ page
   expect(await page.evaluate(() => (window as unknown as { archflow: { camera: { z: number } } }).archflow.camera.z)).not.toBe(1);
 
   // blank design via the new-design dialog
-  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
   const dlg = page.getByRole('dialog');
   await dlg.getByRole('radio', { name: '空白設計' }).check();
   await dlg.getByLabel('設計名稱').fill('空白');
   await dlg.getByRole('button', { name: '確定' }).click();
-  await expect(page.getByRole('button', { name: /空白/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.af-design-trigger')).toContainText(/空白/);
   expect((await data(page)).blocks).toHaveLength(0);
 
   const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
@@ -241,18 +242,20 @@ test('function: the starter power tree template opens in the power view', async 
   await page.goto('file://' + DIST);
   await page.getByRole('button', { name: '建立專案' }).click();
 
-  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
   const dlg = page.getByRole('dialog');
   await dlg.getByRole('radio', { name: '範本：入門電源樹' }).check();
   await dlg.getByRole('button', { name: '確定' }).click();
-  await expect(page.getByRole('button', { name: /分散式電源架構/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.af-design-trigger')).toContainText(/分散式電源架構/);
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas [data-role="source"]')).toHaveCount(1);
   // the voltage legend overlay (3.29b d)
   await expect(page.getByRole('complementary', { name: '電壓顏色' })).toContainText('12V');
   // the first design keeps its own view
-  await page.getByRole('button', { name: /入門方塊圖/ }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitemradio', { name: /入門方塊圖/ }).click();
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '功能檢視' })).toHaveAttribute('aria-pressed', 'true');
   expect(errors).toEqual([]);
 });

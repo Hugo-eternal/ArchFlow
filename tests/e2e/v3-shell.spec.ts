@@ -56,7 +56,7 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   await page.getByLabel('專案名稱').fill('主機板');
   await page.getByRole('radio', { name: '空白設計' }).check();
   await page.getByRole('button', { name: '建立專案' }).click();
-  await expect(page.getByRole('navigation', { name: '設計清單' }).getByRole('button', { name: /設計 1/ })).toBeVisible();
+  await expect(page.locator('.af-design-trigger')).toContainText('設計 1');
 
   // two blocks; move the second one to the right
   await page.getByRole('button', { name: '新增方塊' }).click();
@@ -92,11 +92,13 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   await expect.poll(async () => (await model(page)).blocks[0].title).toBe('PMIC');
 
   // second design, then back
-  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
   await page.getByRole('dialog').getByLabel('設計名稱').fill('電源樹');
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
-  await expect(page.getByRole('button', { name: /電源樹/ })).toHaveAttribute('aria-current', 'page');
-  await page.getByRole('button', { name: /設計 1/ }).click();
+  await expect(page.locator('.af-design-trigger')).toContainText(/電源樹/);
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitemradio', { name: /設計 1/ }).click();
   expect((await model(page)).blocks).toHaveLength(2);
 
   // save
@@ -123,7 +125,9 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   await expect(page.getByRole('button', { name: '建立專案' })).toBeVisible();
   const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: '開啟 JSON 專案' }).click()]);
   await chooser.setFiles(await save.path());
-  await expect(page.getByRole('navigation', { name: '設計清單' }).getByRole('button')).toHaveCount(5); // 2 designs + 3 actions
+  await page.locator('.af-design-trigger').click();
+  await expect(page.getByRole('menuitemradio')).toHaveCount(2);
+  await page.keyboard.press('Escape');
   expect((await model(page)).blocks.map(x => x.title)).toEqual(['PMIC', '']);
 
   expect(errors).toEqual([]);
@@ -155,7 +159,7 @@ test('a project schedule from its template is drawn and can be panned', async ({
   await page.getByRole('radio', { name: '專案時程' }).check();
   await expect(page.getByRole('radio', { name: '範本：入門專案時程' })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
-  await expect(page.getByRole('button', { name: /產品開發流程/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('.af-design-trigger')).toContainText(/產品開發流程/);
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas .af-sched-interval')).toHaveCount(4);
   await expect(page.locator('svg.af-canvas')).toContainText('專案時程');
@@ -287,7 +291,8 @@ test('app bar and command bar (V2.10.1 look, 3.46a): one row each, design menu b
   await expect(trigger.locator('.af-count')).toHaveText('2');
 
   // the command bar follows the design type: a schedule has its own commands, no block insert
-  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
   await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
   const tools = page.getByRole('toolbar', { name: '工具列' });
@@ -388,7 +393,8 @@ test('status bar, notifications, empty hint and language switch without reload (
 
   // a power-sequence design in the vendor editor, then switch the language: no page reload,
   // project kept, shell and editor in English
-  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
   await page.getByRole('dialog').getByRole('radio', { name: '電源時序' }).check();
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
   await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: '新增電源軌' }).first()).toBeVisible();
@@ -397,7 +403,9 @@ test('status bar, notifications, empty hint and language switch without reload (
   expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
   await expect(page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
   await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: 'Add rail' }).first()).toBeVisible();
-  await expect(page.getByRole('navigation', { name: 'Designs' }).getByRole('button')).toHaveCount(5);
+  await page.locator('.af-design-trigger').click();
+  await expect(page.getByRole('menuitemradio')).toHaveCount(2);
+  await page.keyboard.press('Escape');
   await expect(bar).toContainText('Unsaved');
   // the editor still edits the project after the reload in English
   const rails = () => page.evaluate(() => ((window as unknown as { archflow: { data(): { rails: unknown[] } } }).archflow.data().rails.length));
@@ -484,3 +492,50 @@ test('schedule overview (3.43h): span, status, milestones; a milestone in the li
   await expect(panel.getByLabel('任務名稱')).toHaveValue(name);
   expect(errors).toEqual([]);
 });
+
+test('project contents panel (V2.10.1 look, 3.46c): groups, search, click selects and centres, toggle', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const nav = page.getByRole('navigation', { name: '專案內容' });
+  await expect(nav.getByRole('heading', { name: /功能方塊/ })).toContainText('4');
+  await expect(nav.getByRole('heading', { name: /分支接點/ })).toContainText('0');
+  await expect(nav.getByRole('button')).toHaveText(['感測器', '微控制器', '無線模組', '電源']);
+
+  // a click selects the block (properties panel) and marks the entry
+  await nav.getByRole('button', { name: '無線模組' }).click();
+  await expect(nav.getByRole('button', { name: '無線模組' })).toHaveAttribute('aria-current', 'true');
+  await expect(page.getByLabel('IC 型號 / 料號')).toHaveValue('無線模組');
+
+  // search filters; nothing found; Escape clears
+  const search = nav.getByRole('searchbox', { name: '搜尋任務或元件' });
+  await search.fill('感測');
+  await expect(nav.getByRole('button')).toHaveText(['感測器']);
+  await search.fill('zzzz');
+  await expect(nav.getByRole('status')).toHaveText('找不到符合的項目');
+  await search.press('Escape');
+  await expect(nav.getByRole('button')).toHaveCount(4);
+
+  // the power view calls the group "power blocks"
+  await page.getByRole('button', { name: '電源檢視' }).click();
+  await expect(nav.getByRole('heading', { name: /電源方塊/ })).toBeVisible();
+
+  // the command bar toggle hides and shows the panel
+  await page.getByRole('button', { name: '專案內容面板' }).click();
+  await expect(nav).toHaveCount(0);
+  await page.getByRole('button', { name: '專案內容面板' }).click();
+  await expect(nav).toBeVisible();
+
+  // a schedule lists its tasks with their dates
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await expect(nav.getByRole('heading', { name: /任務/ })).toBeVisible();
+  await expect(nav.getByRole('button').first()).toContainText(/開始 \d{4}\/\d{2}\/\d{2}/);
+  await nav.getByRole('button').first().click();
+  await expect(nav.getByRole('button').first()).toHaveAttribute('aria-current', 'true');
+  expect(errors).toEqual([]);
+});
+

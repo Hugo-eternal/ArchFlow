@@ -52,6 +52,8 @@ export interface DesignModule<D = Design['data']> {
   emptyHint?(d: D): MessageKey | null;
   /** Items of a design the command palette can go to (blocks, tasks), at most 400. */
   findItems?(d: D): FindItem[];
+  /** The left "project contents" panel (V2 .navigator): grouped items, click selects and centres. */
+  outline?(d: D): OutlineSection[];
   /** 'canvas' = the shared canvas / inspector; 'embedded' = a vendor editor in an iframe (3.30–3.31). */
   editor: 'canvas' | 'embedded';
 
@@ -131,6 +133,11 @@ export interface FindItem {
   /** What to select (a block-diagram ItemRef, or a canvas design's selection). */
   select: CanvasSelection;
 }
+
+/** A group of the project contents panel (V2 .navsection + list), e.g. "Function blocks 4". */
+export interface OutlineSection { id: string; heading: MessageKey; items: OutlineItem[] }
+/** An entry of the project contents panel: `sub` is a small line above the label (V2 ref), `lines` below it (V2 schedule dates). */
+export interface OutlineItem extends Omit<FindItem, 'hint'> { sub?: string; lines?: string[] }
 
 /** A canvas design's own drawing and editing (the shell pans / zooms it, routes pointer and keys). */
 export interface CanvasDrawing<D> {

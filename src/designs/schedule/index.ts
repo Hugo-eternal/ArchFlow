@@ -11,7 +11,7 @@ import type { Command } from '../../core/commands';
 import { localize, type CanvasSelection, type DesignCommandContext, type DesignModule } from '../module';
 import { addBranch, appendTask, shiftConflicts, drag, nudge, removeItems, resetOffsets, ScheduleEditError, type DragHandle } from './edit';
 import { scheduleFields } from './fields';
-import { day, today } from './dates';
+import { day, formatDate, today, visibleDates } from './dates';
 import { layout, scheduleBounds, ScheduleError } from './layout';
 import { scheduleLayer } from './render';
 import { estimateWidth, textLayout, textsLayer } from '../../render/texts';
@@ -152,5 +152,15 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
       if (!b || !x.title) return [];
       return [{ id: x.id, label: x.title, hint: b.ref, at: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, select: { kind: 'task', id: x.id } }];
     });
+  },
+  // V2 schedule explorer: title, then the dates the card shows ("Start 2026/11/16")
+  outline(d) {
+    let boxes: ReturnType<typeof layout>['boxes'] | null = null;
+    try { boxes = layout(d).boxes; } catch (e) { if (!(e instanceof ScheduleError)) throw e; }
+    return [{ id: 'tasks', heading: 'outline.tasks', items: d.tasks.map(x => {
+      const b = boxes?.get(x.id);
+      return { id: x.id, label: x.title || t('schedule.untitled'), lines: visibleDates(x).map(v => `${t(`schedule.date.${v.key}`)} ${formatDate(v.date)}`),
+        at: b ? { x: b.x + b.w / 2, y: b.y + b.h / 2 } : { x: 0, y: 0 }, select: { kind: 'task', id: x.id } };
+    }) }];
   },
 };

@@ -1,10 +1,11 @@
-// The V3 shell: start screen, or the workspace (app bar, design list, canvas, properties panel,
+// The V3 shell: start screen, or the workspace (app bar, project contents, canvas, properties panel,
 // status bar) with its dialogs. All actions are registry commands (controller.ts).
 import { useEffect, useRef, useState } from 'react';
 import { t, getLocale, type MessageKey } from '../core/i18n';
 import { formatShortcut } from '../core/commands';
 import { APP_VERSION } from '../version';
 import { isMac, type Shell, type DesignChoice } from './controller';
+import type { OutlineItem, OutlineSection } from '../designs/module';
 import { useVersion } from './use-store';
 import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
@@ -185,26 +186,47 @@ function CanvasLegend({ shell }: { shell: Shell }) {
   );
 }
 
-function DesignList({ shell }: { shell: Shell }) {
-  const s = shell.store;
+/** Is this outline item the current selection (block diagram: one of the selected items)? */
+function isSelected(shell: Shell, it: OutlineItem): boolean {
+  if (shell.isBlockDiagram) return shell.gestures.selection.some(r => r.kind === it.select.kind && r.id === it.select.id);
+  const sel = shell.item;
+  return !!sel && sel.kind === it.select.kind && sel.id === it.select.id;
+}
+
+/** The left panel (V2 .navigator "project contents"): search, then the design's groups; a click selects and centres. */
+function Outline({ shell, sections }: { shell: Shell; sections: OutlineSection[] }) {
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLocaleLowerCase();
+  const match = (it: OutlineItem) => !q || [it.label, it.sub ?? '', ...(it.lines ?? [])].join(' ').toLocaleLowerCase().includes(q);
+  const found = sections.map(sec => ({ ...sec, shown: sec.items.filter(match) }));
+  const none = !!q && found.every(sec => sec.shown.length === 0);
   return (
-    <nav className="af-designs" aria-label={t('design.list')}>
-      <ul>
-        {s.designs.map(d => (
-          <li key={d.id}>
-            <button type="button" className={`af-design-item${d.id === s.activeDesignId ? ' is-active' : ''}`} aria-current={d.id === s.activeDesignId ? 'page' : undefined}
-              onClick={() => void shell.run('design.switch', d.id)}>
-              <span className="af-design-name">{d.name}</span>
-              <span className="af-design-type">{t(`design.type.${d.type}` as MessageKey)}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="af-designs-actions">
-        <CommandButton shell={shell} id="design.add" />
-        <CommandButton shell={shell} id="design.rename" />
-        <CommandButton shell={shell} id="design.delete" />
-      </div>
+    <nav className="af-outline" aria-label={t('outline.title')}>
+      <h2 className="af-outline-title">{t('outline.title')}</h2>
+      <input type="search" className="af-outline-search" value={query} placeholder={t('outline.search')} aria-label={t('outline.search')}
+        onChange={e => setQuery(e.target.value)}
+        onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); setQuery(''); e.currentTarget.blur(); } }} />
+      {none && <p className="af-outline-empty" role="status">{t('outline.empty')}</p>}
+      {found.map(sec => (
+        <section key={sec.id} className="af-outline-section" aria-labelledby={`af-outline-${sec.id}`}>
+          <h3 id={`af-outline-${sec.id}`} className="af-outline-head">{t(sec.heading)}<span className="af-outline-count">{sec.items.length}</span></h3>
+          <ul>
+            {sec.shown.map(it => {
+              const on = isSelected(shell, it);
+              return (
+                <li key={it.id}>
+                  <button type="button" className={`af-outline-item${on ? ' is-active' : ''}`} aria-current={on ? 'true' : undefined}
+                    onClick={() => shell.reveal({ ...it, hint: '' })}>
+                    {it.sub && <small>{it.sub}</small>}
+                    <span className="af-outline-label">{it.label}</span>
+                    {it.lines?.map(l => <span key={l} className="af-outline-line">{l}</span>)}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
     </nav>
   );
 }
@@ -216,11 +238,13 @@ function Workspace({ shell }: { shell: Shell }) {
   const m = shell.module, data = d ? s.data(d.id) : undefined;
   const stats = m?.stats && data ? m.stats(data as never) : '';
   const hint = m?.emptyHint && data ? m.emptyHint(data as never) : null;
+  const outline = m?.outline && data ? m.outline(data as never) : null;
+  const explorer = shell.explorerOpen && !!outline;
   return (
     <div className="af-shell">
       <AppBar shell={shell} />
-      <div className={`af-body${shell.explorerOpen ? '' : ' no-explorer'}`}>
-        {shell.explorerOpen && <DesignList shell={shell} />}
+      <div className={`af-body${explorer ? '' : ' no-explorer'}`}>
+        {explorer && outline && <Outline key={d?.id} shell={shell} sections={outline} />}
         <section className="af-stage" aria-label={d?.name}>
           <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />

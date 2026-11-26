@@ -244,6 +244,14 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     if (!label) return [];
     return [{ id: b.id, label, hint: [b.partNumber && b.title !== label ? b.title : '', b.ref].filter(Boolean).join(' \u00b7 '), at: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, select: { kind: 'block', id: b.id } }];
   }),
+  // V2 updateExplorer: blocks (ref above the part number / title), then junctions ("● name")
+  outline: d => [
+    { id: 'blocks', heading: d.view === 'power' ? 'outline.powerBlocks' : 'outline.blocks', items: d.blocks.map(b => ({
+      id: b.id, label: b.partNumber || b.title || t('outline.unnamed'), sub: b.ref || undefined,
+      at: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, select: { kind: 'block', id: b.id } })) },
+    { id: 'junctions', heading: 'outline.junctions', items: d.junctions.map(j => ({
+      id: j.id, label: `\u25cf ${j.name}`, at: { x: j.x, y: j.y }, select: { kind: 'junction', id: j.id } })) },
+  ],
   legend: d => {
     const items = voltageLegend(d);
     return items.length ? { title: 'power.legend.title', items: items.map(i => ({ swatch: `af-rail-${i.band}`, text: i.text })) } : null;
