@@ -128,7 +128,7 @@
   "inspector.title": "Properties",
   "inspector.multi": "{count} items selected",
   "project.unsaved": "(unsaved)",
-  "project.untitled": "Untitled project",
+  "project.untitled": "New project",
   "project.discard.title": "Discard unsaved changes?",
   "project.discard.message": "The current project has unsaved changes. Continuing will lose them.",
   "start.create": "Create project",
@@ -559,7 +559,7 @@
   "help.disclaimer": "Voltages and currents are manual annotations; the power view only sums downstream demand. Nothing is simulated, and part or cable ratings are not checked. Equal labels are not connected.",
   "help.palette": "Press {keys} for the command palette: search commands, switch designs or go to a block / task.",
   "status.stats.diagram": "{blocks} blocks · {ports} pins · {wires} wires · {junctions} junctions",
-  "status.stats.schedule": "{tasks} tasks · {forks} fork points",
+  "status.stats.schedule": "{tasks} tasks · {links} links",
   "status.saved": "Saved",
   "toast.dismiss": "Dismiss",
   "toast.region": "Notifications",
@@ -932,5 +932,13 @@
   "start.tpl.sequence.mcu.desc": "6 rows",
   "start.tpl.flowchart.lcd.name": "LCD panel power-on",
   "start.tpl.flowchart.lcd.desc": "16 steps: ID check, 3 retries, timed waits",
-  "start.blankCaption": "Blank design: start from an empty canvas"
+  "start.blankCaption": "Blank design: start from an empty canvas",
+  "project.created": "Project created. Use Add design to manage more drawings.",
+  "status.kind.function": "Function blocks",
+  "status.kind.power": "Power architecture",
+  "status.kind.schedule": "Project schedule",
+  "status.kind.sequence": "Power sequence",
+  "status.kind.flowchart": "Flowchart",
+  "canvas.hint.diagram": "Drag empty space to pan · Shift-drag to box select · grid {size}",
+  "canvas.hint.schedule": "Drag the canvas to move / wheel to zoom"
 }

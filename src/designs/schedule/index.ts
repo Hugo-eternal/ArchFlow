@@ -137,11 +137,9 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
   },
   commands: scheduleCommands(),
   // V2 #stats for a branching schedule: tasks and fork points
-  stats(d) {
-    const kids = new Map<string, number>();
-    for (const l of d.links) kids.set(l.from, (kids.get(l.from) ?? 0) + 1);
-    return t('status.stats.schedule', { tasks: d.tasks.length, forks: [...kids.values()].filter(n => n > 1).length });
-  },
+  // V2 status: "5 tasks · 4 links"
+  stats: d => t('status.stats.schedule', { tasks: d.tasks.length, links: d.links.length }),
+
   emptyHint: d => (d.tasks.length ? null : 'hint.empty.schedule'),
   // V2 palette "Go to task": the task's display reference (T01 …) as hint
   findItems(d) {

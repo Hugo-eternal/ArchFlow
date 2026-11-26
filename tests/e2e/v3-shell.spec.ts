@@ -159,7 +159,7 @@ test('a project schedule from its template is drawn and can be panned', async ({
   await page.getByRole('radio', { name: '專案時程' }).check();
   await expect(page.getByRole('radio', { name: /^入門時程/ })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
-  await expect(page.locator('.af-design-trigger')).toContainText(/產品開發流程/);
+  await expect(page.locator('.af-design-trigger')).toContainText(/入門時程/);
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas .af-sched-interval')).toHaveCount(4);
   await expect(page.locator('svg.af-canvas')).toContainText('專案時程');
@@ -372,7 +372,7 @@ test('status bar, notifications, empty hint and language switch without reload (
   // empty canvas: guidance; the status bar has the type and counts (saved state: app bar)
   const bar = page.locator('.af-statusbar');
   await expect(page.locator('.af-empty-hint')).toContainText('按 B');
-  await expect(bar).toContainText('方塊圖');
+  await expect(bar).toContainText('功能方塊');
   await expect(bar).toContainText('0 個方塊 · 0 個接腳 · 0 條線路 · 0 個分支接點');
   await expect(page.locator('.af-save-state')).toContainText('已儲存');
   await page.getByRole('button', { name: '新增方塊' }).click();
@@ -729,8 +729,9 @@ test('zoom control, tips card and status bar (V2.10.1 look, 3.46e)', async ({ pa
 
   // status bar: type, counts, the last message, the credit
   const bar = page.locator('.af-statusbar');
-  await expect(bar).toContainText('方塊圖');
+  await expect(bar).toContainText('功能方塊');
   await expect(bar).toContainText('4 個方塊');
+  await expect(bar).toContainText('專案已建立。');
   await expect(bar).toContainText('GuoWei Chiu');
   await page.getByRole('button', { name: '儲存', exact: true }).click();
   await expect(bar.locator('.af-status-notice')).toContainText('已儲存');

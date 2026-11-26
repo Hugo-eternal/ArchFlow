@@ -145,14 +145,21 @@ export class Shell {
   closeDialog(): void { this.dialog = null; this.ui.emit(); }
   setViewport(v: Viewport): void { this.viewport = v; }
 
+  /** The name a design from a template gets: the template's own label (V2 named it after the card, e.g. "Starter power tree"). */
+  private templateName(choice: DesignChoice): string {
+    const tpl = choice.template ? this.designs.require(choice.type).templates.find(x => x.id === choice.template) : undefined;
+    return tpl ? t(tpl.label) : '';
+  }
+
   /** A new project with one design (blank or from a template). */
   newProject(name: string, choice: DesignChoice = { type: this.designs.list()[0].type }): void {
     const made = this.designs.require(choice.type).create({ template: choice.template, variant: choice.variant });
-    const designName = choice.name?.trim() || made.name || t('design.defaultName', { n: 1 });
+    const designName = choice.name?.trim() || this.templateName(choice) || made.name || t('design.defaultName', { n: 1 });
     this.store.newProject(name.trim() || t('project.untitled'), { type: choice.type, name: designName, data: made.data });
     this.gestures.select([]);
     this.screen = 'workspace';
-    this.message = null;
+    // V2 status notice after creating a project (no toast)
+    this.message = { key: 'project.created', tone: 'info' };
     this.toasts = [];
     this.pendingFit = !!choice.template;
     this.ui.emit();
@@ -161,7 +168,7 @@ export class Shell {
   /** Add a design to the open project and switch to it. */
   addDesign(choice: DesignChoice): void {
     const made = this.designs.require(choice.type).create({ template: choice.template, variant: choice.variant });
-    const name = choice.name?.trim() || made.name || t('design.defaultName', { n: this.store.designs.length + 1 });
+    const name = choice.name?.trim() || this.templateName(choice) || made.name || t('design.defaultName', { n: this.store.designs.length + 1 });
     this.gestures.cancel();
     this.gestures.select([]);
     this.store.addDesign(choice.type, name, made.data, { activate: true });

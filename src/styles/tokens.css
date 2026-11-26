@@ -43,6 +43,10 @@
   --chrome-disabled-icon: #BCC5CB;
   --led-saved: #3E9B6E;
   --side-panel: #FAFBFA;      /* project contents panel (V2 .navigator) */
+  --canvas-paper: #FAFBFA;     /* block / schedule canvas (V2 --af-paper) */
+  --grid-minor: #E4ECF1;       /* V2 gg-grid #D1DFE8 at 0.65 px: drawn 1 px wide here, so lighter */
+  --grid-major: #CCD9E3;       /* … and #B7CAD7 at 0.9 px every 5 cells */
+  --hint-bg: rgb(234 240 246 / .85);
   --start-body: #F4F6F8;          /* start screen behind the form (V2 .af2-start-body) */
   --start-form: rgb(255 255 255 / .9);
   --start-heading: #142E4B;
@@ -247,7 +251,10 @@
   --appbar-height: 50px;
   --toolbar-height: 44px;
   --statusbar-height: 28px;
-  --grid-size: 10px;             /* canvas dot grid; set at run time from the camera (shell/Canvas.tsx) */
+  --grid-size: 10px;             /* canvas grid (V2 gg-grid); these four are set at run time from the camera (shell/Canvas.tsx) */
+  --grid-major-size: 50px;
+  --grid-minor-w: .65px;
+  --grid-major-w: .9px;
   --grid-x: 0px;
   --grid-y: 0px;
   --touch-target: 44px;
@@ -348,6 +355,10 @@
     --chrome-disabled-icon: #56636F;
     --led-saved: #5CC495;
     --side-panel: #18222B;
+    --canvas-paper: #121A21;
+    --grid-minor: #1F2C38;
+    --grid-major: #2C3D4D;
+    --hint-bg: rgb(28 50 71 / .85);
     --start-body: #121A22;
     --start-form: rgb(23 33 43 / .92);
     --start-heading: #DCE6F0;
@@ -470,6 +481,10 @@
   --chrome-disabled-icon: #56636F;
   --led-saved: #5CC495;
   --side-panel: #18222B;
+  --canvas-paper: #121A21;
+  --grid-minor: #1F2C38;
+  --grid-major: #2C3D4D;
+  --hint-bg: rgb(28 50 71 / .85);
   --start-body: #121A22;
   --start-form: rgb(23 33 43 / .92);
   --start-heading: #DCE6F0;

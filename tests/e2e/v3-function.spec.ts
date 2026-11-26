@@ -247,7 +247,7 @@ test('function: the starter power tree template opens in the power view', async 
   const dlg = page.getByRole('dialog');
   await dlg.getByRole('radio', { name: '範本：入門電源樹' }).check();
   await dlg.getByRole('button', { name: '確定' }).click();
-  await expect(page.locator('.af-design-trigger')).toContainText(/分散式電源架構/);
+  await expect(page.locator('.af-design-trigger')).toContainText(/入門電源樹/);
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas [data-role="source"]')).toHaveCount(1);
@@ -450,6 +450,6 @@ test('export PNG (3.44: the V3 counterpart of V2 export-and-language.spec): page
   const buf = fs.readFileSync(await png.path());
   expect(buf.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
   expect({ w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) }).toEqual({ w: 2560, h: 1440 });
-  expect(await page.evaluate(() => (window as unknown as { __lastDownload?: string }).__lastDownload ?? null)).toBe('未命名專案 - 入門方塊圖.png'); // "project - design" (3.22)
+  expect(await page.evaluate(() => (window as unknown as { __lastDownload?: string }).__lastDownload ?? null)).toBe('新專案 - 入門方塊圖.png'); // "project - design" (3.22)
   expect(errors).toEqual([]);
 });

@@ -113,6 +113,9 @@ export function Canvas({ shell }: { shell: Shell }) {
     if (!svg) return;
     const bg = backgroundOf(c, gridSize(d.grid));
     svg.style.setProperty('--grid-size', `${bg.size}px`);
+    svg.style.setProperty('--grid-major-size', `${bg.size * 5}px`);
+    svg.style.setProperty('--grid-minor-w', `${Math.max(0.5, 0.65 * c.z)}px`);
+    svg.style.setProperty('--grid-major-w', `${Math.max(0.6, 0.9 * c.z)}px`);
     svg.style.setProperty('--grid-x', `${bg.x}px`);
     svg.style.setProperty('--grid-y', `${bg.y}px`);
     svg.dataset.grid = String(d.grid.show);

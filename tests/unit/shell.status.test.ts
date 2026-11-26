@@ -46,12 +46,9 @@ describe('status bar counts and empty hint', () => {
     expect(functionDesign.stats!(d)).toMatch(/^\d+ blocks · \d+ pins · \d+ wires · \d+ junctions$/);
   });
 
-  it('schedule: tasks and fork points', () => {
+  it('schedule: tasks and links, as V2 (3.46g)', () => {
     const d = scheduleDesign.create({ template: 'starter' }).data;
-    const out = new Map<string, number>();
-    for (const l of d.links) out.set(l.from, (out.get(l.from) ?? 0) + 1);
-    const forks = [...out.values()].filter(n => n > 1).length;
-    expect(scheduleDesign.stats!(d)).toBe(`${d.tasks.length} 個任務 · ${forks} 個分支點`);
+    expect(scheduleDesign.stats!(d)).toBe(`${d.tasks.length} 個任務 · ${d.links.length} 條連線`);
     expect(scheduleDesign.emptyHint!(d)).toBeNull();
     expect(scheduleDesign.emptyHint!(scheduleDesign.create().data)).toBe('hint.empty.schedule');
   });

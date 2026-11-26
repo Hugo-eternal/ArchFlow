@@ -239,6 +239,12 @@ export function Logo() {
   );
 }
 
+/** The kind of a design as V2 named it: a block diagram in the power view is V2's "power architecture". */
+export function designKind(type: string, data: unknown): { icon: IconName; label: MessageKey } {
+  if (type === 'function' && (data as { view?: string } | undefined)?.view === 'power') return { icon: 'zap', label: 'status.kind.power' };
+  return { icon: KIND_ICON[type] ?? 'blocks', label: `status.kind.${type}` as MessageKey };
+}
+
 export const KIND_ICON: Record<string, IconName> = { function: 'blocks', schedule: 'schedule', sequence: 'activity', flowchart: 'flow' };
 
 /** The project name, edited in place (V2 af2-project-name). */
@@ -260,14 +266,14 @@ function DesignMenu({ shell }: { shell: Shell }) {
   if (!d) return null;
   const entries: MenuEntry[] = [
     { heading: t('design.list') },
-    ...s.designs.map(x => ({ id: 'design.switch', arg: x.id, key: `switch:${x.id}`, label: x.name, icon: KIND_ICON[x.type], checked: x.id === d.id })),
+    ...s.designs.map(x => ({ id: 'design.switch', arg: x.id, key: `switch:${x.id}`, label: x.name, icon: designKind(x.type, s.data(x.id)).icon, checked: x.id === d.id })),
     'sep', { id: 'design.add', icon: 'plus' }, { id: 'design.loadExample', icon: 'layoutTemplate' }, { id: 'design.duplicate' },
     'sep', { id: 'design.rename', icon: 'pencil' }, { id: 'design.delete', icon: 'trash' },
   ];
   return (
     <MenuButton shell={shell} label={t('design.switchOrManage')} entries={entries} buttonClass="af-design-trigger" tip={t('design.switchOrManage')}
       trigger={<>
-        <span className="af-kind-dot" data-kind={d.type}><Icon name={KIND_ICON[d.type] ?? 'blocks'} /></span>
+        <span className="af-kind-dot" data-kind={d.type}><Icon name={designKind(d.type, s.data(d.id)).icon} /></span>
         <span className="af-design-name">{d.name}</span>
         {s.designs.length > 1 && <span className="af-count">{s.designs.length}</span>}
         <Icon name="chevronDown" className="af-icon af-caret" />

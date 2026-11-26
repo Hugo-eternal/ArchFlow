@@ -355,14 +355,24 @@
 .af-view-option:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }
 .af-canvas {
   display: block; width: 100%; height: 100%;
-  background-color: var(--color-board);
+  background-color: var(--canvas-paper);
   touch-action: none;
   user-select: none;
 }
+/* V2 gg-grid: thin lines every cell, stronger every 5 cells; widths scale with the zoom (set by Canvas.tsx) */
 .af-canvas[data-grid="true"] {
-  background-image: radial-gradient(circle, var(--color-rule-2) 1px, transparent 1px);
-  background-size: var(--grid-size) var(--grid-size);
+  background-image:
+    linear-gradient(to right, var(--grid-major) var(--grid-major-w), transparent var(--grid-major-w)),
+    linear-gradient(to bottom, var(--grid-major) var(--grid-major-w), transparent var(--grid-major-w)),
+    linear-gradient(to right, var(--grid-minor) var(--grid-minor-w), transparent var(--grid-minor-w)),
+    linear-gradient(to bottom, var(--grid-minor) var(--grid-minor-w), transparent var(--grid-minor-w));
+  background-size: var(--grid-major-size) var(--grid-major-size), var(--grid-major-size) var(--grid-major-size), var(--grid-size) var(--grid-size), var(--grid-size) var(--grid-size);
   background-position: var(--grid-x) var(--grid-y);
+}
+/* V2 #view::after: how to move around, bottom left of the canvas */
+.af-canvas-hint {
+  position: absolute; left: 20px; bottom: 20px; z-index: 1; margin: 0; padding: 5px 8px; border-radius: 4px;
+  background: var(--hint-bg); color: var(--color-muted); font-size: 12px; pointer-events: none;
 }
 .af-canvas:focus-visible { outline-offset: -3px; }
 .af-canvas-empty { display: grid; place-items: center; color: var(--color-muted); }
@@ -485,7 +495,7 @@
 
 /* canvas legend overlay (DesignModule.legend; power view colour ↔ voltage, 3.29b d) */
 .af-canvas-legend {
-  position: absolute; left: var(--space-3); bottom: var(--space-3); z-index: 1; margin: 0;
+  position: absolute; left: 20px; bottom: 58px; z-index: 1; margin: 0;
   padding: var(--space-2) var(--space-3); min-width: 0;
   background: var(--color-surface); border: var(--border-width) solid var(--color-rule-2); border-radius: var(--radius-md); box-shadow: var(--shadow-1);
   font-size: var(--text-sm); color: var(--color-text); pointer-events: none;

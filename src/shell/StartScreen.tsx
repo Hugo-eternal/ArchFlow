@@ -91,7 +91,7 @@ export function StartScreen({ shell }: { shell: Shell }) {
   const kind = kinds.find(k => k.id === kindId) ?? kinds[0];
   const [templates, setTemplates] = useState<Record<string, string>>({});
   const template = kind ? templates[kind.id] ?? kind.templates[0] : undefined;
-  const choice: DesignChoice = { type: kind.type, template: blank ? undefined : template, variant: kind.variant };
+  const choice: DesignChoice = { type: kind.type, template: blank ? undefined : template, variant: kind.variant, name: blank || !template ? undefined : t(tplKey(kind, template, 'name')) };
   const preview = useMemo(() => previewOf(shell, kind, template), [shell, kind, template]);
   const tools = shell.tools.list();
   const m = shell.message;

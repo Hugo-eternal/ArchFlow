@@ -16,7 +16,8 @@ import { ContextMenu } from './ContextMenu';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
 import { StartScreen } from './StartScreen';
-import { AppBar, KIND_ICON, shortcutText, useLocale } from './AppBar';
+import { AppBar, designKind, shortcutText, useLocale } from './AppBar';
+import { gridSize } from '../core/grid';
 import { Icon, type IconName } from './icons';
 
 function FileInput({ shell }: { shell: Shell }) {
@@ -244,6 +245,9 @@ function Workspace({ shell }: { shell: Shell }) {
           <CanvasLegend shell={shell} />
           <SelectionBar shell={shell} />
           {!shell.module?.embedded && <ZoomControl shell={shell} />}
+          {!shell.module?.embedded && (shell.isBlockDiagram || shell.module?.canvas) && (
+            <p className="af-canvas-hint" aria-hidden="true">{shell.isBlockDiagram ? t('canvas.hint.diagram', { size: gridSize(shell.data().grid) }) : t('canvas.hint.schedule')}</p>
+          )}
           {!shell.module?.embedded && <TipsCard shell={shell} />}
           <ContextMenu shell={shell} />
           {hint && <p className="af-empty-hint">{t(hint)}</p>}
@@ -251,7 +255,7 @@ function Workspace({ shell }: { shell: Shell }) {
         <InspectorPane shell={shell} />
       </div>
       <footer className="af-statusbar" role="status">
-        {d && <span className="af-status-kind"><Icon name={KIND_ICON[d.type] ?? 'blocks'} />{t(`design.type.${d.type}` as MessageKey)}</span>}
+        {d && <span className="af-status-kind"><Icon name={designKind(d.type, data).icon} />{t(designKind(d.type, data).label)}</span>}
         {stats && <span className="af-status-stats">{stats}</span>}
         {shell.embeddedStatus.text && <span className="af-status-stats">{shell.embeddedStatus.text}</span>}
         {invalid > 0 && <span className="af-status-warning">{t('status.invalidRoutes', { count: invalid })}</span>}

@@ -128,7 +128,7 @@
   "inspector.title": "屬性",
   "inspector.multi": "已選取 {count} 個項目",
   "project.unsaved": "（未儲存）",
-  "project.untitled": "未命名專案",
+  "project.untitled": "新專案",
   "project.discard.title": "放棄未儲存的變更？",
   "project.discard.message": "目前專案有尚未儲存的變更，繼續會遺失這些變更。",
   "start.create": "建立專案",
@@ -559,7 +559,7 @@
   "help.disclaimer": "電壓、電流為手動標註；電源檢視的下游需求只做加總，不模擬電路，也不檢查元件或線材額定值。相同標籤不會自動相連。",
   "help.palette": "按 {keys} 開啟指令面板，可搜尋指令、切換設計或前往方塊 / 任務。",
   "status.stats.diagram": "{blocks} 個方塊 · {ports} 個接腳 · {wires} 條線路 · {junctions} 個分支接點",
-  "status.stats.schedule": "{tasks} 個任務 · {forks} 個分支點",
+  "status.stats.schedule": "{tasks} 個任務 · {links} 條連線",
   "status.saved": "已儲存",
   "toast.dismiss": "關閉通知",
   "toast.region": "通知",
@@ -932,5 +932,13 @@
   "start.tpl.sequence.mcu.desc": "6 列",
   "start.tpl.flowchart.lcd.name": "LCD 面板上電流程",
   "start.tpl.flowchart.lcd.desc": "16 步：讀 ID 判斷、重試 3 次、各段等待時間",
-  "start.blankCaption": "空白設計：從空白畫布開始"
+  "start.blankCaption": "空白設計：從空白畫布開始",
+  "project.created": "專案已建立。使用「新增設計」管理更多圖面。",
+  "status.kind.function": "功能方塊",
+  "status.kind.power": "電源架構",
+  "status.kind.schedule": "專案時程",
+  "status.kind.sequence": "上電時序",
+  "status.kind.flowchart": "流程圖",
+  "canvas.hint.diagram": "拖曳空白平移 · Shift 拖曳框選 · 格距 {size}",
+  "canvas.hint.schedule": "拖曳畫布移動視野 / 滾輪縮放"
 }
