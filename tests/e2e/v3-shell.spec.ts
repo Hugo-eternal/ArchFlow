@@ -462,3 +462,22 @@ test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins f
   await expect(page.locator('.af-toast').last()).toContainText('已依連線排列接腳');
   expect(errors).toEqual([]);
 });
+
+test('schedule overview (3.43h): span, status, milestones; a milestone in the list selects its task', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('radio', { name: '範本：產品開發時程' }).check();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  const box = panel.getByRole('region', { name: '時程總覽' });
+  await expect(box).toBeVisible();
+  await expect(box.locator('.af-overview-span strong')).toHaveText(/\d+ 天/);
+  await expect(box.getByRole('img')).toBeVisible();
+  const ms = box.locator('.af-overview-item').filter({ hasText: '◆' }).first();
+  const name = (await ms.locator('span').textContent())!.replace('◆ ', '');
+  await ms.click();
+  await expect(panel.getByLabel('任務名稱')).toHaveValue(name);
+  expect(errors).toEqual([]);
+});

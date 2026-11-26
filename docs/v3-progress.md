@@ -109,7 +109,7 @@
 - [x] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
 - [x] 3.43f 非覆寫功能區塊盤點（`docs/v3-port-checklist.md` 新增一節；L0）
 - [x] 3.43g `designs/*`：補齊範本——方塊圖兩個 10 模組範例（V2 LIB.function0 / function1）、電源樹兩個 9 節點範例（LIB.current0 / current1）、時程「產品開發時程」與「工程變更流程」（PLANS.product / eco）（L2；golden 以 V2 實際產出比對，同 3.25–3.28 的做法）
-- [ ] 3.43h `designs/schedule`：時程總覽——總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）（V2 af16 overview L3430）（L2）
+- [x] 3.43h `designs/schedule`：時程總覽——總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）（V2 af16 overview L3430）（L2）
 - [ ] 3.43i `designs/function`：零件數值——自動補單位、常用值清單（V2 L4267 normValue）（L2）
 - [ ] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
@@ -126,8 +126,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43g 完成；剩 3.43h、3.43i，然後 3.43
-- **下一步**：3.43h 時程總覽。V2 af16 `overview(panel)`（legacy L3430–L3451）：沒有選取時屬性面板最上方「時程總覽」——總天數與起訖（所有任務最早開始到最晚結束，含首尾）、依狀態（完成 / 進行中 / 待辦）的比例條與圖例、有日期問題（衝突 / 逾期）的任務清單按鈕（點選即選取並捲到該任務），以及 3.43b 的「一鍵順延」。V3：`src/designs/schedule/fields.ts` 的 `designFields()`（目前只有 `note('count')` 與 fixAll），清單按鈕需要 `selectItem` → custom 欄位拿不到 shell；可在 `CustomContext` 加一個 `select?(sel)`（inspector panel options 提供）或讓 InspectorPane 傳入。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43h 完成；剩 3.43i，然後 3.43
+- **下一步**：3.43i 零件數值。V2 L4267 起：`normValue(k, v)`（u→µ、`4.7k`→`4.7kΩ`、只有數字與前綴時依零件補單位：res / bead Ω、cap / capp F、ind H、fuse A、xtal Hz（k / M 後補 Hz）、vcc V（`normRail`），最多 24 字）與常用值清單（V2 在欄位旁提供 datalist；`PARTS` 已有每種零件的常用值，`designs/function/parts.ts`）。V3 欄位：`designs/function/index.ts` 的 `partValue`（目前 `setPartValue(d, id, k === 'vcc' ? normRail(v) || v.trim() : v.trim())`）。`inspector/fields` 的 TextField 是否支援 datalist（`options` / `suggestions`）要先看；沒有就加一個選填的 `suggestions` 並在 panel 產生 `<datalist>`。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -262,10 +262,11 @@
 - 線路標註 3.43d2：`model/route-edit.setLabelMark`（角度存 0–359；null 回到自動）；`render/wires`：`labelPosition` 回傳 angle、標籤 `transform: rotate(...)` 與 `data-wire-label`、`labelBox`、`duplicates()`（V2 dedupeLabels：標籤文字（不分大小寫、去空白）等於 14 px 內的接腳名稱時不畫；接腳名稱框由 `render/blocks.pinLabelBoxes` / `pinLabelAt` 估算）。`interaction/gestures`：`labelAt`（依角度反轉後測框）、`label` 狀態（拖曳 → mark、點一下只選線）；選取線路的把手判斷順序：畫出的把手框（6 px）→ 標籤 → 24 px 擴大範圍。`inspector/common` 線路「線路名稱／數值標註」群組（`markOf`：mark 或自動位置，routes 以 WeakMap 快取）。`model/diagram.adoptNewBlock`（`block.add`）。未移植：V2 按 R 旋轉已聚焦的標註（R 在 V3 是零件旋轉的快捷鍵），以及雙擊標籤行內改名。
 - 零件連線 3.43e：`src/model/part-wiring.ts`——`blockAt`（6 px 邊距、上層優先）、`freeLead`（未用的端點優先，再取最近）、`connectToBody(d, from, target, p)`（任一端是零件時：目標是零件 → 它的空端點；一般方塊 → 最近的邊新增接腳，電源 / 接地符號時接腳名稱為 VCC 值 / GND、類型 power / gnd、名稱隱藏、線路為 power；`growForPorts`）、`nearestWirePoint`（12 px、對齊格距、離線段端點至少一格）、`tapWire`（新增接點「TAP n」，原線保留前半段並取消箭頭與手動路徑，後半段為複本）。`Gestures.dropOnBody`：拉線放開時沒有對到接腳才走這條路；新路徑（或拆線後所有路徑）必須有效，否則以 `route-invalid` 拒絕。V2 拖曳時對目標方塊加亮（af24-target）未移植。
 - 範本 3.43g：V2 的六個完整範例由 V2 實際產生（在 V2 頁面設 `afTemplateMode = null`、把啟動畫面第 1 / 2 張範本卡設為 pressed，再 `createWorkspaceProject`；第 1 張卡 = variant 1、第 2 張 = variant 0），經 `convertProject` 轉成 V3，兩語系逐字比對：不同的字串改為 `@i18n:template.<x>.<id>.<路徑>`（b3.title、t0.text、task2.note…，共 118 個鍵），id 與數字取 zh-Hant；時程日期還原到 V2 PLANS 的原始日期並記 `anchor`（建立時 `shiftToWeek` 對到本週，同 V2）。範本名稱 = 圖上的標題文字。`function`：starter / platform / sensor / power-starter / power-car / power-zones；`schedule`：starter / product / eco。產生用的腳本沒有提交（一次性）；`tests/golden/templates.examples.test.ts` 每次都重新請 V2 建立並比對（zh-Hant：方塊、接腳、線、接點、文字、外框與匯出線路完全相同；en：文字相同，幾何沿用 zh-Hant，同 3.27c）。
+- 時程總覽 3.43h：`schedule/fields` 的 `overview`（custom 欄位，沒有選取且有任務時在最上方）：總天數（最早開始到最晚結束，含首尾）與起訖、依狀態的比例條（`role="img"` 帶各狀態數量）與圖例、里程碑（日期、已完成 / 已過 / 剩 n 天）、「需注意」清單（第一個問題的說明）；清單按鈕呼叫 `CustomContext.select`（新增；`PanelOptions.select`，InspectorPane 以 `findItems` + `Shell.reveal` 選取並置中）。`issueText` 共用於任務欄位。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2+（3.43g：模組標註、i18n、token、css、型別、建置（dist 1.97 MB）、產物檢查、Vitest 59 檔 483 項（含 golden 12 項新範本比對）、Playwright 37 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3（3.43h：模組標註、i18n、token、css、型別、建置、產物檢查、Vitest 60 檔 485 項、Playwright 38 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

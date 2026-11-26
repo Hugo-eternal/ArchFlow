@@ -767,5 +767,15 @@
   "template.schedule.eco.task7.note": "Sales",
   "template.schedule.eco.t0.text": "Engineering change flow",
   "template.schedule.eco.t1.text": "From change request to production; purple is the documentation and customer-notice branch. ◆ marks review and release gates.",
-  "template.schedule.eco.name": "Engineering change flow"
+  "template.schedule.eco.name": "Engineering change flow",
+  "schedule.overview.title": "Schedule overview",
+  "schedule.overview.days": "{n} days",
+  "schedule.overview.noDates": "Set date ranges on tasks to see the total span here.",
+  "schedule.overview.milestones": "Milestones",
+  "schedule.overview.noDate": "No date",
+  "schedule.overview.passed": "passed",
+  "schedule.overview.inDays": "in {n} days",
+  "schedule.overview.attention": "Needs attention",
+  "schedule.overview.attentionN": "Needs attention · {n}",
+  "schedule.overview.ok": "✓ No date conflicts or overdue tasks"
 }

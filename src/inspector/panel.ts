@@ -25,6 +25,8 @@ export interface PanelOptions<D, S> {
   /** Called with the outcome and the selection when a commit is refused. */
   onRefused?: (outcome: CommitOutcome, sel: S) => void;
   debounceMs?: number;
+  /** Select another item (custom fields: lists that jump to an item). */
+  select?: (sel: S) => void;
   /** Where open / closed groups are remembered (default: in this panel only). */
   groupState?: { get(key: string): boolean | undefined; set(key: string, open: boolean): void };
   doc?: Document;
@@ -335,6 +337,7 @@ export class InspectorPanel<D, S> {
     return spec.render({
       data, sel: this.sel as S, id: `${this.prefix}-${spec.key}`, doc: this.doc,
       apply: edit => this.commitEditFn(edit),
+      select: this.o.select,
     });
   }
 

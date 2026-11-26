@@ -10,7 +10,7 @@ import type { ScheduleAppearance, ScheduleCustomLook, ScheduleData, ScheduleThem
 import { t, type MessageKey } from '../../core/i18n';
 import type { FieldSpec } from '../../inspector/fields';
 import type { CanvasSelection } from '../module';
-import { day, durationOf, interval, issues } from './dates';
+import { day, durationOf, formatDate, interval, issues, iso, spanOf, today, type Issue } from './dates';
 import { conflictsBelow, descendants, setDefaultRange, setDuration, setParent, setTimeType, shiftConflicts, updateLink, updateTask, MAX_TASKS } from './edit';
 import { customOf, geometry, setBranchColor, setCustom, setSizes, setTheme, THEME_SWATCH, THEMES, themeOf, useCustom } from './appearance';
 import { textSizes } from './layout';
@@ -82,8 +82,7 @@ function taskFields(d: ScheduleData, s: CanvasSelection): F[] {
           visible: (dd, ss) => durationOf(task(dd, ss)) !== null,
           get: (dd, ss) => durationOf(task(dd, ss)) ?? 1, set: (dd, ss, v) => setDuration(dd, ss.id, v),
         },
-        note('issues', (dd, ss) => issues(dd, task(dd, ss)).map(i => (i.kind === 'overdue' ? t('schedule.issueText.overdue')
-          : i.reason === 'beforeParent' ? t('schedule.issueText.beforeParent', { name: i.parent ?? '' }) : t('schedule.issueText.endsBeforeStart'))).join('\n'), 'af-field-note is-warning'),
+        note('issues', (dd, ss) => issues(dd, task(dd, ss)).map(issueText).join('\n'), 'af-field-note is-warning'),
       ],
     },
     {
@@ -178,9 +177,72 @@ const size = (key: 'title' | 'body' | 'time', min: number, max: number): F => ({
   set: (d, _s, v) => setSizes(d, { [key]: Math.round(v) } as Partial<ScheduleAppearance>),
 });
 
+const issueText = (i: Issue) => (i.kind === 'overdue' ? t('schedule.issueText.overdue')
+  : i.reason === 'beforeParent' ? t('schedule.issueText.beforeParent', { name: i.parent ?? '' }) : t('schedule.issueText.endsBeforeStart'));
+
+/**
+ * Schedule overview (V2 af16 overview, L3430): the whole span with its first and last day, the
+ * tasks by status as a bar with a legend, the milestones with their dates, and the tasks that need
+ * attention (date conflicts, overdue) — each list item selects its task and brings it into view.
+ */
+const overview: F = {
+  kind: 'custom', key: 'overview', label: 'schedule.overview.title',
+  render: ({ doc, data, select }) => {
+    const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => { const e = doc.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    const box = el('section', 'af-overview');
+    box.setAttribute('aria-label', t('schedule.overview.title'));
+    box.append(el('h3', 'af-overview-title', t('schedule.overview.title')));
+    const spans = data.tasks.map(spanOf), starts = spans.map(x => x.start).filter((v): v is number => v !== null), ends = spans.map(x => x.end).filter((v): v is number => v !== null);
+    if (starts.length && ends.length) {
+      const a = Math.min(...starts), b = Math.max(...ends), span = el('p', 'af-overview-span');
+      span.append(el('strong', undefined, t('schedule.overview.days', { n: b - a + 1 })), el('span', undefined, `${formatDate(iso(a))} \u2192 ${formatDate(iso(b))}`));
+      box.append(span);
+    } else box.append(el('p', 'af-field-hint', t('schedule.overview.noDates')));
+    // status bar and legend
+    const counts = (['done', 'doing', 'todo'] as const).map(k => [k, data.tasks.filter(x => x.status === k).length] as const).filter(([, n]) => n);
+    if (counts.length) {
+      const bar = el('div', 'af-overview-bar');
+      bar.setAttribute('role', 'img');
+      bar.setAttribute('aria-label', counts.map(([k, n]) => `${t(`schedule.status.${k}` as MessageKey)} ${n}`).join('\u3001'));
+      for (const [k, n] of counts) { const part = el('span', `is-${k}`); part.style.flex = String(n); bar.append(part); }
+      const legend = el('p', 'af-overview-legend');
+      for (const [k, n] of counts) legend.append(el('span', `is-${k}`, `${t(`schedule.status.${k}` as MessageKey)} ${n}`));
+      box.append(bar, legend);
+    }
+    const now = today();
+    const item = (title: string, sub: string, id: string, cls = '') => {
+      const b = el('button', `af-overview-item${cls}`);
+      b.type = 'button';
+      b.append(el('span', undefined, title || t('schedule.untitled')), el('small', undefined, sub));
+      b.addEventListener('click', () => select?.({ kind: 'task', id }));
+      return b;
+    };
+    const ms = data.tasks.filter(x => x.milestone).map(x => ({ x, e: spanOf(x).end })).sort((a, b) => (a.e ?? 1e9) - (b.e ?? 1e9));
+    if (ms.length) {
+      box.append(el('p', 'af-overview-sub', t('schedule.overview.milestones')));
+      const list = el('div', 'af-overview-list');
+      for (const { x, e } of ms) {
+        const when = e === null ? t('schedule.overview.noDate') : `${formatDate(iso(e))} \u00b7 ${x.status === 'done' ? t('schedule.status.done') : e < now ? t('schedule.overview.passed') : t('schedule.overview.inDays', { n: e - now })}`;
+        list.append(item(`\u25c6 ${x.title}`, when, x.id, x.status === 'done' ? ' is-done' : ''));
+      }
+      box.append(list);
+    }
+    const warn = data.tasks.map(x => ({ x, i: issues(data, x, now) })).filter(w => w.i.length);
+    box.append(el('p', 'af-overview-sub', warn.length ? t('schedule.overview.attentionN', { n: warn.length }) : t('schedule.overview.attention')));
+    if (!warn.length) box.append(el('p', 'af-overview-ok', t('schedule.overview.ok')));
+    else {
+      const list = el('div', 'af-overview-list');
+      for (const { x, i } of warn) list.append(item(x.title, issueText(i[0]), x.id, ' is-warning'));
+      box.append(list);
+    }
+    return box;
+  },
+};
+
 function designFields(): F[] {
   const isCustom = (d: ScheduleData) => !!d.appearance.engineering;
   return [
+    { ...overview, visible: (d: ScheduleData) => d.tasks.length > 0 },
     note('count', d => t('schedule.summary', { tasks: d.tasks.length, links: d.links.length, max: MAX_TASKS })),
     action('fixAll', d => { const k = conflictsBelow(d); return k ? t('schedule.fix.all', { count: k }) : ''; }, d => shiftConflicts(d).data, 'af-field-action is-warning'),
     {

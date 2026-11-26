@@ -63,6 +63,8 @@ export interface CustomField<D, S> extends Base<D, S> {
 export interface CustomContext<D, S> {
   data: D; sel: S; id: string; doc: Document;
   apply: (edit: (data: D) => D) => void;
+  /** Select another item (and bring it into view), when the host offers it. */
+  select?: (sel: S) => void;
 }
 
 export type FieldSpec<D, S> =

@@ -41,7 +41,11 @@ function DrawingInspector({ shell }: { shell: Shell }) {
 
   useEffect(() => {
     if (!ref.current) return;
-    const p = new InspectorPanel<Design['data'], CanvasSelection>(ref.current, { data, commit: edit => ({ ok: shell.editDesign(edit) }), groupState: groupStorage });
+    const p = new InspectorPanel<Design['data'], CanvasSelection>(ref.current, {
+      data, commit: edit => ({ ok: shell.editDesign(edit) }), groupState: groupStorage,
+      // a list in the panel (schedule overview) selects a task and brings it into view
+      select: sel => { const it = shell.module?.findItems?.(shell.store.data(shell.store.activeDesignId) as never).find(x => x.id === sel.id); if (it) shell.reveal(it); else shell.selectItem(sel); },
+    });
     panel.current = p;
     shown.current = '';
     refresh(p);

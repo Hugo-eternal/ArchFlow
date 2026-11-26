@@ -767,5 +767,15 @@
   "template.schedule.eco.task7.note": "業務",
   "template.schedule.eco.t0.text": "工程變更流程",
   "template.schedule.eco.t1.text": "從變更申請到量產導入；紫色為文件與客戶通知分支。◆ 為審查與發行關卡。",
-  "template.schedule.eco.name": "工程變更流程"
+  "template.schedule.eco.name": "工程變更流程",
+  "schedule.overview.title": "時程總覽",
+  "schedule.overview.days": "{n} 天",
+  "schedule.overview.noDates": "為任務設定日期區間後，這裡會顯示總工期。",
+  "schedule.overview.milestones": "里程碑",
+  "schedule.overview.noDate": "未設日期",
+  "schedule.overview.passed": "已過",
+  "schedule.overview.inDays": "剩 {n} 天",
+  "schedule.overview.attention": "需注意",
+  "schedule.overview.attentionN": "需注意 · {n}",
+  "schedule.overview.ok": "✓ 沒有日期衝突或逾期任務"
 }
