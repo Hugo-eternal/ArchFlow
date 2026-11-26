@@ -14,6 +14,7 @@ import type { FieldSpec } from '../../inspector/fields';
 import { inView } from '../../inspector/common';
 import type { Measure } from '../../render/texts';
 import { h, r2, type VNode } from '../../render/vnode';
+import { normRail, railBand } from './parts';
 
 type F = FieldSpec<BlockDiagram, ItemRef>;
 
@@ -312,3 +313,21 @@ export function loadWarning(b: Block, d: BlockDiagram, measure: Measure): VNode 
     h('text', { class: 'af-load-text', x: r2(box.x + LOAD_BADGE.padX), y: r2(box.y + box.h / 2), 'dominant-baseline': 'central', style: `font-size:${LOAD_BADGE.font}px` }, box.text),
   ]);
 }
+
+// ---------------------------------------------------------------- rail colours (3.29b b, plan §2.2.2)
+
+/** Voltage of a power wire: its own electrical label, else the voltage of the block it comes from. */
+export function wireVoltage(w: Wire, d: BlockDiagram): string {
+  const own = normRail(w.electrical?.voltage ?? '');
+  if (own) return own;
+  const from = 'block' in w.a ? d.blocks.find(b => b.id === (w.a as { block: string }).block) : undefined;
+  return normRail(from?.metrics.voltage?.value ?? '');
+}
+
+/** Rail colour band of a power wire in the power view (same voltage, same colour), else none. */
+export function wireRail(w: Wire, d: BlockDiagram): string | undefined {
+  if (d.view !== 'power' || w.kind !== 'power') return undefined;
+  const v = wireVoltage(w, d);
+  return v ? railBand(v) : undefined;
+}
+

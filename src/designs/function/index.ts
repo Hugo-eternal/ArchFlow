@@ -26,7 +26,7 @@ import {
   snapConnectorsToFrames, updateConnector, type ConnKind,
 } from './connector';
 import { insertLcd, lcdOrigin } from './lcd';
-import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields } from './power';
+import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields, wireRail } from './power';
 import { estimateWidth } from '../../render/texts';
 import starter from './templates/starter.json';
 import powerStarter from './templates/power-starter.json';
@@ -198,6 +198,7 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     return sym || badges || warn ? h('g', { class: 'af-decor' }, [warn, sym, badges]) : null;
   },
   blockFooter: metricStrip,
+  wireTone: wireRail,
   inspectorFields(sel, d) {
     if (sel.kind === 'wire') return powerWireFields();
     if (sel.kind !== 'block') return [];

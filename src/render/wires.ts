@@ -47,26 +47,32 @@ function strokeOf(w: Wire): { cls: string; color?: string } {
   return { cls: `af-wire af-wire-${kind}`, color: w.line.color || undefined };
 }
 
-export interface WireRenderOptions { selected?: ReadonlySet<string> }
+export interface WireRenderOptions {
+  selected?: ReadonlySet<string>;
+  /** A colour band that replaces the wire's colour (power view: rail by voltage, 3.29b b):
+   *  adds class `is-rail-<band>` and a matching arrow; the wire's own colour is not used. */
+  tone?: (w: Wire) => string | undefined;
+}
 
 /** In the power view everything but power wires is drawn faded (plan §2.2.1). */
 export const isMuted = (w: Wire, view: BlockView) => view === 'power' && w.kind !== 'power';
 
 function wireNode(w: Wire, route: Route, view: BlockView, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions): VNode {
-  const s = strokeOf(w), d = toPathData(route.ps);
+  const tone = opts.tone?.(w);
+  const s = strokeOf(tone ? { ...w, line: { ...w.line, color: '' } } : w), d = toPathData(route.ps);
   // an arrow never points into a junction; `bothEnds` adds one at the start (V2 edge.afBoth, L4112)
   const arrowEnd = w.line.arrow && !('junction' in w.b);
   const arrowStart = w.line.arrow && !!w.line.bothEnds && !('junction' in w.a);
   let marker: string | undefined, markerStart: string | undefined;
   if ((arrowEnd || arrowStart) && route.valid) {
-    const id = markerId(w.line.color, w.line.arrowSize ?? 9);
-    markers.set(id, { ...w.line, kindColor: s.cls.split(' ')[1] });
+    const id = markerId(tone ? `rail${tone}` : w.line.color, w.line.arrowSize ?? 9);
+    markers.set(id, { ...w.line, color: tone ? '' : w.line.color, kindColor: tone ? `af-rail-${tone}` : s.cls.split(' ')[1] });
     if (arrowEnd) marker = `url(#${id})`;
     if (arrowStart) markerStart = `url(#${id})`;
   }
   const style = [s.color && `stroke:${s.color}`, w.line.width && `stroke-width:${w.line.width}px`].filter(Boolean).join(';') || undefined;
   const text = wireLabel(w, view), pos = text ? labelPosition(w, route.ps) : null;
-  return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${isMuted(w, view) ? ' is-muted' : ''}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
+  return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${tone ? ` is-rail-${tone}` : ''}${isMuted(w, view) ? ' is-muted' : ''}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
     opts.selected?.has(w.id) ? h('path', { class: 'af-wire-selected', d }) : null,
     h('path', { class: s.cls, d, style, 'stroke-dasharray': DASH[w.line.dash], 'marker-end': marker, 'marker-start': markerStart }),
     pos ? h('text', {

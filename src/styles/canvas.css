@@ -77,6 +77,21 @@
 .af-arrow.af-wire-clock { fill: var(--wire-clock); }
 .af-arrow.af-wire-bus { fill: var(--wire-bus); }
 .af-arrow { stroke: none; }
+/* power wires coloured by rail voltage in the power view (render/wires tone; 3.29b b) */
+.af-wire-group.is-rail-unknown .af-wire { stroke: var(--rail-unknown); }
+.af-arrow.af-rail-unknown { fill: var(--rail-unknown); }
+.af-wire-group.is-rail-negative .af-wire { stroke: var(--rail-negative); }
+.af-arrow.af-rail-negative { fill: var(--rail-negative); }
+.af-wire-group.is-rail-core .af-wire { stroke: var(--rail-core); }
+.af-arrow.af-rail-core { fill: var(--rail-core); }
+.af-wire-group.is-rail-io .af-wire { stroke: var(--rail-io); }
+.af-arrow.af-rail-io { fill: var(--rail-io); }
+.af-wire-group.is-rail-logic .af-wire { stroke: var(--rail-logic); }
+.af-arrow.af-rail-logic { fill: var(--rail-logic); }
+.af-wire-group.is-rail-mid .af-wire { stroke: var(--rail-mid); }
+.af-arrow.af-rail-mid { fill: var(--rail-mid); }
+.af-wire-group.is-rail-high .af-wire { stroke: var(--rail-high); }
+.af-arrow.af-rail-high { fill: var(--rail-high); }
 .af-wire-group.is-invalid .af-wire { stroke: var(--color-danger); stroke-dasharray: 6 4; }
 .af-wire-group.is-muted { opacity: var(--wire-muted-opacity); }
 .af-wire-selected { fill: none; stroke: var(--color-selection); stroke-width: 9px; stroke-linejoin: round; }

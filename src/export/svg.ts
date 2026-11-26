@@ -41,6 +41,8 @@ export interface SvgExportOptions {
   decorate?: BlockRenderOptions['decorate'];
   /** Strip along the bottom of blocks (DesignModule.blockFooter). */
   footer?: (b: import('../io/schema-types').Block, d: BlockDiagram, measure: Measure) => { height: number; node: VNode } | null;
+  /** Colour band of wires (DesignModule.wireTone). */
+  wireTone?: (w: import('../io/schema-types').Wire, d: BlockDiagram) => string | undefined;
   /** Draw in this view instead of the diagram's own (export dialog choice, plan §2.2.1). */
   view?: BlockView;
   /** Routes already computed for this data (the canvas has them). */
@@ -119,7 +121,7 @@ export function exportSvg(data: BlockDiagram, o: SvgExportOptions = {}): SvgExpo
   const drawing = h('g', { class: 'af-export' }, [
     framesLayer(d.frames, { measure }),
     ...(extra.below ?? []),
-    wiresLayer(d, routes),
+    wiresLayer(d, routes, { tone: o.wireTone && (w => o.wireTone!(w, d)) }),
     blocksLayer(d, { theme: d.theme, decorate: o.decorate, footer: o.footer && ((b, x) => o.footer!(b, x, measure)) }),
     textsLayer(d.texts, { measure }),
     ...(extra.above ?? []),

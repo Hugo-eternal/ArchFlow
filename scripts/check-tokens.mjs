@@ -62,6 +62,7 @@ const PAIRS = [
   ['--metric-key', '--metric-strip', 4.5], ['--metric-value', '--metric-strip', 4.5], ['--metric-unit', '--metric-strip', 4.5], ['--metric-empty', '--metric-strip', 4.5],
   ['--conn-num', '--color-surface', 4.5], ['--conn-name-both', '--color-board', 4.5],
   ...['unknown', 'negative', 'core', 'io', 'logic', 'mid', 'high'].map(b => [`--rail-${b}`, '--rail-surface', 4.5]),
+  ...['unknown', 'negative', 'core', 'io', 'logic', 'mid', 'high'].map(b => [`--rail-${b}`, '--color-board', 3]),
   ...['teal', 'blue', 'amber', 'gray'].flatMap(c => [[`--frame-${c}-ink`, `--frame-${c}-tab`, 4.5], [`--frame-${c}-line`, '--color-board', 1.5]]),
 ];
 const rows = [];

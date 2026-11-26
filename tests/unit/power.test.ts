@@ -13,8 +13,10 @@ import { find, type VNode } from '../../src/render/vnode';
 import { blockInspector } from '../../src/inspector/common';
 import { fieldKeys } from '../../src/inspector/panel';
 import { exportSvg } from '../../src/export/svg';
+import { routeAll } from '../../src/router/full-path';
+import { wiresLayer } from '../../src/render/wires';
 import { functionDesign } from '../../src/designs/function';
-import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
+import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
 import type { BlockDiagram } from '../../src/io/schema-types';
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -123,6 +125,32 @@ describe('load warnings (3.29b a, plan §2.2.2)', () => {
     const box = loadBadgeBox(src, d, estimateWidth)!;
     expect(e.viewBox[1] + e.viewBox[3]).toBeGreaterThanOrEqual(box.y + box.h);
     expect(exportSvg(d, { ...opts, view: 'function' }).source).not.toContain('下游需求');
+  });
+});
+
+describe('power wires coloured by rail voltage (3.29b b)', () => {
+  it('voltage from the wire label, else from the block it comes from; same voltage, same colour', () => {
+    const d = goldenPower();
+    expect(d.wires.map(w => wireVoltage(w, d))).toEqual(['12V', '5V', '5V', '3.3V']);
+    expect(d.wires.map(w => wireRail(w, d))).toEqual(['high', 'mid', 'mid', 'logic']);
+    expect(wireRail(d.wires[0], { ...d, view: 'function' })).toBeUndefined();
+  });
+
+  it('drawn with the rail token (wire and arrow), over the wire\'s own colour (V2 wrote one on every wire)', () => {
+    const d = goldenPower(), routes = routeAll(d);
+    const layer = wiresLayer(d, routes, { tone: w => wireRail(w, d) });
+    const groups = find(layer, x => x.attrs['data-wire'] !== undefined).map(x => String(x.attrs.class));
+    expect(groups.filter(c => c.includes('is-rail-mid'))).toHaveLength(2);
+    const g0 = find(layer, x => x.attrs['data-wire'] === d.wires[0].id)[0];
+    expect(find(g0, x => String(x.attrs.class).startsWith('af-wire af-wire-'))[0].attrs.style ?? '').not.toContain('stroke:');
+    // the function view keeps the wire's own colour
+    expect(find(wiresLayer({ ...d, view: 'function' }, routes, { tone: w => wireRail(w, { ...d, view: 'function' }) }), x => String(x.attrs.style ?? '').includes('stroke:#334e70')).length).toBe(4);
+    const tokens = fs.readFileSync(path.join(ROOT, 'src/styles/tokens.css'), 'utf8');
+    const high = tokens.match(/--rail-high: (#[0-9A-F]{6})/i)![1];
+    const arrow = { ...d, wires: d.wires.map((w, i) => (i === 0 ? { ...w, line: { ...w.line, arrow: true } } : w)) };
+    const src = exportSvg(arrow, { wireTone: functionDesign.wireTone }).source;
+    expect(src).toContain(`stroke="${high}"`);
+    expect(src).toMatch(new RegExp(`<marker[^>]*>\\s*<path[^>]*fill="${high}"`));
   });
 });
 
