@@ -15,10 +15,17 @@
   font-size: var(--block-title-size);
   font-weight: 600;
 }
-.af-block-subtitle, .af-block-metric {
+.af-block-subtitle {
   fill: var(--block-subtitle);
   font-size: var(--block-subtitle-size);
 }
+/* power view metric strip (designs/function/power.ts; V2 .block-metrics) */
+.af-metrics-strip { fill: var(--metric-strip); }
+.af-metrics-rule { stroke: var(--metric-rule); stroke-width: 1px; }
+.af-metric-key { fill: var(--metric-key); }
+.af-metric-value { fill: var(--metric-value); }
+.af-metric-value.is-empty { fill: var(--metric-empty); }
+.af-metric-unit { fill: var(--metric-unit); }
 .af-block-ref {
   fill: var(--block-subtitle);
   font-size: var(--block-ref-size);

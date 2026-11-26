@@ -185,3 +185,42 @@ test('function: switch between the function and power views (button, Shift+V), s
   expect(JSON.parse(fs.readFileSync(await save.path(), 'utf8')).designs[0].data.view).toBe('power');
   expect(errors).toEqual([]);
 });
+
+test('function: power view — power settings in the panel, metric strip on the block and in the export', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  const select = (i: number) => page.evaluate(n => { const s = (window as unknown as { archflow: { data(): { blocks: { id: string }[] }; gestures: { select(x: unknown[]): void } } }).archflow; s.gestures.select([{ kind: 'block', id: s.data().blocks[n].id }]); }, i);
+
+  // function view: no power fields
+  await select(3);
+  await expect(panel.getByLabel('電壓', { exact: true })).toHaveCount(0);
+
+  await page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' }).click();
+  await select(3);
+  const volt = panel.getByLabel('電壓', { exact: true });
+  await volt.fill('5');
+  await volt.press('Enter');
+  // typing a value switched the figure on: the strip shows it
+  await expect(panel.getByLabel('在圖面顯示電壓')).toBeChecked();
+  await expect(page.locator('svg.af-canvas .af-metrics .af-metric-value')).toHaveText(['5']);
+  await expect(page.locator('svg.af-canvas .af-metrics .af-metric-key')).toHaveText(['電壓']);
+  // one undo step removes it
+  await page.getByRole('button', { name: '復原' }).click();
+  await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(0);
+  await page.getByRole('button', { name: '重做' }).click();
+
+  // back in the function view the strip is gone, the value stays
+  await page.keyboard.press('Shift+V');
+  await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(0);
+  expect((await data(page)).blocks[3]).toMatchObject({ metrics: { voltage: { value: '5', show: true } } });
+
+  await page.getByRole('button', { name: '匯出' }).click();
+  const dlg = page.getByRole('dialog');
+  await dlg.getByRole('radio', { name: /電源檢視/ }).check();
+  const [svg] = await Promise.all([page.waitForEvent('download'), dlg.getByRole('button', { name: '下載' }).click()]);
+  expect(fs.readFileSync(await svg.path(), 'utf8')).toContain('>電壓<');
+  expect(errors).toEqual([]);
+});

@@ -160,8 +160,8 @@
 | `inspector` | 1885 |  | script#2 | 同步標記面板（mSyncInspector） | ☐ |  |
 | `inspector` | 1929 |  | script#2 | RC4.10：「重新繞線」按鈕留在標記設定外 | ☐ |  |
 | `inspector` | 1951 |  | script#3 | 面板分組（可收合群組、全部展開 / 收折） | ☐ |  |
-| `inspector` | 1998 |  | script#4 | 電源設計：電源欄位分組 | ☐ |  |
-| `inspector` | 2060 |  | script#5 | 電源設計：電流單位等量測欄位 | ☐ |  |
+| `inspector` | 1998 |  | script#4 | 電源設計：電源欄位分組 | ☑ | 3.27b `designs/function/power.ts` `powerBlockFields`（`inView('power')` 群組「電源設定」） |
+| `inspector` | 2060 |  | script#5 | 電源設計：電流單位等量測欄位 | ☑ | 3.27b 電流存 A、以 A / mA 顯示（`shownValue` / `storedValue`）；V2 此層移除角色選單，V3 保留（見 CHANGELOG） |
 | `inspector` | 2082 |  | script#6 | 保護性路線欄位 | ☐ |  |
 | `inspector` | 2219 |  | script#9 | 時程文字對齊控制 | ☐ |  |
 | `inspector` | 2254 |  | schedule-release-patch | 時程：改寫區段標題（路線 → 連接設定） | ☐ |  |
@@ -170,10 +170,10 @@
 | `inspector` | 2303 |  | text-controller-v24-js | 文字控制 v24：`setTimeout` 同步外觀模式 | ☑ | 3.21 `sync()` 取代 setTimeout |
 | `inspector` | 3047 |  | af15-ux2 | V1.5：接腳表格（enhance + 2 層 microtask） | ☐ |  |
 | `inspector` | 3125 |  | af15-ux2 | V1.5：線條樣式 / 方塊字型（enhance + 3 層 microtask） | ☐ |  |
-| `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☐ |  |
+| `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☐ | 3.27b 查證：此層實際是線路標籤 / 接腳模式工具，不是角色配色；V2.10.1 沒有依角色上色（golden power 的顏色來自外觀預設） |
 | `inspector` | 3509 |  | af15-ux2 | V1.5：範本與時程線條樣式修正（再加 `setTimeout 30`） | ☐ |  |
 | `inspector` | 3703 |  | af15-ux2 | V1.6 時程：工期 / 快速修正（`setTimeout 40、120`） | ☐ |  |
-| `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☐ |  |
+| `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☑ | 3.27b `demand` / `load` + 自訂欄位（同步產生，無 setTimeout）；輸入數值自動開啟顯示；可輸入負電壓 |
 | `inspector` | 4108 |  | af15-ux2 | V2.3.0：電壓徽章、箭頭「一鍵套用」 | ☑ | 3.25 `functionDesign.inspectorFields`（零件數值 / 大小 / 方向、電壓標示）；雙向箭頭為共用欄位 `bothEnds` |
 | `inspector` | 10536 |  | af-v280-ux | V2.8：記住區段開合（`setTimeout 0/80/250`） | ☐ |  |
 | `inspector` | 10587 |  | af-v290-free | V2.9：自由尺寸開關、精確寬高（`setTimeout 0/80/250`） | ☐ |  |
@@ -308,7 +308,7 @@
 | `render` | 3234 |  | af15-ux2 | 接腳裝飾 | ☐ |  |
 | `render` | 3506 |  | af15-ux2 | 時程裝飾、分支顏色（setTimeout 0） | ☐ |  |
 | `render` | 3707 |  | af15-ux2 | 提示 | ☐ |  |
-| `render` | 3857 |  | af15-ux2 | V2.2.4：電源設計新方塊預設電源接腳 | ☐ |  |
+| `render` | 3857 |  | af15-ux2 | V2.2.4：電源設計新方塊預設電源接腳 | ☑ | 3.27b `model/diagram.makeBlock`（電源檢視：VIN / OUT，類型 power） |
 | `render` | 4044 |  | af15-ux2 | V2.3.0：零件庫插入位置 | ☑ | 3.25 插入位置改用 `model.freeSpot`（避開方塊 / 徽章 / 線路，CHANGELOG） |
 | `render` | 4424 |  | af15-ux2 | V2.4.0：繪製區域外框 | ☐ |  |
 | `render` | 10399 |  | af-v270-sizing | V2.7：每方塊字型 | ☐ |  |

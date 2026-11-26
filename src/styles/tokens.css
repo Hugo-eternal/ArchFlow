@@ -84,6 +84,13 @@
   --part-stroke: #2A3A4B;
   --part-label: #22313F;
   --rail-surface: #FFFFFF;
+  /* power view metric strip (3.27b; V2 .block-metrics #f0f5fc / #cdd8e6, key #536e91, value #173b65, unit #6f84a0 — darkened to 4.5:1) */
+  --metric-strip: #F0F5FC;
+  --metric-rule: #CDD8E6;
+  --metric-key: #4C6687;
+  --metric-value: #173B65;
+  --metric-unit: #546B89;
+  --metric-empty: #5E6E82;
   --rail-unknown: #55657A;
   --rail-negative: #8A3B6E;
   --rail-core: #6B4FA0;
@@ -174,6 +181,12 @@
     --part-stroke: #C9D6E3;
     --part-label: #DCE6F0;
     --rail-surface: #18222C;
+    --metric-strip: #1C2A38;
+    --metric-rule: #34424F;
+    --metric-key: #A7B8CA;
+    --metric-value: #DCE6F0;
+    --metric-unit: #9DAEC0;
+    --metric-empty: #8E9DAD;
     --rail-unknown: #A9B7C6;
     --rail-negative: #E59AC8;
     --rail-core: #BBA6EC;
@@ -232,6 +245,12 @@
   --part-stroke: #C9D6E3;
   --part-label: #DCE6F0;
   --rail-surface: #18222C;
+  --metric-strip: #1C2A38;
+  --metric-rule: #34424F;
+  --metric-key: #A7B8CA;
+  --metric-value: #DCE6F0;
+  --metric-unit: #9DAEC0;
+  --metric-empty: #8E9DAD;
   --rail-unknown: #A9B7C6;
   --rail-negative: #E59AC8;
   --rail-core: #BBA6EC;

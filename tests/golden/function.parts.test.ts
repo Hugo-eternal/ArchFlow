@@ -125,7 +125,11 @@ describe('module: panel fields and commands', () => {
     const keys = (id: string) => functionDesign.inspectorFields!({ kind: 'block', id }, d).map(f => f.key);
     expect(keys(res.id)).toEqual(['partValue', 'partSize', 'partRot']);
     expect(keys(gnd.id)).toEqual(['partSize']);
-    expect(keys(plain.id)).toEqual(['rails']);
+    // plus the power settings group, built only in the power view (3.27b)
+    expect(keys(plain.id)).toEqual(['rails', 'power']);
+    const shown = (id: string) => functionDesign.inspectorFields!({ kind: 'block', id }, d).filter(f => !f.visible || f.visible(d, { kind: 'block', id })).map(f => f.key);
+    expect(d.view).toBe('function');
+    expect(shown(plain.id)).toEqual(['rails']);
     const rails = functionDesign.inspectorFields!({ kind: 'block', id: plain.id }, d)[0];
     if (rails.kind !== 'text') throw new Error('text field expected');
     const out = rails.set(d, { kind: 'block', id: plain.id }, '3v3, 1.8');

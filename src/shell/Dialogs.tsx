@@ -82,7 +82,7 @@ export function ExportDialog({ shell }: { shell: Shell }) {
   const data = shell.data();
   const exp = useMemo<SvgExport | ExportError>(() => {
     const m = shell.module;
-    try { return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
+    try { return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, footer: m?.blockFooter, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
   }, [data, view, transparent, shell]);
   const result = exp instanceof ExportError ? null : fitPage(exp, page);
   const report = result ? readability(data, result, shell.routesFor(data), shell.measure) : null;

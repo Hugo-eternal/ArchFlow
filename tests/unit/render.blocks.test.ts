@@ -6,7 +6,8 @@ import { chromium, type Browser } from 'playwright';
 import { openApp } from '../helpers/load-app.js';
 import { loadGolden } from '../golden/golden.js';
 import { convertProject } from '../tools/v2-to-v3';
-import { blocksLayer, blockLines, metricText } from '../../src/render/blocks';
+import { blocksLayer, blockLines } from '../../src/render/blocks';
+import { metricText } from '../../src/designs/function/power';
 import { find, toMarkup, h } from '../../src/render/vnode';
 import type { BlockDiagram } from '../../src/io/schema-types';
 import * as m from '../../src/model/diagram';
@@ -91,7 +92,8 @@ describe('render/blocks text', () => {
     expect(blockLines({ ...b, partNumber: 'TPS5430', title: 'Buck', subtitle: '5V→3V3' })).toEqual({ title: 'TPS5430', second: 'Buck', subtitle: '5V→3V3' });
     expect(blockLines({ ...b, partNumber: '', title: 'Buck', showTitle: false }).title).toBe('');
     expect(metricText('voltage', { value: '3.3', show: true })).toBe('3.3 V');
-    expect(metricText('current', { value: '500', show: true, unit: 'mA' })).toBe('500 mA');
+    // currents are stored in A and shown in the block's unit (V2 displayCurrent, 3.27b)
+    expect(metricText('current', { value: '0.5', show: true, unit: 'mA' })).toBe('500 mA');
     expect(metricText('efficiency', { value: '92%', show: true })).toBe('92%');
     expect(metricText('efficiency', { value: '90', show: true })).toBe('90%');
     expect(metricText('power', { value: ' ', show: true })).toBe('');

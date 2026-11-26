@@ -62,7 +62,7 @@ export function Canvas({ shell }: { shell: Shell }) {
       framesLayer(d.frames, { selected: ids('frame'), measure: shell.measure }),
       ...(extra.below ?? []),
       wiresLayer(d, routes, { selected: new Set([...ids('wire'), ...ids('junction')]) }),
-      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate }),
+      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate, footer: m?.blockFooter && ((b, x) => m.blockFooter!(b, x, shell.measure)) }),
       textsLayer(d.texts, { selected: ids('text'), measure: shell.measure }),
       ...(extra.above ?? []),
       overlay(shell),

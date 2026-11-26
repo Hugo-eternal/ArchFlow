@@ -64,6 +64,8 @@ export function makeBlock(d: BlockDiagram, at: Point, view: BlockView = d.view):
     sizing: 'auto', showTitle: true, locked: false, metrics: {},
   };
   if (view === 'power') {
+    // power pins like the templates (V2 L3857: IN → VIN, both of type power)
+    b.ports = [makePort('VIN', 'l', 0.25, 'power'), makePort('OUT', 'r', 0.5, 'power')];
     b.role = 'converter';
     b.metrics = { voltage: { value: '', show: false }, current: { value: '', show: false } };
   }

@@ -50,6 +50,8 @@ export interface DesignModule<D = Design['data']> {
   blockDiagram?: true;
   /** Extra drawing on a block (part symbols, connector pins …), used by render/blocks `decorate`. */
   decorate?(b: Block, d: BlockDiagram): VNode | null;
+  /** A strip along the bottom of a block (the power view's metric table, 3.27b). */
+  blockFooter?(b: Block, d: BlockDiagram, measure: import('../render/texts').Measure): { height: number; node: VNode } | null;
   /** Drawing below / above the shared layers (frames, badges …), on the canvas and in exports. */
   renderExtras?(d: BlockDiagram): { below?: VNode[]; above?: VNode[] };
   /** Design-specific inspector fields, appended after the shared ones — complete, synchronous. */

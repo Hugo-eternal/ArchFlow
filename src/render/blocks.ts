@@ -5,8 +5,8 @@
 // V2: render L308 (block DOM), placePorts L305, applyBlockAppearance, appendMetrics, the
 // title-layout layers (af15 L3062 nine-grid titles) and the export look (exportSvgDocument).
 // Part symbols, connectors and LCD templates (designs/function, 3.25–3.26) draw on top of
-// this through `decorate`.
-import type { Block, BlockDiagram, Metric, MetricKey, Port, Theme } from '../io/schema-types';
+// this through `decorate`; the power view's metric strip (designs/function, 3.27b) through `footer`.
+import type { Block, BlockDiagram, Port, Theme } from '../io/schema-types';
 import { gridSize, portPoint } from '../core/grid';
 import { h, r2, type VNode } from './vnode';
 
@@ -17,13 +17,16 @@ export interface BlockRenderOptions {
   theme?: Theme;
   /** Extra drawing for a block (part symbols, connector pins …) added after the body. */
   decorate?: (b: Block, d: BlockDiagram) => VNode | null;
+  /** A strip along the bottom of a block (the power view's metric table): the title rows are
+   *  centred in the space above it. */
+  footer?: BlockFooter;
 }
+
+export type BlockFooter = (b: Block, d: BlockDiagram) => { height: number; node: VNode } | null;
 
 export const PORT_LABEL_GAP = 8;       // label distance from the port centre, inside the block
 export const PORT_LABEL_OUTSIDE = 13;  // … outside the block (V2 placePorts: 13 px)
 export const BLOCK_PAD = 12;
-const METRIC_ORDER: MetricKey[] = ['voltage', 'current', 'power', 'efficiency'];
-const METRIC_UNIT: Record<MetricKey, string> = { voltage: 'V', current: 'A', power: 'W', efficiency: '%' };
 
 /** Style overrides of one block as CSS custom properties (user colours are data, not CSS). */
 function styleOf(b: Block): string | undefined {
@@ -43,13 +46,6 @@ export function blockLines(b: Block): { title: string; second: string; subtitle:
     second: b.partNumber && b.title ? b.title : '',
     subtitle: b.subtitle,
   };
-}
-
-export function metricText(key: MetricKey, m: Metric): string {
-  const v = m.value.trim();
-  if (!v) return '';
-  if (/[a-z%]$/i.test(v)) return v;
-  return key === 'efficiency' ? `${v}%` : `${v} ${key === 'current' && m.unit ? m.unit : METRIC_UNIT[key]}`;
 }
 
 function titleLayout(b: Block): { x: number; anchor: 'start' | 'middle' | 'end'; top: boolean } {
@@ -78,24 +74,22 @@ function portNode(b: Block, p: Port, g: number | undefined, connected: boolean):
   ]);
 }
 
-/** One block: body, accent bar, text, metrics, ports. */
+/** One block: body, accent bar, text, footer, ports. */
 export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = {}, connected: ReadonlySet<string> = new Set()): VNode {
   const g = d.grid?.snap ? gridSize(d.grid) : undefined;
   const lines = blockLines(b), lay = titleLayout(b);
   const titleSize = b.style.titleSize ?? opts.theme?.title;
   const subSize = b.font?.subtitle ?? opts.theme?.subtitle;
-  // voltage / current / power / efficiency belong to the power view (plan §2.2.1)
-  const metrics = d.view !== 'power' ? [] : METRIC_ORDER.map(k => (b.metrics[k]?.show ? metricText(k, b.metrics[k]!) : '')).filter(Boolean);
   const rows: { text: string; cls: string; size: number | undefined; height: number }[] = [];
   const sub = subSize ?? 13;
   if (lines.title) rows.push({ text: lines.title, cls: 'af-block-title', size: titleSize, height: (titleSize ?? 20) * 1.25 });
   for (const tx of [lines.second, lines.subtitle]) if (tx) rows.push({ text: tx, cls: 'af-block-subtitle', size: subSize, height: sub * 1.35 });
-  if (metrics.length) rows.push({ text: metrics.join(' · '), cls: 'af-block-metric', size: b.font?.metric ?? opts.theme?.metric, height: sub * 1.35 });
   const isPart = !!b.part;
+  const footer = isPart ? null : opts.footer?.(b, d) ?? null;
 
   // stack the rows around the vertical centre (or from the top)
   const total = rows.reduce((n, r) => n + r.height, 0);
-  let y = lay.top ? b.y + BLOCK_PAD : b.y + b.h / 2 - total / 2;
+  let y = lay.top ? b.y + BLOCK_PAD : b.y + (b.h - (footer?.height ?? 0)) / 2 - total / 2;
   // a part (schematic symbol) shows no title / reference: its value is drawn by decorate (V2 L3986)
   const textNodes = isPart ? [] : rows.map(row => {
     // a per-block size goes in style: a presentation attribute would lose to the CSS class
@@ -115,6 +109,7 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
     isPart ? null : h('path', { class: 'af-block-accent', d: `M${r2(b.x + 5)},${r2(b.y + 2)}H${r2(b.x + b.w - 5)}` }),
     b.ref && !isPart ? h('text', { class: 'af-block-ref', x: r2(b.x + 8), y: r2(b.y + 16) }, b.ref) : null,
     ...textNodes,
+    footer?.node ?? null,
     opts.decorate?.(b, d) ?? null,
     ...b.ports.map(p => portNode(b, p, g, connected.has(`${b.id}/${p.id}`))),
     opts.selected?.has(b.id) ? h('rect', { class: 'af-block-selection', x: r2(b.x - 4), y: r2(b.y - 4), width: r2(b.w + 8), height: r2(b.h + 8), rx: 9 }) : null,

@@ -12,9 +12,10 @@ const TOKEN = new RegExp(`[${CJK}]|\\s+|[^\\s${CJK}]+`, 'g');
 /** Width of `text` at `fontPx` (bold / italic). */
 export type Measure = (text: string, fontPx: number, bold: boolean, italic: boolean) => number;
 
-/** Rough width without a browser: CJK full width, Latin ≈ 0.55 em. */
+/** Rough width without a browser: CJK full width, narrow punctuation ≈ 0.27 em (Source Han Sans
+ *  ".": 3.55 px at 13 px, 3.27b), other Latin ≈ 0.55 em. */
 export const estimateWidth: Measure = (text, px, bold) =>
-  [...text].reduce((n, ch) => n + (CJK_CHAR.test(ch) ? 1 : /\s/.test(ch) ? 0.3 : 0.55), 0) * px * (bold ? 1.05 : 1);
+  [...text].reduce((n, ch) => n + (CJK_CHAR.test(ch) ? 1 : /\s/.test(ch) ? 0.3 : /[.,:;'|!]/.test(ch) ? 0.27 : 0.55), 0) * px * (bold ? 1.05 : 1);
 
 /** A canvas-based measure for the browser (fonts as on the canvas). */
 export function canvasMeasure(fontFamily: string): Measure {

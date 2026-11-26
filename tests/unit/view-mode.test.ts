@@ -7,6 +7,8 @@ import { setLocale } from '../../src/core/i18n';
 import * as m from '../../src/model/diagram';
 import { blocksLayer } from '../../src/render/blocks';
 import { wiresLayer } from '../../src/render/wires';
+import { estimateWidth } from '../../src/render/texts';
+import { functionDesign } from '../../src/designs/function';
 import { find } from '../../src/render/vnode';
 import { routeAll } from '../../src/router/full-path';
 import { exportSvg } from '../../src/export/svg';
@@ -62,7 +64,8 @@ describe('History.amend', () => {
 describe('render by view', () => {
   it('function view: no metrics, power wires without values, nothing faded', () => {
     const d = diagram('function'), routes = routeAll(d);
-    expect(find(blocksLayer(d), x => String(x.attrs.class).includes('af-block-metric'))).toHaveLength(0);
+    const footer = (b: Parameters<NonNullable<typeof functionDesign.blockFooter>>[0], x: BlockDiagram) => functionDesign.blockFooter!(b, x, estimateWidth);
+    expect(find(blocksLayer(d, { footer }), x => String(x.attrs.class).includes('af-metric'))).toHaveLength(0);
     const w = wiresLayer(d, routes);
     expect(texts(w)).toEqual(['VBUS', 'SDA']);
     expect(groups(w).some(g => String(g.attrs.class).includes('is-muted'))).toBe(false);
@@ -70,7 +73,8 @@ describe('render by view', () => {
 
   it('power view: metrics, power wire values, signal wires faded', () => {
     const d = { ...diagram('function'), view: 'power' as const }, routes = routeAll(d);
-    expect(find(blocksLayer(d), x => String(x.attrs.class).includes('af-block-metric')).map(x => x.text)).toEqual(['5 V']);
+    const footer = (b: Parameters<NonNullable<typeof functionDesign.blockFooter>>[0], x: BlockDiagram) => functionDesign.blockFooter!(b, x, estimateWidth);
+    expect(find(blocksLayer(d, { footer }), x => x.tag === 'text' && String(x.attrs.class).startsWith('af-metric')).map(x => x.text)).toEqual(['電壓', '5', 'V']);
     const w = wiresLayer(d, routes);
     expect(texts(w)).toEqual(['VBUS · 5 V · 2 A', 'SDA']);
     expect(groups(w).map(g => String(g.attrs.class).includes('is-muted'))).toEqual([false, true]);

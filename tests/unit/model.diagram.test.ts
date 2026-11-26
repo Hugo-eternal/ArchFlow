@@ -105,6 +105,9 @@ describe('model/diagram matches V2', () => {
     expect([fnView.view, pwView.view]).toEqual(['function', 'power']);
     expect(m.makeBlock(fnView, { x: 0, y: 0 }).role).toBeUndefined();
     expect(m.makeBlock(pwView, { x: 0, y: 0 })).toMatchObject({ role: 'converter', metrics: { voltage: { value: '', show: false }, current: { value: '', show: false } } });
+    // power pins (V2 L3857, 3.27b)
+    expect(m.makeBlock(pwView, { x: 0, y: 0 }).ports.map(p => `${p.name}:${p.type}`)).toEqual(['VIN:power', 'OUT:power']);
+    expect(m.makeBlock(fnView, { x: 0, y: 0 }).ports.map(p => `${p.name}:${p.type}`)).toEqual(['IN:in', 'OUT:out']);
     for (const [d, kind, arrow] of [[fnView, 'signal', false], [pwView, 'power', true]] as const) {
       let x = d; const A = m.makeBlock(x, { x: 0, y: 0 }); x = m.addBlock(x, A).data;
       const B = m.makeBlock(x, { x: 400, y: 0 }); x = m.addBlock(x, B).data;

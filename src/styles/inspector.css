@@ -84,3 +84,16 @@
 @media (prefers-reduced-motion: no-preference) {
   .af-segment span, .af-field-reset { transition: background var(--duration-fast) var(--ease); }
 }
+
+/* power view: note and downstream demand vs rating (designs/function/power.ts; V2 .pd-note, .af24-load) */
+.af-field-note { margin: 0; color: var(--color-muted); font-size: var(--text-sm); line-height: 1.6; }
+.af-power-load {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--space-1) var(--space-2);
+  padding: var(--space-2); border-radius: var(--radius-sm); background: var(--color-surface-2); font-size: var(--text-sm);
+}
+.af-power-load > span:first-child { grid-column: 1 / -1; }
+.af-power-load-bar { height: 6px; border-radius: 3px; background: var(--color-rule); overflow: hidden; }
+.af-power-load-bar i { display: block; height: 100%; background: var(--color-success); }
+.af-power-load.is-near .af-power-load-bar i { background: var(--color-copper); }
+.af-power-load.is-over .af-power-load-bar i { background: var(--color-danger); }
+.af-power-load.is-over b { color: var(--color-danger); }

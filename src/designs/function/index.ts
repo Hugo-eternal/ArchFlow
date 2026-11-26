@@ -26,6 +26,7 @@ import {
   snapConnectorsToFrames, updateConnector, type ConnKind,
 } from './connector';
 import { insertLcd, lcdOrigin } from './lcd';
+import { metricStrip, powerBlockFields, powerWireFields } from './power';
 import starter from './templates/starter.json';
 
 const TEMPLATES = { starter } as const;
@@ -192,11 +193,13 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     const sym = b.connector ? connectorNode(b) : partNode(b), badges = badgesNode(b);
     return sym || badges ? h('g', { class: 'af-decor' }, [sym, badges]) : null;
   },
+  blockFooter: metricStrip,
   inspectorFields(sel, d) {
+    if (sel.kind === 'wire') return powerWireFields();
     if (sel.kind !== 'block') return [];
     const b = d.blocks.find(x => x.id === sel.id);
     if (!b) return [];
-    return b.connector ? connectorFields() : b.part ? partFields(b) : [railsField];
+    return b.connector ? connectorFields() : b.part ? partFields(b) : [railsField, ...powerBlockFields()];
   },
   commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
