@@ -16,6 +16,8 @@
     "test": "vitest run",
     "test:all": "npm run test:modules && npm run check:i18n && npm run check:tokens && npm run check:css && npm run check:vendor && npm run typecheck && npm run build && npm run check:dist && npm test && npm run test:e2e",
     "test:e2e": "playwright test --trace off",
+    "test:legacy": "vitest run --config vitest.legacy.config.js",
+    "test:legacy:e2e": "playwright test --config playwright.legacy.config.js --trace off",
     "test:modules": "node scripts/check-test-modules.mjs",
     "test:unit": "vitest run",
     "typecheck": "tsc -p tsconfig.json",

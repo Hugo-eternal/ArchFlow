@@ -8,8 +8,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { openApp } from '../helpers/load-app.js';
-import { loadGolden, goldenDir, json } from './golden.js';
+import { openApp } from '../../helpers/load-app.js';
+import { loadGolden, goldenDir, json } from '../../golden/golden.js';
 
 
 const snap = name => path.join(goldenDir('layout'), '__snapshots__', `${name}.json`);

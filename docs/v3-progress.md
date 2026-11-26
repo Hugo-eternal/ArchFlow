@@ -112,7 +112,7 @@
 - [x] 3.43h `designs/schedule`：時程總覽——總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）（V2 af16 overview L3430）（L2）
 - [x] 3.43i `designs/function`：零件數值——自動補單位、常用值清單（V2 L4267 normValue）（L2）
 - [x] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
-- [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
+- [x] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4）
 
 ## 階段 4：Skill、CI、修改層級驗證
@@ -126,11 +126,11 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.42、3.43（含 3.43a–3.43i）完成；移植清單 ☐ 0（覆寫鏈 327 層：☑ 252、✂ 54、⤳ 21；非覆寫功能區塊全部 ☑ / ✂）
-- **下一步**：3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）。現況：`tests/` 有兩類——(a) V3 測試（`*.ts`、`tests/e2e/v3-*.spec.ts`）直接 import `src/` 或開 `dist/ArchFlow.html`；(b) 階段 2 建立的 V2 特性測試（`*.js`：`tests/golden/{function,power,schedule,sequence,flowchart,layout}.test.js`、`tests/unit/*.test.js`、`tests/e2e/{smoke,create-and-wire,designs-save-reopen,export-and-language,tools}.spec.js`）經 `tests/helpers/load-app.js` / `tests/e2e/helpers.js` 開 legacy V2。決定每個 (b) 測試：改對 dist 跑（找出對應的 V3 操作）、或保留為「V2 對照組」（golden 比對的資料來源，例如 `*.v3.test.ts` 需要 V2 輸出）、或刪除（已有等價 V3 測試）。目標是發版後 legacy 檔可以移除時測試仍成立；保留的 V2 對照組要在 `tests/README.md` 註明用途與移除條件。`tests/golden/svg-compare` 的完整逐元素比對（3.26 起的已知問題：文字錨點換算、路徑去重複點）建議在此一併處理。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.44 完成；剩 3.45 版本號
+- **下一步**：3.45 版本號統一為 V3.0.0（L4）。`src/version.ts` 的 `APP_VERSION` 由 `'3.0.0-dev'` 改為 `'3.0.0'`；`package.json` version；檢查其他出現版本字樣的地方（`grep -rn "3\.0\.0\|2\.10\.1\|V2\.10" src i18n package.json README* docs/*.md`，文件中描述 V2 的不要改）；`CHANGELOG.md` 標題「V3.0.0（開發中）」改為正式；`dead-code.test` 的版本檢查（`/^3\.0\.0/`）。L4 = L3 + 遷移測試（`io/migrate` 仍空，`io.project-file` / `io.schema` 測試）+ 產物檢查 + **人工驗收**：請使用者實際開 `dist/ArchFlow.html` 驗收（列出清單：3.13 / 3.14 留下的「開 V2 檔顯示不支援舊版格式」、3.38 的自動整理、以及 3.39–3.43 新增的主要功能）。`index.html`（V2 發佈檔）是否改由 V3 取代，屬發版決定——先問使用者，不要自行覆蓋。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
-  - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
+  - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
   - V2 React 介面沒有原始碼，使用者已確認採 vendor 隔離（audit §5.3）；V3 殼層以 React + TS 重寫。
   - 已實測確認：存檔的 `applicationVersion` 是 `'1.8-rc4'`。階段 2 只記錄現行 bug、不修（plan §3.1 R10）。
@@ -264,10 +264,11 @@
 - 範本 3.43g：V2 的六個完整範例由 V2 實際產生（在 V2 頁面設 `afTemplateMode = null`、把啟動畫面第 1 / 2 張範本卡設為 pressed，再 `createWorkspaceProject`；第 1 張卡 = variant 1、第 2 張 = variant 0），經 `convertProject` 轉成 V3，兩語系逐字比對：不同的字串改為 `@i18n:template.<x>.<id>.<路徑>`（b3.title、t0.text、task2.note…，共 118 個鍵），id 與數字取 zh-Hant；時程日期還原到 V2 PLANS 的原始日期並記 `anchor`（建立時 `shiftToWeek` 對到本週，同 V2）。範本名稱 = 圖上的標題文字。`function`：starter / platform / sensor / power-starter / power-car / power-zones；`schedule`：starter / product / eco。產生用的腳本沒有提交（一次性）；`tests/golden/templates.examples.test.ts` 每次都重新請 V2 建立並比對（zh-Hant：方塊、接腳、線、接點、文字、外框與匯出線路完全相同；en：文字相同，幾何沿用 zh-Hant，同 3.27c）。
 - 時程總覽 3.43h：`schedule/fields` 的 `overview`（custom 欄位，沒有選取且有任務時在最上方）：總天數（最早開始到最晚結束，含首尾）與起訖、依狀態的比例條（`role="img"` 帶各狀態數量）與圖例、里程碑（日期、已完成 / 已過 / 剩 n 天）、「需注意」清單（第一個問題的說明）；清單按鈕呼叫 `CustomContext.select`（新增；`PanelOptions.select`，InspectorPane 以 `findItems` + `Shell.reveal` 選取並置中）。`issueText` 共用於任務欄位。
 - 零件數值 3.43i：`designs/function/parts.normValue`（V2 L4268 移植；**修正**：V2 的 k / M → kΩ / MΩ 套用到所有零件，晶振「32.768k」會變成「32.768kΩ」，V3 只對 Ω 單位的零件、未知種類或寫出 ohm 時套用；其餘輸入與 V2 原始碼逐一相同，`tests/unit/parts.values.test.ts`）。`inspector/fields` TextField 新增 `suggestions`（panel 產生 `<datalist id="<field>-list">`），零件數值欄位提供 `PARTS[].presets`（V2 有這些資料但從未顯示）。另補記：V2 零件庫拖放到畫布（L4276）不移植。
+- 測試重整 3.44：只描述 V2 的測試移到 `tests/legacy/{unit,golden,e2e}`（V2 E2E 5 支、golden 錄製者 6 支、V2 單元 8 支），以 `vitest.legacy.config.js` / `playwright.legacy.config.js` 執行（`npm run test:legacy`、`test:legacy:e2e`）；golden 快照仍在 `tests/golden/<type>/__snapshots__`（錄製者以 cwd 解析路徑）。主套件（`npm test`、`npm run test:e2e`、`test:all`）只跑 V3：`src/` 測試（部分在 Chromium 請 V2 當對照）與對 `dist/ArchFlow.html` 的 E2E。補上 V2 E2E 唯一沒有 V3 對應的項目：PNG 匯出（`v3-function.spec`「export PNG」，2560 × 1440 @1×、檔名「專案 - 設計.png」）。`tests/README.md` 記錄對照組用途、V2 E2E ↔ V3 對應與移除條件。未做（延後）：`tests/tools/svg-compare.ts` 的完整逐元素比對（文字錨點換算、路徑去重複點），目前各 golden 以逐項比對涵蓋。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.43：移植清單 ☐ 0、`dead-code.test` 通過；模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 61 檔 487 項、Playwright 38 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3（3.44：模組標註、i18n、token、css、vendor、型別、建置、產物檢查；V3 Vitest 47 檔 411 項、V3 Playwright 29 項（對 dist）；V2 對照組 Vitest 14 檔 76 項、Playwright 10 項，全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

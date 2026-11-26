@@ -1,6 +1,6 @@
 // module: designs:schedule — date arithmetic used for task intervals (V2.10.1 L574–577, L621–623).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 describe('schedule date calculations', () => {
   let app;

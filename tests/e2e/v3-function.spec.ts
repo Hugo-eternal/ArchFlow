@@ -422,3 +422,26 @@ test('wiring a part quickly (3.43e): drag a resistor lead onto a block body', as
   expect((await ports())[1]).toBe(pins[1] + 1);
   expect(errors).toEqual([]);
 });
+
+test('export PNG (3.44: the V3 counterpart of V2 export-and-language.spec): page size at 1×, file name', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  // the file name the app asks for (Playwright's download name is unreliable for blob: from file://, 2.15)
+  await page.addInitScript(() => {
+    const click = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function (this: HTMLAnchorElement) { if (this.download) (window as unknown as { __lastDownload: string }).__lastDownload = this.download; return click.call(this); };
+  });
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await page.getByRole('button', { name: '匯出' }).click();
+  const dlg = page.getByRole('dialog');
+  await dlg.getByRole('radio', { name: 'PNG' }).check();
+  await dlg.getByLabel('頁面大小').selectOption({ label: 'PPT 投影片 · 2560 × 1440（16:9 高解析）' });
+  await dlg.getByLabel('圖片解析度').selectOption('1');
+  const [png] = await Promise.all([page.waitForEvent('download'), dlg.getByRole('button', { name: '下載' }).click()]);
+  const buf = fs.readFileSync(await png.path());
+  expect(buf.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
+  expect({ w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) }).toEqual({ w: 2560, h: 1440 });
+  expect(await page.evaluate(() => (window as unknown as { __lastDownload?: string }).__lastDownload ?? null)).toBe('未命名專案 - 入門方塊圖.png'); // "project - design" (3.22)
+  expect(errors).toEqual([]);
+});

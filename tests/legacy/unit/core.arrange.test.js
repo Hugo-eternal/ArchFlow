@@ -1,7 +1,7 @@
 // module: core — automatic arrangement. In V2.10.1, autoArrange() opens the RC4 organize
 // preview (#v4Dialog) for block designs (audit §4.3) and lays out the timeline for schedules.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 const SCRAMBLED = [[700, 400], [60, 420], [720, 40], [80, 60]];
 

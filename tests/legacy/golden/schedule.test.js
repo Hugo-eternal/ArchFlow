@@ -1,11 +1,11 @@
 // module: designs:schedule — golden: the project-schedule example with dates (range and
 // deadline), statuses, a milestone and a manual interval; timeline geometry, interval
 // labels and SVG export. Text boxes are not part of the fixture: V2.10.1 drops them on
-// reload for schedules (KNOWN_LOSS in tests/unit/io.roundtrip.test.js).
+// reload for schedules (KNOWN_LOSS in tests/legacy/unit/io.roundtrip.test.js).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import path from 'node:path';
-import { openApp } from '../helpers/load-app.js';
-import { loadGolden, svgStructure, goldenDir, json } from './golden.js';
+import { openApp } from '../../helpers/load-app.js';
+import { loadGolden, svgStructure, goldenDir, json } from '../../golden/golden.js';
 
 const TYPE = 'schedule';
 const snap = name => path.join(goldenDir(TYPE), '__snapshots__', name);

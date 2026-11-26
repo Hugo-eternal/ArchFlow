@@ -1,6 +1,6 @@
 // module: io — save → load round trip through the real file input (#file) for every design type.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 const TYPES = ['function', 'power', 'schedule', 'sequence', 'flowchart'];
 

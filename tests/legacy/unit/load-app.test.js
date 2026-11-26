@@ -1,6 +1,6 @@
 // module: core — the test helper can drive the V2.10.1 engine in Chromium.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 describe('load-app helper', () => {
   let app;

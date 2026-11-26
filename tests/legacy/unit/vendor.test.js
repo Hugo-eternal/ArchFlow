@@ -2,7 +2,7 @@
 // — vendor/ holds exactly what V2.10.1 injects into its editor / tool iframes (step 3.5).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fs from 'node:fs';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 const read = f => fs.readFileSync(`vendor/${f}`, 'utf8');
 const srcdocOf = (app, selector) => app.eval(sel => document.querySelector(sel)?.srcdoc ?? null, selector);

@@ -1,6 +1,6 @@
 // module: router — findPath (V2.10.1 L274): orthogonal A* around block rectangles.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 // Independent checks (do not reuse the engine's own clear()/cuts()).
 const isOrthogonal = ps => ps.slice(1).every((p, i) => p.x === ps[i].x || p.y === ps[i].y);

@@ -6,21 +6,31 @@ V3 重構的安全網：先鎖定 V2.10.1 的現行行為（階段 2），重構
 
 | 指令 | 內容 |
 |---|---|
-| `npm test` | Vitest：`tests/unit`、`tests/golden` |
-| `npm run test:e2e` | Playwright（只用預裝 Chromium，已帶 `--trace off`）：`tests/e2e` |
+| `npm test` | Vitest（V3）：`tests/unit`、`tests/golden`——`src/` 模組，以及與 V2.10.1 的對照 |
+| `npm run test:e2e` | Playwright（V3）：`tests/e2e/v3-*.spec.ts`，對 `dist/ArchFlow.html`（先 `npm run build`） |
+| `npm run test:legacy` | Vitest（V2 對照組）：`tests/legacy/unit`、`tests/legacy/golden` |
+| `npm run test:legacy:e2e` | Playwright（V2 對照組）：`tests/legacy/e2e`，對 `index.html`（V2.10.1） |
 | `npm run test:modules` | 檢查每個測試檔的模組標註，並列出「模組 → 測試檔」 |
-| `npm run test:all` | 以上三項依序執行 |
+| `npm run test:all` | 模組標註、檢查、型別、建置、產物檢查、`npm test`、`npm run test:e2e`（不含 V2 對照組） |
 
-不要執行 `playwright install`；`@playwright/test` 版本已對齊環境內建的瀏覽器。
+Playwright 一律 `--workers=1`（雲端環境記憶體）與 `--trace off`。不要執行 `playwright install`；`@playwright/test` 版本已對齊環境內建的瀏覽器。
 
 ## 目錄
 
 | 目錄 | 內容 |
 |---|---|
-| `tests/unit/` | 單元測試：繞線、資料驗證、存檔↔載入、時程日期、自動排列 |
-| `tests/golden/` | 黃金測試：每種設計一個固定專案（`<type>/project.json`）+ 行為摘要與匯出快照（`<type>/__snapshots__/`） |
-| `tests/e2e/` | 端對端：經 `index.html` 與 V2 殼層的真實操作 |
-| `tests/helpers/` | `load-app.js`：在 Chromium 載入 `legacy/app.<locale>.html` 並呼叫引擎函式 |
+| `tests/unit/` | V3 單元測試（直接 import `src/`）；與 V2 有關的會在 Chromium 開 V2 當對照（oracle） |
+| `tests/golden/` | V3 黃金測試 + 黃金資料：每種設計一個固定專案（`<type>/project.json`）、V2 錄下的快照與 V3 轉換檔（`<type>/__snapshots__/`） |
+| `tests/e2e/` | V3 端對端：對 `dist/ArchFlow.html` 的真實操作 |
+| `tests/legacy/` | **V2 對照組**（階段 2 建立）：只描述 V2.10.1 行為的測試——`golden/*.test.js` 是 `tests/golden/<type>/__snapshots__` 的錄製者，`unit/*.test.js` 鎖定 V2 引擎行為（含 `QUIRK:` 與 `KNOWN_LOSS`），`e2e/*.spec.js` 經 V2 殼層操作 |
+| `tests/helpers/` | `load-app.js`：在 Chromium 載入 `legacy/app.<locale>.html` 並呼叫引擎函式（V3 對照測試與 V2 對照組共用） |
+| `tests/tools/` | 只給測試用的工具：`v2-to-v3.ts`（V2 檔 → V3）、`svg-compare.ts` |
+
+### V2 對照組的用途與移除條件（3.44）
+
+- 用途：V3 的黃金比對以 V2 的實際行為為準。`tests/legacy` 重新產生或驗證這些快照；V3 測試則讀快照，或在 Chromium 中直接請 V2 產生結果再比對（例如 `templates.examples.test.ts`、`function.template.test.ts`、`router.*`）。
+- 每個 V2 E2E 在 V3 都有對應：smoke / create-and-wire / designs-save-reopen → `v3-shell.spec.ts`；export-and-language → `v3-shell.spec.ts`（SVG、語言）與 `v3-function.spec.ts`「export PNG」；tools → `v3-tools.spec.ts`。
+- 移除條件：`legacy/` 從倉庫移除時，一併移除 `tests/legacy` 與 `tests/helpers/load-app.js`，並把仍在 Chromium 中呼叫 V2 的 V3 測試改為讀錄好的快照。
 
 ## 模組標註（必填）
 

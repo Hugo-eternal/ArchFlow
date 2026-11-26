@@ -124,7 +124,7 @@ v4Open ──► v4Generate（模式：routes「整理線路」/ layout「依連
 
 ## 4. 3.37 / 3.38 要先鎖定的行為
 
-- V2 的 `tests/unit/core.arrange.test.js`：已整齊的圖沒有可套用的候選；routes 模式方塊不動、線都合法、可復原；layout 模式方塊不重疊、線都合法；layout 模式結果固定（決定性）。
+- V2 的 `tests/legacy/unit/core.arrange.test.js`：已整齊的圖沒有可套用的候選；routes 模式方塊不動、線都合法、可復原；layout 模式方塊不重疊、線都合法；layout 模式結果固定（決定性）。
 - golden：建議以 golden function / power 與一張打亂座標的圖（同 `core.arrange.test.js` 的 SCRAMBLED）在 V2 引擎跑 `uiCandidate` 各 kind，把 paths / 方塊座標 / metrics 存成快照，V3 `layout/` 對同一份資料輸出相同結果。
 - 上限：60 方塊、100 條線；逐條改善 3 輪、3.5 秒。
 - 決定性：V2 用 `performance.now()` 預算，超時時結果可能不同——V3 測試應以固定預算或關閉時間限制比較。

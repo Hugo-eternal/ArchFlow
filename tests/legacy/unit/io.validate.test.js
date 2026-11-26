@@ -1,7 +1,7 @@
 // module: io — validateDiagram (V2.10.1 L358 + 28 override layers) and the project-file size guard.
 // Locks CURRENT behaviour, including quirks noted inline (do not "fix" here; see plan §3.1 R10).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { openApp } from '../helpers/load-app.js';
+import { openApp } from '../../helpers/load-app.js';
 
 describe('validateDiagram', () => {
   let app;

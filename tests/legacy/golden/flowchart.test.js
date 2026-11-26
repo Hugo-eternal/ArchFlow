@@ -3,8 +3,8 @@
 // and the three text exports from the editor's export menu (SVG, Mermaid, .flow.json).
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import path from 'node:path';
-import { openApp } from '../helpers/load-app.js';
-import { loadGolden, svgStructure, goldenDir, json, missingFrom } from './golden.js';
+import { openApp } from '../../helpers/load-app.js';
+import { loadGolden, svgStructure, goldenDir, json, missingFrom } from '../../golden/golden.js';
 
 const TYPE = 'flowchart';
 const snap = name => path.join(goldenDir(TYPE), '__snapshots__', name);

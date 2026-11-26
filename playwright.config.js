@@ -1,4 +1,5 @@
-// E2E runs only on the preinstalled Chromium. Run with: npm run test:e2e (adds --trace off).
+// V3 E2E against dist/ArchFlow.html (npm run build first), on the preinstalled Chromium. Run with:
+// npm run test:e2e (adds --trace off). V2.10.1 E2E: playwright.legacy.config.js.
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({

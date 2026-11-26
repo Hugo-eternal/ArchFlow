@@ -3,8 +3,8 @@
 // (V2.2.4), its behaviour summary and its SVG export.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import path from 'node:path';
-import { openApp } from '../helpers/load-app.js';
-import { loadGolden, svgStructure, diagramSummary, goldenDir, json } from './golden.js';
+import { openApp } from '../../helpers/load-app.js';
+import { loadGolden, svgStructure, diagramSummary, goldenDir, json } from '../../golden/golden.js';
 
 const TYPE = 'power';
 const snap = name => path.join(goldenDir(TYPE), '__snapshots__', name);
