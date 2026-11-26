@@ -369,16 +369,16 @@ test('status bar, notifications, empty hint and language switch without reload (
   await page.getByRole('radio', { name: '空白設計' }).check();
   await page.getByRole('button', { name: '建立專案' }).click();
 
-  // empty canvas: guidance; the status bar has the type, counts, saved state and zoom
+  // empty canvas: guidance; the status bar has the type and counts (saved state: app bar)
   const bar = page.locator('.af-statusbar');
   await expect(page.locator('.af-empty-hint')).toContainText('按 B');
   await expect(bar).toContainText('方塊圖');
   await expect(bar).toContainText('0 個方塊 · 0 個接腳 · 0 條線路 · 0 個分支接點');
-  await expect(bar).toContainText('已儲存');
+  await expect(page.locator('.af-save-state')).toContainText('已儲存');
   await page.getByRole('button', { name: '新增方塊' }).click();
   await expect(page.locator('.af-empty-hint')).toHaveCount(0);
   await expect(bar).toContainText('1 個方塊 · 2 個接腳'); // a new block has its default pins
-  await expect(bar).toContainText('未儲存');
+  await expect(page.locator('.af-save-state')).toContainText('未儲存');
 
   // a notification can be closed, and closes by itself
   await page.getByRole('button', { name: '儲存', exact: true }).click();
@@ -406,7 +406,7 @@ test('status bar, notifications, empty hint and language switch without reload (
   await page.locator('.af-design-trigger').click();
   await expect(page.getByRole('menuitemradio')).toHaveCount(2);
   await page.keyboard.press('Escape');
-  await expect(bar).toContainText('Unsaved');
+  await expect(page.locator('.af-save-state')).toContainText('Unsaved');
   // the editor still edits the project after the reload in English
   const rails = () => page.evaluate(() => ((window as unknown as { archflow: { data(): { rails: unknown[] } } }).archflow.data().rails.length));
   const n = await rails();
@@ -656,7 +656,7 @@ test('context menu (V2.10.1, 3.46d3): canvas actions at the pointer, item action
   const cb = (await canvas.boundingBox())!;
 
   // empty canvas: "add block here" puts the block near the pointer
-  const at = { x: cb.x + 150, y: cb.y + cb.height - 120 };
+  const at = { x: cb.x + cb.width - 150, y: cb.y + 150 };
   await page.mouse.click(at.x, at.y, { button: 'right' });
   const menu = page.getByRole('menu', { name: '畫布' });
   await expect(menu).toBeVisible();
@@ -700,3 +700,40 @@ test('context menu (V2.10.1, 3.46d3): canvas actions at the pointer, item action
   await expect(page.getByRole('menu', { name: '更多動作' }).getByRole('menuitem')).toHaveText(['編輯名稱F2', '新增輸入接腳', '新增輸出接腳', '新增雙向接腳', '依連線排列接腳', '刪除方塊']);
   expect(errors).toEqual([]);
 });
+
+test('zoom control, tips card and status bar (V2.10.1 look, 3.46e)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const zoom = page.getByRole('group', { name: '縮放' });
+  const pct = zoom.getByRole('button', { name: /^縮放 \d+%/ });
+  const z0 = Number((await pct.textContent())!.replace('%', ''));
+  await zoom.getByRole('button', { name: '放大' }).click();
+  await expect.poll(async () => Number((await pct.textContent())!.replace('%', ''))).toBeGreaterThan(z0);
+  await pct.click();
+  await expect(pct).toHaveText('100%');
+  await zoom.getByRole('button', { name: '縮小' }).click();
+  await expect(pct).not.toHaveText('100%');
+
+  // tips: the keys come from the commands; "got it" is remembered
+  const tips = page.getByRole('complementary', { name: '操作提示' });
+  await expect(tips).toContainText('B 方塊');
+  await expect(tips).toContainText('G 格線');
+  await tips.getByRole('button', { name: '知道了' }).click();
+  await expect(tips).toHaveCount(0);
+  await page.reload();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await expect(page.locator('.af-zoom')).toBeVisible();
+  await expect(tips).toHaveCount(0);
+
+  // status bar: type, counts, the last message, the credit
+  const bar = page.locator('.af-statusbar');
+  await expect(bar).toContainText('方塊圖');
+  await expect(bar).toContainText('4 個方塊');
+  await expect(bar).toContainText('GuoWei Chiu');
+  await page.getByRole('button', { name: '儲存', exact: true }).click();
+  await expect(bar.locator('.af-status-notice')).toContainText('已儲存');
+  expect(errors).toEqual([]);
+});
+

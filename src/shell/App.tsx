@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { t, getLocale, type MessageKey } from '../core/i18n';
 import { formatShortcut } from '../core/commands';
-import { APP_VERSION } from '../version';
+import { APP_CREDIT, APP_VERSION } from '../version';
 import { isMac, type Shell, type DesignChoice } from './controller';
 import type { OutlineItem, OutlineSection } from '../designs/module';
 import { useVersion } from './use-store';
@@ -15,7 +15,8 @@ import { SelectionBar } from './SelectionBar';
 import { ContextMenu } from './ContextMenu';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
-import { AppBar, CommandButton, LocaleSelect, useLocale } from './AppBar';
+import { AppBar, CommandButton, KIND_ICON, LocaleSelect, shortcutText, useLocale } from './AppBar';
+import { Icon, type IconName } from './icons';
 
 function FileInput({ shell }: { shell: Shell }) {
   const ref = useRef<HTMLInputElement>(null);
@@ -233,6 +234,51 @@ function Outline({ shell, sections }: { shell: Shell; sections: OutlineSection[]
   );
 }
 
+/** V2 .zoomtools: zoom out, the percentage (back to 100 %), zoom in. */
+function ZoomControl({ shell }: { shell: Shell }) {
+  const z = Math.round(shell.camera.z * 100);
+  return (
+    <div className="af-zoom" role="group" aria-label={t('zoom.label')}>
+      <button type="button" aria-label={t('cmd.zoomOut')} data-tip={t('cmd.zoomOut')} onClick={() => void shell.run('view.zoomOut')}>{'\u2212'}</button>
+      <button type="button" className="af-zoom-pct" aria-label={t('zoom.reset', { zoom: z })} data-tip={t('cmd.zoomReset')} onClick={() => void shell.run('view.zoomReset')}>{z}%</button>
+      <button type="button" aria-label={t('cmd.zoomIn')} data-tip={t('cmd.zoomIn')} onClick={() => void shell.run('view.zoomIn')}>{'\uff0b'}</button>
+    </div>
+  );
+}
+
+/** "Seen the tips" is remembered per browser (V2 archflow-v2-tips-seen). */
+const TIPS_KEY = 'archflow:tips-seen';
+const tipsSeen = (): boolean => { try { return localStorage.getItem(TIPS_KEY) === '1'; } catch { return false; } };
+
+/** V2 .af2-tips: the first-run card over the canvas (selection bar, right-click, single keys). */
+function TipsCard({ shell }: { shell: Shell }) {
+  const [seen, setSeen] = useState(tipsSeen);
+  if (seen) return null;
+  const done = () => { setSeen(true); try { localStorage.setItem(TIPS_KEY, '1'); } catch { /* storage unavailable */ } };
+  const keys: [string, MessageKey][] = shell.isBlockDiagram
+    ? [['block.add', 'tips.key.block'], ['text.add', 'tips.key.text'], ['design.manage', 'tips.key.grid'], ['view.fit', 'tips.key.fit']]
+    : [['schedule.append', 'tips.key.next'], ['schedule.addBranch', 'tips.key.branch'], ['view.fit', 'tips.key.fit']];
+  const shown = keys.map(([id, label]) => [shortcutText(shell, id), label] as const).filter(([k]) => k);
+  const row = (icon: IconName, body: React.ReactNode) => <li><Icon name={icon} /><span>{body}</span></li>;
+  return (
+    <aside className="af-tips" aria-label={t('tips.label')}>
+      <div className="af-tips-head">
+        <strong>{t('tips.title')}</strong>
+        <button type="button" className="af-btn icon" aria-label={t('tips.dismiss')} onClick={done}><Icon name="close" /></button>
+      </div>
+      <ul>
+        {row('pointer', t(shell.isBlockDiagram ? 'tips.selbar.diagram' : 'tips.selbar.schedule'))}
+        {row('more', t('tips.context'))}
+        {shown.length > 0 && row('keyboard', <>{t('tips.keys')}{shown.map(([k, label]) => <span key={label} className="af-tips-key"><kbd className="af-kbd">{k}</kbd> {t(label)}</span>)}</>)}
+      </ul>
+      <div className="af-tips-foot">
+        <button type="button" className="af-link" onClick={() => { done(); void shell.run('help.open'); }}>{t('tips.allShortcuts')}</button>
+        <button type="button" className="af-btn primary" onClick={done}>{t('tips.gotIt')}</button>
+      </div>
+    </aside>
+  );
+}
+
 function Workspace({ shell }: { shell: Shell }) {
   const s = shell.store;
   const d = s.activeDesign;
@@ -252,20 +298,22 @@ function Workspace({ shell }: { shell: Shell }) {
           <Canvas key={d?.id} shell={shell} />
           <CanvasLegend shell={shell} />
           <SelectionBar shell={shell} />
+          {!shell.module?.embedded && <ZoomControl shell={shell} />}
+          {!shell.module?.embedded && <TipsCard shell={shell} />}
           <ContextMenu shell={shell} />
           {hint && <p className="af-empty-hint">{t(hint)}</p>}
         </section>
         <InspectorPane shell={shell} />
       </div>
-      <footer className="af-statusbar">
-        {d && <span className="af-status-kind">{t(`design.type.${d.type}` as MessageKey)}</span>}
+      <footer className="af-statusbar" role="status">
+        {d && <span className="af-status-kind"><Icon name={KIND_ICON[d.type] ?? 'blocks'} />{t(`design.type.${d.type}` as MessageKey)}</span>}
         {stats && <span className="af-status-stats">{stats}</span>}
+        {shell.embeddedStatus.text && <span className="af-status-stats">{shell.embeddedStatus.text}</span>}
         {invalid > 0 && <span className="af-status-warning">{t('status.invalidRoutes', { count: invalid })}</span>}
-        {shell.embeddedStatus.text && <span className="af-status-embedded">{shell.embeddedStatus.text}</span>}
         {shell.embeddedStatus.warn && <span className="af-status-warning">{shell.embeddedStatus.warn}</span>}
+        {shell.message && <span className={`af-status-notice${shell.message.tone === 'error' ? ' is-error' : ''}`}>{t(shell.message.key, shell.message.vars)}</span>}
         <span className="af-spacer" />
-        <span className={`af-status-saved${s.dirty ? ' is-dirty' : ''}`}>{t(s.dirty ? 'status.unsaved' : 'status.saved')}</span>
-        {!shell.module?.embedded && <span className="af-status-zoom">{t('status.zoom', { zoom: Math.round(shell.camera.z * 100) })}</span>}
+        <span className="af-status-who">{APP_CREDIT}</span>
       </footer>
       <Toasts shell={shell} />
     </div>

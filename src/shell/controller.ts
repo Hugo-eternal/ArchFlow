@@ -5,7 +5,7 @@
 import { CommandRegistry, type Command } from '../core/commands';
 import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
-import { centreOn, fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
+import { centreOn, fit, toWorld, unionBounds, zoomAt, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, BlockView, Camera, Design, DesignType } from '../io/schema-types';
 import type { CanvasSelection, DesignModule, DesignRegistry, EmbeddedApi, FindItem } from '../designs/module';
@@ -531,7 +531,7 @@ export function shellCommands(): Command<Shell>[] {
       run: s => s.gestures.select(s.gestures.selection.filter(i => i.kind !== 'wire')),
     },
     // V2 "Align / Grid" panel (#workspaceManage) and "Layout and fonts" dialog (#chineseFont / #englishFont)
-    { id: 'design.manage', label: 'cmd.alignGrid', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'alignGrid' }) },
+    { id: 'design.manage', shortcut: 'G', label: 'cmd.alignGrid', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'alignGrid' }) },
     { id: 'theme.fonts', label: 'cmd.fonts', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'fonts' }) },
     ...(['horizontal', 'vertical'] as AlignAxis[]).map((axis): Command<Shell> => ({
       id: axis === 'horizontal' ? 'layout.alignHorizontal' : 'layout.alignVertical', label: axis === 'horizontal' ? 'cmd.alignHorizontal' : 'cmd.alignVertical', group: 'layout',
@@ -551,6 +551,9 @@ export function shellCommands(): Command<Shell>[] {
     { id: 'help.open', label: 'cmd.help', group: 'help', shortcut: 'Mod+?', run: s => s.openDialog({ kind: 'help' }) },
     { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },
     { id: 'view.zoomIn', label: 'cmd.zoomIn', group: 'view', shortcut: 'Mod+=', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1.2, s.viewport)) },
+    // V2 #zoom: the percentage goes back to 100 % around the view centre
+    { id: 'view.zoomReset', label: 'cmd.zoomReset', group: 'view', shortcut: 'Mod+0', enabled: s => hasProject(s) && !s.module?.embedded,
+      run: s => s.store.setCamera(zoomAt(s.camera, 1, { x: s.viewport.w / 2, y: s.viewport.h / 2 })) },
     { id: 'view.zoomOut', label: 'cmd.zoomOut', group: 'view', shortcut: 'Mod+-', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1 / 1.2, s.viewport)) },
     { id: 'view.mode.function', label: 'view.mode.function', group: 'view-mode', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.setView('function') },
     { id: 'view.mode.power', label: 'view.mode.power', group: 'view-mode', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.setView('power') },

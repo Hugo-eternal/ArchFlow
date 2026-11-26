@@ -344,17 +344,42 @@
 .af-insp-help { margin: 0; font-size: 12.5px; line-height: 1.6; }
 
 .af-statusbar {
-  display: flex; flex: none; align-items: center; gap: var(--space-4);
-  min-height: var(--statusbar-height);
-  padding: 0 var(--space-3);
-  background: var(--color-surface);
-  border-top: var(--border-width) solid var(--color-rule);
-  font-size: var(--text-sm);
+  display: flex; flex: none; align-items: center; gap: 14px;
+  height: var(--statusbar-height); padding: 0 6px 0 12px; overflow: hidden; white-space: nowrap;
+  background: var(--chrome); border-top: var(--border-width) solid var(--chrome-line);
+  font-size: 12px; line-height: 1;
 }
-.af-status-message { margin: 0; flex: 1; color: var(--color-text); }
-.af-status-message.is-error { color: var(--color-danger); }
-.af-status-warning { color: var(--color-danger); }
-.af-status-zoom { color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.af-status-kind { display: inline-flex; align-items: center; gap: 6px; font-weight: var(--weight-semibold); color: var(--color-text); }
+.af-status-kind .af-icon { width: 13px; height: 13px; color: var(--chrome-text-2); }
+.af-status-stats { color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.af-status-notice { overflow: hidden; text-overflow: ellipsis; color: var(--color-text); }
+.af-status-notice.is-error, .af-status-warning { color: var(--color-danger); }
+.af-status-who { color: var(--color-faint); }
+/* V2 .zoomtools */
+.af-zoom {
+  position: absolute; right: 20px; bottom: 20px; z-index: 2; display: flex; gap: 2px; padding: 3px;
+  background: var(--color-surface); border: var(--border-width) solid var(--color-rule); border-radius: 8px; box-shadow: var(--shadow-1);
+}
+.af-zoom button {
+  min-width: 32px; height: 32px; padding: 0 10px; border: 0; border-radius: 5px; background: transparent;
+  color: var(--color-text); font: var(--weight-semibold) 13px var(--font-ui); cursor: pointer;
+}
+.af-zoom .af-zoom-pct { min-width: 58px; font: var(--weight-semibold) 12px var(--font-mono); }
+.af-zoom button:hover { background: var(--chrome-soft); }
+/* V2 .af2-tips */
+.af-tips {
+  position: absolute; left: 16px; bottom: 16px; z-index: 2; width: 330px; box-sizing: border-box; padding: 14px 14px 12px 16px;
+  background: var(--color-surface); border: var(--border-width) solid var(--color-rule); border-radius: 12px; box-shadow: var(--shadow-pop);
+}
+.af-tips-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.af-tips-head strong { font-size: 14px; color: var(--color-text); }
+.af-tips ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.af-tips li { display: flex; gap: 10px; font-size: 12.5px; line-height: 1.6; color: var(--color-muted); }
+.af-tips li > .af-icon { flex: none; margin-top: 3px; color: var(--color-accent); }
+.af-tips-key { white-space: nowrap; margin-right: 6px; }
+.af-tips-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+.af-tips-foot .af-btn.primary { flex: 0 0 155px; justify-content: center; }
+.af-link { padding: 0; border: 0; background: none; color: var(--color-accent); font: var(--weight-semibold) 13px var(--font-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 /* dialogs */
 .af-modal-backdrop {
@@ -417,7 +442,6 @@
 
 /* vendor editor frame (embedded designs, 3.30) */
 .af-embedded-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--color-surface); }
-.af-status-embedded { color: var(--color-muted); }
 
 /* tools (3.32; V2 af2-tools-home / af2-tool-scrim / af2-tooldlg) */
 .af-tools-home { margin-top: var(--space-6); }
@@ -496,11 +520,6 @@
 .af-modal:has(.af-help) { width: min(820px, 100%); }
 .af-help:focus { outline: none; }
 
-/* status bar (V2 af2-status): design type, counts, warnings … saved state, zoom */
-.af-status-kind { font-weight: var(--weight-semibold); color: var(--color-ink-2); }
-.af-status-stats { color: var(--color-muted); font-variant-numeric: tabular-nums; }
-.af-status-saved { color: var(--color-muted); }
-.af-status-saved.is-dirty { color: var(--color-accent); }
 
 /* notifications (V2 af2-toasts) */
 .af-toasts {

@@ -120,7 +120,7 @@
 - [x] 3.46d2 `shell`：選取時的浮動工具列（名稱／輸入／輸出／顏色／刪除／更多；V2 `.af2-selbar`，深色 38 px，跟著選取項目）（L3）
 - [x] 3.46d3 `shell`：右鍵選單（V2 `Lu` 選取項目動作／`Bg` 畫布動作：在這裡新增方塊、新增文字、整理預覽、全部重新配線、格線與對齊、適合畫面、範本、版面與字體；時程：新增任務、自動調整），與浮動工具列「更多」共用項目（L3）
 - [x] 3.46d4 `shell`：字體與 V2.10.1 一致（使用者要求「字體跟 v2 一樣」）：介面字型堆疊改為 V2 `--af-ui` 的順序、等寬字型為 V2 `--af-mono`、`text-rendering: optimizeLegibility`；逐元素比對 V2 實際 computed style 修正字重／字級（版本標籤、快捷鍵標示、主要按鈕 700→600，專案名 600，設計名 13.5 px，儲存狀態 12 px，左側數量用等寬字，圖面設定列 500 12 px，單位 500）（L3）
-- [ ] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
+- [x] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
 - [ ] 3.46f `shell`：啟動畫面照 V2.10.1——左右分欄、步驟編號、設計類型卡（圖示＋說明）、範本／空白分段、範本卡、右側預覽與小工具卡、頂部語言與工具連結（L3）
 - [ ] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4；版本號已改，等 3.46 完成後人工驗收與發佈決定）
@@ -137,7 +137,7 @@
 
 ## 交接
 - **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
-- **下一步**：3.46e（畫布周邊：縮放控制、上手提示卡、狀態列）。3.46d3 完成：`src/shell/ContextMenu.tsx` 右鍵選單（V2 `Fg` / `.af2-ctx`）。右鍵點方塊／線路／文字／任務先選取（已在選取中則保留），開該項目選單（與浮動工具列「更多」同一份：`SelectionBar.tsx` 的 `itemMenu`）；點空白處開畫布選單（`canvasMenu`：在這裡新增方塊／文字（`block.add` / `text.add` 帶 `{ at }` 世界座標）、整理預覽、全部重新配線（`wire.reroute` 帶 `'all'`）、格線與對齊、適合畫面、範本、版面與字體；時程：新增任務、自動調整＋共用項）。鍵盤：Shift+F10（新指令 `view.contextMenu`）或選單鍵開選取項目（或畫布）的選單；方向鍵、Home／End、Enter、Esc；滾輪／視窗縮放／點外面關閉。選單項目帶參數時不顯示快捷鍵（快捷鍵不帶參數，意思不同）。右鍵不再觸發拖曳。`Shell.selectionTarget()` 取代 SelectionBar 內的判斷。
+- **下一步**：3.46f（啟動畫面照 V2.10.1；目前 V3 啟動畫面標題 700 26 px，V2 為 650 30 px，一起改）。3.46e 完成：畫布右下縮放控制（V2 `.zoomtools`：−／比例（點一下回 100%，新指令 `view.zoomReset` Mod+0）／＋）、左下上手提示卡（V2 `.af2-tips`；單鍵提示從指令的快捷鍵產生；「知道了」或 × 記在 localStorage `archflow:tips-seen`；「看全部快速鍵」開說明）、狀態列改 V2 `.af2-status`（設計類型圖示＋名稱、統計、最後一則訊息、右側作者 `APP_CREDIT`；儲存狀態已在 app bar、縮放比例在縮放控制，所以從狀態列移除）。`design.manage`（格線與對齊）加上 V2 的 G 快捷鍵。嵌入式設計不顯示縮放控制與提示卡。剩餘差異（3.46g 處理或記錄）：V2 單鍵是 A 新增方塊／P 整理預覽／L 元件庫／M 區域框、時程 A 接續／B 分支；V3 是 B 新增方塊、P 新增接腳、時程沒有單鍵（快捷鍵全域唯一，B 已被方塊用）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -278,7 +278,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.46d3：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 413 項、Playwright V3 33 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46e：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 413 項、Playwright V3 34 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

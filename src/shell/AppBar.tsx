@@ -250,7 +250,7 @@ export function Logo() {
   );
 }
 
-const KIND_ICON: Record<string, IconName> = { function: 'blocks', schedule: 'schedule', sequence: 'activity', flowchart: 'flow' };
+export const KIND_ICON: Record<string, IconName> = { function: 'blocks', schedule: 'schedule', sequence: 'activity', flowchart: 'flow' };
 
 /** The project name, edited in place (V2 af2-project-name). */
 function ProjectName({ shell }: { shell: Shell }) {
