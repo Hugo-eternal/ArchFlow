@@ -13,7 +13,7 @@ import { frameApi, installHosts, installToolHosts } from './embedded';
 import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
 import { ModelError, type ItemRef } from '../model/types';
-import { addBlock, addFrame, addPort, addText, adoptNewBlock, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, setPortLabelMode, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addFrame, addPort, addText, adoptNewBlock, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, setPortLabelMode, TEXT_DEFAULT, updateBlock, updateWire } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { alignable, alignBlocks, arrangePorts, type AlignAxis } from '../model/arrange';
 import { estimateWidth, type Measure } from '../render/texts';
@@ -83,6 +83,8 @@ export class Shell {
   private frameReady = false;
   /** Set by the canvas: open the browser's file picker. */
   pickFile: () => void = () => {};
+  /** Focus a field of the properties panel by key (set by the panel; false when not shown). */
+  focusField: (key: string) => boolean = () => false;
   private routeCache: { data: BlockDiagram | null; routes: Map<string, Route> } = { data: null, routes: new Map() };
 
   /** The tool shown over the shell (V2 af2-tooldlg), and the tools opened so far (their frames stay mounted). */
@@ -269,6 +271,34 @@ export class Shell {
 
 const hasProject = (s: Shell) => s.screen === 'workspace' && !!s.store.activeDesign;
 const selectedBlocks = (s: Shell) => s.gestures.selection.filter(i => i.kind === 'block').map(i => i.id);
+/** The id of the one selected block-diagram item of this kind, or null. */
+const oneOf = (s: Shell, kind: ItemRef['kind']): string | null => {
+  const sel = s.isBlockDiagram ? s.gestures.selection : [];
+  return sel.length === 1 && sel[0].kind === kind ? sel[0].id : null;
+};
+
+/** The panel field holding the selected item's name (V2 eo(bu()): the name / label / title box). */
+function nameField(s: Shell): string | null {
+  if (!hasProject(s)) return null;
+  if (!s.isBlockDiagram) return s.item?.kind === 'task' ? 'title' : null;
+  const sel = s.gestures.selection;
+  if (sel.length !== 1) return null;
+  return sel[0].kind === 'block' ? 'partNumber' : sel[0].kind === 'wire' || sel[0].kind === 'port' ? 'name' : sel[0].kind === 'text' ? 'text' : null;
+}
+
+/** V2 "block style" quick colours (L168145 presets: fill, border, accent; the text colour reset). */
+export const BLOCK_PRESETS = [
+  { name: 'standard', fill: '#FFFFFF', border: '#A9B4C0', accent: '#3A4A5C' },
+  { name: 'mistBlue', fill: '#F3F6FA', border: '#A9BBCF', accent: '#2B5C8A' },
+  { name: 'mistGreen', fill: '#F3F7F5', border: '#A8C3B9', accent: '#2E6E62' },
+  { name: 'sand', fill: '#F9F6F0', border: '#D1BE9C', accent: '#9A6A26' },
+  { name: 'slate', fill: '#F1F3F5', border: '#B3BCC6', accent: '#5B6876' },
+  { name: 'ink', fill: '#1F2A37', border: '#1F2A37', accent: '#8DB0D3' },
+] as const;
+
+/** V2 wire quick colours (inspector .af15-wire swatches). */
+export const WIRE_COLORS = ['#44546A', '#2B5C8A', '#2E6E62', '#9A6A26', '#A33A32', '#5B5394', '#7A8694', '#1C2733'] as const;
+
 const canEdit = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
 
 function confirmDiscard(s: Shell, then: () => void): void {
@@ -353,11 +383,13 @@ export function shellCommands(): Command<Shell>[] {
     {
       id: 'port.add', label: 'cmd.portAdd', group: 'insert', shortcut: 'P',
       enabled: s => canEdit(s) && s.gestures.selection.length === 1 && s.gestures.selection[0].kind === 'block',
-      run: s => {
+      // with a type ('in' / 'out' / 'io', the selection bar) the block stays selected, as V2's "+ input"
+      run: (s, arg) => {
         const block = s.gestures.selection[0].id;
         let id = '';
-        const r = s.edit(x => { const out = addPort(x, block, 'io'); id = out.id; return out.data; });
-        if (r.ok) s.gestures.select([{ kind: 'port', block, id }]);
+        const type = arg === 'in' || arg === 'out' || arg === 'io' ? arg : null;
+        const r = s.edit(x => { const out = addPort(x, block, type ?? 'io'); id = out.id; return out.data; });
+        if (r.ok && !type) s.gestures.select([{ kind: 'port', block, id }]);
       },
     },
     {
@@ -402,6 +434,42 @@ export function shellCommands(): Command<Shell>[] {
         const invalid = [...s.routesFor(s.data()).values()].filter(x => !x.valid).length;
         if (invalid) s.notify('wire.rerouteInvalid', { count: invalid }, 'error'); else s.notify('wire.rerouted');
       },
+    },
+    // selection bar (V2 .af2-selbar, 3.46d2): edit the name in the panel, quick colours, line type, arrow
+    {
+      id: 'item.rename', label: 'cmd.itemRename', group: 'edit', shortcut: 'F2',
+      enabled: s => !!nameField(s),
+      run: s => { const key = nameField(s); if (key) { s.inspectorOpen = true; s.ui.emit(); setTimeout(() => s.focusField(key), 0); } },
+    },
+    {
+      id: 'item.delete', label: 'cmd.delete', group: 'edit',
+      enabled: s => hasProject(s) && (s.isBlockDiagram ? s.enabled('selection.delete') : !!s.item && !!s.module?.canvas?.remove),
+      run: s => {
+        if (s.isBlockDiagram) { void s.run('selection.delete'); return; }
+        const sel = s.item, remove = s.module?.canvas?.remove;
+        if (sel && remove && s.editDesign(d => remove(d, sel))) s.selectItem(null);
+      },
+    },
+    {
+      id: 'block.stylePreset', label: 'cmd.blockStylePreset', group: 'edit',
+      enabled: s => canEdit(s) && !!oneOf(s, 'block'),
+      run: (s, arg) => {
+        const p = BLOCK_PRESETS[typeof arg === 'number' ? arg : 0], id = oneOf(s, 'block');
+        if (!p || !id) return;
+        s.edit(d => { const b = d.blocks.find(x => x.id === id)!; const style = { ...b.style, fill: p.fill, border: p.border, accent: p.accent }; delete style.text; return updateBlock(d, id, { style }); });
+      },
+    },
+    {
+      id: 'wire.color', label: 'cmd.wireColor', group: 'wire', enabled: s => canEdit(s) && !!oneOf(s, 'wire'),
+      run: (s, arg) => { const id = oneOf(s, 'wire'); if (id && typeof arg === 'string') s.edit(d => updateWire(d, id, { line: { ...d.wires.find(w => w.id === id)!.line, color: arg } })); },
+    },
+    {
+      id: 'wire.dash', label: 'cmd.wireDash', group: 'wire', enabled: s => canEdit(s) && !!oneOf(s, 'wire'),
+      run: (s, arg) => { const id = oneOf(s, 'wire'); if (id && typeof arg === 'string') s.edit(d => updateWire(d, id, { line: { ...d.wires.find(w => w.id === id)!.line, dash: arg } })); },
+    },
+    {
+      id: 'wire.arrow', label: 'cmd.wireArrow', group: 'wire', enabled: s => canEdit(s) && !!oneOf(s, 'wire'),
+      run: s => { const id = oneOf(s, 'wire'); if (id) s.edit(d => { const line = d.wires.find(w => w.id === id)!.line; return updateWire(d, id, { line: { ...line, arrow: !line.arrow } }); }); },
     },
     // V2 drawing settings "port names inside / outside" (afPinLabels): every shown pin name, one undo step
     {

@@ -246,6 +246,34 @@
 .af-outline-line { font-size: 11px; line-height: 1.7; color: var(--color-muted); }
 
 .af-stage { position: relative; min-width: 0; min-height: 0; }
+/* floating selection bar (V2 .af2-selbar) */
+.af-selbar {
+  position: absolute; left: 0; top: 0; z-index: 3; display: flex; align-items: center; gap: 2px; padding: 4px;
+  border-radius: 10px; background: var(--selbar); color: var(--selbar-text);
+  box-shadow: var(--selbar-shadow);
+}
+.af-selbar[data-visible="false"], .af-selbar[data-busy="true"] { opacity: 0; pointer-events: none; }
+.af-sb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 30px; min-width: 30px; padding: 0 8px;
+  border: 0; border-radius: 7px; background: transparent; color: var(--selbar-text); font: 500 12.5px var(--font-ui); cursor: pointer;
+}
+.af-sb-btn:not(.has-label) { width: 30px; padding: 0; }
+.af-sb-btn .af-icon { width: 15px; height: 15px; }
+.af-sb-btn:hover { background: var(--selbar-hover); }
+.af-sb-btn[aria-pressed="true"] { background: var(--selbar-on); }
+.af-sb-btn.is-danger { margin-left: 6px; }
+.af-sb-btn.is-danger:hover { background: var(--selbar-danger); color: var(--selbar-danger-text); }
+.af-sb-btn:focus-visible, .af-sb-sw:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }
+.af-sb-swatches, .af-sb-dashes { display: flex; align-items: center; gap: 3px; height: 22px; margin-left: 4px; padding: 0 4px 0 8px; border-left: 1px solid var(--selbar-hover); }
+.af-sb-sw { flex: 0 0 18px; width: 18px; height: 18px; padding: 0; box-sizing: border-box; border: 3px solid; border-radius: 50%; box-shadow: 0 0 0 1px var(--selbar-ring); cursor: pointer; }
+.af-sb-sw:hover { scale: 1.15; }
+.af-sb-sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--selbar), 0 0 0 3.5px var(--selbar-text); }
+.af-sb-dash { width: 22px; height: 8px; stroke: currentColor; stroke-width: 2; }
+.af-selbar [data-tip]::before { top: auto; bottom: calc(100% + 8px); }
+@media (prefers-reduced-motion: no-preference) {
+  .af-selbar { transition: opacity .14s; }
+  .af-sb-sw { transition: scale .12s; }
+}
 /* function / power view switch, floating over the top of the canvas (3.27a) */
 .af-view-switch {
   position: absolute; top: var(--space-2); left: 50%; transform: translateX(-50%); z-index: 1;

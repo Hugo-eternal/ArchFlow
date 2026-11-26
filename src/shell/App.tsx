@@ -11,6 +11,7 @@ import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
 import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
 import { OrganizeDialog } from './OrganizeDialog';
+import { SelectionBar } from './SelectionBar';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
 import { AppBar, CommandButton, LocaleSelect, useLocale } from './AppBar';
@@ -249,6 +250,7 @@ function Workspace({ shell }: { shell: Shell }) {
           <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />
           <CanvasLegend shell={shell} />
+          <SelectionBar shell={shell} />
           {hint && <p className="af-empty-hint">{t(hint)}</p>}
         </section>
         <InspectorPane shell={shell} />

@@ -43,6 +43,14 @@
   --chrome-disabled-icon: #BCC5CB;
   --led-saved: #3E9B6E;
   --side-panel: #FAFBFA;      /* project contents panel (V2 .navigator) */
+  --selbar: #14202C;           /* selection bar (V2 .af2-selbar, --af-ink) */
+  --selbar-text: #E7EEF4;
+  --selbar-hover: #2C3E50;
+  --selbar-on: #2A4258;
+  --selbar-danger: #5A2420;
+  --selbar-danger-text: #FFD6D1;
+  --selbar-shadow: 0 10px 28px -8px rgb(15 24 33 / .55), inset 0 0 0 1px rgb(255 255 255 / .04);
+  --selbar-ring: rgb(255 255 255 / .32);
   --led-dirty: #B7832F;
   --dirty-text: #7A5418;
   --tip-bg: #14202C;
@@ -330,6 +338,12 @@
     --chrome-disabled-icon: #56636F;
     --led-saved: #5CC495;
     --side-panel: #18222B;
+    --selbar: #26384A;
+    --selbar-text: #E7EEF4;
+    --selbar-hover: #34495E;
+    --selbar-on: #3A5878;
+    --selbar-danger: #6A2C27;
+    --selbar-danger-text: #FFD6D1;
     --led-dirty: #E0A85A;
     --dirty-text: #F1D3AC;
     --tip-bg: #E9EEF2;
@@ -439,6 +453,12 @@
   --chrome-disabled-icon: #56636F;
   --led-saved: #5CC495;
   --side-panel: #18222B;
+  --selbar: #26384A;
+  --selbar-text: #E7EEF4;
+  --selbar-hover: #34495E;
+  --selbar-on: #3A5878;
+  --selbar-danger: #6A2C27;
+  --selbar-danger-text: #FFD6D1;
   --led-dirty: #E0A85A;
   --dirty-text: #F1D3AC;
   --tip-bg: #E9EEF2;

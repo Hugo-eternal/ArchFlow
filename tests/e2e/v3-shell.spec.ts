@@ -212,7 +212,7 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   const links = () => page.evaluate(() => { const a = (window as unknown as { archflow: { store: { data(id: string): { links: { from: string; to: string }[] }; activeDesignId: string } } }).archflow.store; return a.data(a.activeDesignId).links.map(l => `${l.from}>${l.to}`).sort(); });
   const before = await links();
   await card.click();
-  await page.getByRole('button', { name: '接續任務' }).click();
+  await page.getByRole('toolbar', { name: '工具列' }).getByRole('button', { name: '接續任務' }).click();
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n + 1);
   await expect(page.locator('.af-toast').last()).toContainText('後續任務接在它之後');
   await expect(panel.getByLabel('工期（含首尾）')).toBeVisible();
@@ -583,5 +583,65 @@ test('properties panel head and drawing settings (V2.10.1 look, 3.46d)', async (
   await first.click();
   await expect(pane.locator('.af-insp-kind')).toHaveText('任務');
   await expect(pane.locator('.af-insp-name')).toHaveText(title);
+  expect(errors).toEqual([]);
+});
+
+test('selection bar (V2.10.1 look, 3.46d2): block, wire and task actions above the selection', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const data = () => page.evaluate(() => (window as unknown as { archflow: { data(): { blocks: { id: string; partNumber: string; ports: unknown[]; style: Record<string, string> }[]; wires: { line: { color: string; dash: string; arrow: boolean } }[] } } }).archflow.data());
+  const bar = page.getByRole('toolbar', { name: '選取項目快捷列' });
+  await expect(bar).toHaveCount(0);
+
+  // a block: the bar sits above it
+  await page.getByRole('navigation', { name: '專案內容' }).getByRole('button', { name: '微控制器' }).click();
+  await expect(bar).toBeVisible();
+  const mcu = (await data()).blocks.find(b => b.partNumber === '微控制器')!;
+  const box = await bar.boundingBox(), blk = await page.locator(`svg.af-canvas [data-block="${mcu.id}"]`).boundingBox();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(blk!.y);
+  await bar.getByRole('button', { name: '新增輸入接腳' }).click();
+  await expect.poll(async () => (await data()).blocks.find(b => b.id === mcu.id)!.ports.length).toBe(mcu.ports.length + 1);
+  await expect(page.locator('.af-insp-kind')).toHaveText('方塊'); // still the block
+  await bar.getByRole('button', { name: '方塊配色 霧綠' }).click();
+  await expect.poll(async () => (await data()).blocks.find(b => b.id === mcu.id)!.style.fill).toBe('#F3F7F5');
+  await expect(bar.getByRole('button', { name: '方塊配色 霧綠' })).toHaveAttribute('aria-pressed', 'true');
+  // name: the panel field gets the focus
+  await bar.getByRole('button', { name: '編輯名稱' }).click();
+  await expect(page.getByLabel('IC 型號 / 料號')).toBeFocused();
+  // more: the full list, with the bidirectional pin
+  await bar.getByRole('button', { name: '更多動作' }).click();
+  await page.getByRole('menuitem', { name: '新增雙向接腳' }).click();
+  await expect.poll(async () => (await data()).blocks.find(b => b.id === mcu.id)!.ports.length).toBe(mcu.ports.length + 2);
+
+  // a wire: colour, line type, arrow, delete
+  const wire = page.locator('svg.af-canvas [data-wire]').first();
+  const wb = (await wire.boundingBox())!;
+  await wire.click({ position: { x: wb.width / 2, y: wb.height / 2 }, force: true });
+  await expect(bar.getByRole('button', { name: '編輯線路名稱' })).toBeVisible();
+  await bar.getByRole('button', { name: '線路顏色 #A33A32' }).click();
+  await bar.getByRole('button', { name: '虛線' }).click();
+  await bar.getByRole('button', { name: '箭頭' }).click();
+  const w0 = (await data()).wires[0].line;
+  expect(w0).toMatchObject({ color: '#A33A32', dash: 'dash' });
+  const wires = (await data()).wires.length;
+  await bar.getByRole('button', { name: '刪除線路' }).click();
+  await expect.poll(async () => (await data()).wires.length).toBe(wires - 1);
+  await expect(bar).toHaveCount(0);
+
+  // a schedule task: rename, next, branch, delete
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await page.getByRole('navigation', { name: '專案內容' }).getByRole('button').first().click();
+  await expect(bar.getByRole('button', { name: '接續任務' })).toBeVisible();
+  await bar.getByRole('button', { name: '重新命名' }).click();
+  await expect(page.getByRole('complementary', { name: '屬性' }).getByRole('textbox').first()).toBeFocused();
+  const tasks = () => page.evaluate(() => (window as unknown as { archflow: { data(): { tasks: unknown[] } } }).archflow.data().tasks.length);
+  const n = await tasks();
+  await bar.getByRole('button', { name: '刪除任務' }).click();
+  await expect.poll(tasks).toBe(n - 1);
   expect(errors).toEqual([]);
 });

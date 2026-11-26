@@ -89,11 +89,12 @@ function DrawingInspector({ shell }: { shell: Shell }) {
       select: sel => { const it = shell.module?.findItems?.(shell.store.data(shell.store.activeDesignId) as never).find(x => x.id === sel.id); if (it) shell.reveal(it); else shell.selectItem(sel); },
     });
     panel.current = p;
+    shell.focusField = key => p.focus(key);
     shown.current = '';
     refresh(p);
     // an item removed by an edit or undo is never synced: the panel switches first
     const off = shell.store.subscribe(() => refresh(p));
-    return () => { off(); p.destroy(); panel.current = null; };
+    return () => { off(); p.destroy(); panel.current = null; shell.focusField = () => false; };
   }, [shell, designId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sel = current();
@@ -126,7 +127,8 @@ function BlockInspectorPane({ shell }: { shell: Shell }) {
     if (!ref.current || !shell.isBlockDiagram) return;
     const i = blockInspector(ref.current, shell.store, { onRefused: r => shell.refused(r as never), groupState: groupStorage, emptyText: null });
     insp.current = i;
-    return () => { i.destroy(); insp.current = null; };
+    shell.focusField = key => i.panel.focus(key);
+    return () => { i.destroy(); insp.current = null; shell.focusField = () => false; };
   }, [shell, designId]);
 
   const sel = shell.gestures.selection;
