@@ -30,7 +30,7 @@ function readPlan() {
     base: { geo: geo(plan.base.geo), paths: paths(plan.base.paths), labels: lab(plan.base.labels), metrics: met(plan.base.metrics) },
     candidates: plan.candidates.slice(1).map(p => ({
       kind: p.kind,
-      nodes: p.m.nodes.map(n => ({ id: n.id, x: r(n.x), y: r(n.y), ports: n.ports.map(q => ({ id: q.id, side: q.side, t: r(q.t), off: q.afGridOffset ?? null })) })),
+      nodes: p.m.nodes.map(n => ({ id: n.id, x: r(n.x), y: r(n.y), ports: n.ports.map(q => ({ id: q.id, side: q.side, t: q.t, off: q.afGridOffset ?? null })) })),
       geo: geo(p.geo), paths: paths(p.paths), labels: lab(p.labels), metrics: met(p.metrics),
       changes: Object.fromEntries(Object.entries(p.changes || {}).map(([k, v]) => [k, v.length])),
     })),

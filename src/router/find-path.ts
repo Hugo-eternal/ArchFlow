@@ -12,7 +12,7 @@
 import { clear, inside, near, same, simplify, type Point, type Rect } from '../core/geometry';
 
 /** Binary min-heap on `f` (port of V2 Heap L272 — same tie order, so results match V2). */
-class Heap<T extends { f: number }> {
+export class Heap<T extends { f: number }> {
   private a: T[] = [];
   get length() { return this.a.length; }
   push(v: T): void {

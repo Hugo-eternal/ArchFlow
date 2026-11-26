@@ -19,9 +19,10 @@ const golden = (name: string): Golden => JSON.parse(fs.readFileSync(path.join(RO
 const diagram = (g: Golden) => (convertProject(g.project as never).designs[0].data as BlockDiagram);
 const near = (a: number, b: number, tol = 0.5) => Math.abs(a - b) <= tol;
 
-/** The engine model of a V2 candidate: block positions / port sides from the candidate. */
+/** The engine model of a V2 candidate: its block positions (organize never moves ports: permissions.ports is off;
+ *  the golden's port t is rounded, so it is not used). */
 function candidateModel(m: EngineModel, c: Cand): EngineModel {
-  return { ...m, nodes: m.nodes.map(n => { const x = c.nodes.find(k => k.id === n.id)!; return { ...n, x: x.x, y: x.y, ports: n.ports.map(p => ({ ...p, ...(x.ports.find(q => q.id === p.id) ?? {}) })) as typeof n.ports }; }) };
+  return { ...m, nodes: m.nodes.map(n => { const x = c.nodes.find(k => k.id === n.id)!; return { ...n, x: x.x, y: x.y }; }) };
 }
 const geoOf = (m: EngineModel, g: Plan['geo']): Geometry => ({ grid: g.grid, anchors: g.anchors, boxes: g.boxes.map(b => ({ ...b, ports: m.nodes.find(n => n.id === b.id)!.ports })) });
 const pick = (x: Metrics) => ({ invalid: x.invalid, crossings: x.crossings, overlap: x.overlap, bends: x.bends, length: x.length, shared: x.shared, unrelated: x.unrelated, rejoined: x.rejoined, labelConflicts: x.labelConflicts, unwanted: x.unwanted });

@@ -63,11 +63,11 @@ v4Open ──► v4Generate（模式：routes「整理線路」/ layout「依連
 | 函式 | 行 | 位元組 | 作用 |
 |---|---|---|---|
 | `uiRoutes` | 1708, 1758 | 1287 | 依權限（全部 / 選取）重繞可動的線；第二層加入同源線（`ssRouteOne`） |
-| `uiRouteOne` | 1706 | 1004 | 單線：兩端轉接點組合取成本最低 |
+| `uiRouteOne` | 1706 | 1004 | 單線：兩端轉接點組合取成本最低。**只被第一層 `uiRoutes`（L1708）呼叫，第二層完全取代，實際不執行——3.37b 未移植** |
 | `ssRouteOne` | 1754 | 1657 | 同源線版本（鼓勵共用前段、避免重新匯合） |
 | `roAdapters` | 1594 | 849 | 接腳外的轉接點（格點對齊） |
 | `roFind` | 1596 | 2374 | 轉接點之間的正交路徑搜尋（有期限 `deadline`）。**注意**：與 V3 `router/find-path`（V2 `findPath` 的 A*）是不同的演算法，要獨立移植並以 golden 鎖定 |
-| `uiRouteCost` / `ssCost` | 1705, 1753 | 322 / 602 | 路徑成本 |
+| `uiRouteCost` / `ssCost` | 1705, 1753 | 322 / 602 | 路徑成本（`uiRouteCost` 同上，不執行、未移植） |
 
 ### 2.4 方塊與接腳排列（RC3）→ `layout/place.ts`
 
