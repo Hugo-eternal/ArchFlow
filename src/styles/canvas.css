@@ -19,6 +19,11 @@
   fill: var(--block-subtitle);
   font-size: var(--block-subtitle-size);
 }
+/* power view: accent bar by power role (render/blocks data-role; a block's own accent wins) */
+[data-role="source"] { --block-accent: var(--role-source); }
+[data-role="converter"] { --block-accent: var(--role-converter); }
+[data-role="distribution"] { --block-accent: var(--role-distribution); }
+[data-role="load"] { --block-accent: var(--role-load); }
 /* power view metric strip (designs/function/power.ts; V2 .block-metrics) */
 .af-metrics-strip { fill: var(--metric-strip); }
 .af-metrics-rule { stroke: var(--metric-rule); stroke-width: 1px; }

@@ -170,7 +170,7 @@
 | `inspector` | 2303 |  | text-controller-v24-js | 文字控制 v24：`setTimeout` 同步外觀模式 | ☑ | 3.21 `sync()` 取代 setTimeout |
 | `inspector` | 3047 |  | af15-ux2 | V1.5：接腳表格（enhance + 2 層 microtask） | ☐ |  |
 | `inspector` | 3125 |  | af15-ux2 | V1.5：線條樣式 / 方塊字型（enhance + 3 層 microtask） | ☐ |  |
-| `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☐ | 3.27b 查證：此層實際是線路標籤 / 接腳模式工具，不是角色配色；V2.10.1 沒有依角色上色（golden power 的顏色來自外觀預設） |
+| `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☑ | 3.27c 依使用者決定新增角色配色（電源檢視、`data-role` + `--role-*`）；3.27b 查證：此層實際是線路標籤 / 接腳模式工具，不是角色配色；V2.10.1 沒有依角色上色（golden power 的顏色來自外觀預設） |
 | `inspector` | 3509 |  | af15-ux2 | V1.5：範本與時程線條樣式修正（再加 `setTimeout 30`） | ☐ |  |
 | `inspector` | 3703 |  | af15-ux2 | V1.6 時程：工期 / 快速修正（`setTimeout 40、120`） | ☐ |  |
 | `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☑ | 3.27b `demand` / `load` + 自訂欄位（同步產生，無 setTimeout）；輸入數值自動開啟顯示；可輸入負電壓 |

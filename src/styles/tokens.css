@@ -91,6 +91,11 @@
   --metric-value: #173B65;
   --metric-unit: #546B89;
   --metric-empty: #5E6E82;
+  /* power roles: accent bar in the power view (3.27c; V2 appearance presets "slate" / "sand" / "mist green", plus purple) */
+  --role-source: #5B6876;
+  --role-converter: #9A6A26;
+  --role-distribution: #6B4FA0;
+  --role-load: #2E6E62;
   --rail-unknown: #55657A;
   --rail-negative: #8A3B6E;
   --rail-core: #6B4FA0;
@@ -187,6 +192,10 @@
     --metric-value: #DCE6F0;
     --metric-unit: #9DAEC0;
     --metric-empty: #8E9DAD;
+    --role-source: #A7B4BF;
+    --role-converter: #D9A55E;
+    --role-distribution: #B49BE0;
+    --role-load: #6FC2AE;
     --rail-unknown: #A9B7C6;
     --rail-negative: #E59AC8;
     --rail-core: #BBA6EC;
@@ -251,6 +260,10 @@
   --metric-value: #DCE6F0;
   --metric-unit: #9DAEC0;
   --metric-empty: #8E9DAD;
+  --role-source: #A7B4BF;
+  --role-converter: #D9A55E;
+  --role-distribution: #B49BE0;
+  --role-load: #6FC2AE;
   --rail-unknown: #A9B7C6;
   --rail-negative: #E59AC8;
   --rail-core: #BBA6EC;

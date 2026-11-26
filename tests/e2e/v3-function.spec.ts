@@ -224,3 +224,23 @@ test('function: power view — power settings in the panel, metric strip on the 
   expect(fs.readFileSync(await svg.path(), 'utf8')).toContain('>電壓<');
   expect(errors).toEqual([]);
 });
+
+test('function: the starter power tree template opens in the power view', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+
+  await page.getByRole('button', { name: '新增設計' }).click();
+  const dlg = page.getByRole('dialog');
+  await dlg.getByRole('radio', { name: '範本：入門電源樹' }).check();
+  await dlg.getByRole('button', { name: '確定' }).click();
+  await expect(page.getByRole('button', { name: /分散式電源架構/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(5);
+  await expect(page.locator('svg.af-canvas [data-role="source"]')).toHaveCount(1);
+  // the first design keeps its own view
+  await page.getByRole('button', { name: /入門方塊圖/ }).click();
+  await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '功能檢視' })).toHaveAttribute('aria-pressed', 'true');
+  expect(errors).toEqual([]);
+});

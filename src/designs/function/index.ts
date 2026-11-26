@@ -28,8 +28,11 @@ import {
 import { insertLcd, lcdOrigin } from './lcd';
 import { metricStrip, powerBlockFields, powerWireFields } from './power';
 import starter from './templates/starter.json';
+import powerStarter from './templates/power-starter.json';
 
-const TEMPLATES = { starter } as const;
+// "power-starter": V2's power example (createWorkspaceProject('power'), "Starter power tree"),
+// extracted from V2.10.1 like `starter` and opened in the power view (data.view, 3.27c).
+const TEMPLATES = { starter, 'power-starter': powerStarter } as const;
 type F = FieldSpec<BlockDiagram, ItemRef>;
 
 const blockOf = (d: BlockDiagram, s: ItemRef): Block => {
@@ -179,7 +182,7 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   type: 'function',
   label: 'design.type.function',
   schema: DATA_SCHEMAS.function,
-  templates: [{ id: 'starter', label: 'template.function.starter.name' }],
+  templates: [{ id: 'starter', label: 'template.function.starter.name' }, { id: 'power-starter', label: 'template.power.starter.label' }],
   editor: 'canvas',
   blockDiagram: true,
   create({ template } = {}) {

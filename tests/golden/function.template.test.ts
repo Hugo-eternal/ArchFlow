@@ -8,6 +8,7 @@ import { convertProject } from '../tools/v2-to-v3';
 import { functionDesign } from '../../src/designs/function';
 import { templateKeys } from '../../src/designs/module';
 import starter from '../../src/designs/function/templates/starter.json';
+import powerStarter from '../../src/designs/function/templates/power-starter.json';
 import { emptyDiagram } from '../../src/model/diagram';
 import { validateData } from '../../src/io/schema';
 import { exportSvg } from '../../src/export/svg';
@@ -48,6 +49,15 @@ describe('designs/function module', () => {
       expect(name).toBe(t('template.function.starter.name'));
       expect(JSON.stringify(data)).not.toContain('@i18n:');
     }
+    for (const locale of ['zh-Hant', 'en'] as const) {
+      setLocale(locale);
+      const { data, name } = functionDesign.create({ template: 'power-starter' });
+      expect(validateData('function', data)).toEqual([]);
+      expect(data.view).toBe('power');
+      expect(name).toBe(t('template.power.starter.name'));
+      expect(JSON.stringify(data)).not.toContain('@i18n:');
+    }
+    for (const k of templateKeys(powerStarter)) { expect(zh).toHaveProperty([k]); expect(en).toHaveProperty([k]); }
     const keys = templateKeys(starter);
     expect(keys.length).toBeGreaterThan(5);
     for (const k of keys) { expect(zh).toHaveProperty([k]); expect(en).toHaveProperty([k]); }
@@ -74,6 +84,40 @@ describe('golden: starter template vs V2.10.1', () => {
       expect(shape(made.data)).toEqual(shape(v2data));
       expect(wirePaths(v2svg)).toHaveLength(v2data.wires.length);
       expect(wirePaths(exportSvg(made.data).source)).toEqual(wirePaths(v2svg));
+    }, 60000);
+  }
+});
+
+describe('golden: starter power tree vs V2.10.1', () => {
+  const apps: { close(): Promise<void> }[] = [];
+  afterAll(async () => { for (const a of apps) await a.close(); });
+
+  for (const locale of ['zh-Hant', 'en'] as Locale[]) {
+    it(`${locale}: same diagram and exported wire routes as V2's power example, in the power view`, async () => {
+      const app = await openApp({ locale });
+      apps.push(app);
+      await app.createProject('power');
+      const v2 = convertProject(await app.eval(() => projectData()));
+      const v2svg = await app.eval(() => exportSvgDocument(false).source) as string;
+      const v2data = v2.designs[0].data as BlockDiagram;
+      expect(v2data.view).toBe('power');
+
+      setLocale(locale);
+      const made = functionDesign.create({ template: 'power-starter' });
+      expect(made.name).toBe(v2.designs[0].name);
+      // on purpose: V2 left the 12 V input at its default role "load"; the template calls it a source (3.27c)
+      expect(made.data.blocks[0].role).toBe('source');
+      const fixed = { ...v2data, blocks: v2data.blocks.map((b, i) => (i === 0 ? { ...b, role: 'source' } : b)) };
+      if (locale === 'zh-Hant') {
+        expect(shape(made.data)).toEqual(shape(fixed));
+        expect(wirePaths(v2svg)).toHaveLength(v2data.wires.length);
+        expect(wirePaths(exportSvg(made.data).source)).toEqual(wirePaths(v2svg));
+      } else {
+        // V2 grows auto-sized blocks to fit the longer English figures (h 140 / 160, ports move
+        // with them); the V3 template keeps one geometry for both languages (known difference, 3.27c)
+        const flat = (x: BlockDiagram) => ({ ...x, blocks: x.blocks.map(b => ({ ...b, h: 0, ports: b.ports.map(p => ({ ...p, t: 0 })) })) });
+        expect(shape(flat(made.data))).toEqual(shape(flat(fixed)));
+      }
     }, 60000);
   }
 });

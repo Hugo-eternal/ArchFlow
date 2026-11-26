@@ -275,5 +275,15 @@
   "power.wire.voltage": "電壓",
   "power.wire.current": "電流",
   "power.wire.unit": "電流單位",
-  "power.wire.show": "在圖面顯示電壓 / 電流"
+  "power.wire.show": "在圖面顯示電壓 / 電流",
+  "template.power.starter.input.partNumber": "電源輸入",
+  "template.power.starter.main.title": "主電源",
+  "template.power.starter.buck.partNumber": "降壓 5 V",
+  "template.power.starter.lowNoise.title": "低雜訊",
+  "template.power.starter.periph.partNumber": "周邊負載",
+  "template.power.starter.mcu.partNumber": "微控制器",
+  "template.power.starter.heading": "入門電源樹",
+  "template.power.starter.hint": "一路輸入、一級降壓、兩個負載；點方塊可改電壓、電流與效率標註。",
+  "template.power.starter.name": "分散式電源架構",
+  "template.power.starter.label": "入門電源樹"
 }

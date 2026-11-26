@@ -75,6 +75,39 @@ describe('metric strip vs V2.10.1 export (golden power)', () => {
   });
 });
 
+describe('power view export vs V2.10.1 (golden power)', () => {
+  it('wire labels, metric strips and block titles where V2 drew them', () => {
+    const d = goldenPower(), v2 = v2Elements().filter(e => e.tag === 'text');
+    const doc = new DOMParser().parseFromString(exportSvg(d, { footer: functionDesign.blockFooter, decorate: functionDesign.decorate }).source, 'image/svg+xml');
+    const v3 = [...doc.querySelectorAll('text')].map(x => ({ text: x.textContent!, x: Number(x.getAttribute('x')), y: Number(x.getAttribute('y')), central: x.getAttribute('dominant-baseline') === 'central', size: Number(x.getAttribute('font-size')) }));
+    const at = (text: string, ok: (c: (typeof v3)[number]) => boolean) => v3.some(c => c.text === text && ok(c));
+    for (const w of d.wires) {
+      const e = v2.find(x => x.text?.startsWith(w.name));
+      expect(at(e!.text, c => Math.abs(c.x - Number(e!.x)) <= 1 && Math.abs(c.y - Number(e!.y)) <= 1), e!.text).toBe(true);
+    }
+    // the title line: V2 baseline − 0.38 em is V3's central y (the second line differs, see handoff 3.27c)
+    for (const b of d.blocks) {
+      const e = v2.find(x => x.text === b.partNumber)!;
+      expect(at(b.partNumber, c => c.central && Math.abs(c.y - (Number(e.y) - 0.38 * Number(e['font-size']))) <= 1.5), b.partNumber).toBe(true);
+    }
+    for (const k of ['電壓', '電流', '效率']) expect(v3.filter(c => c.text === k)).toHaveLength(v2.filter(e => e.text === k).length);
+  });
+});
+
+describe('role colours (power view)', () => {
+  const accent = (src: string) => [...src.matchAll(/<path d="M[^"]*H[^"]*" stroke="([^"]+)"/g)].map(m => m[1]);
+  it('the accent bar follows the role unless the block has its own accent; not in the function view', () => {
+    let d = m.emptyDiagram('power');
+    d = m.addBlock(d, { ...m.makeBlock(d, { x: 0, y: 0 }), id: 'S', role: 'source' }).data;
+    d = m.addBlock(d, { ...m.makeBlock(d, { x: 300, y: 0 }), id: 'L', role: 'load' }).data;
+    d = m.addBlock(d, { ...m.makeBlock(d, { x: 600, y: 0 }), id: 'C', role: 'load', style: { accent: '#123456' } }).data;
+    const tokens = fs.readFileSync(path.join(ROOT, 'src/styles/tokens.css'), 'utf8');
+    const tok = (n: string) => tokens.match(new RegExp(`--${n}: (#[0-9A-F]{6})`, 'i'))![1];
+    expect(accent(exportSvg(d).source)).toEqual([tok('role-source'), tok('role-load'), '#123456']);
+    expect(accent(exportSvg(d, { view: 'function' }).source)).toEqual([tok('block-accent'), tok('block-accent'), '#123456']);
+  });
+});
+
 describe('values', () => {
   it('currents are stored in A and shown in the chosen unit', () => {
     expect(shownValue('current', { value: '0.25', show: true, unit: 'mA' })).toBe('250');

@@ -1,0 +1,379 @@
+{
+ "name": "@i18n:template.power.starter.name",
+ "camera": {
+  "x": 26.737704918032787,
+  "y": 276.22131147540983,
+  "z": 0.7065573770491803
+ },
+ "data": {
+  "view": "power",
+  "blocks": [
+   {
+    "id": "xxxttm3y3o",
+    "x": 40,
+    "y": 200,
+    "w": 240,
+    "h": 120,
+    "title": "DC 12 V",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.starter.input.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xw99n3gyj2",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "12",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "source"
+   },
+   {
+    "id": "xuolbaz5k3",
+    "x": 360,
+    "y": 200,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.starter.main.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.starter.buck.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x13qrttcto",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xpybgxnjxk",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "5",
+      "show": true
+     },
+     "current": {
+      "value": "2",
+      "show": true
+     },
+     "efficiency": {
+      "value": "90",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xksqn364iq",
+    "x": 700,
+    "y": 60,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.starter.lowNoise.title",
+    "subtitle": "",
+    "partNumber": "LDO 3.3 V",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xfsi1kptmp",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xkfcb61fnu",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "3.3",
+      "show": true
+     },
+     "current": {
+      "value": "0.5",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "x3lqj2lomt",
+    "x": 700,
+    "y": 340,
+    "w": 240,
+    "h": 120,
+    "title": "5 V",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.starter.periph.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x1v1bzzn5y",
+      "name": "VDD",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "5",
+      "show": true
+     },
+     "current": {
+      "value": "1",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xv064jbbcu",
+    "x": 1020,
+    "y": 60,
+    "w": 240,
+    "h": 120,
+    "title": "3.3 V",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.starter.mcu.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xuw28cd6fw",
+      "name": "VDD",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F6FA",
+     "border": "#B4C3D3",
+     "accent": "#2B5C8A",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "3.3",
+      "show": true
+     },
+     "current": {
+      "value": "0.2",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "load"
+   }
+  ],
+  "wires": [
+   {
+    "id": "x03twte0ye",
+    "a": {
+     "block": "xxxttm3y3o",
+     "port": "xw99n3gyj2"
+    },
+    "b": {
+     "block": "xuolbaz5k3",
+     "port": "x13qrttcto"
+    },
+    "name": "12 V",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x2manvwxq6",
+    "a": {
+     "block": "xuolbaz5k3",
+     "port": "xpybgxnjxk"
+    },
+    "b": {
+     "block": "xksqn364iq",
+     "port": "xfsi1kptmp"
+    },
+    "name": "5V0",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xaq4fq6ekg",
+    "a": {
+     "block": "xuolbaz5k3",
+     "port": "xpybgxnjxk"
+    },
+    "b": {
+     "block": "x3lqj2lomt",
+     "port": "x1v1bzzn5y"
+    },
+    "name": "5V0",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xfn3kv6m98",
+    "a": {
+     "block": "xksqn364iq",
+     "port": "xkfcb61fnu"
+    },
+    "b": {
+     "block": "xv064jbbcu",
+     "port": "xuw28cd6fw"
+    },
+    "name": "3V3",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   }
+  ],
+  "junctions": [],
+  "texts": [
+   {
+    "id": "xqmob2pmab",
+    "text": "@i18n:template.power.starter.heading",
+    "x": 40,
+    "y": -70,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "xh02wkx5op",
+    "text": "@i18n:template.power.starter.hint",
+    "x": 40,
+    "y": -34,
+    "w": 760,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "frames": [],
+  "grid": {
+   "size": 10,
+   "show": true,
+   "snap": true
+  },
+  "wirePresets": [],
+  "presentationClean": false,
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  },
+  "portLabels": "inside"
+ }
+}

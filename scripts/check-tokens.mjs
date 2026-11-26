@@ -52,6 +52,7 @@ const PAIRS = [
   // wires (3.19)
   ['--wire-label', '--wire-label-halo', 4.5], ['--junction-fill', '--color-board', 3],
   ['--part-stroke', '--color-board', 3], ['--part-label', '--color-board', 4.5],
+  ...['source', 'converter', 'distribution', 'load'].map(r => [`--role-${r}`, '--block-fill', 3]),
   ['--metric-key', '--metric-strip', 4.5], ['--metric-value', '--metric-strip', 4.5], ['--metric-unit', '--metric-strip', 4.5], ['--metric-empty', '--metric-strip', 4.5],
   ['--conn-num', '--color-surface', 4.5], ['--conn-name-both', '--color-board', 4.5],
   ...['unknown', 'negative', 'core', 'io', 'logic', 'mid', 'high'].map(b => [`--rail-${b}`, '--rail-surface', 4.5]),

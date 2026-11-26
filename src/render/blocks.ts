@@ -103,7 +103,8 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
 
   return h('g', {
     class: `af-block${isPart ? ' af-part' : ''}${opts.selected?.has(b.id) ? ' is-selected' : ''}${b.locked ? ' is-locked' : ''}`,
-    'data-block': b.id, style: styleOf(b),
+    // power view: the accent bar follows the power role unless the block has its own accent (3.27c)
+    'data-block': b.id, 'data-role': d.view === 'power' && !isPart && b.role ? b.role : undefined, style: styleOf(b),
   }, [
     isPart ? null : h('rect', { class: 'af-block-body', x: r2(b.x), y: r2(b.y), width: r2(b.w), height: r2(b.h), rx: 7 }),
     isPart ? null : h('path', { class: 'af-block-accent', d: `M${r2(b.x + 5)},${r2(b.y + 2)}H${r2(b.x + b.w - 5)}` }),

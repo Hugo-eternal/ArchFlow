@@ -275,5 +275,15 @@
   "power.wire.voltage": "Voltage",
   "power.wire.current": "Current",
   "power.wire.unit": "Current unit",
-  "power.wire.show": "Show voltage / current on the diagram"
+  "power.wire.show": "Show voltage / current on the diagram",
+  "template.power.starter.input.partNumber": "Power input",
+  "template.power.starter.main.title": "Main rail",
+  "template.power.starter.buck.partNumber": "Buck 5 V",
+  "template.power.starter.lowNoise.title": "Low noise",
+  "template.power.starter.periph.partNumber": "Peripheral load",
+  "template.power.starter.mcu.partNumber": "Microcontroller",
+  "template.power.starter.heading": "Starter power tree",
+  "template.power.starter.hint": "One input, one buck stage, two loads. Click a block to edit its voltage, current and efficiency notes.",
+  "template.power.starter.name": "Distributed power architecture",
+  "template.power.starter.label": "Starter power tree"
 }
