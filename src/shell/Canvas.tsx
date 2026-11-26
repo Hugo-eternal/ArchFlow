@@ -1,7 +1,7 @@
 // The block-diagram canvas: one <svg>. The drawing is render/* VNodes mounted on every change
 // (the draft while dragging); pointer input goes to interaction/gestures, the wheel zooms.
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import { t } from '../core/i18n';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { t, type MessageKey } from '../core/i18n';
 import { backgroundOf } from '../core/camera';
 import { gridSize } from '../core/grid';
 import { blocksLayer } from '../render/blocks';
@@ -80,6 +80,7 @@ export function Canvas({ shell }: { shell: Shell }) {
     svg.dataset.invalid = String(invalidCount(routes));
   }, [shell, version]);
 
+  if (shell.module?.canvas) return <DrawingCanvas shell={shell} />;
   if (!shell.isBlockDiagram) return <div className="af-canvas af-canvas-empty">{t('canvas.unsupported')}</div>;
 
   return (
@@ -97,5 +98,63 @@ export function Canvas({ shell }: { shell: Shell }) {
     >
       <g ref={layerRef} className="af-world" />
     </svg>
+  );
+}
+
+/**
+ * The canvas of a design that draws itself (DesignModule.canvas: schedule). Drag pans, the wheel
+ * zooms; editing on the drawing arrives with the design's editing step (3.29).
+ */
+function DrawingCanvas({ shell }: { shell: Shell }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const layerRef = useRef<SVGGElement>(null);
+  const pan = useRef<{ x: number; y: number; cam: { x: number; y: number; z: number } } | null>(null);
+  const [error, setError] = useState<MessageKey | null>(null);
+  const version = useVersion(shell.store) + useVersion(shell.ui) * 1e-6;
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const size = () => {
+      shell.setViewport({ w: svg.clientWidth, h: svg.clientHeight });
+      if (shell.pendingFit && svg.clientWidth > 0) { shell.pendingFit = false; shell.fitView(); }
+    };
+    const ro = new ResizeObserver(size);
+    ro.observe(svg);
+    size();
+    const wheel = (e: WheelEvent) => { e.preventDefault(); const p = pointer(svg, { ...e, button: 0 }); shell.gestures.wheel(e.deltaY, p); };
+    svg.addEventListener('wheel', wheel, { passive: false });
+    return () => { ro.disconnect(); svg.removeEventListener('wheel', wheel); };
+  }, [shell]);
+
+  useLayoutEffect(() => {
+    const layer = layerRef.current, m = shell.module;
+    if (!layer || !m?.canvas) return;
+    const out = m.canvas.render(shell.store.data(shell.store.activeDesignId), { selected: new Set(), measure: shell.measure });
+    const c = shell.camera;
+    layer.setAttribute('transform', `translate(${r2(c.x)},${r2(c.y)}) scale(${c.z})`);
+    layer.replaceChildren(...(out.node ? mount(h('g', {}, [out.node])).childNodes : []));
+    setError(out.error ?? null);
+    svgRef.current!.dataset.grid = 'false';
+  }, [shell, version]);
+
+  return (
+    <>
+      <svg
+        ref={svgRef}
+        className="af-canvas"
+        role="img"
+        aria-label={shell.store.activeDesign?.name ?? t('canvas.label')}
+        tabIndex={0}
+        onPointerDown={e => { const svg = svgRef.current!; svg.setPointerCapture(e.pointerId); svg.focus(); pan.current = { x: e.clientX, y: e.clientY, cam: { ...shell.camera } }; }}
+        onPointerMove={e => { const p = pan.current; if (p) shell.store.setCamera({ ...p.cam, x: p.cam.x + e.clientX - p.x, y: p.cam.y + e.clientY - p.y }); }}
+        onPointerUp={e => { pan.current = null; const svg = svgRef.current!; if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); }}
+        onPointerCancel={() => { pan.current = null; }}
+        onContextMenu={e => e.preventDefault()}
+      >
+        <g ref={layerRef} className="af-world" />
+      </svg>
+      {error && <p className="af-canvas-error" role="alert">{t(error)}</p>}
+    </>
   );
 }

@@ -150,3 +150,38 @@
 .af-conn-more { font-weight: 600; }
 .af-conn-name { fill: var(--part-label); font-family: var(--font-ui); font-size: 11.5px; }
 .af-conn-name.is-both { fill: var(--conn-name-both); font-size: 10.5px; }
+
+/* schedule timeline (designs/schedule/render.ts; V2 drawEdges L688 / export L754, "engineering blue") */
+.af-schedule text { font-family: var(--font-ui); }
+.af-sched-link-line { fill: none; stroke: var(--sched-line); stroke-width: 2px; stroke-linejoin: round; }
+.af-sched-link-arrow { fill: none; stroke: var(--sched-line); stroke-width: 1.5px; }
+.af-sched-link.is-branch .af-sched-link-line { stroke: var(--sched-branch); }
+.af-sched-link.is-branch .af-sched-link-arrow { stroke: var(--sched-branch); }
+.af-sched-link.is-selected .af-sched-link-line { stroke: var(--selection-stroke); stroke-width: 3px; }
+.af-sched-link.is-selected .af-sched-link-arrow { stroke: var(--selection-stroke); }
+.af-sched-interval rect { fill: var(--sched-card); stroke: var(--sched-border); }
+.af-sched-interval text { fill: var(--sched-ink); }
+.af-sched-stem { fill: none; stroke: var(--sched-accent); stroke-width: 1.5px; stroke-linejoin: round; }
+.af-sched-tick { stroke: var(--sched-border); stroke-width: 2px; }
+.af-sched-tick.is-open { stroke-dasharray: 4 4; }
+.af-sched-fork { fill: var(--sched-badge); stroke: var(--sched-branch); stroke-width: 1.5px; }
+.af-sched-fork-label { fill: var(--sched-branch); font-size: 11px; }
+.af-sched-dot { fill: var(--sched-accent); stroke: var(--sched-ring); stroke-width: 3px; }
+.af-sched-dot.is-fork { fill: var(--sched-branch); }
+.af-sched-dot.is-selected { fill: var(--selection-stroke); }
+.af-sched-milestone { fill: var(--sched-milestone); stroke: var(--sched-ring); stroke-width: 2px; }
+.af-sched-card-body { fill: var(--sched-card); stroke: var(--sched-border); stroke-width: 1.5px; }
+.af-sched-title { fill: var(--sched-ink); font-weight: 700; }
+.af-sched-note { fill: var(--sched-muted); font-weight: 400; }
+.af-sched-rule { stroke: var(--sched-border); }
+.af-sched-date { fill: var(--sched-ink); font-weight: 500; }
+.af-sched-chip rect { fill: var(--sched-badge); }
+.af-sched-chip text { fill: var(--sched-ink); font-size: 11px; font-weight: 600; }
+.af-sched-chip.is-doing rect { fill: var(--sched-doing); }
+.af-sched-chip.is-doing text { fill: var(--sched-on-status); }
+.af-sched-chip.is-done rect { fill: var(--sched-done); }
+.af-sched-chip.is-done text { fill: var(--sched-on-status); }
+.af-sched-chip.is-milestone text { fill: var(--sched-milestone); }
+.af-sched-chip.is-issue rect { fill: var(--sched-issue-tint); }
+.af-sched-chip.is-issue text { fill: var(--sched-issue); }
+.af-sched-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 2px; }

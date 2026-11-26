@@ -44,6 +44,10 @@ export interface DesignModule<D = Design['data']> {
   /** 'canvas' = the shared canvas / inspector; 'embedded' = a vendor editor in an iframe (3.30–3.31). */
   editor: 'canvas' | 'embedded';
 
+  // ---- canvas designs that draw themselves (schedule, 3.28)
+  /** Drawing and extent of a canvas design that is not a block diagram. */
+  canvas?: CanvasDrawing<D>;
+
   // ---- canvas designs that are block diagrams ('function'; function / power view in BlockDiagram.view)
   /** True when the design uses the shared block-diagram canvas and router. Defaults for new
    *  blocks / wires follow the diagram's `view` (3.26c), not the design type. */
@@ -62,6 +66,14 @@ export interface DesignModule<D = Design['data']> {
   afterMove?(d: BlockDiagram, movedIds: readonly string[]): BlockDiagram;
   /** Export additions (and the bounds they need). */
   exportExtras?: SvgExportOptions['extras'];
+}
+
+/** A canvas design's own drawing (the shell pans / zooms it and fits its bounds). */
+export interface CanvasDrawing<D> {
+  /** The drawing in diagram coordinates; `error` set when the data cannot be laid out. */
+  render(data: D, opts: { selected: ReadonlySet<string>; measure: import('../render/texts').Measure }): { node: VNode | null; error?: MessageKey };
+  /** Extent of the drawing (fit view), or null when empty. */
+  bounds(data: D): { x: number; y: number; w: number; h: number } | null;
 }
 
 export class DesignRegistry {

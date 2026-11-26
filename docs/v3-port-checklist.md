@@ -17,7 +17,7 @@
 | `commit` | 1535 |  | script#2 |  | ☑ | `interaction/commit.prepare`：normalize + protect（3.11 / 3.20） |
 | `commit` | 1648 | `↶` 回退 | script#2 | Restore automatic-layout wording, direction and density. A separate preflight makes its scope explicit. | ✂ | 由 `history.batch()` 取代；失敗時自動回滾 |
 | `commit` | 3564 | `*` 取代 | af15-ux2 | run fn as one undoable step even if it calls commit() internally | ✂ | 由 `history.batch()` 取代 |
-| `fit` | 601 |  | script#1 |  | ☐ | 時程 fit → `designs/schedule` 提供 `FitOptions` / 外框（3.28）；共用計算為 `core/camera.fit` |
+| `fit` | 601 |  | script#1 |  | ☑ | 時程 fit → `designs/schedule` 提供 `FitOptions` / 外框（3.28）；共用計算為 `core/camera.fit` 3.28 `scheduleDesign.canvas.bounds` + `Shell.fitView` |
 | `fit` | 632 |  | script#1 |  | ☐ | 同上（3.28） |
 | `fit` | 669 |  | script#1 |  | ☐ | 同上（3.28） |
 | `fit` | 3587 | `*` 取代 | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ✂ | 暫停 fit 的技巧不需要：V3 的 fit 只在命令 `view.fit` 執行時才呼叫 |
@@ -108,8 +108,8 @@
 | `graphBranch` | 3594 |  | af15-ux2 | insert-after: the selected task's previous single successor now follows the new task | ☐ |  |
 | `graphCreateTask` | 800 |  | script#1 | Newly appended tasks inherit their parent's independent branch color. | ☐ |  |
 | `openInlineTime` | 670 |  | script#1 |  | ☐ |  |
-| `scheduleLabel` | 624 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☐ |  |
-| `scheduleTask` | 619 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☐ |  |
+| `scheduleLabel` | 624 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☑ | 3.28 `dates.interval`（修正 inclusive 無作用） |
+| `scheduleTask` | 619 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☑ | 3.28 範本與 `emptySchedule` |
 | `taskHeight` | 721 | `*` 取代 | script#1 | V7: independent axis-point dragging, quiet inspector, reusable templates and typography. | ☐ |  |
 
 ## export
@@ -285,7 +285,7 @@
 | 目標 | 行 | 標記 | 位置 | 目的 | 狀態 | 備註 |
 |---|---|---|---|---|---|---|
 | `render` | 596 |  | script#1 | **時程**：自行繪製任務卡（不呼叫 base） | ⤳ |  |
-| `render` | 609 |  | script#1 | 確保時程 model 帶 `schedule=true` | ☐ |  |
+| `render` | 609 |  | script#1 | 確保時程 model 帶 `schedule=true` | ☑ | ✂ V3 以設計類型判斷，不需要 `schedule=true` 標記（3.28） |
 | `render` | 626 |  | script#1 | **時程**：單軸時間軸版本（取代 596） | ⤳ |  |
 | `render` | 648 |  | script#1 | 重繪前關閉行內時間編輯器 | ☐ |  |
 | `render` | 691 |  | script#1 | **時程**：任務框可拖曳 | ☐ |  |
@@ -344,8 +344,8 @@
 | `drawEdges` | 597 |  | script#1 | **時程**：三代時程連線繪製，各自不呼叫 base（前兩代為死碼） | ⤳ |  |
 | `drawEdges` | 629 |  | script#1 | **時程**：三代時程連線繪製，各自不呼叫 base（前兩代為死碼） | ⤳ |  |
 | `drawEdges` | 668 |  | script#1 | **時程**：三代時程連線繪製，各自不呼叫 base（前兩代為死碼） | ⤳ |  |
-| `drawEdges` | 688 |  | script#1 | **時程**：固定任務點繞軸（目前實際使用的時程版本） | ☐ |  |
-| `drawEdges` | 733 |  | script#1 | 時程連線主題、軸點標示 | ☐ |  |
+| `drawEdges` | 688 |  | script#1 | **時程**：固定任務點繞軸（目前實際使用的時程版本） | ☑ | 3.28 `designs/schedule/render.ts` `linksLayer` / `pointsLayer` |
+| `drawEdges` | 733 |  | script#1 | 時程連線主題、軸點標示 | ☑ | 3.28 間隔標籤寬度與字級（配色主題在 3.29） |
 | `drawEdges` | 795 |  | script#1 | 時程分支顏色 | ☐ |  |
 | `drawEdges` | 849 |  | script#1 | 時程線寬 | ☐ |  |
 | `drawEdges` | 1124 |  | script#2 | 繪製前清理接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次；繪製時不再修改資料 |

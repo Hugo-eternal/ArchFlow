@@ -1,0 +1,217 @@
+{
+ "name": "@i18n:template.schedule.starter.name",
+ "camera": {
+  "x": -0.6111111111110503,
+  "y": 326.9222222222222,
+  "z": 0.6402777777777777
+ },
+ "anchor": "2026-03-10",
+ "data": {
+  "tasks": [
+   {
+    "id": "xhvdbzazo5",
+    "title": "@i18n:template.schedule.starter.plan.title",
+    "ref": "T01",
+    "note": "@i18n:template.schedule.starter.plan.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-02",
+     "end": "2026-03-06"
+    },
+    "status": "done",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xrn0m2imsa",
+    "title": "@i18n:template.schedule.starter.design.title",
+    "ref": "T02",
+    "note": "@i18n:template.schedule.starter.design.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-09",
+     "end": "2026-03-20"
+    },
+    "status": "doing",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x0f87rrxl4",
+    "title": "@i18n:template.schedule.starter.build.title",
+    "ref": "T03",
+    "note": "@i18n:template.schedule.starter.build.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-23",
+     "end": "2026-04-10"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x4899g6389",
+    "title": "@i18n:template.schedule.starter.test.title",
+    "ref": "T04",
+    "note": "@i18n:template.schedule.starter.test.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-13",
+     "end": "2026-04-24"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xbbf9fz5d5",
+    "title": "@i18n:template.schedule.starter.launch.title",
+    "ref": "T05",
+    "note": "@i18n:template.schedule.starter.launch.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-27",
+     "end": "2026-04-30"
+    },
+    "status": "todo",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   }
+  ],
+  "links": [
+   {
+    "id": "xmgo8z6mts",
+    "from": "xhvdbzazo5",
+    "to": "xrn0m2imsa",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xt8nzeobjq",
+    "from": "xrn0m2imsa",
+    "to": "x0f87rrxl4",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xqd3s8hr78",
+    "from": "x0f87rrxl4",
+    "to": "x4899g6389",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xy1oscu6rq",
+    "from": "x4899g6389",
+    "to": "xbbf9fz5d5",
+    "days": {
+     "mode": "auto"
+    }
+   }
+  ],
+  "texts": [
+   {
+    "id": "xpwk28jd33",
+    "text": "@i18n:template.schedule.starter.heading",
+    "x": 70,
+    "y": -90,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "xjodr32nci",
+    "text": "@i18n:template.schedule.starter.hint",
+    "x": 70,
+    "y": -52,
+    "w": 900,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "rules": {
+   "endpoint": "start",
+   "count": "difference"
+  },
+  "appearance": {
+   "theme": "blue",
+   "title": 16,
+   "body": 12,
+   "time": 12
+  },
+  "snap": {
+   "enabled": true,
+   "range": 12
+  },
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  }
+ }
+}

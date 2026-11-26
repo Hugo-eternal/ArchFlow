@@ -1,4 +1,4 @@
-// module: shell — V3 src/shell/controller.ts without a browser: commands registered once in the
+// module: shell, designs:schedule — V3 src/shell/controller.ts without a browser: commands registered once in the
 // registry, edits as single undo steps, design list commands, dialogs and refusal messages.
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Shell as BaseShell, refusalText } from '../../src/shell/controller';
@@ -99,5 +99,20 @@ describe('shell controller', () => {
     expect(r.ok).toBe(false);
     expect(s.message).toMatchObject({ key: 'file.legacyFormat', tone: 'error' });
     expect(s.screen).toBe('start');
+  });
+});
+
+describe('shell: schedule designs (3.28)', () => {
+  it('a schedule from its template: drawn by the module, fitted, block commands off', async () => {
+    const s = new Shell();
+    s.newProject('P', { type: 'schedule', template: 'starter' });
+    expect(s.module?.type).toBe('schedule');
+    expect(s.isBlockDiagram).toBe(false);
+    for (const id of ['block.add', 'export.open', 'view.mode.toggle']) expect(s.enabled(id), id).toBe(false);
+    expect(s.enabled('view.fit')).toBe(true);
+    s.setViewport({ w: 1000, h: 600 });
+    await s.run('view.fit');
+    expect(s.camera.z).not.toBe(1);
+    expect(s.store.dirty).toBe(false);
   });
 });

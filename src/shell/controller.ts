@@ -141,6 +141,13 @@ export class Shell {
   viewCentre(): { x: number; y: number } { return toWorld(this.camera, { x: this.viewport.w / 2, y: this.viewport.h / 2 }); }
 
   fitView(): void {
+    const drawing = this.module?.canvas;
+    if (drawing) {
+      const b = drawing.bounds(this.store.data(this.store.activeDesignId));
+      const c = b && fit(b, this.viewport);
+      if (c) this.store.setCamera(c);
+      return;
+    }
     if (!this.isBlockDiagram) return;
     const d = this.data();
     const rects = [...d.blocks, ...d.frames, ...d.texts.map(x => ({ x: x.x, y: x.y, w: x.w, h: 40 }))];

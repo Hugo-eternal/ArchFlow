@@ -147,3 +147,25 @@ test('the shell follows the interface language', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('button', { name: 'Create project' })).toBeVisible();
 });
+
+test('a project schedule from its template is drawn and can be panned', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: '專案時程' }).check();
+  await expect(page.getByRole('radio', { name: '範本：入門專案時程' })).toBeChecked();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await expect(page.getByRole('button', { name: /產品開發流程/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(5);
+  await expect(page.locator('svg.af-canvas .af-sched-interval')).toHaveCount(4);
+  await expect(page.locator('svg.af-canvas')).toContainText('專案時程');
+  await expect(page.getByRole('button', { name: '新增方塊' })).toBeDisabled();
+  const before = await page.locator('svg.af-canvas .af-world').getAttribute('transform');
+  const box = (await page.locator('svg.af-canvas').boundingBox())!;
+  await page.mouse.move(box.x + 200, box.y + 200);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 260, box.y + 240);
+  await page.mouse.up();
+  expect(await page.locator('svg.af-canvas .af-world').getAttribute('transform')).not.toBe(before);
+  expect(errors).toEqual([]);
+});
