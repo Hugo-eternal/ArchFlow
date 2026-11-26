@@ -107,6 +107,10 @@
 - [x] 3.43d `interaction` / `model`：線路路徑手動編輯——選取線段的平移把手（L1552–L1562）、轉角把手（L2141）、Shift 拖曳接腳沿方塊邊移動（L1553 / V1 project）（L3）
 - [x] 3.43d2 `render` / `inspector` / `interaction`：線路標籤手動標記的拖曳 / 旋轉與屬性欄位（L1802 / L1805 / L1885）、標籤與相鄰同名接腳去重（L3099 dedupeLabels）、新方塊沿用多數方塊的名稱位置與編號規則（L3097 adopt）（L3）
 - [x] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
+- [x] 3.43f 非覆寫功能區塊盤點（`docs/v3-port-checklist.md` 新增一節；L0）
+- [ ] 3.43g `designs/*`：補齊範本——方塊圖兩個 10 模組範例（V2 LIB.function0 / function1）、電源樹兩個 9 節點範例（LIB.current0 / current1）、時程「產品開發時程」與「工程變更流程」（PLANS.product / eco）（L2；golden 以 V2 實際產出比對，同 3.25–3.28 的做法）
+- [ ] 3.43h `designs/schedule`：時程總覽——總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）（V2 af16 overview L3430）（L2）
+- [ ] 3.43i `designs/function`：零件數值——自動補單位、常用值清單（V2 L4267 normValue）（L2）
 - [ ] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4）
@@ -122,8 +126,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43a–3.43e 完成，移植清單 ☐ 0
-- **下一步**：3.43 最後檢查（L3）。移植清單已無 ☐；還要做 3.43b 交接提到的補查：移植清單只追蹤「覆寫鏈」，V2 中**不是覆寫**的功能區塊（以 `/* ---------- … ---------- */`、`/* ---------------- … ---------------- */` 標題標示，集中在 legacy L2884–L3720 的 af15 / af16 區塊與 L3720 之後的 af15-ux2 / v2.x 區塊）不會出現在清單裡。逐一列出這些區塊標題（`grep -n "/\* -\{4,\}" legacy/app.zh-Hant.html`），對每個區塊判斷 V3 是否已有、刻意不做（寫理由）或缺少；結果寫成 `docs/v3-port-checklist.md` 新的一節「非覆寫功能區塊」。若發現缺少且屬於使用者會用到的功能，先寫進清單並排新步驟，不要在 3.43 內一次做完。完成後 3.43 才勾選。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43f 補查完成，找出 3 組清單外缺口（3.43g–3.43i）
+- **下一步**：3.43g 補齊範本。V2 範本資料：方塊圖 / 電源 `LIB`（legacy L3290–L3335 附近，`LIB.function0`、`function1`、`current0`、`current1`，每筆 [key, x, y, w, h, role, zh, en, sub zh, sub en, ports, metrics]，`build(base, kind)` L3344 組裝）；時程 `PLANS.product` / `PLANS.eco`（L3454 起，`scheduleExample` L3489 組裝、日期以 `anchor` 對齊到今天所在週）。做法同 3.25 / 3.27c / 3.28：在 V2 中實際選該範本建立專案，取出 model 經 `tests/tools/v2-to-v3.ts` 轉成 V3，存成 `src/designs/<x>/templates/*.json`（文字改 `@i18n:` 鍵），golden 比對 V2 產出。啟動畫面 / 新增設計對話框的範本選擇（`DesignChooser`）要能列出多個範本（目前 function 有 2 個、schedule 1 個）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -260,7 +264,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.43e：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 58 檔 470 項、Playwright 37 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L0（3.43f：只改文件）；前一步 3.43e 為 L3 全數通過。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

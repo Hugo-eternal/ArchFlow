@@ -384,3 +384,30 @@
 | `notify` | 3126 |  | af15-ux2 |  | ☑ | 3.23 `Shell.notify` + i18n（V2 只修正文字，V3 文字直接寫對） |
 | `updateWorkspaceUI` | 595 |  | script#1 |  | ☑ | 依設計類型切換介面：`Shell.module` + AppBar / CommandBar（3.39） |
 | `window.alert` | 2332 |  | archflow-known-fixes-v3 |  | ☑ | 3.23 開檔錯誤以 `openMessage` 顯示在狀態列，不再暫時替換 alert |
+
+## 非覆寫功能區塊（3.43f 補查）
+
+上表只追蹤覆寫鏈。V2 另有一批**不是覆寫**的功能區塊（`<script>` 內以 `/* ---------- … ---------- */` 標題標示；L5330–L10380 是 vendor 與工具 bundle，已整份保留，不在此列）。逐區塊判斷：
+
+| 區塊（legacy 行） | 內容 | 狀態 | V3 / 備註 |
+|---|---|---|---|
+| L2884 ports | 接腳一覽表（功能 / 電源方塊） | ☑ | 屬性面板接腳欄位（3.21）；V3 一次編輯一個接腳，Shift 拖曳移動（3.43d） |
+| L2963 wires | 線條樣式在屬性面板 | ☑ | inspector「線條」群組（3.21） |
+| L2995 blocks | 字級步進、套用到全部、字體捷徑 | ☑ | 「尺寸與字級」群組、套用到全部方塊、版面與字體（3.41b / 3.43c） |
+| L3012 text boxes | 文字框字級、顏色、粗斜體 | ☑ | inspector 文字框欄位（3.21） |
+| L3385–L3417 schedule persistence / checks / canvas / task | 任務狀態、里程碑、衝突與逾期標示 | ☑ | `schedule/dates.issues`、`schedule/render`、`schedule/fields`（3.28–3.29） |
+| L3430 schedule overview | 時程總覽：總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）、一鍵順延 | ☐ | **缺口 → 3.43h**：V3 只有任務 / 連線數與「一鍵順延」（3.43b） |
+| L3452 schedule templates | 三個時程範本：簡單（規劃→發行）、產品開發時程（含韌體 / 法規分支）、工程變更流程 | ☐ | **缺口 → 3.43g**：V3 只有簡單範本 |
+| L3328–L3369 function / power templates（LIB） | 每種方塊圖三個範本：入門 + 兩個 10 模組範例；電源三個：入門 + 兩個 9 節點範例 | ☐ | **缺口 → 3.43g**：V3 只有入門方塊圖與入門電源樹 |
+| L3566–L3602 | 新任務預設、接續插入、順延衝突 | ☑ | 3.43b |
+| L3609–L3681 | 畫布上雙擊直接改名稱 / 日期 / 說明、Enter / F2 改名、Tab 新增任務、雙擊方塊文字行內改名、雙擊線路標籤改名 | ✂ | V3 在屬性面板編輯（3.43b / 3.43d2 已記錄為差異；SVG 畫布沒有 contentEditable，需要另做浮動輸入框，若要可另排） |
+| L3681 workflow order, duration, quick fixes | 欄位順序、工期、設定日期 | ☑ | 3.43b |
+| L3705 hints | 狀態提示 | ☑ | 空白提示、說明對話框（3.40 / 3.41） |
+| L3923–L4124 symbols / badges / library / voltage / saved / exports | 零件符號、電壓徽章、零件庫插入、電壓設定、存檔與匯出 | ☑ | `designs/function/parts` 與 rails（3.25） |
+| L4142 drop a library part | （空區塊，沒有程式） | ✂ | 無內容 |
+| L4146 / L4177 free connection / join a wire | 零件端點連到方塊 / 線上 | ☑ | 3.43e |
+| L4267 values | 零件數值：自動補單位（Ω / F / H / A / Hz / V、u→µ、k/M）、常用值清單 | ☐ | **缺口 → 3.43i**：V3 的 `PARTS` 有常用值資料但沒有提供選擇，也不補單位 |
+| L4307–L4423 frames | 區域外框：成員、繪製、選取、連同內容移動、四角縮放、編輯、按鍵 | ☑ | 3.26a（「拖曳畫出新外框」改為依選取建立，3.26a 已記錄） |
+| L4470–L4576 connectors | 連接器幾何、繪製、面板、貼齊框邊、存檔 | ☑ | 3.26b |
+| L10466–L10483 V2.8 | 每接腳名稱位置、字級欄位移到「文字」 | ☑ | port.label（3.18 / 3.21）、3.43c |
+| L10556–L10619 V2.9 / V2.10 | 自由尺寸、無名稱、Alt 拖曳、文字隨方塊縮放、名稱置中 | ☑ | 3.43c（Alt 拖曳改為：自由尺寸開關 + 拖曳右下角） |
