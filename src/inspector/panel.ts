@@ -207,7 +207,7 @@ export class InspectorPanel<D, S> {
         r.id = `${id}-${i}`;
         r.addEventListener('change', () => { if (r.checked) this.commitNow(b, r.value); });
         const span = this.el('span');
-        span.textContent = t(opt.label);
+        span.textContent = opt.text ?? t(opt.label);
         label.append(r, span);
         fs.append(label);
         return r;
@@ -274,7 +274,7 @@ export class InspectorPanel<D, S> {
         for (const opt of f.options) {
           const o = this.el('option');
           o.value = opt.value;
-          o.textContent = t(opt.label);
+          o.textContent = opt.text ?? t(opt.label);
           c.append(o);
         }
         return c;
@@ -297,6 +297,7 @@ export class InspectorPanel<D, S> {
         const c = this.el('input');
         c.type = 'text';
         if (f.kind === 'text') {
+          if (f.inputType === 'date') c.type = 'date';
           if (f.maxLength !== undefined) c.maxLength = f.maxLength;
           if (f.placeholder) c.placeholder = t(f.placeholder);
         }

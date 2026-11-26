@@ -12,6 +12,9 @@ import type { Measure } from '../../render/texts';
 import { h, r2, type VNode } from '../../render/vnode';
 import { formatDate, interval, issues, visibleDates } from './dates';
 import { linkRoute, stem, TASK_W, type ScheduleLayout, type TaskBox } from './layout';
+import { geometry, lookStyle, themeOf } from './appearance';
+
+const hex = (v: string | undefined) => (v && /^#[0-9a-f]{6}$/i.test(v) ? v : undefined);
 
 export interface ScheduleRenderOptions {
   selected?: ReadonlySet<string>;
@@ -49,9 +52,11 @@ function linksLayer(d: ScheduleData, lay: ScheduleLayout, o: ScheduleRenderOptio
     const cls = `af-sched-link${cross ? ' is-branch' : ''}${sel ? ' is-selected' : ''}`;
     const e = r.end, k = e.dir;
     const label = intervalLabel(d, l.id);
+    // a link's own branch colour (V2 L795; otherwise every link uses the theme's line colour)
+    const own = hex(l.branchColor), paint = own ? `stroke:${own}` : undefined;
     out.push(h('g', { class: cls, 'data-link': l.id }, [
-      h('path', { class: 'af-sched-link-line', d: r.d }),
-      h('path', { class: 'af-sched-link-arrow', d: `M${e.x - 17 * k},${e.y - 4} L${e.x - 10 * k},${e.y} L${e.x - 17 * k},${e.y + 4}` }),
+      h('path', { class: 'af-sched-link-line', d: r.d, style: paint }),
+      h('path', { class: 'af-sched-link-arrow', d: `M${e.x - 17 * k},${e.y - 4} L${e.x - 10 * k},${e.y} L${e.x - 17 * k},${e.y + 4}`, style: paint }),
       label ? (() => {
         const size = lay.text.time, w = Math.max(88, label.length * size * 0.65 + 22), hh = Math.max(28, size + 12);
         const ty = r.label.y + 4;
@@ -70,14 +75,15 @@ function pointsLayer(d: ScheduleData, lay: ScheduleLayout, o: ScheduleRenderOpti
   for (const task of d.tasks) {
     const b = lay.boxes.get(task.id)!, { x, y } = b.axis, kids = lay.children.get(task.id) ?? [];
     const sel = o.selected?.has(task.id), path = stem(b);
-    if (path) out.push(h('path', { class: `af-sched-stem${sel ? ' is-selected' : ''}`, d: path }));
+    const own = hex(task.branchColor);
+    if (path) out.push(h('path', { class: `af-sched-stem${sel ? ' is-selected' : ''}`, 'data-task-stem': task.id, d: path, style: own ? `stroke:${own}` : undefined }));
     if (!lay.parent.has(task.id)) out.push(h('line', { class: 'af-sched-tick', x1: x - 60, y1: y, x2: x - 10, y2: y }));
     if (!kids.length) out.push(h('line', { class: 'af-sched-tick is-open', x1: x + 10, y1: y, x2: x + 55, y2: y }));
     if (kids.length > 1) {
       out.push(h('circle', { class: 'af-sched-fork', cx: x, cy: y, r: 12 }));
       if (o.canvas) out.push(h('text', { class: 'af-sched-fork-label', x: x + 16, y: y + 27 }, t('schedule.fork', { n: kids.length })));
     }
-    out.push(h('circle', { class: `af-sched-dot${kids.length > 1 ? ' is-fork' : ''}${sel ? ' is-selected' : ''}`, 'data-task-point': task.id, cx: x, cy: y, r: 7 }));
+    out.push(h('circle', { class: `af-sched-dot${kids.length > 1 ? ' is-fork' : ''}${sel ? ' is-selected' : ''}`, 'data-task-point': task.id, cx: x, cy: y, r: 7, style: own && !sel ? `fill:${own}` : undefined }));
     if (task.milestone) out.push(h('path', { class: 'af-sched-milestone', d: `M${x} ${y - 9}L${x + 9} ${y}L${x} ${y + 9}L${x - 9} ${y}Z` }));
   }
   return out;
@@ -111,7 +117,7 @@ function cardNode(d: ScheduleData, task: Task, b: TaskBox, lay: ScheduleLayout, 
   const s = lay.text, m = b.metrics, dates = visibleDates(task);
   const title = task.title || t('schedule.untitled');
   const kids: (VNode | null)[] = [
-    h('rect', { class: 'af-sched-card-body', x: r2(b.x), y: r2(b.y), width: TASK_W, height: r2(b.h), rx: 4 }),
+    h('rect', { class: 'af-sched-card-body', x: r2(b.x), y: r2(b.y), width: TASK_W, height: r2(b.h), rx: geometry(d.appearance).radius }),
     h('text', { class: 'af-sched-title', x: r2(b.x + 13), y: r2(b.y + m.header / 2 + s.title * 0.35), style: `font-size:${s.title}px` }, fit(title, TASK_W - 26, s.title, true, o.measure)),
     task.note ? h('text', { class: 'af-sched-note', x: r2(b.x + 13), y: r2(b.y + m.header + s.body * 1.15), style: `font-size:${s.body}px` }, fit(task.note, TASK_W - 26, s.body, false, o.measure)) : null,
   ];
@@ -131,7 +137,7 @@ function cardNode(d: ScheduleData, task: Task, b: TaskBox, lay: ScheduleLayout, 
 
 /** The whole timeline: links, axis points, then cards on top (V2 export order). */
 export function scheduleLayer(d: ScheduleData, lay: ScheduleLayout, o: ScheduleRenderOptions): VNode {
-  return h('g', { class: 'af-schedule' }, [
+  return h('g', { class: 'af-schedule', 'data-sched-theme': themeOf(d.appearance), style: lookStyle(d.appearance) }, [
     h('g', { class: 'af-sched-axis' }, [...linksLayer(d, lay, o), ...pointsLayer(d, lay, o)]),
     ...d.tasks.map(task => cardNode(d, task, lay.boxes.get(task.id)!, lay, o)),
   ]);

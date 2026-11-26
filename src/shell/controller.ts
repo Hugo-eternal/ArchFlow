@@ -7,8 +7,9 @@ import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
 import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, gridSize } from '../core/grid';
-import type { BlockDiagram, BlockView, Camera, DesignType } from '../io/schema-types';
-import type { DesignModule, DesignRegistry } from '../designs/module';
+import type { BlockDiagram, BlockView, Camera, Design, DesignType } from '../io/schema-types';
+import type { CanvasSelection, DesignModule, DesignRegistry } from '../designs/module';
+import type { Selection } from '../core/store';
 import { ModelError } from '../model/types';
 import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
@@ -165,6 +166,28 @@ export class Shell {
     this.notify(view === 'power' ? 'view.mode.powerOn' : 'view.mode.functionOn');
   }
 
+  /** The selected item of a canvas design that draws itself (null when none or gone after undo). */
+  get item(): CanvasSelection | null {
+    const sel = this.store.selection as CanvasSelection | null, c = this.module?.canvas;
+    if (!sel || !c) return null;
+    return !c.exists || c.exists(this.store.data(this.store.activeDesignId), sel) ? sel : null;
+  }
+
+  selectItem(sel: CanvasSelection | null): void { this.store.select(sel as Selection); this.ui.emit(); }
+
+  /** One undo step on the active design's data (canvas designs that draw themselves). */
+  editDesign(fn: (d: Design['data']) => Design['data']): boolean {
+    const id = this.store.activeDesignId, before = this.store.data(id);
+    let after: Design['data'];
+    try { after = fn(before); } catch (e) {
+      const key = this.module?.canvas?.refusal?.(e);
+      if (key) { this.notify(key, undefined, 'error'); return false; }
+      throw e;
+    }
+    if (JSON.stringify(after) !== JSON.stringify(before)) this.store.commit(after);
+    return true;
+  }
+
   edit(fn: (d: BlockDiagram) => BlockDiagram): CommitResult {
     const r = commitEdit(this.store, fn);
     if (!r.ok) this.refused(r);
@@ -272,6 +295,6 @@ export function shellCommands(): Command<Shell>[] {
       run: s => s.setView(s.view === 'power' ? 'function' : 'power'),
     },
     { id: 'view.toggleInspector', label: 'cmd.toggleInspector', group: 'view', enabled: hasProject, run: s => { s.inspectorOpen = !s.inspectorOpen; s.ui.emit(); } },
-    { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'export' }) },
+    { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && (s.isBlockDiagram || !!s.module?.canvas), run: s => s.openDialog({ kind: 'export' }) },
   ];
 }

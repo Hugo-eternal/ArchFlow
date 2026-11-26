@@ -108,7 +108,8 @@ describe('shell: schedule designs (3.28)', () => {
     s.newProject('P', { type: 'schedule', template: 'starter' });
     expect(s.module?.type).toBe('schedule');
     expect(s.isBlockDiagram).toBe(false);
-    for (const id of ['block.add', 'export.open', 'view.mode.toggle']) expect(s.enabled(id), id).toBe(false);
+    for (const id of ['block.add', 'view.mode.toggle']) expect(s.enabled(id), id).toBe(false);
+    expect(s.enabled('export.open')).toBe(true);
     expect(s.enabled('view.fit')).toBe(true);
     s.setViewport({ w: 1000, h: 600 });
     await s.run('view.fit');

@@ -142,6 +142,26 @@ export function exportSvg(data: BlockDiagram, o: SvgExportOptions = {}): SvgExpo
 }
 
 
+/**
+ * Export a drawing of a canvas design that draws itself (DesignModule.canvas: schedule) — the
+ * same styling as block diagrams; `bounds` already include the design's margins (V2 schedule
+ * export L754: viewBox = graphBounds, width / height rounded up, white background).
+ */
+export function exportDrawing(node: VNode, bounds: Bounds | null, o: { transparent?: boolean; theme?: Theme } = {}): SvgExport {
+  if (!bounds) throw new ExportError('empty');
+  const theme = o.theme ?? 'light';
+  const left = bounds.x, top = bounds.y, width = Math.max(1, Math.ceil(bounds.w)), height = Math.max(1, Math.ceil(bounds.h));
+  const defs: VNode[] = [];
+  const styled = splitDefs(styleDrawing(prune(h('g', { class: 'af-export' }, [node])), theme), defs);
+  const background = o.transparent ? undefined : stylesFor(theme).vars.get('--color-surface');
+  const root = h('svg', { xmlns: SVG_NS, version: '1.1', width, height, viewBox: `${left} ${top} ${width} ${height}` }, [
+    defs.length ? h('defs', {}, defs) : null,
+    background ? h('rect', { x: left, y: top, width, height, fill: background }) : null,
+    ...styled.children,
+  ]);
+  return { source: toMarkup(root), width, height, viewBox: [left, top, width, height], defs, content: styled.children, background };
+}
+
 /** Download name of an export: "<project> - <design>.<ext>" made file-system safe. */
 export function exportFileName(projectName: string, designName: string, ext: 'svg' | 'png'): string {
   const base = [projectName.trim(), designName.trim()].filter(Boolean).join(' - ');

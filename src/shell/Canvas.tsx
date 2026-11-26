@@ -11,6 +11,8 @@ import { framesLayer } from '../render/frames';
 import { h, mount, r2, type VNode } from '../render/vnode';
 import type { PointerIn } from '../interaction/gestures';
 import type { Shell } from './controller';
+import type { CanvasSelection } from '../designs/module';
+import type { Design } from '../io/schema-types';
 import { useVersion } from './use-store';
 
 const pointer = (svg: SVGSVGElement, e: { clientX: number; clientY: number; button: number; shiftKey: boolean; metaKey: boolean; ctrlKey: boolean; altKey: boolean }): PointerIn => {
@@ -101,16 +103,32 @@ export function Canvas({ shell }: { shell: Shell }) {
   );
 }
 
+/** data-* attributes of an element and its ancestors up to the drawing (nearest wins). */
+function attrsOf(el: Element | null, stop: Element): Record<string, string | undefined> {
+  const out: Record<string, string | undefined> = {};
+  for (let e = el; e && e !== stop; e = e.parentElement) for (const [k, v] of Object.entries((e as HTMLElement | SVGElement).dataset ?? {})) if (!(k in out)) out[k] = v;
+  return out;
+}
+
+type Drag =
+  | { kind: 'pan'; x: number; y: number; cam: { x: number; y: number; z: number } }
+  | { kind: 'item'; x: number; y: number; start: Design['data']; sel: CanvasSelection; handle?: string; moved: boolean; draft: Design['data']; guides?: { x: number | null; y: number | null } };
+
 /**
- * The canvas of a design that draws itself (DesignModule.canvas: schedule). Drag pans, the wheel
- * zooms; editing on the drawing arrives with the design's editing step (3.29).
+ * The canvas of a design that draws itself (DesignModule.canvas: schedule). Empty space: drag
+ * pans; an item: click selects, drag moves it (drawn as a draft, one undo step on release,
+ * Escape cancels); arrow keys nudge the selection, Delete removes it; the wheel zooms.
  */
 function DrawingCanvas({ shell }: { shell: Shell }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const layerRef = useRef<SVGGElement>(null);
-  const pan = useRef<{ x: number; y: number; cam: { x: number; y: number; z: number } } | null>(null);
+  const drag = useRef<Drag | null>(null);
+  const [, redraw] = useState(0);
   const [error, setError] = useState<MessageKey | null>(null);
-  const version = useVersion(shell.store) + useVersion(shell.ui) * 1e-6;
+  // re-render (and so redraw: the layout effect below has no deps) on any store / shell change
+  useVersion(shell.store);
+  useVersion(shell.ui);
+  const drawing = shell.module?.canvas;
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -124,32 +142,82 @@ function DrawingCanvas({ shell }: { shell: Shell }) {
     size();
     const wheel = (e: WheelEvent) => { e.preventDefault(); const p = pointer(svg, { ...e, button: 0 }); shell.gestures.wheel(e.deltaY, p); };
     svg.addEventListener('wheel', wheel, { passive: false });
-    return () => { ro.disconnect(); svg.removeEventListener('wheel', wheel); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape' && drag.current?.kind === 'item') { e.preventDefault(); e.stopPropagation(); drag.current = null; redraw(n => n + 1); } };
+    window.addEventListener('keydown', esc, true);
+    return () => { ro.disconnect(); svg.removeEventListener('wheel', wheel); window.removeEventListener('keydown', esc, true); };
   }, [shell]);
 
   useLayoutEffect(() => {
-    const layer = layerRef.current, m = shell.module;
-    if (!layer || !m?.canvas) return;
-    const out = m.canvas.render(shell.store.data(shell.store.activeDesignId), { selected: new Set(), measure: shell.measure });
+    const layer = layerRef.current;
+    if (!layer || !drawing) return;
+    const g = drag.current, item = shell.item;
+    const data = g?.kind === 'item' && g.moved ? g.draft : shell.store.data(shell.store.activeDesignId);
+    const out = drawing.render(data, { selected: new Set(item ? [item.id] : []), measure: shell.measure, guides: g?.kind === 'item' ? g.guides : undefined });
     const c = shell.camera;
     layer.setAttribute('transform', `translate(${r2(c.x)},${r2(c.y)}) scale(${c.z})`);
     layer.replaceChildren(...(out.node ? mount(h('g', {}, [out.node])).childNodes : []));
     setError(out.error ?? null);
     svgRef.current!.dataset.grid = 'false';
-  }, [shell, version]);
+  });
+
+  const down = (e: React.PointerEvent<SVGSVGElement>) => {
+    const svg = svgRef.current!;
+    if (e.button !== 0 && e.button !== 1) return;
+    svg.setPointerCapture(e.pointerId);
+    svg.focus();
+    const hit = e.button === 0 ? drawing?.target?.(attrsOf(e.target as Element, svg)) : null;
+    if (hit) {
+      shell.selectItem(hit.sel);
+      const start = shell.store.data(shell.store.activeDesignId);
+      drag.current = { kind: 'item', x: e.clientX, y: e.clientY, start, sel: hit.sel, handle: hit.handle, moved: false, draft: start };
+    } else {
+      if (e.button === 0 && shell.item) shell.selectItem(null);
+      drag.current = { kind: 'pan', x: e.clientX, y: e.clientY, cam: { ...shell.camera } };
+    }
+  };
+  const move = (e: React.PointerEvent<SVGSVGElement>) => {
+    const g = drag.current;
+    if (!g) return;
+    if (g.kind === 'pan') { shell.store.setCamera({ ...g.cam, x: g.cam.x + e.clientX - g.x, y: g.cam.y + e.clientY - g.y }); return; }
+    if (!g.handle || !drawing?.drag) return;
+    if (!g.moved && Math.hypot(e.clientX - g.x, e.clientY - g.y) < 3) return;
+    const z = shell.camera.z;
+    const r = drawing.drag(g.start, g.sel, g.handle, (e.clientX - g.x) / z, (e.clientY - g.y) / z, { shift: e.shiftKey, alt: e.altKey, zoom: z });
+    g.moved = true; g.draft = r.data; g.guides = r.guides;
+    redraw(n => n + 1);
+  };
+  const up = (e: React.PointerEvent<SVGSVGElement>) => {
+    const g = drag.current;
+    drag.current = null;
+    const svg = svgRef.current!;
+    if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId);
+    if (g?.kind === 'item' && g.moved) shell.editDesign(() => g.draft);
+    redraw(n => n + 1);
+  };
+  const key = (e: React.KeyboardEvent<SVGSVGElement>) => {
+    const sel = shell.item;
+    if (!sel || !drawing || e.ctrlKey || e.metaKey || e.altKey) return;
+    const steps: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const step = steps[e.key], k = e.shiftKey ? 10 : 1;
+    if (step && drawing.nudge) { e.preventDefault(); e.stopPropagation(); shell.editDesign(d => drawing.nudge!(d, sel, step[0] * k, step[1] * k)); }
+    else if ((e.key === 'Delete' || e.key === 'Backspace') && drawing.remove) { e.preventDefault(); e.stopPropagation(); if (shell.editDesign(d => drawing.remove!(d, sel))) shell.selectItem(null); }
+    else if (e.key === 'Escape' && !drag.current) { e.stopPropagation(); shell.selectItem(null); }
+  };
 
   return (
     <>
       <svg
         ref={svgRef}
         className="af-canvas"
-        role="img"
-        aria-label={shell.store.activeDesign?.name ?? t('canvas.label')}
+        role="application"
+        aria-label={drawing?.label ? t(drawing.label) : t('canvas.label')}
+        aria-roledescription={shell.store.activeDesign?.name}
         tabIndex={0}
-        onPointerDown={e => { const svg = svgRef.current!; svg.setPointerCapture(e.pointerId); svg.focus(); pan.current = { x: e.clientX, y: e.clientY, cam: { ...shell.camera } }; }}
-        onPointerMove={e => { const p = pan.current; if (p) shell.store.setCamera({ ...p.cam, x: p.cam.x + e.clientX - p.x, y: p.cam.y + e.clientY - p.y }); }}
-        onPointerUp={e => { pan.current = null; const svg = svgRef.current!; if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); }}
-        onPointerCancel={() => { pan.current = null; }}
+        onPointerDown={down}
+        onPointerMove={move}
+        onPointerUp={up}
+        onPointerCancel={() => { drag.current = null; redraw(n => n + 1); }}
+        onKeyDown={key}
         onContextMenu={e => e.preventDefault()}
       >
         <g ref={layerRef} className="af-world" />

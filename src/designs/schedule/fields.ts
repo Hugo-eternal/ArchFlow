@@ -1,0 +1,202 @@
+// designs/schedule — properties panel. Task: name, note, above / below the axis, time (none /
+// range / deadline), status, milestone, predecessor, branch colour, card position; link: auto /
+// manual days, which dates are compared, colour; nothing selected: counting rules, appearance
+// (theme, font sizes, custom look) and axis-point snapping.
+//
+// V2 (legacy/app.zh-Hant.html): task / link panels L631 / L673 / L741 (quiet panel), inline days
+// L647, card position L693, af16 status / milestone / duration L3413–L3424, branch colour L797,
+// appearance region L768–L792 / L816, snapping L2349.
+import type { ScheduleAppearance, ScheduleCustomLook, ScheduleData, ScheduleTheme, Task } from '../../io/schema-types';
+import { t, type MessageKey } from '../../core/i18n';
+import type { FieldSpec } from '../../inspector/fields';
+import type { CanvasSelection } from '../module';
+import { day, interval, issues } from './dates';
+import { descendants, setParent, setTimeType, updateLink, updateTask, MAX_TASKS } from './edit';
+import { customOf, geometry, setBranchColor, setCustom, setSizes, setTheme, THEME_SWATCH, THEMES, themeOf, useCustom } from './appearance';
+import { textSizes } from './layout';
+
+type F = FieldSpec<ScheduleData, CanvasSelection>;
+const opts = <V extends string>(prefix: string, values: readonly V[]) => values.map(value => ({ value, label: `${prefix}.${value}` as MessageKey }));
+
+const task = (d: ScheduleData, s: CanvasSelection): Task => {
+  const x = d.tasks.find(v => v.id === s.id);
+  if (!x) throw new Error(`no task ${s.id}`);
+  return x;
+};
+const link = (d: ScheduleData, s: CanvasSelection) => {
+  const x = d.links.find(v => v.id === s.id);
+  if (!x) throw new Error(`no link ${s.id}`);
+  return x;
+};
+const validDate = (v: string): MessageKey | null => (v === '' || day(v) !== null ? null : 'schedule.error.date');
+
+/** A read-only line of text in the panel. */
+const note = (key: string, text: (d: ScheduleData, s: CanvasSelection) => string, cls = 'af-field-note'): F => ({
+  kind: 'custom', key, label: 'schedule.note', visible: (d, s) => !!text(d, s),
+  render: ({ doc, data, sel }) => { const p = doc.createElement('p'); p.className = cls; p.textContent = text(data, sel); return p; },
+});
+
+function taskFields(d: ScheduleData, s: CanvasSelection): F[] {
+  const me = d.tasks.find(x => x.id === s.id);
+  const after = me ? descendants(d, me.id) : new Set<string>();
+  const parents = d.tasks.filter(x => x.id !== s.id && !after.has(x.id));
+  const time = (dd: ScheduleData, ss: CanvasSelection) => task(dd, ss).time;
+  return [
+    { kind: 'text', key: 'title', label: 'schedule.task.title', maxLength: 200, get: (dd, ss) => task(dd, ss).title, set: (dd, ss, v) => updateTask(dd, ss.id, { title: v }) },
+    { kind: 'text', key: 'note', label: 'schedule.task.note', maxLength: 200, get: (dd, ss) => task(dd, ss).note, set: (dd, ss, v) => updateTask(dd, ss.id, { note: v }) },
+    { kind: 'segmented', key: 'side', label: 'schedule.task.side', options: opts('schedule.side', ['top', 'bottom'] as const), get: (dd, ss) => task(dd, ss).side, set: (dd, ss, v) => updateTask(dd, ss.id, { side: v as Task['side'] }) },
+    {
+      kind: 'group', key: 'time', label: 'schedule.group.time', open: true, fields: [
+        { kind: 'segmented', key: 'timeType', label: 'schedule.task.timeType', options: opts('schedule.time', ['none', 'range', 'deadline'] as const), get: (dd, ss) => time(dd, ss).type, set: (dd, ss, v) => updateTask(dd, ss.id, { time: setTimeType(task(dd, ss), v as Task['time']['type']) }) },
+        {
+          kind: 'text', inputType: 'date', key: 'start', label: 'schedule.date.start', visible: (dd, ss) => time(dd, ss).type === 'range', validate: validDate,
+          get: (dd, ss) => { const x = time(dd, ss); return x.type === 'range' ? x.start : ''; },
+          set: (dd, ss, v) => { const x = time(dd, ss); return x.type === 'range' ? updateTask(dd, ss.id, { time: { ...x, start: v } }) : dd; },
+        },
+        {
+          kind: 'text', inputType: 'date', key: 'end', label: 'schedule.date.end', visible: (dd, ss) => time(dd, ss).type === 'range', validate: validDate,
+          get: (dd, ss) => { const x = time(dd, ss); return x.type === 'range' ? x.end : ''; },
+          set: (dd, ss, v) => { const x = time(dd, ss); return x.type === 'range' ? updateTask(dd, ss.id, { time: { ...x, end: v } }) : dd; },
+        },
+        {
+          kind: 'text', inputType: 'date', key: 'deadline', label: 'schedule.date.deadline', visible: (dd, ss) => time(dd, ss).type === 'deadline', validate: validDate,
+          get: (dd, ss) => { const x = time(dd, ss); return x.type === 'deadline' ? x.date : ''; },
+          set: (dd, ss, v) => updateTask(dd, ss.id, { time: { type: 'deadline', date: v } }),
+        },
+        note('duration', (dd, ss) => {
+          const x = time(dd, ss);
+          if (x.type !== 'range') return '';
+          const a = day(x.start), b = day(x.end);
+          return a !== null && b !== null && b >= a ? t('schedule.duration', { n: b - a + 1 }) : '';
+        }),
+        note('issues', (dd, ss) => issues(dd, task(dd, ss)).map(i => (i.kind === 'overdue' ? t('schedule.issueText.overdue')
+          : i.reason === 'beforeParent' ? t('schedule.issueText.beforeParent', { name: i.parent ?? '' }) : t('schedule.issueText.endsBeforeStart'))).join('\n'), 'af-field-note is-warning'),
+      ],
+    },
+    {
+      kind: 'group', key: 'progress', label: 'schedule.group.progress', open: true, fields: [
+        { kind: 'segmented', key: 'status', label: 'schedule.task.status', options: opts('schedule.status', ['todo', 'doing', 'done'] as const), get: (dd, ss) => task(dd, ss).status, set: (dd, ss, v) => updateTask(dd, ss.id, { status: v as Task['status'] }) },
+        { kind: 'toggle', key: 'milestone', label: 'schedule.task.milestone', get: (dd, ss) => task(dd, ss).milestone, set: (dd, ss, v) => updateTask(dd, ss.id, { milestone: v }) },
+      ],
+    },
+    {
+      kind: 'group', key: 'branch', label: 'schedule.group.branch', fields: [
+        {
+          kind: 'select', key: 'parent', label: 'schedule.task.parent',
+          options: [{ value: '', label: 'schedule.task.noParent' }, ...parents.map(p => ({ value: p.id, label: 'schedule.untitled' as MessageKey, text: p.title || t('schedule.untitled') }))],
+          get: (dd, ss) => dd.links.find(l => l.to === ss.id)?.from ?? '',
+          set: (dd, ss, v) => setParent(dd, ss.id, v),
+        },
+        {
+          kind: 'color', key: 'branchColor', label: 'schedule.task.branchColor', hint: 'schedule.task.branchColorHint', emptyLabel: 'schedule.color.default',
+          fallback: '#245b88', get: (dd, ss) => task(dd, ss).branchColor ?? '',
+          set: (dd, ss, v) => setBranchColor(dd, ss.id, v || null, descendants(dd, ss.id)),
+        },
+        {
+          kind: 'custom', key: 'resetCard', label: 'schedule.task.resetCard',
+          render: ({ doc, apply, data, sel }) => {
+            const b = doc.createElement('button');
+            b.type = 'button';
+            b.className = 'af-field-reset';
+            b.textContent = t('schedule.task.resetCard');
+            const o = task(data, sel).offset;
+            b.disabled = !o.card.x && !o.card.y && !o.axis.x && !o.axis.y;
+            b.addEventListener('click', () => apply(dd => updateTask(dd, sel.id, { offset: { card: { x: 0, y: 0 }, axis: { x: 0, y: 0 } } })));
+            return b;
+          },
+        },
+      ],
+    },
+  ];
+}
+
+function linkFields(): F[] {
+  return [
+    note('route', (d, s) => {
+      const l = link(d, s), a = d.tasks.find(x => x.id === l.from), b = d.tasks.find(x => x.id === l.to);
+      return `${a?.title || t('schedule.untitled')} → ${b?.title || t('schedule.untitled')}`;
+    }),
+    {
+      kind: 'segmented', key: 'mode', label: 'schedule.link.mode', options: opts('schedule.link.mode', ['auto', 'manual'] as const),
+      get: (d, s) => link(d, s).days.mode,
+      set: (d, s, v) => updateLink(d, s.id, { days: v === 'manual' ? { mode: 'manual', value: interval(d, link(d, s)).days ?? 0 } : { mode: 'auto' } }),
+    },
+    {
+      kind: 'number', key: 'days', label: 'schedule.link.days', unit: t('schedule.unit.days'), min: 0, max: 999999, step: 1, visible: (d, s) => link(d, s).days.mode === 'manual',
+      get: (d, s) => { const x = link(d, s).days; return x.mode === 'manual' ? x.value : 0; },
+      set: (d, s, v) => updateLink(d, s.id, { days: { mode: 'manual', value: Math.round(v) } }),
+    },
+    {
+      kind: 'segmented', key: 'fromDate', label: 'schedule.link.fromDate', options: opts('schedule.endpoint', ['start', 'end'] as const),
+      visible: (d, s) => link(d, s).days.mode === 'auto' && d.tasks.find(x => x.id === link(d, s).from)?.time.type === 'range',
+      get: (d, s) => link(d, s).fromDate ?? d.rules.endpoint, set: (d, s, v) => updateLink(d, s.id, { fromDate: v as 'start' | 'end' }),
+    },
+    {
+      kind: 'segmented', key: 'toDate', label: 'schedule.link.toDate', options: opts('schedule.endpoint', ['start', 'end'] as const),
+      visible: (d, s) => link(d, s).days.mode === 'auto' && d.tasks.find(x => x.id === link(d, s).to)?.time.type === 'range',
+      get: (d, s) => link(d, s).toDate ?? d.rules.endpoint, set: (d, s, v) => updateLink(d, s.id, { toDate: v as 'start' | 'end' }),
+    },
+    note('reason', (d, s) => t(`schedule.reason.${interval(d, link(d, s)).reason}` as MessageKey)),
+    {
+      kind: 'color', key: 'linkColor', label: 'schedule.link.color', emptyLabel: 'schedule.color.default', fallback: '#52677e',
+      get: (d, s) => link(d, s).branchColor ?? '',
+      set: (d, s, v) => { const { branchColor: _b, ...rest } = link(d, s); return { ...d, links: d.links.map(l => (l.id === s.id ? (v ? { ...rest, branchColor: v } : rest) : l)) }; },
+    },
+  ];
+}
+
+type Look = keyof ScheduleCustomLook;
+const lookColor = (key: Extract<Look, 'card' | 'border' | 'ink' | 'line'>): F => ({
+  kind: 'color', key: `look-${key}`, label: `schedule.look.${key}` as MessageKey,
+  fallback: '#ffffff',
+  get: d => customOf(d.appearance)[key] ?? THEME_SWATCH[themeOf(d.appearance)][key],
+  set: (d, _s, v) => setCustom(d, { [key]: v }),
+});
+const lookNumber = (key: 'radius' | 'width' | 'lineWidth', min: number, max: number, step: number): F => ({
+  kind: 'number', key: `look-${key}`, label: `schedule.look.${key}` as MessageKey, unit: 'px', min, max, step,
+  get: d => geometry(d.appearance)[key],
+  set: (d, _s, v) => setCustom(d, { [key]: v }),
+});
+const size = (key: 'title' | 'body' | 'time', min: number, max: number): F => ({
+  kind: 'number', key: `size-${key}`, label: `schedule.size.${key}` as MessageKey, unit: 'px', min, max, step: 1,
+  get: d => textSizes(d)[key],
+  set: (d, _s, v) => setSizes(d, { [key]: Math.round(v) } as Partial<ScheduleAppearance>),
+});
+
+function designFields(): F[] {
+  const isCustom = (d: ScheduleData) => !!d.appearance.engineering;
+  return [
+    note('count', d => t('schedule.summary', { tasks: d.tasks.length, links: d.links.length, max: MAX_TASKS })),
+    {
+      kind: 'group', key: 'rules', label: 'schedule.group.rules', open: true, fields: [
+        { kind: 'segmented', key: 'endpoint', label: 'schedule.rules.endpoint', hint: 'schedule.rules.endpointHint', options: opts('schedule.endpoint', ['start', 'end'] as const), get: d => d.rules.endpoint, set: (d, _s, v) => ({ ...d, rules: { ...d.rules, endpoint: v as 'start' | 'end' } }) },
+        { kind: 'segmented', key: 'count', label: 'schedule.rules.count', options: opts('schedule.count', ['difference', 'inclusive'] as const), get: d => d.rules.count, set: (d, _s, v) => ({ ...d, rules: { ...d.rules, count: v as 'difference' | 'inclusive' } }) },
+      ],
+    },
+    {
+      kind: 'group', key: 'appearance', label: 'schedule.group.appearance', open: true, fields: [
+        {
+          kind: 'segmented', key: 'theme', label: 'schedule.look.theme', options: [...opts('schedule.theme', THEMES), { value: 'custom', label: 'schedule.theme.custom' }],
+          get: d => (isCustom(d) ? 'custom' : themeOf(d.appearance)),
+          set: (d, _s, v) => (v === 'custom' ? useCustom(d) : setTheme(d, v as ScheduleTheme)),
+        },
+        size('title', 12, 26), size('body', 10, 18), size('time', 10, 20),
+        ...[lookColor('card'), lookColor('border'), lookColor('ink'), lookColor('line'), lookNumber('radius', 0, 16, 1), lookNumber('width', 1, 4, 0.5), lookNumber('lineWidth', 1, 6, 0.5)]
+          .map(f => ({ ...f, visible: (d: ScheduleData) => isCustom(d) }) as F),
+      ],
+    },
+    {
+      kind: 'group', key: 'snap', label: 'schedule.group.snap', fields: [
+        { kind: 'toggle', key: 'snapOn', label: 'schedule.snap.enabled', hint: 'schedule.snap.hint', get: d => d.snap.enabled, set: (d, _s, v) => ({ ...d, snap: { ...d.snap, enabled: v } }) },
+        { kind: 'number', key: 'snapRange', label: 'schedule.snap.range', unit: 'px', min: 0, max: 50, step: 1, visible: d => d.snap.enabled, get: d => d.snap.range, set: (d, _s, v) => ({ ...d, snap: { ...d.snap, range: Math.round(v) } }) },
+      ],
+    },
+  ];
+}
+
+/** Panel fields for the current selection (kind 'design' = nothing selected). */
+export function scheduleFields(sel: CanvasSelection, d: ScheduleData): F[] {
+  if (sel.kind === 'task') return taskFields(d, sel);
+  if (sel.kind === 'link') return linkFields();
+  return designFields();
+}

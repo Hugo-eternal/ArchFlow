@@ -7,7 +7,7 @@ import { scheduleDesign } from './designs/schedule';
 
 export function createRegistry(): DesignRegistry {
   const r = new DesignRegistry();
-  r.register(functionDesign);
+  r.register(functionDesign as unknown as DesignModule);
   r.register(scheduleDesign as unknown as DesignModule);
   return r;
 }

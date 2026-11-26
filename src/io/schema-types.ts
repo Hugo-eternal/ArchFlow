@@ -189,9 +189,20 @@ export interface ScheduleData {
   links: Link[];                     // V2: edges
   texts: TextBox[];
   rules: { endpoint: 'start' | 'end'; count: 'difference' | 'inclusive' };   // V2: scheduleRules
-  appearance: Record<string, unknown>;   // V2: scheduleAppearance (+ engineering styles), shape fixed in designs/schedule
+  appearance: ScheduleAppearance;   // V2: scheduleAppearance + engineeringStyle / savedEngineeringStyle / customStyleActive
   theme?: Theme;
   snap: { enabled: boolean; range: number };
+}
+
+export type ScheduleTheme = 'blue' | 'mint' | 'slate' | 'amber';
+/** Custom card colours / corner radius / border width (V2 engineeringStyle). */
+export interface ScheduleCustomLook { card?: string; border?: string; ink?: string; line?: string; radius?: number; width?: number; lineWidth?: number }
+export interface ScheduleAppearance {
+  theme?: ScheduleTheme;               // default 'blue'
+  title?: number; body?: number; time?: number;   // font sizes (12–26 / 10–18 / 10–20)
+  engineering?: ScheduleCustomLook;    // the custom look in use
+  savedCustom?: ScheduleCustomLook;    // the kept custom slot (V2 savedEngineeringStyle)
+  customActive?: boolean;
 }
 
 export type TaskTime =
@@ -214,6 +225,7 @@ export interface Link {
   days: { mode: 'auto' } | { mode: 'manual'; value: number };
   fromDate?: 'start' | 'end';
   toDate?: 'start' | 'end';
+  branchColor?: string;              // V2 edge.branchColor (colour of a branch line)
 }
 
 // ---------------------------------------------------------------- vendor editors (stored as-is)

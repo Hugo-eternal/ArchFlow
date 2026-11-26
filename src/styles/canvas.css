@@ -151,26 +151,27 @@
 .af-conn-name { fill: var(--part-label); font-family: var(--font-ui); font-size: 11.5px; }
 .af-conn-name.is-both { fill: var(--conn-name-both); font-size: 10.5px; }
 
+/* schedule colour themes (V2 scheduleThemes L780–L783): the tokens of one theme replace the --sched-* set */
+[data-sched-theme="mint"] { --sched-card: var(--sched-mint-card); --sched-border: var(--sched-mint-border); --sched-ink: var(--sched-mint-ink); --sched-muted: var(--sched-mint-muted); --sched-badge: var(--sched-mint-badge); --sched-accent: var(--sched-mint-accent); --sched-line: var(--sched-mint-line); --sched-branch: var(--sched-mint-branch); }
+[data-sched-theme="slate"] { --sched-card: var(--sched-slate-card); --sched-border: var(--sched-slate-border); --sched-ink: var(--sched-slate-ink); --sched-muted: var(--sched-slate-muted); --sched-badge: var(--sched-slate-badge); --sched-accent: var(--sched-slate-accent); --sched-line: var(--sched-slate-line); --sched-branch: var(--sched-slate-branch); }
+[data-sched-theme="amber"] { --sched-card: var(--sched-amber-card); --sched-border: var(--sched-amber-border); --sched-ink: var(--sched-amber-ink); --sched-muted: var(--sched-amber-muted); --sched-badge: var(--sched-amber-badge); --sched-accent: var(--sched-amber-accent); --sched-line: var(--sched-amber-line); --sched-branch: var(--sched-amber-branch); }
 /* schedule timeline (designs/schedule/render.ts; V2 drawEdges L688 / export L754, "engineering blue") */
 .af-schedule text { font-family: var(--font-ui); }
-.af-sched-link-line { fill: none; stroke: var(--sched-line); stroke-width: 2px; stroke-linejoin: round; }
-.af-sched-link-arrow { fill: none; stroke: var(--sched-line); stroke-width: 1.5px; }
-.af-sched-link.is-branch .af-sched-link-line { stroke: var(--sched-branch); }
-.af-sched-link.is-branch .af-sched-link-arrow { stroke: var(--sched-branch); }
+.af-sched-link-line { fill: none; stroke: var(--sched-line); stroke-width: var(--sched-link-width); stroke-linejoin: round; }
+.af-sched-link-arrow { fill: none; stroke: var(--sched-line); stroke-width: var(--sched-thin-width); }
 .af-sched-link.is-selected .af-sched-link-line { stroke: var(--selection-stroke); stroke-width: 3px; }
 .af-sched-link.is-selected .af-sched-link-arrow { stroke: var(--selection-stroke); }
 .af-sched-interval rect { fill: var(--sched-card); stroke: var(--sched-border); }
 .af-sched-interval text { fill: var(--sched-ink); }
-.af-sched-stem { fill: none; stroke: var(--sched-accent); stroke-width: 1.5px; stroke-linejoin: round; }
+.af-sched-stem { fill: none; stroke: var(--sched-accent); stroke-width: var(--sched-thin-width); stroke-linejoin: round; }
 .af-sched-tick { stroke: var(--sched-border); stroke-width: 2px; }
 .af-sched-tick.is-open { stroke-dasharray: 4 4; }
 .af-sched-fork { fill: var(--sched-badge); stroke: var(--sched-branch); stroke-width: 1.5px; }
 .af-sched-fork-label { fill: var(--sched-branch); font-size: 11px; }
 .af-sched-dot { fill: var(--sched-accent); stroke: var(--sched-ring); stroke-width: 3px; }
-.af-sched-dot.is-fork { fill: var(--sched-branch); }
 .af-sched-dot.is-selected { fill: var(--selection-stroke); }
 .af-sched-milestone { fill: var(--sched-milestone); stroke: var(--sched-ring); stroke-width: 2px; }
-.af-sched-card-body { fill: var(--sched-card); stroke: var(--sched-border); stroke-width: 1.5px; }
+.af-sched-card-body { fill: var(--sched-card); stroke: var(--sched-border); stroke-width: var(--sched-card-width); }
 .af-sched-title { fill: var(--sched-ink); font-weight: 700; }
 .af-sched-note { fill: var(--sched-muted); font-weight: 400; }
 .af-sched-rule { stroke: var(--sched-border); }
@@ -185,3 +186,4 @@
 .af-sched-chip.is-issue rect { fill: var(--sched-issue-tint); }
 .af-sched-chip.is-issue text { fill: var(--sched-issue); }
 .af-sched-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 2px; }
+.af-sched-guide { stroke: var(--selection-stroke); stroke-width: 1px; stroke-dasharray: 4 4; }

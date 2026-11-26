@@ -163,6 +163,7 @@ export const blockDiagramSchema: Schema<BlockDiagram> = obj<BlockDiagram>({
   groups: opt(arr(group, FILE_LIMITS.frames)),
 });
 
+const hexColor: Schema<string> = (v, p, out) => { if (typeof v !== 'string' || !/^#[0-9a-f]{6}$/i.test(v)) push(out, p, 'type', '#rrggbb'); };
 const date = (v: unknown, p: string, out: SchemaError[]) => {
   if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v) || Number.isNaN(Date.parse(v + 'T00:00:00Z'))) push(out, p, 'type', 'date');
 };
@@ -174,13 +175,25 @@ const task = obj({
 });
 const link = obj({
   id, from: id, to: id,
-  days: tagged('mode', { auto: obj({ mode: oneOf('auto') }), manual: obj({ mode: oneOf('manual'), value: num({ min: 0, max: 100_000, int: true }) }) }),
-  fromDate: opt(oneOf('start', 'end')), toDate: opt(oneOf('start', 'end')),
+  days: tagged('mode', { auto: obj({ mode: oneOf('auto') }), manual: obj({ mode: oneOf('manual'), value: num({ min: 0, max: 999_999, int: true }) }) }),
+  fromDate: opt(oneOf('start', 'end')), toDate: opt(oneOf('start', 'end')), branchColor: opt(hexColor),
 });
+/** Custom card look (V2 engineeringStyle / savedEngineeringStyle, L798 / L817 / L850). */
+const scheduleCustom = obj({
+  card: opt(hexColor), border: opt(hexColor), ink: opt(hexColor), line: opt(hexColor),
+  radius: opt(num({ min: 0, max: 16 })), width: opt(num({ min: 1, max: 4 })), lineWidth: opt(num({ min: 1, max: 6 })),
+});
+/** Schedule appearance (V2 scheduleAppearance + engineering styles; 3.29). */
+const scheduleAppearance = obj<ScheduleData['appearance']>({
+  theme: opt(oneOf('blue', 'mint', 'slate', 'amber')),
+  title: opt(num({ min: 12, max: 26 })), body: opt(num({ min: 10, max: 18 })), time: opt(num({ min: 10, max: 20 })),
+  engineering: opt(scheduleCustom), savedCustom: opt(scheduleCustom), customActive: opt(bool),
+});
+
 export const scheduleSchema: Schema<ScheduleData> = obj<ScheduleData>({
   tasks: arr(task, FILE_LIMITS.tasks), links: arr(link, FILE_LIMITS.links), texts: arr(textBox, FILE_LIMITS.texts),
   rules: obj({ endpoint: oneOf('start', 'end'), count: oneOf('difference', 'inclusive') }),
-  appearance: jsonObject(200_000), theme: opt(theme),
+  appearance: scheduleAppearance, theme: opt(theme),
   snap: obj({ enabled: bool, range: num({ min: 0, max: 1000 }) }),
 });
 

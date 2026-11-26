@@ -159,7 +159,7 @@ test('a project schedule from its template is drawn and can be panned', async ({
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas .af-sched-interval')).toHaveCount(4);
   await expect(page.locator('svg.af-canvas')).toContainText('專案時程');
-  await expect(page.getByRole('button', { name: '新增方塊' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: '新增方塊' })).toHaveCount(0);
   const before = await page.locator('svg.af-canvas .af-world').getAttribute('transform');
   const box = (await page.locator('svg.af-canvas').boundingBox())!;
   await page.mouse.move(box.x + 200, box.y + 200);
@@ -167,5 +167,60 @@ test('a project schedule from its template is drawn and can be panned', async ({
   await page.mouse.move(box.x + 260, box.y + 240);
   await page.mouse.up();
   expect(await page.locator('svg.af-canvas .af-world').getAttribute('transform')).not.toBe(before);
+  expect(errors).toEqual([]);
+});
+
+test('schedule editing: select and rename a task, drag its card (one undo step), add a task, theme, export', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  const tasks = () => page.evaluate(() => (window as unknown as { archflow: { store: { data(id: string): { tasks: { title: string; offset: { card: { x: number } } }[] }; activeDesignId: string } } }).archflow.store.data((window as unknown as { archflow: { store: { activeDesignId: string } } }).archflow.store.activeDesignId).tasks);
+
+  // nothing selected: design-wide settings
+  await expect(panel.getByRole('radio', { name: '含頭尾' })).toBeVisible();
+
+  // click the first card, rename it in the panel
+  const card = page.locator('svg.af-canvas [data-task]').first();
+  await card.click();
+  await expect(card).toHaveClass(/af-sched-card/);
+  const title = panel.getByLabel('任務名稱');
+  await title.fill('需求確認');
+  await title.press('Enter');
+  await expect(page.locator('svg.af-canvas .af-sched-title').first()).toHaveText('需求確認');
+
+  // drag the card: offset changes, one undo step puts it back
+  const box = (await card.boundingBox())!;
+  await page.mouse.move(box.x + 60, box.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 100, box.y + 50, { steps: 4 });
+  await page.mouse.up();
+  expect((await tasks())[0].offset.card.x).not.toBe(0);
+  await page.getByRole('button', { name: '復原' }).click();
+  expect((await tasks())[0].offset.card.x).toBe(0);
+  expect((await tasks())[0].title).toBe('需求確認');
+
+  // add a task after the selection; Delete removes it again
+  const n = (await tasks()).length;
+  await page.getByRole('button', { name: '新增任務' }).click();
+  await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n + 1);
+  await page.locator('svg.af-canvas').focus();
+  await page.keyboard.press('Delete');
+  await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n);
+
+  // theme (nothing selected)
+  await page.keyboard.press('Escape');
+  await panel.getByRole('radio', { name: '系統青' }).check();
+  await expect(page.locator('svg.af-canvas .af-schedule')).toHaveAttribute('data-sched-theme', 'mint');
+
+  await page.getByRole('button', { name: '匯出' }).click();
+  const dlg = page.getByRole('dialog');
+  await expect(dlg.getByRole('radio', { name: /電源檢視/ })).toHaveCount(0);
+  const [svg] = await Promise.all([page.waitForEvent('download'), dlg.getByRole('button', { name: '下載' }).click()]);
+  const source = fs.readFileSync(await svg.path(), 'utf8');
+  expect(source).toContain('>需求確認<');
+  expect(source.toLowerCase()).toContain('fill="#f6faf9"');
   expect(errors).toEqual([]);
 });

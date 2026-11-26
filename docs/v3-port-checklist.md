@@ -120,7 +120,7 @@
 | `exportSvgDocument` | 634 |  | script#1 | **時程**：前兩代時程匯出（不呼叫 base，已被 698 / 754 取代，為死碼） | ⤳ |  |
 | `exportSvgDocument` | 676 |  | script#1 | 時程：分支圖匯出後處理 | ☐ |  |
 | `exportSvgDocument` | 698 |  | script#1 | **時程**：預覽 / PNG / SVG 共用的獨立 SVG（不呼叫 base） | ⤳ |  |
-| `exportSvgDocument` | 754 |  | script#1 | **時程**：套用外觀與字型的匯出（取代 698） | ☐ |  |
+| `exportSvgDocument` | 754 |  | script#1 | **時程**：套用外觀與字型的匯出（取代 698） | ☑ | 3.29 `export/svg.exportDrawing` + `canvas.render({ forExport })` |
 | `exportSvgDocument` | 760 |  | script#1 | 時程匯出後處理（色盤） | ☐ |  |
 | `exportSvgDocument` | 1469 |  | script#2 | p13：匯出前重繪連線、套用 clean 簡報樣式 | ☑ | 3.22 `export/svg.ts` 直接用 render 的 VNode 產生，固定為 clean 樣式 |
 | `exportSvgDocument` | 1567 |  | script#2 | 格線：移除格線把手 | ☑ | 3.22 匯出不畫格線把手，無需移除 |
@@ -146,11 +146,11 @@
 | `inspector` | 519 |  | script#1 | 方塊加入「自訂樣式」欄位 | ☐ |  |
 | `inspector` | 599 |  | script#1 | **時程**：整個面板改成任務欄位（不呼叫 base） | ⤳ |  |
 | `inspector` | 631 |  | script#1 | **時程**：連線改為「間隔編輯器」（取代 599 的時程分支） | ⤳ |  |
-| `inspector` | 647 |  | script#1 | **時程**：連線改為行內天數編輯 | ☐ |  |
+| `inspector` | 647 |  | script#1 | **時程**：連線改為行內天數編輯 | ☑ | 3.29 連線欄位（自動 / 自行輸入天數） |
 | `inspector` | 673 |  | script#1 | **時程**：分支圖版本的任務 / 連線面板（再次取代時程分支） | ⤳ |  |
-| `inspector` | 693 |  | script#1 | **時程**：加「任務框位置 / 重設」 | ☐ |  |
-| `inspector` | 741 |  | script#1 | **時程**：「安靜」面板，只留控制項與驗證訊息（再次取代時程分支） | ☐ |  |
-| `inspector` | 770 |  | script#1 | **時程**：移除舊樣式按鈕，改用常駐的外觀區 | ☐ |  |
+| `inspector` | 693 |  | script#1 | **時程**：加「任務框位置 / 重設」 | ☑ | 3.29「重設任務框與圓點位置」 |
+| `inspector` | 741 |  | script#1 | **時程**：「安靜」面板，只留控制項與驗證訊息（再次取代時程分支） | ☑ | 3.29 `designs/schedule/fields.ts` |
+| `inspector` | 770 |  | script#1 | **時程**：移除舊樣式按鈕，改用常駐的外觀區 | ☑ | 3.29 外觀群組（無選取時） |
 | `inspector` | 797 |  | script#1 | **時程**：分支 / 連線配色區 | ⤳ |  |
 | `inspector` | 844 | `↶` 回退 | script#1 | **回退到 797 之前的 alias**（`engineeringBaseInspector`），等於把 797 那層拿掉 | ☐ |  |
 | `inspector` | 1406 |  | script#2 | 線條樣式（ux）面板與選取範圍同步 | ☑ | 3.21 `InspectorPanel.sync()`（store 變更後同步） |
@@ -172,7 +172,7 @@
 | `inspector` | 3125 |  | af15-ux2 | V1.5：線條樣式 / 方塊字型（enhance + 3 層 microtask） | ☐ |  |
 | `inspector` | 3244 |  | af15-ux2 | V1.5：角色配色（enhance + 4 層 microtask） | ☑ | 3.27c 依使用者決定新增角色配色（電源檢視、`data-role` + `--role-*`）；3.27b 查證：此層實際是線路標籤 / 接腳模式工具，不是角色配色；V2.10.1 沒有依角色上色（golden power 的顏色來自外觀預設） |
 | `inspector` | 3509 |  | af15-ux2 | V1.5：範本與時程線條樣式修正（再加 `setTimeout 30`） | ☐ |  |
-| `inspector` | 3703 |  | af15-ux2 | V1.6 時程：工期 / 快速修正（`setTimeout 40、120`） | ☐ |  |
+| `inspector` | 3703 |  | af15-ux2 | V1.6 時程：工期 / 快速修正（`setTimeout 40、120`） | ☑ | 3.29 工期（含首尾）與日期問題提示 |
 | `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☑ | 3.27b `demand` / `load` + 自訂欄位（同步產生，無 setTimeout）；輸入數值自動開啟顯示；可輸入負電壓 |
 | `inspector` | 4108 |  | af15-ux2 | V2.3.0：電壓徽章、箭頭「一鍵套用」 | ☑ | 3.25 `functionDesign.inspectorFields`（零件數值 / 大小 / 方向、電壓標示）；雙向箭頭為共用欄位 `bothEnds` |
 | `inspector` | 10536 |  | af-v280-ux | V2.8：記住區段開合（`setTimeout 0/80/250`） | ☐ |  |
@@ -199,9 +199,9 @@
 | `validateDiagram` | 675 |  | script#1 | 時程：`scheduleGraph`、`graphVersion=1` | ✂ | `scheduleGraph` / `graphVersion` 是版面快取，V3 刪除（plan §2.3） |
 | `validateDiagram` | 694 |  | script#1 | 時程：`cardDx/cardDy`、`graphVersion=2` | ☑ | `io/schema`（3.13）：`task.offset.card` |
 | `validateDiagram` | 737 |  | script#1 | 時程：`axisDx/axisDy`、`graphVersion=3` | ☑ | `io/schema`（3.13）：`task.offset.axis` |
-| `validateDiagram` | 798 |  | script#1 | 時程：`engineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
-| `validateDiagram` | 817 |  | script#1 | 時程：`savedEngineeringStyle` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
-| `validateDiagram` | 850 |  | script#1 | 時程：兩種 style 的 `lineWidth` | ☐ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上 |
+| `validateDiagram` | 798 |  | script#1 | 時程：`engineeringStyle` | ☑ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上；3.29 `scheduleSchema.appearance.engineering` |
+| `validateDiagram` | 817 |  | script#1 | 時程：`savedEngineeringStyle` | ☑ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上；3.29 `appearance.savedCustom` / `customActive` |
+| `validateDiagram` | 850 |  | script#1 | 時程：兩種 style 的 `lineWidth` | ☑ | schema 目前只驗 `appearance` 為 JSON 物件；欄位形狀在 designs/schedule（3.29）補上；3.29 `lineWidth`（1–6） |
 | `validateDiagram` | 1125 |  | script#2 | 清理孤立接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次 |
 | `validateDiagram` | 1199 |  | script#2 | `afCleanRoute`；heading 停用但仍讀得進來 | ✂ | `afCleanRoute` 與 heading 刪除（audit §4.2） |
 | `validateDiagram` | 1297 |  | script#2 | `afLocked`（方塊 / 接腳） | ☑ | `io/schema`（3.13）：方塊 / 接腳 `locked` |
@@ -288,10 +288,10 @@
 | `render` | 609 |  | script#1 | 確保時程 model 帶 `schedule=true` | ☑ | ✂ V3 以設計類型判斷，不需要 `schedule=true` 標記（3.28） |
 | `render` | 626 |  | script#1 | **時程**：單軸時間軸版本（取代 596） | ⤳ |  |
 | `render` | 648 |  | script#1 | 重繪前關閉行內時間編輯器 | ☐ |  |
-| `render` | 691 |  | script#1 | **時程**：任務框可拖曳 | ☐ |  |
-| `render` | 735 |  | script#1 | 時程外觀套用 | ☐ |  |
-| `render` | 759 |  | script#1 | 時程主題 / 字型；移除節點清單的 ref | ☐ |  |
-| `render` | 794 |  | script#1 | 時程分支配色 CSS 變數 | ☐ |  |
+| `render` | 691 |  | script#1 | **時程**：任務框可拖曳 | ☑ | 3.29 `edit.drag`（任務框）+ `DrawingCanvas` |
+| `render` | 735 |  | script#1 | 時程外觀套用 | ☑ | 3.29 `appearance.lookStyle` / 主題 token |
+| `render` | 759 |  | script#1 | 時程主題 / 字型；移除節點清單的 ref | ☑ | 3.29 字級 title / body / time |
+| `render` | 794 |  | script#1 | 時程分支配色 CSS 變數 | ☑ | 3.29 分支色（卡片 / 圓點 / 引線） |
 | `render` | 1122 |  | script#2 | 非拖曳時先清理接點拓撲 | ☑ | `router/junctions.cleanJunctions` 移到提交流程（3.17）；render 不修改資料 |
 | `render` | 1205 |  | script#2 | 重繪後套用時程配色（afPaintSchedule） | ☐ |  |
 | `render` | 1257 |  | script#2 | 功能設計的多接腳版面（af-function-multi） | ☑ | 加大規則 → `model/diagram.growForPorts`（3.12）；多接腳方塊繪製 → `render/blocks`（3.18） |
@@ -346,8 +346,8 @@
 | `drawEdges` | 668 |  | script#1 | **時程**：三代時程連線繪製，各自不呼叫 base（前兩代為死碼） | ⤳ |  |
 | `drawEdges` | 688 |  | script#1 | **時程**：固定任務點繞軸（目前實際使用的時程版本） | ☑ | 3.28 `designs/schedule/render.ts` `linksLayer` / `pointsLayer` |
 | `drawEdges` | 733 |  | script#1 | 時程連線主題、軸點標示 | ☑ | 3.28 間隔標籤寬度與字級（配色主題在 3.29） |
-| `drawEdges` | 795 |  | script#1 | 時程分支顏色 | ☐ |  |
-| `drawEdges` | 849 |  | script#1 | 時程線寬 | ☐ |  |
+| `drawEdges` | 795 |  | script#1 | 時程分支顏色 | ☑ | 3.29 連線 / 任務 `branchColor` |
+| `drawEdges` | 849 |  | script#1 | 時程線寬 | ☑ | 3.29 `--sched-link-width` / `--sched-thin-width` |
 | `drawEdges` | 1124 |  | script#2 | 繪製前清理接點 | ☑ | `router/junctions.cleanJunctions`（3.17），V3 只在提交與載入時執行一次；繪製時不再修改資料 |
 | `drawEdges` | 1171 |  | script#2 | 共用線段合併（afNormalizeSharedBranches） | ✂ | 共用線段合併（afNormalizeSharedBranches）已在 V2 停用 |
 | `drawEdges` | 1187 |  | script#2 | 範本依實際接腳位置對齊 | ☐ |  |

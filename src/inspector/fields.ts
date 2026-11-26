@@ -10,7 +10,8 @@
 import type { MessageKey } from '../core/i18n';
 
 /** An option of a select or segmented control; `label` is an i18n key. */
-export interface FieldOption<V extends string = string> { value: V; label: MessageKey }
+/** `text`: shown as is instead of `t(label)` (user content, e.g. a task name). */
+export interface FieldOption<V extends string = string> { value: V; label: MessageKey; text?: string }
 
 interface Base<D, S> {
   /** Stable id inside one panel (also the DOM id suffix). */
@@ -29,7 +30,11 @@ interface Valued<D, S, V> extends Base<D, S> {
   validate?: (value: V, data: D, sel: S) => MessageKey | null;
 }
 
-export interface TextField<D, S> extends Valued<D, S, string> { kind: 'text'; maxLength?: number; placeholder?: MessageKey }
+export interface TextField<D, S> extends Valued<D, S, string> {
+  kind: 'text'; maxLength?: number; placeholder?: MessageKey;
+  /** 'date': the browser's date input (value "YYYY-MM-DD" or ''). */
+  inputType?: 'date';
+}
 export interface TextareaField<D, S> extends Valued<D, S, string> { kind: 'textarea'; maxLength?: number; rows?: number; placeholder?: MessageKey }
 export interface NumberField<D, S> extends Valued<D, S, number> {
   kind: 'number';

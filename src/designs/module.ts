@@ -27,6 +27,11 @@ export interface DesignCommandContext {
   fitView(): void;
   /** Show a status message. */
   notify(key: MessageKey, vars?: Record<string, string | number>): void;
+  /** Commit an edit of the active design's data as one undo step (canvas designs that draw
+   *  themselves); refusals (DesignModule.canvas.refusal) are shown. Returns false when refused. */
+  editDesign(fn: (d: Design['data']) => Design['data']): boolean;
+  /** Select an item of a canvas design that draws itself. */
+  selectItem(sel: CanvasSelection | null): void;
 }
 
 export interface DesignTemplate { id: string; label: MessageKey }
@@ -68,12 +73,37 @@ export interface DesignModule<D = Design['data']> {
   exportExtras?: SvgExportOptions['extras'];
 }
 
-/** A canvas design's own drawing (the shell pans / zooms it and fits its bounds). */
+/** What is selected on a canvas design that draws itself ('design' = nothing: the design-wide panel). */
+export interface CanvasSelection { kind: string; id: string }
+
+/** A canvas design's own drawing and editing (the shell pans / zooms it, routes pointer and keys). */
 export interface CanvasDrawing<D> {
+  /** Accessible name of the canvas (what it is and how to use it). */
+  label?: MessageKey;
   /** The drawing in diagram coordinates; `error` set when the data cannot be laid out. */
-  render(data: D, opts: { selected: ReadonlySet<string>; measure: import('../render/texts').Measure }): { node: VNode | null; error?: MessageKey };
-  /** Extent of the drawing (fit view), or null when empty. */
+  render(data: D, opts: {
+    selected: ReadonlySet<string>; measure: import('../render/texts').Measure;
+    /** Snap guides while dragging (diagram coordinates). */
+    guides?: { x: number | null; y: number | null };
+    /** The export drawing: no canvas-only marks (status chips, fork labels, selection). */
+    forExport?: boolean;
+  }): { node: VNode | null; error?: MessageKey };
+  /** Extent of the drawing (fit view, export), or null when empty. */
   bounds(data: D): { x: number; y: number; w: number; h: number } | null;
+  /** The item under the pointer, from the data-* attributes of the element hit and its ancestors. */
+  target?(attrs: Readonly<Record<string, string | undefined>>): { sel: CanvasSelection; handle?: string } | null;
+  /** A drag of `handle` by (dx, dy) diagram px from `start` (the result is drawn, committed on release). */
+  drag?(start: D, sel: CanvasSelection, handle: string, dx: number, dy: number, mods: { shift: boolean; alt: boolean; zoom: number }): { data: D; guides?: { x: number | null; y: number | null } };
+  /** Arrow keys on a selection (px; Shift = 10). */
+  nudge?(data: D, sel: CanvasSelection, dx: number, dy: number): D;
+  /** Delete / Backspace on a selection. */
+  remove?(data: D, sel: CanvasSelection): D;
+  /** Does the selected item still exist (after undo)? */
+  exists?(data: D, sel: CanvasSelection): boolean;
+  /** Properties panel: fields for a selection, or for the whole design (kind 'design'). */
+  fields?(sel: CanvasSelection, data: D): FieldSpec<D, CanvasSelection>[];
+  /** Message for an edit the design refused (a limit, a loop), or null for an unexpected error. */
+  refusal?(error: unknown): MessageKey | null;
 }
 
 export class DesignRegistry {

@@ -211,6 +211,7 @@ function convertLink(e: Raw): Link {
   const link: Link = { id: str(e.id), from: str(e.a?.node), to: str(e.b?.node), days: manual ? { mode: 'manual', value: Number(e.manualDays) } : { mode: 'auto' } };
   if (e.fromDate === 'start' || e.fromDate === 'end') link.fromDate = e.fromDate;
   if (e.toDate === 'start' || e.toDate === 'end') link.toDate = e.toDate;
+  if (typeof e.branchColor === 'string' && /^#[0-9a-f]{6}$/i.test(e.branchColor)) link.branchColor = e.branchColor;
   return link;
 }
 

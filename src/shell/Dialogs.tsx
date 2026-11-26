@@ -2,7 +2,7 @@
 // kept inside, Escape to cancel, and focus returned to where it was.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { t, type MessageKey } from '../core/i18n';
-import { exportFileName, exportSvg, type SvgExport } from '../export/svg';
+import { exportDrawing, exportFileName, exportSvg, type SvgExport } from '../export/svg';
 import { fitPage, PAGE_SIZES, DEFAULT_PAGE, type PageSize } from '../export/page';
 import { svgToPng, PNG_SCALES } from '../export/png';
 import { readability } from '../export/readability';
@@ -82,10 +82,20 @@ export function ExportDialog({ shell }: { shell: Shell }) {
   const data = shell.data();
   const exp = useMemo<SvgExport | ExportError>(() => {
     const m = shell.module;
-    try { return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, footer: m?.blockFooter, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
+    try {
+      const drawing = m?.canvas;
+      if (drawing) {
+        // a canvas design that draws itself (schedule): its own drawing and bounds
+        const raw = shell.store.data(shell.store.activeDesignId);
+        const out = drawing.render(raw, { selected: new Set(), measure: shell.measure, forExport: true });
+        if (!out.node) throw new ExportError('empty');
+        return exportDrawing(out.node, drawing.bounds(raw), { transparent });
+      }
+      return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, footer: m?.blockFooter, extras: m?.exportExtras });
+    } catch (e) { if (e instanceof ExportError) return e; throw e; }
   }, [data, view, transparent, shell]);
   const result = exp instanceof ExportError ? null : fitPage(exp, page);
-  const report = result ? readability(data, result, shell.routesFor(data), shell.measure) : null;
+  const report = result && shell.isBlockDiagram ? readability(data, result, shell.routesFor(data), shell.measure) : null;
 
   const run = async () => {
     if (!result) return;
@@ -111,7 +121,7 @@ export function ExportDialog({ shell }: { shell: Shell }) {
               <label key={f}><input type="radio" name="af-export-format" value={f} checked={format === f} onChange={() => setFormat(f)} /><span>{f.toUpperCase()}</span></label>
             ))}
           </fieldset>
-          <fieldset className="af-form-field af-choice">
+          {shell.isBlockDiagram && <fieldset className="af-form-field af-choice">
             <legend>{t('export.view')}</legend>
             {(['function', 'power'] as const).map(v => (
               <label key={v}>
@@ -119,7 +129,7 @@ export function ExportDialog({ shell }: { shell: Shell }) {
                 <span>{t(`view.mode.${v}`)}{v === data.view ? ` ${t('export.view.current')}` : ''}</span>
               </label>
             ))}
-          </fieldset>
+          </fieldset>}
           <label className="af-form-field">
             <span>{t('export.page')}</span>
             <select value={page} onChange={e => setPage(e.target.value as PageSize)}>

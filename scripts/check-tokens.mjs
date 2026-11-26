@@ -53,6 +53,7 @@ const PAIRS = [
   ['--wire-label', '--wire-label-halo', 4.5], ['--junction-fill', '--color-board', 3],
   ['--part-stroke', '--color-board', 3], ['--part-label', '--color-board', 4.5],
   ...['source', 'converter', 'distribution', 'load'].map(r => [`--role-${r}`, '--block-fill', 3]),
+  ...['mint', 'slate', 'amber'].flatMap(t => [[`--sched-${t}-ink`, `--sched-${t}-card`, 4.5], [`--sched-${t}-muted`, `--sched-${t}-card`, 4.5], [`--sched-${t}-border`, `--sched-${t}-card`, 3]]),
   ['--sched-ink', '--sched-card', 4.5], ['--sched-muted', '--sched-card', 4.5], ['--sched-ink', '--sched-badge', 4.5],
   ['--sched-on-status', '--sched-doing', 4.5], ['--sched-on-status', '--sched-done', 4.5], ['--sched-issue', '--sched-issue-tint', 4.5],
   ['--sched-accent', '--color-board', 3], ['--sched-line', '--color-board', 3], ['--sched-border', '--sched-card', 3],

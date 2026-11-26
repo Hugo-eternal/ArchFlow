@@ -3,6 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { t } from '../core/i18n';
 import { blockInspector, type BlockInspector } from '../inspector/common';
+import { InspectorPanel } from '../inspector/panel';
+import type { CanvasSelection } from '../designs/module';
+import type { Design } from '../io/schema-types';
 import type { Shell } from './controller';
 import { useVersion } from './use-store';
 
@@ -17,7 +20,55 @@ const groupStorage = {
   },
 };
 
+/** Panel of a canvas design that draws itself: its fields for the selected item, or design-wide. */
+function DrawingInspector({ shell }: { shell: Shell }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const panel = useRef<InspectorPanel<Design['data'], CanvasSelection> | null>(null);
+  const shown = useRef('');
+  useVersion(shell.ui);
+  useVersion(shell.store);
+  const designId = shell.store.activeDesignId;
+  const data = () => shell.store.data(shell.store.activeDesignId);
+  const current = (): CanvasSelection => shell.item ?? { kind: 'design', id: '' };
+  /** Show the fields of the current selection (rebuild), or just refresh the values. */
+  const refresh = (p: InspectorPanel<Design['data'], CanvasSelection>) => {
+    const sel = current(), key = `${sel.kind}:${sel.id}`;
+    if (key === shown.current) { p.sync(); return; }
+    shown.current = key;
+    const fields = shell.module?.canvas?.fields;
+    p.show(fields ? fields(sel, data()) : [], sel);
+  };
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const p = new InspectorPanel<Design['data'], CanvasSelection>(ref.current, { data, commit: edit => ({ ok: shell.editDesign(edit) }), groupState: groupStorage });
+    panel.current = p;
+    shown.current = '';
+    refresh(p);
+    // an item removed by an edit or undo is never synced: the panel switches first
+    const off = shell.store.subscribe(() => refresh(p));
+    return () => { off(); p.destroy(); panel.current = null; };
+  }, [shell, designId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const sel = current();
+  useEffect(() => { if (panel.current) refresh(panel.current); }, [`${sel.kind}:${sel.id}`]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return <div ref={ref} />;
+}
+
 export function InspectorPane({ shell }: { shell: Shell }) {
+  if (shell.module?.canvas) {
+    return (
+      <aside className="af-inspector-pane" aria-label={t('inspector.title')} hidden={!shell.inspectorOpen}>
+        <h2 className="af-pane-title">{t('inspector.title')}</h2>
+        <DrawingInspector key={shell.store.activeDesignId} shell={shell} />
+      </aside>
+    );
+  }
+  return <BlockInspectorPane shell={shell} />;
+}
+
+function BlockInspectorPane({ shell }: { shell: Shell }) {
   const ref = useRef<HTMLDivElement>(null);
   const insp = useRef<BlockInspector | null>(null);
   useVersion(shell.ui);
