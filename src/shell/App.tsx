@@ -67,16 +67,94 @@ function StartScreen({ shell }: { shell: Shell }) {
             <input value={name} maxLength={100} placeholder={t('project.untitled')} onChange={e => setName(e.target.value)} />
           </label>
           <DesignChooser shell={shell} value={choice} onChange={setChoice} legend="start.designType" />
-          <p className="af-start-note">{t('start.moreTypesLater')}</p>
           <div className="af-start-actions">
             <button type="submit" className="af-button is-primary">{t('start.create')}</button>
             <button type="button" className="af-button" onClick={() => shell.pickFile()}>{t('start.open')}</button>
           </div>
         </form>
+        <ToolsSection shell={shell} />
         <Status shell={shell} />
         <p className="af-start-version">{t('app.version', { version: APP_VERSION })}</p>
       </div>
     </main>
+  );
+}
+
+/** The tools as tiles (V2 af2-tools-home on the start screen): usable without a project. */
+function ToolsSection({ shell }: { shell: Shell }) {
+  const tools = shell.tools.list();
+  if (!tools.length) return null;
+  return (
+    <section className="af-tools-home" aria-labelledby="af-tools-title">
+      <h2 id="af-tools-title">{t('tools.title')} <small>{t('tools.subtitle')}</small></h2>
+      <div className="af-tool-tiles">
+        {tools.map(tl => (
+          <button key={tl.id} type="button" className={`af-tool-tile is-${tl.id}`} onClick={() => void shell.run(`tool.open.${tl.id}`)}>
+            <strong>{t(tl.label)}</strong>
+            <small>{t(tl.long)}</small>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Tools menu in the workspace toolbar. */
+function ToolsMenu({ shell }: { shell: Shell }) {
+  const tools = shell.tools.list();
+  if (!tools.length) return null;
+  return (
+    <label className="af-picker">
+      <span className="af-visually-hidden">{t('tools.menu')}</span>
+      <select value="" onChange={e => { const id = e.target.value; e.target.value = ''; if (id) void shell.run(`tool.open.${id}`); }}>
+        <option value="">{t('tools.menu')}</option>
+        {tools.map(tl => <option key={tl.id} value={tl.id}>{t(tl.label)}</option>)}
+      </select>
+    </label>
+  );
+}
+
+/**
+ * The tool dialog over the shell (V2 af2-tool-scrim / af2-tooldlg): one iframe per tool opened
+ * so far, only the current one visible; the tool closes itself through its host object, the
+ * close button, Escape or a click on the scrim.
+ */
+function ToolDialog({ shell }: { shell: Shell }) {
+  const docs = useRef(new Map<string, string>());
+  const frames = useRef(new Map<string, HTMLIFrameElement | null>());
+  const before = useRef<HTMLElement | null>(null);
+  const open = shell.tool;
+  useEffect(() => {
+    if (open) {
+      before.current = document.activeElement as HTMLElement | null;
+      frames.current.get(open)?.focus();
+      const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { e.stopPropagation(); shell.closeTool(); } };
+      window.addEventListener('keydown', key, true);
+      return () => window.removeEventListener('keydown', key, true);
+    }
+    before.current?.focus?.();
+    return undefined;
+  }, [open, shell]);
+  if (!shell.openedTools.length) return null;
+  const lang = getLocale() === 'en' ? 'en' : 'zh-Hant';
+  const current = open ? shell.tools.get(open) : undefined;
+  return (
+    <div className="af-tool-scrim" hidden={!open} onPointerDown={e => { if (e.target === e.currentTarget) shell.closeTool(); }}>
+      <div className="af-tool-dialog" role="dialog" aria-modal="true" aria-label={current ? t(current.label) : undefined}>
+        <div className="af-tool-head">
+          <h2>{current ? t(current.label) : ''}</h2>
+          <button type="button" className="af-button" onClick={() => shell.closeTool()}>{t('tools.close')}</button>
+        </div>
+        {shell.openedTools.map(id => {
+          const tl = shell.tools.get(id)!;
+          if (!docs.current.has(id)) docs.current.set(id, tl.srcdoc(lang));
+          return (
+            <iframe key={id} ref={el => { frames.current.set(id, el); }} className="af-tool-frame" title={t(tl.label)} hidden={id !== open}
+              srcDoc={docs.current.get(id)} allow={tl.allow} allowFullScreen={tl.allowFullscreen} />
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -215,6 +293,8 @@ function Workspace({ shell }: { shell: Shell }) {
             <CommandButton shell={shell} id="view.toggleInspector" />
           </>}
           <CommandButton shell={shell} id="export.open" primary />
+          <span className="af-toolbar-sep" aria-hidden="true" />
+          <ToolsMenu shell={shell} />
         </div>
         <LocaleSelect />
       </header>
@@ -245,7 +325,7 @@ export function App({ shell }: { shell: Shell }) {
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if (shell.dialog || shell.screen !== 'workspace') return;
+      if (shell.dialog || shell.tool || shell.screen !== 'workspace') return;
       if (shell.registry.handleKey(e, shell, isMac())) e.preventDefault();
     };
     const leave = (e: BeforeUnloadEvent) => { if (shell.store.dirty) e.preventDefault(); };
@@ -263,6 +343,7 @@ export function App({ shell }: { shell: Shell }) {
       {dlg?.kind === 'confirm' && <ConfirmDialog key="confirm" shell={shell} d={dlg} />}
       {dlg?.kind === 'export' && <ExportDialog shell={shell} />}
       {dlg?.kind === 'newDesign' && <NewDesignDialog shell={shell} />}
+      <ToolDialog shell={shell} />
     </>
   );
 }

@@ -9,7 +9,8 @@ import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../c
 import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, BlockView, Camera, Design, DesignType } from '../io/schema-types';
 import type { CanvasSelection, DesignModule, DesignRegistry, EmbeddedApi } from '../designs/module';
-import { frameApi, installHosts } from './embedded';
+import { frameApi, installHosts, installToolHosts } from './embedded';
+import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
 import { ModelError } from '../model/types';
 import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
@@ -69,7 +70,11 @@ export class Shell {
   pickFile: () => void = () => {};
   private routeCache: { data: BlockDiagram | null; routes: Map<string, Route> } = { data: null, routes: new Map() };
 
-  constructor(readonly designs: DesignRegistry) {
+  /** The tool shown over the shell (V2 af2-tooldlg), and the tools opened so far (their frames stay mounted). */
+  tool: string | null = null;
+  openedTools: string[] = [];
+
+  constructor(readonly designs: DesignRegistry, readonly tools: ToolRegistry = new ToolRegistry()) {
     this.gestures = new Gestures({
       store: this.store,
       camera: () => this.camera,
@@ -81,9 +86,11 @@ export class Shell {
       refused: r => this.refused(r),
     });
     installHosts(this, typeof window !== 'undefined' ? window : ({} as Window));
+    installToolHosts(this, typeof window !== 'undefined' ? window : ({} as Window));
     this.registry.registerAll(canvasCommands() as unknown as Command<Shell>[]);
     this.registry.registerAll(shellCommands());
     for (const m of designs.list()) if (m.commands) this.registry.registerAll(m.commands as unknown as Command<Shell>[]);
+    this.registry.registerAll(tools.list().map(tl => ({ id: `tool.open.${tl.id}`, label: tl.label, group: 'tools', run: (s: Shell) => s.openTool(tl.id) })));
   }
 
   // ------------------------------------------------------------------ reading
@@ -172,6 +179,15 @@ export class Shell {
     this.store.amend(d => ({ ...(d as BlockDiagram), view }));
     this.notify(view === 'power' ? 'view.mode.powerOn' : 'view.mode.functionOn');
   }
+
+  /** Show a tool over the shell; its frame stays mounted after closing (V2 kept it, hidden). */
+  openTool(id: string): void {
+    if (!this.tools.get(id)) return;
+    if (!this.openedTools.includes(id)) this.openedTools = [...this.openedTools, id];
+    this.tool = id;
+    this.ui.emit();
+  }
+  closeTool(): void { if (this.tool) { this.tool = null; this.ui.emit(); } }
 
   setEmbeddedStatus(text: string, warn: string): void { this.embeddedStatus = { text, warn }; this.ui.emit(); }
   embeddedReady(): void { this.frameReady = true; this.ui.emit(); }

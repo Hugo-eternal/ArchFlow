@@ -135,7 +135,6 @@
   "start.open": "Open JSON project",
   "start.projectName": "Project name",
   "start.designType": "First design",
-  "start.moreTypesLater": "Power, schedule, sequence and flowchart designs are connected in later steps.",
   "status.invalidRoutes": "{count} wires have no valid route",
   "status.zoom": "Zoom {zoom}%",
   "text.placeholder": "Text",
@@ -464,5 +463,12 @@
   "template.flowchart.lcd.n15": "Log DTC, notify host",
   "template.flowchart.lcd.n16": "Display fault",
   "template.flowchart.lcd.name": "LCD panel power-on",
-  "flowchart.frame": "Flowchart editor"
+  "flowchart.frame": "Flowchart editor",
+  "tools.title": "Tools",
+  "tools.subtitle": "No project needed",
+  "tools.menu": "Tools",
+  "tools.close": "Close",
+  "tool.bom.name": "RSI BOM Converter",
+  "tool.bom.desc": "BOM Excel to the RSI format",
+  "tool.bom.long": "Upload a BOM Excel file, classify parts by part number and download it in the RSI format."
 }

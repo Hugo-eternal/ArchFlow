@@ -44,3 +44,14 @@ function hostFor(shell: Shell, module: DesignModule) {
 export function installHosts(shell: Shell, win: Window = window): void {
   for (const m of shell.designs.list()) if (m.embedded) (win as unknown as Record<string, unknown>)[m.embedded.host] = hostFor(shell, m);
 }
+
+/** Publish each tool's host object (V2: afRsiHost / afEdidHost / afHexHost / afPgHost = { lang, close, toast }). */
+export function installToolHosts(shell: Shell, win: Window = window): void {
+  for (const tool of shell.tools.list()) {
+    (win as unknown as Record<string, unknown>)[tool.host] = {
+      get lang() { return getLocale() === 'en' ? 'en' : 'zh'; },
+      close: () => shell.closeTool(),
+      toast: (text: string) => { if (text) shell.notify('embedded.status', { text: String(text) }); },
+    };
+  }
+}

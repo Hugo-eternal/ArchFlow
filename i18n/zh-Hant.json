@@ -135,7 +135,6 @@
   "start.open": "開啟 JSON 專案",
   "start.projectName": "專案名稱",
   "start.designType": "第一張設計",
-  "start.moreTypesLater": "電源架構、專案時程、電源時序與流程圖會在後續步驟接上。",
   "status.invalidRoutes": "{count} 條線路沒有合法路徑",
   "status.zoom": "縮放 {zoom}%",
   "text.placeholder": "文字",
@@ -464,5 +463,12 @@
   "template.flowchart.lcd.n15": "記錄 DTC 並通知主機",
   "template.flowchart.lcd.n16": "顯示異常",
   "template.flowchart.lcd.name": "LCD 面板上電流程",
-  "flowchart.frame": "流程圖編輯器"
+  "flowchart.frame": "流程圖編輯器",
+  "tools.title": "小工具",
+  "tools.subtitle": "不用建立專案就能使用",
+  "tools.menu": "小工具",
+  "tools.close": "關閉",
+  "tool.bom.name": "RSI BOM Converter",
+  "tool.bom.desc": "BOM Excel 轉成 RSI 格式",
+  "tool.bom.long": "上傳 BOM Excel，依料號分類、組出 Specifications，下載 RSI 格式。"
 }

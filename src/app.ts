@@ -6,6 +6,8 @@ import { functionDesign } from './designs/function';
 import { scheduleDesign } from './designs/schedule';
 import { sequenceDesign } from './designs/sequence';
 import { flowchartDesign } from './designs/flowchart';
+import { ToolRegistry } from './tools/module';
+import { bomTool } from './tools/bom';
 
 export function createRegistry(): DesignRegistry {
   const r = new DesignRegistry();
@@ -16,6 +18,12 @@ export function createRegistry(): DesignRegistry {
   return r;
 }
 
+export function createTools(): ToolRegistry {
+  const r = new ToolRegistry();
+  r.register(bomTool);
+  return r;
+}
+
 export function createApp(): Shell {
-  return new Shell(createRegistry());
+  return new Shell(createRegistry(), createTools());
 }
