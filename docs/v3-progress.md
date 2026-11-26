@@ -102,7 +102,7 @@
 ### 3K 收尾
 - [x] 3.42 CSS 整併：移除重複規則與多餘 `!important`（L1；改到 package.json，實際跑 L3 + 產物檢查）
 - [x] 3.43a 移植清單逐列分類（☑ 寫 V3 位置、✂ 寫不移植原因）、audit §4 刪除項目以測試確認未移植（`tests/unit/dead-code.test.ts`）；找出的 16 列功能缺口排入 3.43b–3.43e（L0 + 新測試）
-- [ ] 3.43b `designs/schedule`：編輯語意補齊——「接續任務」插在選取任務之後（V2 L3583）、刪除中間任務接回後續（L772）、新任務預設日期與不重複名稱（af16 fillDefaults L3567）、沿用分支顏色（L800）；順便評估 af16 的「順延衝突」（fixConflicts L3604）與畫布上直接改名（startRename）（L2）
+- [x] 3.43b `designs/schedule`：編輯語意補齊——「接續任務」插在選取任務之後（V2 L3583）、刪除中間任務接回後續（L772）、新任務預設日期與不重複名稱（af16 fillDefaults L3567）、沿用分支顏色（L800）；順便評估 af16 的「順延衝突」（fixConflicts L3604）與畫布上直接改名（startRename）（L2）
 - [ ] 3.43c `designs/function` / `inspector`：方塊尺寸與名稱——自由尺寸開關與精確寬高（V2.9 L10587）、無名稱方塊開關（`showTitle`，V2.9 L10565）、文字隨方塊縮放（V2.10 L10627）、每方塊字級（V2.7 L10399）（L3）
 - [ ] 3.43d `interaction` / `render`：線路編輯——選取線段的平移把手（L1562）、轉角把手與雙擊插入直角（L2141）、標籤手動標記的拖曳 / 旋轉與屬性欄位（L1802 / L1805 / L1885）、標籤與相鄰同名接腳去重（L3099）、新方塊沿用多數方塊的名稱位置與編號規則（adopt，L3097）（L3）
 - [ ] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
@@ -121,8 +121,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.42、3.43a 完成；移植清單剩 16 列功能缺口（3.43b–3.43e）
-- **下一步**：3.43b 時程編輯語意。V2 af16 區塊（legacy L3548 起的 IIFE：`oneStep`、`fillDefaults` L3567、`graphAppend` / `graphBranch` 覆寫 L3582–L3598、`shiftTree` / `resolveFrom` / `fixConflicts` L3601–L3606（`window.afScheduleFixAll`）、`startRename` L3609 起）；V2 L772（刪除接回）、L800（分支色沿用）。V3 對應：`src/designs/schedule/edit.ts`（`appendTask` / `addBranch` / `removeItems`）、`index.ts` 的命令。**注意**：移植清單只追蹤「覆寫鏈」上的層；af16 這類非覆寫的功能區塊（例如順延衝突、畫布改名、任務總覽）不會出現在清單中，3.43b–3.43e 做完後要再用 `node scripts/audit/find-overrides.mjs` 以外的方式（讀 V2 L3548–L3720、L2884–L3040 的 `/* ---------- … ---------- */` 區塊標題）確認沒有漏掉的功能。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43b 完成；移植清單剩 12 列缺口（3.43c–3.43e）
+- **下一步**：3.43c 方塊尺寸與名稱（V2.9 自由尺寸 / 精確寬高 / 無名稱 L10565–L10590、V2.10 文字隨方塊縮放 L10600–L10630、V2.7 每方塊字級 L10390–L10400；先讀這幾段 V2 的 enhance()，再看 `src/inspector/common.ts` 方塊欄位與 `src/render/blocks.ts`）。schema 已有 `block.sizing`、`showTitle`、`font`；「文字隨方塊縮放」要先確認 V2 存在哪個欄位（可能需要新增 schema 欄位——若要新增，與 3.38 一樣先問使用者）。時程尚未移植（記為差異）：畫布上雙擊直接改名 / 改日期 / 改說明（V2 af16 startRename / startDateEdit / startNoteEdit）、Enter / F2 改名、Tab 新增下一個任務——V3 在屬性面板編輯；若使用者要，可另排。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -251,10 +251,11 @@
 - 版面設定 3.41b：`src/model/arrange.ts`（`alignable` / `alignBlocks(d, ids, axis)`（V2 uxAlign）、`arrangePorts(d, block, 'LR'|'TB')`（V2 afArrangeIO orient=true；`tests/unit/model.arrange.test.ts` 直接以 `new Function` 執行 V2 原始碼比對））、`src/render/theme.ts`（`LATIN_FONTS` / `CJK_FONTS` / `DEFAULT_THEME` / `THEME_LIMITS`（px）/ `cleanTheme` / `fontStack` / `pxToPt` / `ptToPx`）；`render/blocks.blocksLayer` 有 theme 時在 `g.af-blocks` 設 `--block-font`（token 預設 `var(--font-ui)`，`.af-block text` 讀它；匯出經 inline-style 取 computed font-family）。`src/shell/LayoutDialogs.tsx`（`AlignGridDialog`、`FontsDialog`：數字欄 `step="any"`，範圍自己驗證——原生 step 0.5 會擋下範本的 9.75 pt）。命令 `design.manage`、`theme.fonts`、`layout.alignHorizontal` / `layout.alignVertical`、`layout.arrangeSelectedPorts`（group `layout`）；V2 對照表 chineseFont / englishFont → `theme.fonts`。
 - CSS 3.42：V3 的 CSS 本來就沒有 `!important`（只有 V2 有）。新增 `scripts/check-css.mjs`（`npm run check:css`，已加入 `test:all`）：擋 `!important`、同一 @-context 中同一選擇器重複設定同一屬性（前一個是死的）、src/ 沒有任何檔案提到的 `af-*` class（以前綴動態組成的 class 視為有用）。清掉的：`.af-start-note`（未使用）、`.af-rail-unknown .af-rail-bolt` 的 fill 被後面 `fill: none` 蓋掉——保留實際生效的 `fill: none`，從前面的群組選擇器移除（畫面不變）。
 - 移植清單 3.43a：`docs/v3-port-checklist.md` 現為 ☐ 16（全部是缺口，備註「缺口 → 3.43x」）／☑ 236／✂ 54／⤳ 21；`node scripts/audit/port-checklist.mjs` 重新產生不會改動手動狀態（已驗證）。主要 ✂ 理由：Project Explorer 清單 → 指令面板「前往項目」；換語系的工作階段快照 → 3.41 不重新載入；行內天數編輯器 → 屬性面板；「以範本取代目前設計」→ 改為新增設計；範本建構 / 量測對齊 → 範本 JSON 已是 V2 產出結果；接點鎖定 → 3.11 決定。已知差異：V2 格線開啟時「依連線排列接腳」只做正規化（L1564），V3 一律排列（CHANGELOG）。`tests/unit/dead-code.test.ts`：audit §4 的廢止功能（標題、both 類型、V1 雙工作區、version 4、舊版轉接、本地化推論、en tidy、版本字樣改寫、RC2 / RC3 對話框、點擊隱藏元素、review 欄位、單一版本常數）在 src/ 程式碼（去掉註解後）中都不存在。
+- 時程 3.43b：`schedule/dates` 新增 `iso` / `weekday`（週末改週一）/ `spanOf` / `durationOf`；`schedule/edit`：`appendTask(d, title, parent?, { now })` 回傳 `inserted`（選取任務原本只有一個後續時插入）、新任務預設日期（上一個任務結束後的工作日起、長度同上一個或 5 天）、不重複名稱（「新任務 2」）、沿用分支色（任務與連線）；`addBranch` 同樣套用；`removeItems` 刪除任務時後續接回上一個任務（V2 L772）；`setDefaultRange`、`setDuration`、`conflictsBelow`、`shiftConflicts(d, from?)`（V2 af16 fixConflicts：從 from 的上一個任務往下，或所有起點）。屬性面板：「＋ 設定日期區間」、可編輯的「工期（含首尾）」、任務的「順延後續任務」與總覽的「一鍵順延」（`af-field-action`）；命令 `schedule.fixConflicts`。與 V2 不同：V2 新增分支時只對第一個新任務套用預設值（主線後續），V3 兩個都套用；名稱保留「主線後續任務」「分支任務」而非一律「新任務」。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L0 + Vitest 全部（3.43a：只改文件與新增測試；Vitest 54 檔 445 項通過）；前一步 3.42 為 L3 + 產物檢查全數通過。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L2（3.43b：模組標註、i18n、token、css、型別、建置、產物檢查、Vitest 54 檔 447 項、Playwright 33 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

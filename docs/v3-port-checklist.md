@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 16　☑ 236　✂ 54　⤳ 21
+合計 327 層：☐ 12　☑ 240　✂ 54　⤳ 21
 
 ## core / interaction
 
@@ -38,7 +38,7 @@
 | `refreshSelection` | 667 |  | script#1 |  | ☑ | 分支鈕依選取啟用：`schedule.addBranch` enabled（3.28） |
 | `removeSelection` | 505 |  | script#1 |  | ☑ | `model/diagram.remove`（3.12）：方塊、接腳、線、接點、文字框、外框一次處理 |
 | `removeSelection` | 674 |  | script#1 |  | ☑ | 被 L772 取代的舊規則（見下一列） |
-| `removeSelection` | 772 |  | script#1 | Delete a middle task without blocking browser dialogs; preserve descendants and reconnect. | ☐ | **缺口 → 3.43b**：刪除中間任務時要把後續任務接回上一個任務（V3 `removeItems` 目前讓後續變成起點） |
+| `removeSelection` | 772 |  | script#1 | Delete a middle task without blocking browser dialogs; preserve descendants and reconnect. | ☑ | `schedule/edit.removeItems`：後續任務接回上一個任務（3.43b） |
 | `finish` | 4209 |  | af15-ux2 | pressing near a lead end starts a wire, not a move: the lead dots are small | ☐ | **缺口 → 3.43e**：從零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V3 只能接腳對接腳） |
 | `finish` | 4569 |  | af15-ux2 | ---------- snap onto a frame edge after a move ---------- | ☑ | 3.26b `DesignModule.afterMove` → `snapConnectorsToFrames`（Gestures `adjustMove`） |
 | `updateExplorer` | 763 |  | script#1 | Export uses the same palette and typography as the editor, including moved axis points. | ✂ | Project Explorer 的方塊 / 任務清單：由指令面板「前往項目」取代（3.40） |
@@ -103,10 +103,10 @@
 | `graphAutoFit` | 736 | `*` 取代 | script#1 |  | ☑ | `schedule.autoArrange` → `resetOffsets`（3.28） |
 | `openScheduleTemplates` | 769 | `*` 取代 | script#1 | Dedicated, always available appearance region, not a modal. | ✂ | 捲動到外觀區：V3 外觀是屬性面板的群組 |
 | `openScheduleTemplates` | 861 | `*` 取代 | script#1 | Collapsible appearance controls; moving existing elements preserves input handlers. | ✂ | 同上 |
-| `graphAppend` | 3583 |  | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ☐ | **缺口 → 3.43b**：「接續任務」插在選取任務之後（原本唯一的後續改接到新任務）、新任務預設日期與不重複名稱（af16 fillDefaults L3567）；V3 目前在選取任務下多接一個子任務（形成分支） |
+| `graphAppend` | 3583 |  | af15-ux2 | ---------- "continue" inserts after the selected task; "branch" forks ---------- | ☑ | `schedule/edit.appendTask`：插在選取任務之後、預設日期與不重複名稱（3.43b） |
 | `graphBounds` | 689 | `*` 取代 | script#1 | Route axes from fixed task points; dragging a frame never changes dependencies or dates. | ☑ | `schedule/layout.scheduleBounds`（3.28） |
-| `graphBranch` | 3594 |  | af15-ux2 | insert-after: the selected task's previous single successor now follows the new task | ☐ | **缺口 → 3.43b**：分支的新任務也要套用預設日期 / 名稱（fillDefaults） |
-| `graphCreateTask` | 800 |  | script#1 | Newly appended tasks inherit their parent's independent branch color. | ☐ | **缺口 → 3.43b**：新任務沿用上一個任務的分支顏色 |
+| `graphBranch` | 3594 |  | af15-ux2 | insert-after: the selected task's previous single successor now follows the new task | ☑ | `schedule/edit.addBranch`：新任務預設日期 / 名稱（3.43b） |
+| `graphCreateTask` | 800 |  | script#1 | Newly appended tasks inherit their parent's independent branch color. | ☑ | `schedule/edit` newTask：沿用上一個任務的分支顏色（任務與連線，3.43b） |
 | `openInlineTime` | 670 |  | script#1 |  | ☑ | 見 `select` L646：天數在屬性面板編輯 |
 | `scheduleLabel` | 624 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☑ | 3.28 `dates.interval`（修正 inclusive 無作用） |
 | `scheduleTask` | 619 | `*` 取代 | script#1 | Single-axis schedule, integrated with the existing ArchFlow workspace. | ☑ | 3.28 範本與 `emptySchedule` |

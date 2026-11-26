@@ -62,6 +62,31 @@ export function interval(d: ScheduleData, l: Link): { days: number | null; reaso
   return d.rules.count === 'inclusive' ? { days: y - x + 1, reason: 'autoInclusive' } : { days: y - x, reason: 'auto' };
 }
 
+/** "YYYY-MM-DD" of a day number. */
+export function iso(n: number): string {
+  const d = new Date(n * 864e5);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+
+/** The day itself, or the Monday after when it falls on a weekend (V2 af16 weekday). */
+export function weekday(n: number): number {
+  const w = new Date(n * 864e5).getUTCDay();
+  return w === 6 ? n + 2 : w === 0 ? n + 1 : n;
+}
+
+/** First and last day of a task: a range has both, a deadline only its end (V2 af16 startOf / endOf). */
+export function spanOf(t: Task): { start: number | null; end: number | null } {
+  if (t.time.type === 'range') return { start: day(t.time.start), end: day(t.time.end) };
+  if (t.time.type === 'deadline') return { start: null, end: day(t.time.date) };
+  return { start: null, end: null };
+}
+
+/** Days of a range, both ends counted (V2 af16 durOf); null when not a valid range. */
+export function durationOf(t: Task): number | null {
+  const { start, end } = spanOf(t);
+  return t.time.type === 'range' && start !== null && end !== null && end >= start ? end - start + 1 : null;
+}
+
 /** Today as a day number (local calendar date). */
 export function today(now: Date = new Date()): number {
   return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5;

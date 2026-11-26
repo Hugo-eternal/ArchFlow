@@ -11,7 +11,7 @@ import { estimateWidth } from '../../src/render/texts';
 import { exportDrawing } from '../../src/export/svg';
 import { emptySchedule, scheduleDesign } from '../../src/designs/schedule';
 import { layout } from '../../src/designs/schedule/layout';
-import { addBranch, appendTask, descendants, drag, MAX_TASKS, nudge, removeItems, resetOffsets, ScheduleEditError, setParent, setTimeType } from '../../src/designs/schedule/edit';
+import { addBranch, appendTask, conflictsBelow, descendants, drag, MAX_TASKS, nudge, removeItems, resetOffsets, ScheduleEditError, setDefaultRange, setDuration, setParent, setTimeType, shiftConflicts } from '../../src/designs/schedule/edit';
 import { geometry, lookStyle, setBranchColor, setCustom, setTheme, THEME_SWATCH, useCustom } from '../../src/designs/schedule/appearance';
 import { scheduleFields } from '../../src/designs/schedule/fields';
 import { fieldKeys } from '../../src/inspector/panel';
@@ -53,11 +53,59 @@ describe('tasks and links', () => {
     expect(addBranch(d, leaf, { main: 'M', branch: 'B2' }).data.tasks).toHaveLength(d.tasks.length + 1);
   });
 
-  it('remove: links of a removed task go, its successors become starts', () => {
-    const d = chain(3), out = removeItems(d, [{ kind: 'task', id: d.tasks[1].id }]);
-    expect(out.tasks).toHaveLength(2);
-    expect(out.links).toEqual([]);
+  it('remove a middle task: its successors are linked to its predecessor (V2 L772); a start task leaves starts', () => {
+    const d = chain(3), [a, b, c] = d.tasks.map(x => x.id);
+    const out = removeItems(d, [{ kind: 'task', id: b }]);
+    expect(out.tasks.map(x => x.id)).toEqual([a, c]);
+    expect(out.links.map(l => [l.from, l.to, l.days.mode])).toEqual([[a, c, 'auto']]);
+    expect(removeItems(d, [{ kind: 'task', id: a }]).links.map(l => [l.from, l.to])).toEqual([[b, c]]);
     expect(removeItems(d, [{ kind: 'link', id: d.links[0].id }]).links).toHaveLength(1);
+    // two removed at once: both reconnect in turn
+    const four = chain(4);
+    expect(removeItems(four, [{ kind: 'task', id: four.tasks[1].id }, { kind: 'task', id: four.tasks[2].id }]).links.map(l => [l.from, l.to])).toEqual([[four.tasks[0].id, four.tasks[3].id]]);
+  });
+
+  it('continue inserts after the selected task when it had one successor (V2 af16 L3583); new-task defaults', () => {
+    const now = Date.UTC(2026, 10, 26) / 864e5;             // a Thursday
+    let d = chain(2);
+    const [a, b] = d.tasks.map(x => x.id);
+    d = { ...d, tasks: d.tasks.map((x, i) => (i === 0 ? { ...x, time: { type: 'range', start: '2026-11-20', end: '2026-11-27' }, branchColor: '#aa3300' } : x)) };
+    const r = appendTask(d, 'T1', a, { now });              // the title is taken: "T1 2"
+    expect(r.inserted).toBe(true);
+    expect(r.data.links.map(l => [l.from, l.to])).toEqual([[r.id, b], [a, r.id]]);
+    const t = r.data.tasks.find(x => x.id === r.id)!;
+    expect(t.title).toBe('T1 2');
+    // after a Friday end: the next Monday; as long as the predecessor (8 days)
+    expect(t.time).toEqual({ type: 'range', start: '2026-11-30', end: '2026-12-07' });
+    expect(t.branchColor).toBe('#aa3300');
+    expect(r.data.links.find(l => l.to === r.id)!.branchColor).toBe('#aa3300');
+    // no predecessor dates: from today (a Thursday), 5 days
+    const leaf = appendTask(emptySchedule(), 'N', undefined, { now });
+    expect(leaf.inserted).toBe(false);
+    expect(leaf.data.tasks.at(-1)!.time).toEqual({ type: 'range', start: '2026-11-26', end: '2026-11-30' });
+    // a branch gets the defaults too
+    const br = addBranch(r.data, a, { main: 'M', branch: 'B' }, { now });
+    expect(br.data.tasks.at(-1)!.time.type).toBe('range');
+  });
+
+  it('duration, set a date range, shift conflicts (V2 af16)', () => {
+    const now = Date.UTC(2026, 10, 26) / 864e5;
+    let d = chain(3);
+    const [a, b, c] = d.tasks.map(x => x.id);
+    d = setDefaultRange(d, a, now);
+    expect(d.tasks[0].time).toEqual({ type: 'range', start: '2026-11-26', end: '2026-11-30' });
+    d = setDuration(d, a, 10);
+    expect(d.tasks[0].time).toEqual({ type: 'range', start: '2026-11-26', end: '2026-12-05' });
+    // b starts inside a, c after b: shifting b moves c with it, durations kept
+    d = { ...d, tasks: d.tasks.map(x => (x.id === b ? { ...x, time: { type: 'range', start: '2026-12-01', end: '2026-12-03' } }
+      : x.id === c ? { ...x, time: { type: 'deadline', date: '2026-12-04' } } : x)) };
+    expect(conflictsBelow(d)).toBe(1);
+    const r = shiftConflicts(d);
+    expect(r.moved).toBe(1);
+    expect(r.data.tasks[1].time).toEqual({ type: 'range', start: '2026-12-07', end: '2026-12-09' });   // Sat 6 → Mon 7
+    expect(r.data.tasks[2].time).toEqual({ type: 'deadline', date: '2026-12-10' });
+    expect(shiftConflicts(r.data)).toEqual({ data: r.data, moved: 0 });
+    expect(shiftConflicts(d, c).moved).toBe(0);              // only below c's predecessor b: no conflict there
   });
 
   it('predecessor: kept link when unchanged, loops refused', () => {

@@ -317,7 +317,6 @@
   "template.schedule.starter.label": "Starter project schedule",
   "schedule.color.default": "Theme default",
   "schedule.error.date": "Enter a valid date",
-  "schedule.duration": "Duration {n} days (inclusive)",
   "schedule.group.appearance": "Appearance",
   "schedule.group.branch": "Branch and position",
   "schedule.group.progress": "Progress",
@@ -611,5 +610,13 @@
   "fonts.sampleSub": "Subtitle 3.3 V",
   "fonts.note": "Fonts must be installed on this computer; otherwise the built-in font is used. Applies to this block diagram only.",
   "fonts.reset": "Reset to default",
-  "fonts.apply": "Apply"
+  "fonts.apply": "Apply",
+  "schedule.task.setDates": "＋ Set a date range",
+  "schedule.task.duration": "Duration (inclusive)",
+  "schedule.fix.task": "↦ Shift following tasks to clear conflicts",
+  "schedule.fix.all": "↦ Shift tasks to clear {count} date conflicts",
+  "schedule.fixed": "Shifted {count} following task chains; durations unchanged.",
+  "schedule.fixedNone": "Nothing needed shifting.",
+  "schedule.inserted": "Inserted “{name}”; following tasks now come after it.",
+  "cmd.scheduleFix": "Shift conflicting tasks"
 }

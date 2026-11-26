@@ -10,8 +10,8 @@ import type { ScheduleAppearance, ScheduleCustomLook, ScheduleData, ScheduleThem
 import { t, type MessageKey } from '../../core/i18n';
 import type { FieldSpec } from '../../inspector/fields';
 import type { CanvasSelection } from '../module';
-import { day, interval, issues } from './dates';
-import { descendants, setParent, setTimeType, updateLink, updateTask, MAX_TASKS } from './edit';
+import { day, durationOf, interval, issues } from './dates';
+import { conflictsBelow, descendants, setDefaultRange, setDuration, setParent, setTimeType, shiftConflicts, updateLink, updateTask, MAX_TASKS } from './edit';
 import { customOf, geometry, setBranchColor, setCustom, setSizes, setTheme, THEME_SWATCH, THEMES, themeOf, useCustom } from './appearance';
 import { textSizes } from './layout';
 
@@ -29,6 +29,17 @@ const link = (d: ScheduleData, s: CanvasSelection) => {
   return x;
 };
 const validDate = (v: string): MessageKey | null => (v === '' || day(v) !== null ? null : 'schedule.error.date');
+
+/** A button that applies one edit (V2 af16 quick fixes). */
+const action = (key: string, text: (d: ScheduleData, s: CanvasSelection) => string, edit: (d: ScheduleData, s: CanvasSelection) => ScheduleData, cls = 'af-field-action'): F => ({
+  kind: 'custom', key, label: 'schedule.note', visible: (d, s) => !!text(d, s),
+  render: ({ doc, data, sel, apply }) => {
+    const b = doc.createElement('button');
+    b.type = 'button'; b.className = cls; b.textContent = text(data, sel);
+    b.addEventListener('click', () => apply(dd => edit(dd, sel)));
+    return b;
+  },
+});
 
 /** A read-only line of text in the panel. */
 const note = (key: string, text: (d: ScheduleData, s: CanvasSelection) => string, cls = 'af-field-note'): F => ({
@@ -63,12 +74,14 @@ function taskFields(d: ScheduleData, s: CanvasSelection): F[] {
           get: (dd, ss) => { const x = time(dd, ss); return x.type === 'deadline' ? x.date : ''; },
           set: (dd, ss, v) => updateTask(dd, ss.id, { time: { type: 'deadline', date: v } }),
         },
-        note('duration', (dd, ss) => {
-          const x = time(dd, ss);
-          if (x.type !== 'range') return '';
-          const a = day(x.start), b = day(x.end);
-          return a !== null && b !== null && b >= a ? t('schedule.duration', { n: b - a + 1 }) : '';
-        }),
+        // no dates yet: one button (V2 af16 "Set a date range")
+        action('setDates', (dd, ss) => (time(dd, ss).type === 'none' ? t('schedule.task.setDates') : ''), (dd, ss) => setDefaultRange(dd, ss.id)),
+        // duration next to the dates, both ends counted; changing it moves the end date (V2 af16)
+        {
+          kind: 'number', key: 'duration', label: 'schedule.task.duration', unit: t('schedule.unit.days'), min: 1, max: 999, step: 1,
+          visible: (dd, ss) => durationOf(task(dd, ss)) !== null,
+          get: (dd, ss) => durationOf(task(dd, ss)) ?? 1, set: (dd, ss, v) => setDuration(dd, ss.id, v),
+        },
         note('issues', (dd, ss) => issues(dd, task(dd, ss)).map(i => (i.kind === 'overdue' ? t('schedule.issueText.overdue')
           : i.reason === 'beforeParent' ? t('schedule.issueText.beforeParent', { name: i.parent ?? '' }) : t('schedule.issueText.endsBeforeStart'))).join('\n'), 'af-field-note is-warning'),
       ],
@@ -77,6 +90,8 @@ function taskFields(d: ScheduleData, s: CanvasSelection): F[] {
       kind: 'group', key: 'progress', label: 'schedule.group.progress', open: true, fields: [
         { kind: 'segmented', key: 'status', label: 'schedule.task.status', options: opts('schedule.status', ['todo', 'doing', 'done'] as const), get: (dd, ss) => task(dd, ss).status, set: (dd, ss, v) => updateTask(dd, ss.id, { status: v as Task['status'] }) },
         { kind: 'toggle', key: 'milestone', label: 'schedule.task.milestone', get: (dd, ss) => task(dd, ss).milestone, set: (dd, ss, v) => updateTask(dd, ss.id, { milestone: v }) },
+        // date conflicts around this task: shift the following tasks, durations unchanged (V2 af16 fixConflicts)
+        action('fix', (dd, ss) => (conflictsBelow(dd, ss.id) ? t('schedule.fix.task') : ''), (dd, ss) => shiftConflicts(dd, ss.id).data, 'af-field-action is-warning'),
       ],
     },
     {
@@ -167,6 +182,7 @@ function designFields(): F[] {
   const isCustom = (d: ScheduleData) => !!d.appearance.engineering;
   return [
     note('count', d => t('schedule.summary', { tasks: d.tasks.length, links: d.links.length, max: MAX_TASKS })),
+    action('fixAll', d => { const k = conflictsBelow(d); return k ? t('schedule.fix.all', { count: k }) : ''; }, d => shiftConflicts(d).data, 'af-field-action is-warning'),
     {
       kind: 'group', key: 'rules', label: 'schedule.group.rules', open: true, fields: [
         { kind: 'segmented', key: 'endpoint', label: 'schedule.rules.endpoint', hint: 'schedule.rules.endpointHint', options: opts('schedule.endpoint', ['start', 'end'] as const), get: d => d.rules.endpoint, set: (d, _s, v) => ({ ...d, rules: { ...d.rules, endpoint: v as 'start' | 'end' } }) },

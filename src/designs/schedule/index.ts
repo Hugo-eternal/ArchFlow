@@ -9,7 +9,7 @@ import { DATA_SCHEMAS } from '../../io/schema';
 import { t, type MessageKey } from '../../core/i18n';
 import type { Command } from '../../core/commands';
 import { localize, type CanvasSelection, type DesignCommandContext, type DesignModule } from '../module';
-import { addBranch, appendTask, drag, nudge, removeItems, resetOffsets, ScheduleEditError, type DragHandle } from './edit';
+import { addBranch, appendTask, shiftConflicts, drag, nudge, removeItems, resetOffsets, ScheduleEditError, type DragHandle } from './edit';
 import { scheduleFields } from './fields';
 import { day, today } from './dates';
 import { layout, scheduleBounds, ScheduleError } from './layout';
@@ -49,7 +49,22 @@ function scheduleCommands(): Command<DesignCommandContext>[] {
   return [
     {
       id: 'schedule.append', label: 'cmd.scheduleAppend', group: 'schedule', enabled: isSchedule,
-      run: c => { let id = ''; if (c.editDesign(d => { const r = appendTask(d as ScheduleData, t('schedule.task.newTitle'), selectedTask(c)); id = r.id; return r.data; })) added(c, id); },
+      run: c => {
+        let id = '', inserted = false;
+        if (!c.editDesign(d => { const r = appendTask(d as ScheduleData, t('schedule.task.newTitle'), selectedTask(c)); id = r.id; inserted = r.inserted; return r.data; })) return;
+        added(c, id);
+        const name = (c.store.data(c.store.activeDesignId) as ScheduleData).tasks.find(x => x.id === id)?.title ?? '';
+        if (inserted) c.notify('schedule.inserted', { name });
+      },
+    },
+    // V2 af16 fixConflicts: around the selected task, or the whole schedule
+    {
+      id: 'schedule.fixConflicts', label: 'cmd.scheduleFix', group: 'schedule', enabled: isSchedule,
+      run: c => {
+        let moved = 0;
+        c.editDesign(d => { const r = shiftConflicts(d as ScheduleData, selectedTask(c)); moved = r.moved; return r.data; });
+        c.notify(moved ? 'schedule.fixed' : 'schedule.fixedNone', { count: moved });
+      },
     },
     {
       id: 'schedule.addBranch', label: 'cmd.scheduleBranch', group: 'schedule', enabled: c => isSchedule(c) && !!selectedTask(c),

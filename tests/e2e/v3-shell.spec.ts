@@ -203,13 +203,20 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   expect((await tasks())[0].offset.card.x).toBe(0);
   expect((await tasks())[0].title).toBe('需求確認');
 
-  // add a task after the selection; Delete removes it again
+  // add a task after the selection: inserted before its old successor (3.43b), with dates;
+  // Delete removes it again and the old successor is linked back
   const n = (await tasks()).length;
+  const links = () => page.evaluate(() => { const a = (window as unknown as { archflow: { store: { data(id: string): { links: { from: string; to: string }[] }; activeDesignId: string } } }).archflow.store; return a.data(a.activeDesignId).links.map(l => `${l.from}>${l.to}`).sort(); });
+  const before = await links();
+  await card.click();
   await page.getByRole('button', { name: '新增任務' }).click();
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n + 1);
+  await expect(page.locator('.af-toast').last()).toContainText('後續任務接在它之後');
+  await expect(panel.getByLabel('工期（含首尾）')).toBeVisible();
   await page.locator('svg.af-canvas').focus();
   await page.keyboard.press('Delete');
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n);
+  expect((await links()).length).toBe(before.length);
 
   // theme (nothing selected)
   await page.keyboard.press('Escape');

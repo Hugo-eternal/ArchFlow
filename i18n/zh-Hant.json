@@ -317,7 +317,6 @@
   "template.schedule.starter.label": "入門專案時程",
   "schedule.color.default": "主題預設",
   "schedule.error.date": "請輸入有效日期",
-  "schedule.duration": "工期 {n} 天（含首尾）",
   "schedule.group.appearance": "外觀",
   "schedule.group.branch": "分支與位置",
   "schedule.group.progress": "進度",
@@ -611,5 +610,13 @@
   "fonts.sampleSub": "副標 3.3 V",
   "fonts.note": "字體需安裝在這台電腦上；沒有時改用內建字體。只套用到目前的方塊圖。",
   "fonts.reset": "回復預設",
-  "fonts.apply": "套用"
+  "fonts.apply": "套用",
+  "schedule.task.setDates": "＋ 設定日期區間",
+  "schedule.task.duration": "工期（含首尾）",
+  "schedule.fix.task": "↦ 順延後續任務以解除衝突",
+  "schedule.fix.all": "↦ 一鍵順延，解除 {count} 個日期衝突",
+  "schedule.fixed": "已順延 {count} 段後續任務，工期不變。",
+  "schedule.fixedNone": "沒有需要順延的任務。",
+  "schedule.inserted": "已插入「{name}」，後續任務接在它之後。",
+  "cmd.scheduleFix": "順延衝突任務"
 }
