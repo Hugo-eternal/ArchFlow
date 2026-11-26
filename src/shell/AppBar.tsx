@@ -145,7 +145,8 @@ function menus(shell: Shell): { key: MessageKey; entries: MenuEntry[] }[] {
     {
       key: 'menu.edit',
       entries: [{ id: 'history.undo' }, { id: 'history.redo' }, 'sep', { id: 'selection.selectAll' }, { id: 'selection.clear' }, { id: 'selection.delete' },
-        ...(shell.isBlockDiagram ? ['sep' as const, { id: 'wire.reroute' }, { id: 'wire.clearRoutes' }] : [])],
+        ...(shell.isBlockDiagram ? ['sep' as const, { id: 'wire.reroute' }, { id: 'wire.clearRoutes' },
+          'sep' as const, { id: 'layout.alignHorizontal' }, { id: 'layout.alignVertical' }, { id: 'layout.arrangeSelectedPorts' }] : [])],
     },
     { key: 'menu.design', entries: [{ id: 'design.add' }, { id: 'design.loadExample' }, { id: 'design.duplicate' }, 'sep', { id: 'design.rename' }, { id: 'design.delete' }] },
     {
@@ -153,6 +154,7 @@ function menus(shell: Shell): { key: MessageKey; entries: MenuEntry[] }[] {
       entries: [
         ...(shell.isBlockDiagram ? [{ id: 'view.mode.function' }, { id: 'view.mode.power' }, 'sep' as const] : []),
         ...(shell.module?.embedded ? [] : [{ id: 'view.fit' }, { id: 'view.zoomIn' }, { id: 'view.zoomOut' }, 'sep' as const, { id: 'view.toggleInspector' }]),
+        ...(shell.isBlockDiagram ? ['sep' as const, { id: 'design.manage' }, { id: 'theme.fonts' }] : []),
         'sep', { id: 'palette.open' }, { id: 'help.open' },
       ],
     },

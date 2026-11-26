@@ -9,7 +9,7 @@
   stroke: var(--block-accent);
   stroke-width: var(--block-accent-width);
 }
-.af-block text { font-family: var(--font-ui); }
+.af-block text { font-family: var(--block-font); }
 .af-block-title {
   fill: var(--block-text);
   font-size: var(--block-title-size);

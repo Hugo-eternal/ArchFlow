@@ -15,6 +15,7 @@ import type { Selection } from '../core/store';
 import { ModelError, type ItemRef } from '../model/types';
 import { addBlock, addFrame, addPort, addText, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
+import { alignable, alignBlocks, arrangePorts, type AlignAxis } from '../model/arrange';
 import { estimateWidth, type Measure } from '../render/texts';
 import { Gestures } from '../interaction/gestures';
 import { canvasCommands } from '../interaction/commands';
@@ -33,6 +34,8 @@ export type Dialog =
   | { kind: 'export' }
   | { kind: 'organize' }
   | { kind: 'palette' }
+  | { kind: 'alignGrid' }
+  | { kind: 'fonts' }
   | { kind: 'help' }
   | { kind: 'newDesign' }
   | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
@@ -260,6 +263,7 @@ export class Shell {
 }
 
 const hasProject = (s: Shell) => s.screen === 'workspace' && !!s.store.activeDesign;
+const selectedBlocks = (s: Shell) => s.gestures.selection.filter(i => i.kind === 'block').map(i => i.id);
 const canEdit = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
 
 function confirmDiscard(s: Shell, then: () => void): void {
@@ -399,6 +403,20 @@ export function shellCommands(): Command<Shell>[] {
       id: 'wire.clearRoutes', label: 'cmd.wireClearSelection', group: 'wire',
       enabled: s => canEdit(s) && s.gestures.selection.some(i => i.kind === 'wire'),
       run: s => s.gestures.select(s.gestures.selection.filter(i => i.kind !== 'wire')),
+    },
+    // V2 "Align / Grid" panel (#workspaceManage) and "Layout and fonts" dialog (#chineseFont / #englishFont)
+    { id: 'design.manage', label: 'cmd.alignGrid', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'alignGrid' }) },
+    { id: 'theme.fonts', label: 'cmd.fonts', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'fonts' }) },
+    ...(['horizontal', 'vertical'] as AlignAxis[]).map((axis): Command<Shell> => ({
+      id: axis === 'horizontal' ? 'layout.alignHorizontal' : 'layout.alignVertical', label: axis === 'horizontal' ? 'cmd.alignHorizontal' : 'cmd.alignVertical', group: 'layout',
+      enabled: s => canEdit(s) && alignable(s.data(), selectedBlocks(s)).length >= 2,
+      run: s => { const r = s.edit(d => alignBlocks(d, selectedBlocks(s), axis)?.data ?? d); if (r.ok) s.notify('align.done'); },
+    })),
+    // V2 afArrangeSelectedIO: the selected block's pins by where their wires go
+    {
+      id: 'layout.arrangeSelectedPorts', label: 'cmd.arrangePorts', group: 'layout',
+      enabled: s => { if (!canEdit(s)) return false; const ids = selectedBlocks(s); const b = ids.length === 1 ? s.data().blocks.find(x => x.id === ids[0]) : undefined; return !!b && !b.locked && b.ports.some(p => !p.locked); },
+      run: s => { const id = selectedBlocks(s)[0]; const r = s.edit(d => arrangePorts(d, id)); if (r.ok) s.notify('ports.arranged'); },
     },
     // the organize dialog (V2 RC4 v4Open): compare candidates, apply one as a single undo step
     { id: 'layout.arrangePreview', label: 'cmd.organize', group: 'view', enabled: s => canEdit(s) && s.store.data(s.store.activeDesignId) !== undefined, run: s => s.openDialog({ kind: 'organize' }) },

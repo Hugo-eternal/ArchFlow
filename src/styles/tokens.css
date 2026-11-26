@@ -163,6 +163,7 @@
 
   /* typography */
   --font-ui: "Source Han Sans TC", "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --block-font: var(--font-ui);   /* a diagram theme sets it on its blocks layer (render/theme fontStack) */
   --font-mono: "Cascadia Mono", Consolas, "SF Mono", ui-monospace, monospace;
   --text-xs: 11px;
   --text-sm: 12px;

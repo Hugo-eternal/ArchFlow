@@ -6,6 +6,7 @@
 // title-layout layers (af15 L3062 nine-grid titles) and the export look (exportSvgDocument).
 // Part symbols, connectors and LCD templates (designs/function, 3.25–3.26) draw on top of
 // this through `decorate`; the power view's metric strip (designs/function, 3.27b) through `footer`.
+import { fontStack } from './theme';
 import type { Block, BlockDiagram, Port, Theme } from '../io/schema-types';
 import { gridSize, portPoint } from '../core/grid';
 import { h, r2, type VNode } from './vnode';
@@ -123,5 +124,7 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
 export function blocksLayer(d: BlockDiagram, opts: BlockRenderOptions = {}): VNode {
   const connected = new Set<string>();
   for (const w of d.wires) for (const e of [w.a, w.b]) if ('block' in e) connected.add(`${e.block}/${e.port}`);
-  return h('g', { class: 'af-blocks' }, d.blocks.map(b => blockNode(b, d, opts, connected)));
+  // the diagram's fonts (V2 fontStack on the canvas); without a theme the UI font from canvas.css
+  const font = opts.theme ? { style: `--block-font: ${fontStack(opts.theme)}` } : {};
+  return h('g', { class: 'af-blocks', ...font }, d.blocks.map(b => blockNode(b, d, opts, connected)));
 }

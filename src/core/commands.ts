@@ -197,8 +197,8 @@ export const V2_HIDDEN_ELEMENT_COMMANDS: Record<string, string | null> = {
   examplesBtn: 'design.loadExample',
   helpBtn: 'help.open',
   stats: null,                // V2 #stats was status text; V3's status bar shows DesignModule.stats
-  chineseFont: 'theme.cjkFont',
-  englishFont: 'theme.latinFont',
+  chineseFont: 'theme.fonts',       // one dialog for both fonts and the sizes (V2 #designDialog)
+  englishFont: 'theme.fonts',
   // not commands: elements the V2 shell only read or measured
   view: null,                 // the canvas element (pointer events, size)
   inspector: null,            // the inspector panel element

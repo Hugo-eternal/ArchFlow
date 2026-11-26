@@ -399,3 +399,59 @@ test('status bar, notifications, empty hint and language switch without reload (
   await expect(page.getByRole('dialog', { name: 'Pattern Generator' })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins from the edit menu', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const data = () => page.evaluate(() => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): unknown } }).archflow.data())) as { grid: { size: number; show: boolean; snap: boolean }; theme?: { latinFont: string; title: number } });
+
+  // align / grid: select all blocks, align them in a row (one undo step)
+  await page.locator('svg.af-canvas').click({ position: { x: 10, y: 10 } });
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: '檢視', exact: true }).click();
+  await page.getByRole('menuitem', { name: '對齊／格線…' }).click();
+  const dlg = page.getByRole('dialog', { name: '對齊／格線…' });
+  await expect(dlg).toContainText('以第一個選取的方塊為準');
+  await dlg.getByRole('button', { name: '水平對齊' }).click();
+  await expect(page.locator('.af-toast').last()).toContainText('已對齊選取方塊');
+  // grid: spacing 20 (the diagram is put on the new grid), hide it, check it
+  await dlg.getByRole('button', { name: '20', exact: true }).click();
+  await expect.poll(async () => (await data()).grid.size).toBe(20);
+  await dlg.getByRole('checkbox', { name: '顯示格線' }).uncheck();
+  await expect.poll(async () => (await data()).grid.show).toBe(false);
+  await dlg.getByRole('button', { name: '檢查格線' }).click();
+  await expect(dlg.getByRole('list', { name: '檢查格線' }).getByRole('listitem')).toHaveCount(8);
+  await expect(dlg.getByRole('list', { name: '檢查格線' })).toContainText('方塊位置與尺寸在格點上');
+  await dlg.getByRole('button', { name: '關閉' }).click();
+  // undo the grid show, the spacing, then the alignment
+  await page.getByRole('button', { name: '復原' }).click();
+  await expect.poll(async () => (await data()).grid.show).toBe(true);
+
+  // fonts: validation in pt, apply, the blocks use the font, reset
+  await page.getByRole('button', { name: '檢視', exact: true }).click();
+  await page.getByRole('menuitem', { name: '版面與字體…' }).click();
+  const fonts = page.getByRole('dialog', { name: '版面與字體…' });
+  await fonts.getByLabel('英文字體').selectOption('Arial');
+  await fonts.getByLabel('IC 型號字級（pt）').fill('99');
+  await expect(fonts.getByText('請輸入 9–36')).toBeVisible();
+  await expect(fonts.getByRole('button', { name: '套用' })).toBeDisabled();
+  await fonts.getByLabel('IC 型號字級（pt）').fill('24');
+  await fonts.getByRole('button', { name: '套用' }).click();
+  await expect(fonts).toBeHidden();
+  expect((await data()).theme).toMatchObject({ latinFont: 'Arial', title: 32 });
+  const family = await page.locator('svg.af-canvas .af-block text').first().evaluate(e => getComputedStyle(e).fontFamily);
+  expect(family).toMatch(/^"?Arial/);
+  await page.getByRole('button', { name: '檢視', exact: true }).click();
+  await page.getByRole('menuitem', { name: '版面與字體…' }).click();
+  await fonts.getByRole('button', { name: '回復預設' }).click();
+  expect((await data()).theme).toBeUndefined();
+
+  // arrange pins: one block selected
+  await page.locator('svg.af-canvas [data-block]').first().click();
+  await page.getByRole('button', { name: '編輯', exact: true }).click();
+  await page.getByRole('menuitem', { name: '依連線排列接腳' }).click();
+  await expect(page.locator('.af-toast').last()).toContainText('已依連線排列接腳');
+  expect(errors).toEqual([]);
+});
