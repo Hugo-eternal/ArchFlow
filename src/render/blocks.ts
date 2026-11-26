@@ -60,21 +60,38 @@ function titleLayout(b: Block): { x: number; anchor: 'start' | 'middle' | 'end';
   return { x, anchor: hz === 'left' ? 'start' : hz === 'right' ? 'end' : 'middle', top: v === 'top' };
 }
 
-function portNode(b: Block, p: Port, g: number | undefined, connected: boolean, size?: number): VNode {
+/** Where a pin's name is drawn: anchor point, text anchor and baseline (shared by the drawing and label de-duplication). */
+export function pinLabelAt(b: Block, p: Port, g: number | undefined): { x: number; y: number; anchor: 'start' | 'middle' | 'end'; baseline: 'auto' | 'hanging' | 'central' } | null {
+  if (p.label === 'hidden' || !p.name) return null;
   const c = portPoint(b, p, g);
-  const label = p.label === 'hidden' || !p.name ? null : (() => {
-    const out = p.label === 'outside', gap = out ? PORT_LABEL_OUTSIDE : PORT_LABEL_GAP;
-    // inside: towards the block centre; outside: away from it
-    const sign = out ? 1 : -1;
-    const dx = p.side === 'l' ? -sign : p.side === 'r' ? sign : 0, dy = p.side === 't' ? -sign : p.side === 'b' ? sign : 0;
-    const anchor = dx < 0 ? 'end' : dx > 0 ? 'start' : 'middle';
-    return h('text', {
-      class: 'af-port-label', x: r2(c.x + dx * gap), y: r2(c.y + dy * gap), 'text-anchor': anchor,
-      'dominant-baseline': dy < 0 ? 'auto' : dy > 0 ? 'hanging' : 'central',
-      // the block's or the diagram's pin-label size (V2 --diagram-label-size); else the token
-      style: size ? `font-size:${size}px` : undefined,
-    }, p.name);
-  })();
+  const out = p.label === 'outside', gap = out ? PORT_LABEL_OUTSIDE : PORT_LABEL_GAP;
+  // inside: towards the block centre; outside: away from it
+  const sign = out ? 1 : -1;
+  const dx = p.side === 'l' ? -sign : p.side === 'r' ? sign : 0, dy = p.side === 't' ? -sign : p.side === 'b' ? sign : 0;
+  return { x: c.x + dx * gap, y: c.y + dy * gap, anchor: dx < 0 ? 'end' : dx > 0 ? 'start' : 'middle', baseline: dy < 0 ? 'auto' : dy > 0 ? 'hanging' : 'central' };
+}
+
+/** Boxes of every pin name (V2 dedupeLabels reads the drawn .pinname boxes). */
+export function pinLabelBoxes(d: BlockDiagram, measure: (text: string, px: number, bold: boolean, italic: boolean) => number, theme?: Theme): { text: string; x: number; y: number; w: number; h: number }[] {
+  const g = d.grid?.snap ? gridSize(d.grid) : undefined, out: { text: string; x: number; y: number; w: number; h: number }[] = [];
+  for (const b of d.blocks) for (const p of b.ports) {
+    const at = pinLabelAt(b, p, g);
+    if (!at) continue;
+    const size = b.font?.label ?? theme?.label ?? 11, w = measure(p.name, size, false, false);
+    const x = at.anchor === 'end' ? at.x - w : at.anchor === 'middle' ? at.x - w / 2 : at.x;
+    const y = at.baseline === 'auto' ? at.y - size : at.baseline === 'hanging' ? at.y : at.y - size / 2;
+    out.push({ text: p.name, x, y, w, h: size });
+  }
+  return out;
+}
+
+function portNode(b: Block, p: Port, g: number | undefined, connected: boolean, size?: number): VNode {
+  const c = portPoint(b, p, g), at = pinLabelAt(b, p, g);
+  const label = at ? h('text', {
+    class: 'af-port-label', x: r2(at.x), y: r2(at.y), 'text-anchor': at.anchor, 'dominant-baseline': at.baseline,
+    // the block's or the diagram's pin-label size (V2 --diagram-label-size); else the token
+    style: size ? `font-size:${size}px` : undefined,
+  }, p.name) : null;
   return h('g', { class: 'af-port', 'data-port': p.id, 'data-side': p.side, 'data-connected': connected ? 'true' : 'false' }, [
     h('circle', { class: 'af-port-dot', cx: r2(c.x), cy: r2(c.y), r: 3.5 }),
     label,

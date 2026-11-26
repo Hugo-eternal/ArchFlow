@@ -377,3 +377,27 @@ test('wire path editing (3.43d): segment and corner handles, Shift-drag a pin', 
   expect(count(after, 'b')).toBe(count(mcu.ports.map(p => p.side), 'b') + 1);
   expect(errors).toEqual([]);
 });
+
+test('wire label marks (3.43d2): drag a label, turn it in the panel, back to automatic', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const label = page.locator('svg.af-canvas .af-wire-label').first();
+  const id = await label.getAttribute('data-wire-label');
+  const mark = () => page.evaluate(w => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): { wires: { id: string; label?: { mark?: unknown } }[] } } }).archflow.data().wires.find(x => x.id === w)!.label?.mark ?? null)), id);
+  const b = (await label.boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(b.x + b.width / 2 + 40, b.y + b.height / 2 + 30, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(mark).not.toBeNull();
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  await expect(panel).toContainText('手動固定');
+  await panel.getByRole('button', { name: '直向', exact: true }).click();
+  await expect.poll(async () => ((await mark()) as { angle: number }).angle).toBe(90);
+  await expect(page.locator(`svg.af-canvas [data-wire-label="${id}"]`)).toHaveAttribute('transform', /rotate\(90 /);
+  await panel.getByRole('button', { name: '恢復自動位置' }).click();
+  await expect.poll(mark).toBeNull();
+  expect(errors).toEqual([]);
+});

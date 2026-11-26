@@ -45,6 +45,7 @@
 }
 .af-field-reset:hover:not(:disabled), .af-field-action:hover { background: var(--color-hover); }
 .af-field-action { width: 100%; text-align: left; }
+.af-field-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .af-field-action.is-warning { background: var(--color-copper-tint); }
 .af-field-reset:disabled { color: var(--color-faint); }
 .af-field-hint { margin: 0; color: var(--color-muted); font-size: var(--text-xs); }

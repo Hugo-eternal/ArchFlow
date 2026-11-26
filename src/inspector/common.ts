@@ -11,6 +11,9 @@ import { applyFontsToAll, blockOf, BLOCK_SIZE, fitFrame, resizeBlock, portOf, up
 import { FILE_LIMITS } from '../io/schema';
 import { commitEdit } from '../interaction/commit';
 import { scaleTextOn, setScaleText } from '../core/prefs';
+import { setLabelMark } from '../model/route-edit';
+import { routeAll } from '../router/full-path';
+import { labelBox, labelPosition, wireLabel } from '../render/wires';
 import type { Store } from '../core/store';
 import { t, type MessageKey } from '../core/i18n';
 import type { FieldOption, FieldSpec } from './fields';
@@ -201,8 +204,65 @@ export function wireFields(): BlockField[] {
         },
       ],
     },
+    markGroup(),
     { kind: 'toggle', key: 'locked', label: 'inspector.locked', get: (d, s) => wire(d, s).locked, set: setWire('locked') },
   ];
+}
+
+/** Routes of a diagram, computed once per data value (the label's automatic place needs them). */
+const routeCache = new WeakMap<BlockDiagram, ReturnType<typeof routeAll>>();
+const routesOf = (d: BlockDiagram) => { let r = routeCache.get(d); if (!r) { r = routeAll(d); routeCache.set(d, r); } return r; };
+
+/** Where the wire's label is now: its mark, else the automatic place (V2 v4LabelPosition). */
+function markOf(d: BlockDiagram, s: ItemRef): { x: number; y: number; angle: number } | null {
+  const w = wire(d, s);
+  if (w.label?.mark) return { ...w.label.mark };
+  const r = routesOf(d).get(w.id), text = wireLabel(w, d.view), pos = r && text ? labelPosition(w, r.ps) : null;
+  if (!pos) return null;
+  return { x: pos.anchor === 'middle' ? pos.x : pos.x + labelBox(w, pos, text).w / 2, y: pos.y, angle: 0 };
+}
+
+/**
+ * The wire label's position and angle (V2 v4 "Wire name / value mark", L1805): X / Y / angle,
+ * Horizontal / Vertical / Vertical reverse / Reverse, ±15°, back to the automatic place. Dragging
+ * the label on the canvas does the same.
+ */
+function markGroup(): BlockField {
+  const has = (d: BlockDiagram, s: ItemRef) => markOf(d, s) !== null;
+  const set = (k: 'x' | 'y' | 'angle') => (d: BlockDiagram, s: ItemRef, v: number) => { const m = markOf(d, s); return m ? setLabelMark(d, s.id, { ...m, [k]: v }) : d; };
+  return {
+    kind: 'group', key: 'mark', label: 'inspector.group.mark', visible: has, fields: [
+      {
+        kind: 'custom', key: 'markState', label: 'inspector.mark.state',
+        render: ({ doc, data, sel }) => { const p = doc.createElement('p'); p.className = 'af-field-hint'; p.textContent = t(wire(data, sel).label?.mark ? 'inspector.mark.manual' : 'inspector.mark.auto'); return p; },
+      },
+      { kind: 'number', key: 'markX', label: 'inspector.mark.x', unit: 'px', min: -1e7, max: 1e7, step: 1, get: (d, s) => Math.round((markOf(d, s)?.x ?? 0) * 100) / 100, set: set('x') },
+      { kind: 'number', key: 'markY', label: 'inspector.mark.y', unit: 'px', min: -1e7, max: 1e7, step: 1, get: (d, s) => Math.round((markOf(d, s)?.y ?? 0) * 100) / 100, set: set('y') },
+      { kind: 'number', key: 'markAngle', label: 'inspector.mark.angle', unit: '\u00b0', min: -360, max: 360, step: 15, get: (d, s) => markOf(d, s)?.angle ?? 0, set: set('angle') },
+      {
+        kind: 'custom', key: 'markActions', label: 'inspector.group.mark',
+        render: ({ doc, apply, sel }) => {
+          const row = doc.createElement('div');
+          row.className = 'af-field-actions';
+          const add = (text: string, edit: (d: BlockDiagram) => BlockDiagram) => {
+            const b = doc.createElement('button');
+            b.type = 'button'; b.className = 'af-field-reset'; b.textContent = text;
+            b.addEventListener('click', () => apply(edit));
+            row.append(b);
+          };
+          const at = (angle: (cur: number) => number) => (d: BlockDiagram) => { const m = markOf(d, sel); return m ? setLabelMark(d, sel.id, { ...m, angle: angle(m.angle) }) : d; };
+          add(t('inspector.mark.horizontal'), at(() => 0));
+          add(t('inspector.mark.vertical'), at(() => 90));
+          add(t('inspector.mark.verticalReverse'), at(() => 270));
+          add(t('inspector.mark.reverse'), at(() => 180));
+          add('\u221215\u00b0', at(a => a - 15));
+          add('+15\u00b0', at(a => a + 15));
+          add(t('inspector.mark.reset'), d => setLabelMark(d, sel.id, null));
+          return row;
+        },
+      },
+    ],
+  };
 }
 
 export function textFields(): BlockField[] {

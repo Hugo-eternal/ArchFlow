@@ -637,5 +637,17 @@
   "inspector.block.scaleTextHint": "When you drag the corner, name, subtitle, pin and value sizes change by the same ratio; this setting is kept in this browser.",
   "canvas.refused.route-invalid": "the target crosses a block or makes an invalid route",
   "canvas.segmentHandle": "Drag to move this segment",
-  "canvas.cornerHandle": "Drag to move this corner"
+  "canvas.cornerHandle": "Drag to move this corner",
+  "inspector.group.mark": "Wire name / value mark",
+  "inspector.mark.state": "Mark position",
+  "inspector.mark.manual": "Pinned by hand: drag the mark to move it; organize keeps it.",
+  "inspector.mark.auto": "Automatic: drag the mark to pin it.",
+  "inspector.mark.x": "X",
+  "inspector.mark.y": "Y",
+  "inspector.mark.angle": "Angle",
+  "inspector.mark.horizontal": "Horizontal",
+  "inspector.mark.vertical": "Vertical",
+  "inspector.mark.verticalReverse": "Vertical reverse",
+  "inspector.mark.reverse": "Reverse",
+  "inspector.mark.reset": "Reset to automatic"
 }

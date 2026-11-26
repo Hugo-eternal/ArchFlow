@@ -402,3 +402,23 @@ export function scaleBlockFonts(d: BlockDiagram, f: number): BlockDiagram {
   }
   return data;
 }
+
+/**
+ * A just-added block follows the diagram (V2 L3097 adopt): its reference ("U3") is kept only when
+ * most other ordinary blocks have one, and its name position is the one most blocks use (more
+ * than half), else centred.
+ */
+export function adoptNewBlock(d: BlockDiagram, id: string): BlockDiagram {
+  const n = blockOf(d, id);
+  if (!n || n.part) return d;
+  const others = d.blocks.filter(b => b.id !== id && !b.part);
+  const patch: BlockPatch = {};
+  if (!(others.length && others.filter(b => b.ref.trim()).length > others.length / 2) && /^[A-Z]{1,3}\d+$/.test(n.ref)) patch.ref = '';
+  if (!n.titleAlign) {
+    const count = new Map<string, number>();
+    for (const b of others) { const k = b.titleAlign ?? 'center-center'; count.set(k, (count.get(k) ?? 0) + 1); }
+    const best = [...count].sort((a, b) => b[1] - a[1])[0];
+    if (best && best[1] > others.length / 2 && best[0] !== 'center-center') patch.titleAlign = best[0] as Block['titleAlign'];
+  }
+  return Object.keys(patch).length ? updateBlock(d, id, patch) : d;
+}

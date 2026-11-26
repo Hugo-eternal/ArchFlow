@@ -637,5 +637,17 @@
   "inspector.block.scaleTextHint": "拖曳右下角縮放方塊時，名稱、副標、接腳與數值字級跟著同比例變化；這個設定存在這台電腦的瀏覽器。",
   "canvas.refused.route-invalid": "目標位置會穿過方塊或形成無效路徑",
   "canvas.segmentHandle": "拖曳平移這段線",
-  "canvas.cornerHandle": "拖曳移動轉角"
+  "canvas.cornerHandle": "拖曳移動轉角",
+  "inspector.group.mark": "線路名稱／數值標註",
+  "inspector.mark.state": "標註位置",
+  "inspector.mark.manual": "手動固定：拖曳標註即可移動；整理時保留。",
+  "inspector.mark.auto": "自動位置：拖曳標註即可固定。",
+  "inspector.mark.x": "X",
+  "inspector.mark.y": "Y",
+  "inspector.mark.angle": "角度",
+  "inspector.mark.horizontal": "水平",
+  "inspector.mark.vertical": "直向",
+  "inspector.mark.verticalReverse": "反向直排",
+  "inspector.mark.reverse": "反向",
+  "inspector.mark.reset": "恢復自動位置"
 }

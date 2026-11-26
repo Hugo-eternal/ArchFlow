@@ -13,7 +13,7 @@ import { frameApi, installHosts, installToolHosts } from './embedded';
 import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
 import { ModelError, type ItemRef } from '../model/types';
-import { addBlock, addFrame, addPort, addText, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addFrame, addPort, addText, adoptNewBlock, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { alignable, alignBlocks, arrangePorts, type AlignAxis } from '../model/arrange';
 import { estimateWidth, type Measure } from '../render/texts';
@@ -344,7 +344,7 @@ export function shellCommands(): Command<Shell>[] {
         const d = s.data(), c = s.viewCentre();
         const at = freeSpot(d, BLOCK_DEFAULT.w, BLOCK_DEFAULT.h, c, d.grid.snap ? gridSize(d.grid) : 1);
         let id = '';
-        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at)); id = out.id; return out.data; });
+        const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at)); id = out.id; return adoptNewBlock(out.data, id); });
         if (r.ok) s.gestures.select([{ kind: 'block', id }]);
       },
     },

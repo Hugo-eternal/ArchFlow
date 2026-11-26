@@ -9,6 +9,8 @@ import type { BlockDiagram, BlockView, LineFormat, Wire } from '../io/schema-typ
 import { near, simplify, toPathData, type Point } from '../core/geometry';
 import type { Route } from '../router/full-path';
 import { h, r2, type VNode } from './vnode';
+import { pinLabelBoxes } from './blocks';
+import { estimateWidth } from './texts';
 
 export const DASH: Record<string, string | undefined> = { solid: undefined, dash: '8 5', dot: '2 4' };
 const KINDS = new Set(['signal', 'power', 'clock', 'bus']);
@@ -27,8 +29,8 @@ export function wireLabel(w: Wire, view: BlockView): string {
 }
 
 /** Where the label goes: the manual mark, else organize's spot for this route (label.auto), else above the middle of the longest segment. */
-export function labelPosition(w: Wire, ps: readonly Point[]): { x: number; y: number; anchor: 'middle' | 'start' } | null {
-  if (w.label?.mark) return { x: w.label.mark.x, y: w.label.mark.y, anchor: 'middle' };
+export function labelPosition(w: Wire, ps: readonly Point[]): { x: number; y: number; anchor: 'middle' | 'start'; angle?: number } | null {
+  if (w.label?.mark) return { x: w.label.mark.x, y: w.label.mark.y, anchor: 'middle', angle: w.label.mark.angle || undefined };
   // where organize placed it, while the wire still runs the same way (V2 afUnifiedLabel, 3.38)
   const auto = w.label?.auto;
   if (auto && auto.signature === JSON.stringify(simplify(ps).map(p => ({ x: p.x, y: p.y })))) return { x: auto.x, y: auto.y, anchor: 'middle' };
@@ -60,7 +62,33 @@ export interface WireRenderOptions {
 /** In the power view everything but power wires is drawn faded (plan §2.2.1). */
 export const isMuted = (w: Wire, view: BlockView) => view === 'power' && w.kind !== 'power';
 
-function wireNode(w: Wire, route: Route, view: BlockView, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions): VNode {
+/** The box of a wire label as drawn (unrotated), for de-duplication and hit testing. */
+export function labelBox(w: Wire, pos: { x: number; y: number; anchor: 'middle' | 'start' }, text: string, measure = estimateWidth): { x: number; y: number; w: number; h: number } {
+  const size = w.label?.size ?? LABEL_SIZE, width = measure(text, size, true, false);
+  return { x: pos.anchor === 'middle' ? pos.x - width / 2 : pos.x, y: pos.y - size * 0.8, w: width, h: size };
+}
+
+/**
+ * V2 dedupeLabels (L3099): a wire label whose text equals a pin name drawn within 14 px of it is
+ * hidden — the pin already says it.
+ */
+function duplicates(d: BlockDiagram, routes: ReadonlyMap<string, Route>): Set<string> {
+  const out = new Set<string>();
+  const labels = d.wires.flatMap(w => {
+    const r = routes.get(w.id), text = wireLabel(w, d.view), pos = r && text ? labelPosition(w, r.ps) : null;
+    return pos ? [{ w, text: text.trim().toLowerCase(), box: labelBox(w, pos, text) }] : [];
+  });
+  if (!labels.length) return out;
+  const pins = pinLabelBoxes(d, estimateWidth, d.theme).map(p => ({ ...p, text: p.text.trim().toLowerCase() }));
+  const pad = 14;
+  for (const l of labels) {
+    const b = l.box;
+    if (pins.some(p => p.text === l.text && p.x < b.x + b.w + pad && p.x + p.w > b.x - pad && p.y < b.y + b.h + pad && p.y + p.h > b.y - pad)) out.add(l.w.id);
+  }
+  return out;
+}
+
+function wireNode(w: Wire, route: Route, view: BlockView, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions, hidden = false): VNode {
   const tone = opts.tone?.(w);
   const s = strokeOf(tone ? { ...w, line: { ...w.line, color: '' } } : w), d = toPathData(route.ps);
   // an arrow never points into a junction; `bothEnds` adds one at the start (V2 edge.afBoth, L4112)
@@ -74,12 +102,13 @@ function wireNode(w: Wire, route: Route, view: BlockView, markers: Map<string, L
     if (arrowStart) markerStart = `url(#${id})`;
   }
   const style = [s.color && `stroke:${s.color}`, w.line.width && `stroke-width:${w.line.width}px`].filter(Boolean).join(';') || undefined;
-  const text = wireLabel(w, view), pos = text ? labelPosition(w, route.ps) : null;
+  const text = hidden ? '' : wireLabel(w, view), pos = text ? labelPosition(w, route.ps) : null;
   return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${tone ? ` is-rail-${tone}` : ''}${isMuted(w, view) ? ' is-muted' : ''}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
     opts.selected?.has(w.id) ? h('path', { class: 'af-wire-selected', d }) : null,
     h('path', { class: s.cls, d, style, 'stroke-dasharray': DASH[w.line.dash], 'marker-end': marker, 'marker-start': markerStart }),
     pos ? h('text', {
-      class: 'af-wire-label', x: r2(pos.x), y: r2(pos.y), 'text-anchor': pos.anchor,
+      class: 'af-wire-label', x: r2(pos.x), y: r2(pos.y), 'text-anchor': pos.anchor, 'data-wire-label': w.id,
+      transform: pos.angle ? `rotate(${r2(pos.angle)} ${r2(pos.x)} ${r2(pos.y)})` : undefined,
       style: w.label?.size && w.label.size !== LABEL_SIZE ? `font-size:${w.label.size}px` : undefined,
     }, text) : null,
   ]);
@@ -98,7 +127,8 @@ function markerDefs(markers: Map<string, LineFormat & { kindColor: string }>): V
  *  follow `d.view`. */
 export function wiresLayer(d: BlockDiagram, routes: ReadonlyMap<string, Route>, opts: WireRenderOptions = {}): VNode {
   const markers = new Map<string, LineFormat & { kindColor: string }>();
-  const wires = d.wires.filter(w => routes.has(w.id)).map(w => wireNode(w, routes.get(w.id)!, d.view, markers, opts));
+  const dup = duplicates(d, routes);
+  const wires = d.wires.filter(w => routes.has(w.id)).map(w => wireNode(w, routes.get(w.id)!, d.view, markers, opts, dup.has(w.id)));
   return h('g', { class: 'af-wires' }, [
     markerDefs(markers),
     ...wires,

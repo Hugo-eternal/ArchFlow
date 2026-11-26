@@ -76,3 +76,13 @@ export function slidePort(d: BlockDiagram, blockId: string, portId: string, at: 
   }
   return data;
 }
+
+/** Pin a wire label by hand (V2 afLabelMark: x, y, angle 0–359) or, with null, give it back to the automatic place. */
+export function setLabelMark(d: BlockDiagram, wireId: string, mark: { x: number; y: number; angle: number } | null): BlockDiagram {
+  const w = d.wires.find(x => x.id === wireId);
+  if (!w) return d;
+  const label = { ...w.label };
+  if (mark) label.mark = { x: mark.x, y: mark.y, angle: ((Math.round(mark.angle) % 360) + 360) % 360 };
+  else delete label.mark;
+  return updateWire(d, wireId, { label });
+}

@@ -23,9 +23,10 @@ import { routeWire, type Route } from '../router/full-path';
 import { simplify } from '../core/geometry';
 import type { Measure } from '../render/texts';
 import { panBy, toWorld, wheelFactor, zoomAt } from '../core/camera';
-import { gridSize, portPoint, snapIfOn } from '../core/grid';
+import { GridError, gridSize, portPoint, snapIfOn } from '../core/grid';
 import { connect, frameMembers, moveItems, resizeBlock, updateFrame, FRAME } from '../model/diagram';
-import { moveCorner, moveSegment, setManualPath, slidePort, JOG } from '../model/route-edit';
+import { moveCorner, moveSegment, setLabelMark, setManualPath, slidePort, JOG } from '../model/route-edit';
+import { labelBox, labelPosition, wireLabel } from '../render/wires';
 import { ModelError } from '../model/types';
 
 /** Screen px around a selected frame's corner that start a resize. */
@@ -72,6 +73,7 @@ type State =
   | { kind: 'blockResize'; block: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'path'; wire: string; ps: Point[]; index: number; corner: boolean; start: Point; before: BlockDiagram; draft: BlockDiagram; valid: boolean }
   | { kind: 'slide'; block: string; port: string; before: BlockDiagram; draft: BlockDiagram }
+  | { kind: 'label'; wire: string; start: PointerIn; world: Point; pos: { x: number; y: number; angle: number }; before: BlockDiagram; draft: BlockDiagram; moved: boolean }
   | { kind: 'wire'; from: WireEnd; at: Point; to: Point; target: { end: WireEnd; at: Point } | null };
 
 const same = (a: ItemRef, b: ItemRef) => a.kind === b.kind && a.id === b.id && (a.kind !== 'port' || (b.kind === 'port' && a.block === b.block));
@@ -88,7 +90,7 @@ export class Gestures {
   /** The diagram to draw: the moving draft during a move, else the store's data. */
   draft(): BlockDiagram {
     const s = this.state;
-    return s.kind === 'move' || s.kind === 'resize' || s.kind === 'blockResize' || s.kind === 'path' || s.kind === 'slide' ? s.draft : this.data();
+    return s.kind === 'move' || s.kind === 'resize' || s.kind === 'blockResize' || s.kind === 'path' || s.kind === 'slide' || s.kind === 'label' ? s.draft : this.data();
   }
 
   isSelected(ref: Pick<ItemRef, 'kind' | 'id'>): boolean { return this.selection.some(s => s.kind === ref.kind && s.id === ref.id); }
@@ -98,6 +100,25 @@ export class Gestures {
     const first = items[0];
     this.host.store.select(first && first.kind !== 'port' ? { kind: first.kind, id: first.id } as never : null);
     this.host.changed?.();
+  }
+
+  /** The wire label under a point (its drawn box, turned with its angle), top-most first. */
+  labelAt(d: BlockDiagram, p: Point, zoom: number): { wire: string; pos: { x: number; y: number; angle: number } } | null {
+    const routes = this.host.routes(), pad = 3 / zoom;
+    for (let i = d.wires.length - 1; i >= 0; i--) {
+      const w = d.wires[i], r = routes.get(w.id), text = r ? wireLabel(w, d.view) : '';
+      const pos = text ? labelPosition(w, r!.ps) : null;
+      if (!pos) continue;
+      const box = labelBox(w, pos, text, this.host.measure);
+      // undo the label's rotation around its anchor, then test the plain box
+      const a = -((pos.angle ?? 0) * Math.PI) / 180, dx = p.x - pos.x, dy = p.y - pos.y;
+      const q = { x: pos.x + dx * Math.cos(a) - dy * Math.sin(a), y: pos.y + dx * Math.sin(a) + dy * Math.cos(a) };
+      if (q.x >= box.x - pad && q.x <= box.x + box.w + pad && q.y >= box.y - pad && q.y <= box.y + box.h + pad) {
+        const cx = pos.anchor === 'middle' ? pos.x : box.x + box.w / 2;
+        return { wire: w.id, pos: { x: cx, y: pos.y, angle: pos.angle ?? 0 } };
+      }
+    }
+    return null;
   }
 
   /** The path of a wire as drawn, its corner points (bends) and segment midpoints (handles). */
@@ -140,12 +161,24 @@ export class Gestures {
     const wsel = this.selection.length === 1 && this.selection[0].kind === 'wire' ? d.wires.find(w => w.id === this.selection[0].id) : undefined;
     if (wsel && !wsel.locked && !ev.shift) {
       const ps = this.wireHandles(wsel.id);
-      const tol = BLOCK_HANDLE / cam.z, near = (p: Point) => Math.abs(world.x - p.x) <= tol && Math.abs(world.y - p.y) <= tol;
-      const corner = ps.corners.findIndex(near), segment = corner < 0 ? ps.segments.findIndex(near) : -1;
+      // the drawn handle (10 px) first, the wider 24 px target only where no label is
+      const within = (tol: number) => (p: Point) => Math.abs(world.x - p.x) <= tol / cam.z && Math.abs(world.y - p.y) <= tol / cam.z;
+      const pick = (tol: number) => { const c = ps.corners.findIndex(within(tol)); return { corner: c, segment: c < 0 ? ps.segments.findIndex(within(tol)) : -1 }; };
+      let { corner, segment } = pick(6);
+      if (corner < 0 && segment < 0 && !this.labelAt(d, world, cam.z)) ({ corner, segment } = pick(BLOCK_HANDLE));
       if (corner >= 0 || segment >= 0) {
         this.state = { kind: 'path', wire: wsel.id, ps: ps.points, index: corner >= 0 ? corner + 1 : segment, corner: corner >= 0, start: world, before: d, draft: d, valid: true };
         return;
       }
+    }
+    // a wire label: drag it to pin it by hand (V2 v4 marks, L1806); a click selects the wire
+    const label = this.labelAt(d, world, cam.z);
+    if (label && !ev.shift) {
+      const w = d.wires.find(x => x.id === label.wire)!;
+      this.select([{ kind: 'wire', id: w.id }]);
+      if (w.locked) { this.host.refused?.({ ok: false, error: new GridError('locked-wire', w.id) }); return; }
+      this.state = { kind: 'label', wire: w.id, start: ev, world, pos: label.pos, before: d, draft: d, moved: false };
+      return;
     }
     const item = hitTest(d, world, { zoom: cam.z, routes: this.host.routes(), measure: this.host.measure });
     // Shift-drag a pin: slide it along the block edge (V2 project / gg port drag)
@@ -237,6 +270,14 @@ export class Gestures {
         this.host.changed?.();
         return;
       }
+      case 'label': {
+        if (!s.moved && Math.hypot(ev.x - s.start.x, ev.y - s.start.y) < CLICK_SLOP) return;
+        s.moved = true;
+        const mark = { x: Math.round((s.pos.x + world.x - s.world.x) * 100) / 100, y: Math.round((s.pos.y + world.y - s.world.y) * 100) / 100, angle: s.pos.angle };
+        s.draft = setLabelMark(s.before, s.wire, mark);
+        this.host.changed?.();
+        return;
+      }
       case 'slide': {
         const g = s.before.grid?.snap ? gridSize(s.before.grid) : 1;
         s.draft = slidePort(s.before, s.block, s.port, world, g);
@@ -280,6 +321,12 @@ export class Gestures {
       case 'path': {
         // V2: "the target intersects a block or creates an invalid route" — nothing changes
         if (!s.valid) { this.host.refused?.({ ok: false, error: new ModelError('route-invalid', s.wire) }); break; }
+        const r = commitEdit(this.host.store, () => s.draft);
+        if (!r.ok) this.host.refused?.(r);
+        break;
+      }
+      case 'label': {
+        if (!s.moved) break;
         const r = commitEdit(this.host.store, () => s.draft);
         if (!r.ok) this.host.refused?.(r);
         break;
