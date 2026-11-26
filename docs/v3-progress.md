@@ -89,7 +89,10 @@
 - [x] 3.35 `tools/pattern`（L2）
 ### 3I 自動整理
 - [x] 3.36 `layout/` 呼叫圖：以 `v4Generate` 為入口列出實際用到的函式（L0）
-- [ ] 3.37 `layout/` autoArrange（L3）
+- [x] 3.37a `layout/` golden 錄製（V2 引擎在 golden 圖上的候選結果）＋資料轉接層＋量測 / 幾何（`roMetrics`、`ssClassify`、`roGeometry` 等，與 V2 base 指標一致）（L3）
+- [ ] 3.37b `layout/` 繞線（`roAdapters`、`roFind`、`uiRouteOne`、`ssRouteOne`、`uiRoutes`；routes 模式的路徑與 V2 一致）（L3）
+- [ ] 3.37c `layout/` 線路標籤（`uiDefaultLabels`、`uiLiveLabels`、`uiArrangeLabels`、`uiLabelRect`；與 V2 一致）（L3）
+- [ ] 3.37d `layout/` 排列、候選、保護檢查、逐條改善與入口 `organize()`（layout 模式與 V2 一致、決定性）（L3）
 - [ ] 3.38 `layout/` 整理預覽（RC4）（L3）
 ### 3J 完整殼層
 - [ ] 3.39 `shell`：app bar、命令列（L3）
@@ -112,8 +115,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3I 自動整理：3.36 呼叫圖完成（`docs/v3-layout-callgraph.md`）
-- **下一步**：3.37 `layout/` autoArrange（L3）。照 `docs/v3-layout-callgraph.md` §2 的檔案分配移植運算部分（metrics / geometry / route / place / labels / candidate，共約 40 KB 的 V2 原始碼），入口做成純函式（例如 `organize(data, { mode: 'routes' | 'layout', ids?, budgetMs? })` → `{ base, candidates, best }`）。**先做 golden**（§4）：在 V2 引擎對 golden function / power 與打亂座標的圖跑 `uiCandidate`（各 kind）與 `v4Refine`，把方塊座標、paths、metrics 存快照，再讓 V3 對同一份 V3 資料產生相同結果（座標容差 0.5）。`roFind` 與 V3 `router/find-path` 不同，要獨立移植。量很大，可再拆成 3.37a（metrics + geometry + route，以 routes 模式 golden 驗證）與 3.37b（place + labels + candidate + refine，layout 模式），拆分時更新本清單。
+- **目前階段**：階段 3（模組化重構）——3I 自動整理：3.37a（golden、轉接層、量測）完成
+- **下一步**：3.37b `layout/route.ts` 繞線：移植 `roAdapters`（L1594）、`roFind`（L1596）、`uiRouteCost`（L1705）、`uiRouteOne`（L1706）、`uiRoutes`（L1708 + L1758 第二層）、`ssCost`（L1753）、`ssRouteOne`（L1754）、`ggOn`（L1476）。V2 原始碼直接看 legacy 對應行（全是單行函式，可用 `sed -n <行>p legacy/app.zh-Hant.html`）。驗證：golden `routes.candidates` 中 kind `preserved` 的 `paths`（function / power / scrambled 三份），以 V3 `fromDiagram` + `geometry` + `currentPaths` 為輸入、權限 `{ routes: true, blocks: false, ports: false, sides: false, labels: true, scope: 'all', space: 'wide', ids: [] }`，`uiRoutes` 結果要與 V2 相同（座標容差 0.5）。`roFind` 有 `deadline`（時間預算）——測試給足夠大的預算以保證決定性。注意：V2 `uiCandidate` 先 `uiLayout`（preserved 不動）再 `uiGeo`（`roGeometry(m,false)` 並保留原尺寸），routes 模式的 geo 就是 base geo。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -231,10 +234,11 @@
 - Hex（3.34）：`src/tools/hex/index.ts`——`vendor/tools/hex.html` 原樣，host `afHexHost`；E2E 載入 .bin 後顯示位元組。
 - Pattern（3.35）：`src/tools/pattern/index.ts`——`vendor/tools/pattern.html` 原樣，host `afPgHost`，iframe `allow` 含 clipboard / fullscreen / window-management 與 `allowFullscreen`（同 V2）。3H 工具全部完成：`createTools` 依序註冊 bom、edid、hex、pattern。
 - 自動整理呼叫圖（3.36）：`docs/v3-layout-callgraph.md`（流程、62 個引擎函式的行號 / 大小 / 作用 / V3 落點、覆寫鏈、外部依賴對照、要鎖定的行為）；產生腳本 `scripts/audit/layout-callgraph.mjs`（從 `v4Generate` 等入口沿引擎前綴展開，解析 `const X=Y;` 覆寫別名；`--json`）。
+- 自動整理 3.37a：golden `tests/golden/layout.test.js`——V2 引擎在閉包內（`roCopy` 等全域都取不到），只能經 `window.ArchFlowRC4.plan()`：開啟整理對話框（`autoArrange()`）→ 等「完成」→ 讀 plan（base 與所有候選的 m / geo / paths / labels / metrics / changes）；切 `#v4Mode` 為 layout 再讀一次。三份：golden function、power、打亂座標的入門方塊圖（`tests/golden/layout/scrambled.project.json` 固定檔，因為新建專案的 id 是隨機的）。快照 `tests/golden/layout/__snapshots__/{function,power,scrambled}.json`（連跑三次一致）。V3：`src/layout/model.ts`（引擎資料形狀：nodes / edges、端點 `{ node, port }` / `{ junction }`、錨點以端點 JSON 為鍵——沿用 V2 用語以便逐行移植；`fromDiagram`、`geometry`（方塊尺寸 = w / h、錨點 = `core/grid.portPoint`）、`currentPaths`、`endDir`、`pairs` / `rect` / `sameAt` / `copy` / `endKey`）、`src/layout/metrics.ts`（`validPath`、`overlap`、`cross`、`pathMetrics`、`source` / `commonPrefix` / `pathOverlap` / `classify`、`labelRect`（含旋轉）、`rectOverlap`、`labelConflicts`、`noOverlap`、`measure`、`score`、`allowed`）。測試 `tests/unit/layout.metrics.test.ts`：三份 golden 的幾何、目前路徑、原圖與每個候選的指標都與 V2 相同。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L0（3.36：只改文件與稽核腳本；`node scripts/audit/layout-callgraph.mjs` 可執行，模組標註未受影響；專案沒有文件 lint / 連結檢查指令）。前一步 3.35：L2（模組標註、i18n、vendor、產物檢查（dist 1.83 MB）、`tools.test`（6 項）、`v3-tools.spec`（4 項）通過）。
+- **最後通過的驗證層級**：L3（3.37a：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 46 檔 368 項（含 V2 引擎 golden 錄製 `tests/golden/layout.test.js`）、Playwright 28 項（`--workers=1`）全數通過）。前一步 3.36：L0（只改文件與稽核腳本；`node scripts/audit/layout-callgraph.mjs` 可執行，模組標註未受影響；專案沒有文件 lint / 連結檢查指令）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

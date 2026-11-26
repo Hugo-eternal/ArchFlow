@@ -1,0 +1,4319 @@
+{
+  "project": {
+    "version": 5,
+    "project": {
+      "name": "Test"
+    },
+    "activeDesignId": "xwihpr65ho",
+    "designs": [
+      {
+        "id": "xwihpr65ho",
+        "name": "入門方塊圖",
+        "type": "function",
+        "diagram": {
+          "nodes": [
+            {
+              "id": "x9g9kv1npx",
+              "x": -70,
+              "y": 60,
+              "title": "",
+              "text": "",
+              "partNumber": "主機板",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xcl144al2u",
+                  "name": "PWR",
+                  "side": "r",
+                  "t": 0.2777777777777778,
+                  "type": "power",
+                  "showLabel": true,
+                  "afGridOffset": 50
+                },
+                {
+                  "id": "ximk77udab",
+                  "name": "LVDS",
+                  "side": "r",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 90
+                },
+                {
+                  "id": "xln465qfe5",
+                  "name": "BL_EN",
+                  "side": "r",
+                  "t": 0.7777777777777778,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 140
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 200,
+              "h": 180,
+              "afLayout": "center-center"
+            },
+            {
+              "id": "xreqvga5y2",
+              "x": 220,
+              "y": 70,
+              "title": "FPC / FFC",
+              "text": "",
+              "partNumber": "CN1",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xybch890vc",
+                  "name": "VDD",
+                  "side": "l",
+                  "t": 0.14285714285714285,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20,
+                  "afPin": 0,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "xh1lg9rzi6",
+                  "name": "VDD",
+                  "side": "r",
+                  "t": 0.14285714285714285,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20,
+                  "afPin": 0,
+                  "afEnd": "r"
+                },
+                {
+                  "id": "x2wfa96000",
+                  "name": "GND",
+                  "side": "l",
+                  "t": 0.2857142857142857,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 40,
+                  "afPin": 1,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "xjeplpt4y3",
+                  "name": "GND",
+                  "side": "r",
+                  "t": 0.2857142857142857,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 40,
+                  "afPin": 1,
+                  "afEnd": "r"
+                },
+                {
+                  "id": "xa05cl71j1",
+                  "name": "LVDS+",
+                  "side": "l",
+                  "t": 0.42857142857142855,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 60,
+                  "afPin": 2,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "xpxzh8f45m",
+                  "name": "LVDS+",
+                  "side": "r",
+                  "t": 0.42857142857142855,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 60,
+                  "afPin": 2,
+                  "afEnd": "r"
+                },
+                {
+                  "id": "x7cb10p7sn",
+                  "name": "LVDS−",
+                  "side": "l",
+                  "t": 0.5714285714285714,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 80,
+                  "afPin": 3,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "xhh5sw5izx",
+                  "name": "LVDS−",
+                  "side": "r",
+                  "t": 0.5714285714285714,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 80,
+                  "afPin": 3,
+                  "afEnd": "r"
+                },
+                {
+                  "id": "xwp6wsirzt",
+                  "name": "BL_EN",
+                  "side": "l",
+                  "t": 0.7142857142857143,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 100,
+                  "afPin": 4,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "xl9aieb0rd",
+                  "name": "BL_EN",
+                  "side": "r",
+                  "t": 0.7142857142857143,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 100,
+                  "afPin": 4,
+                  "afEnd": "r"
+                },
+                {
+                  "id": "xgqlydr5y0",
+                  "name": "BL_PWM",
+                  "side": "l",
+                  "t": 0.8571428571428571,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 120,
+                  "afPin": 5,
+                  "afEnd": "l"
+                },
+                {
+                  "id": "x46vxudclk",
+                  "name": "BL_PWM",
+                  "side": "r",
+                  "t": 0.8571428571428571,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 120,
+                  "afPin": 5,
+                  "afEnd": "r"
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 30,
+              "h": 140,
+              "afLayout": "center-center",
+              "afSym": "conn",
+              "afRot": 0,
+              "afSize": "M",
+              "afConn": {
+                "kind": "fpc",
+                "side": "both",
+                "pins": [
+                  "VDD",
+                  "GND",
+                  "LVDS+",
+                  "LVDS−",
+                  "BL_EN",
+                  "BL_PWM"
+                ],
+                "only": false
+              },
+              "afMpn": "",
+              "afRows": {
+                "vis": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ],
+                "hidden": 0
+              }
+            },
+            {
+              "id": "xuokrxpp0p",
+              "x": 350,
+              "y": 10,
+              "title": "",
+              "text": "",
+              "partNumber": "TCON",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xpaaasqdp8",
+                  "name": "LVDS",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 80
+                },
+                {
+                  "id": "xkdu4gdc2f",
+                  "name": "SRC",
+                  "side": "r",
+                  "t": 0.375,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 60
+                },
+                {
+                  "id": "xymf87c32p",
+                  "name": "GATE",
+                  "side": "r",
+                  "t": 0.625,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 100
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 200,
+              "h": 160,
+              "afLayout": "center-center"
+            },
+            {
+              "id": "xbcb9jm20h",
+              "x": 710,
+              "y": -20,
+              "title": "",
+              "text": "",
+              "partNumber": "Source IC ×4",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xqs31ybnf2",
+                  "name": "IN",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 50
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 260,
+              "h": 100,
+              "afLayout": "center-center"
+            },
+            {
+              "id": "xxwhev2fmn",
+              "x": 710,
+              "y": 120,
+              "title": "",
+              "text": "",
+              "partNumber": "Gate IC ×2",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xpfstxusym",
+                  "name": "IN",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 50
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 260,
+              "h": 100,
+              "afLayout": "center-center"
+            },
+            {
+              "id": "x49tf8uc1q",
+              "x": 350,
+              "y": 250,
+              "title": "",
+              "text": "",
+              "partNumber": "背光驅動",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xzi91y4dz4",
+                  "name": "EN",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 60
+                },
+                {
+                  "id": "xwh04psm12",
+                  "name": "OUT",
+                  "side": "r",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": true,
+                  "afGridOffset": 60
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 200,
+              "h": 120,
+              "afLayout": "center-center"
+            },
+            {
+              "id": "xhz0f2z7n5",
+              "x": 650,
+              "y": 290,
+              "title": "LED",
+              "text": "",
+              "partNumber": "",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xumwp7dziq",
+                  "name": "A",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                },
+                {
+                  "id": "xwsgn3orw6",
+                  "name": "K",
+                  "side": "r",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 100,
+              "h": 40,
+              "afLayout": "center-center",
+              "afSym": "led",
+              "afRot": 0,
+              "afSize": "M"
+            },
+            {
+              "id": "xux4fhcz1f",
+              "x": 810,
+              "y": 290,
+              "title": "LED",
+              "text": "",
+              "partNumber": "",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xrgocaifet",
+                  "name": "A",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                },
+                {
+                  "id": "xwuyyjhanu",
+                  "name": "K",
+                  "side": "r",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 100,
+              "h": 40,
+              "afLayout": "center-center",
+              "afSym": "led",
+              "afRot": 0,
+              "afSize": "M"
+            },
+            {
+              "id": "xzs7jedej6",
+              "x": 920,
+              "y": -340,
+              "title": "電阻",
+              "text": "",
+              "partNumber": "",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xbp7leuv5h",
+                  "name": "1",
+                  "side": "l",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                },
+                {
+                  "id": "xt5qo6rqhd",
+                  "name": "2",
+                  "side": "r",
+                  "t": 0.5,
+                  "type": "io",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 100,
+              "h": 40,
+              "afLayout": "center-center",
+              "afSym": "res",
+              "afRot": 0,
+              "afSize": "M"
+            },
+            {
+              "id": "xe8vw57gfr",
+              "x": 950,
+              "y": -90,
+              "title": "接地",
+              "text": "",
+              "partNumber": "",
+              "ref": "",
+              "color": "#355c82",
+              "ports": [
+                {
+                  "id": "xinysjrm37",
+                  "name": "GND",
+                  "side": "t",
+                  "t": 0.5,
+                  "type": "gnd",
+                  "showLabel": false,
+                  "afGridOffset": 20
+                }
+              ],
+              "role": "load",
+              "voltage": "",
+              "current": "",
+              "power": "",
+              "efficiency": "",
+              "showMetrics": {
+                "voltage": false,
+                "current": false,
+                "power": false,
+                "efficiency": false
+              },
+              "appearance": {
+                "fill": "#eaf0f6",
+                "border": "#8fa5bc",
+                "accent": "#355c82",
+                "text": "#243d56",
+                "titleSize": 20
+              },
+              "ioConfig": {
+                "input": false,
+                "output": false,
+                "inputPosition": 0.5,
+                "outputPosition": 0.5,
+                "inputCount": null,
+                "outputCount": null
+              },
+              "review": false,
+              "w": 40,
+              "h": 40,
+              "afLayout": "center-center",
+              "afSym": "gnd",
+              "afRot": 0,
+              "afSize": "M"
+            }
+          ],
+          "edges": [
+            {
+              "id": "xi1pfpfzrv",
+              "a": {
+                "node": "x9g9kv1npx",
+                "port": "xcl144al2u"
+              },
+              "b": {
+                "node": "xreqvga5y2",
+                "port": "xybch890vc"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": false,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": false
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 130,
+                    "y": 110
+                  },
+                  {
+                    "x": 210,
+                    "y": 110
+                  },
+                  {
+                    "x": 210,
+                    "y": 90
+                  },
+                  {
+                    "x": 220,
+                    "y": 90
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xy3rp5x0o4",
+              "a": {
+                "node": "x9g9kv1npx",
+                "port": "ximk77udab"
+              },
+              "b": {
+                "node": "xreqvga5y2",
+                "port": "xa05cl71j1"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 130,
+                    "y": 150
+                  },
+                  {
+                    "x": 210,
+                    "y": 150
+                  },
+                  {
+                    "x": 210,
+                    "y": 130
+                  },
+                  {
+                    "x": 220,
+                    "y": 130
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xhxgyxejap",
+              "a": {
+                "node": "x9g9kv1npx",
+                "port": "xln465qfe5"
+              },
+              "b": {
+                "node": "xreqvga5y2",
+                "port": "xwp6wsirzt"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 130,
+                    "y": 200
+                  },
+                  {
+                    "x": 140,
+                    "y": 200
+                  },
+                  {
+                    "x": 140,
+                    "y": 170
+                  },
+                  {
+                    "x": 220,
+                    "y": 170
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "x25l1brpot",
+              "a": {
+                "node": "xreqvga5y2",
+                "port": "xpxzh8f45m"
+              },
+              "b": {
+                "node": "xuokrxpp0p",
+                "port": "xpaaasqdp8"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 250,
+                    "y": 130
+                  },
+                  {
+                    "x": 260,
+                    "y": 130
+                  },
+                  {
+                    "x": 260,
+                    "y": 90
+                  },
+                  {
+                    "x": 350,
+                    "y": 90
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xp3zibqxyr",
+              "a": {
+                "node": "xreqvga5y2",
+                "port": "xl9aieb0rd"
+              },
+              "b": {
+                "node": "x49tf8uc1q",
+                "port": "xzi91y4dz4"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 250,
+                    "y": 170
+                  },
+                  {
+                    "x": 260,
+                    "y": 170
+                  },
+                  {
+                    "x": 260,
+                    "y": 310
+                  },
+                  {
+                    "x": 350,
+                    "y": 310
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "x1e8hx1g5p",
+              "a": {
+                "node": "xuokrxpp0p",
+                "port": "xkdu4gdc2f"
+              },
+              "b": {
+                "node": "xbcb9jm20h",
+                "port": "xqs31ybnf2"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 550,
+                    "y": 70
+                  },
+                  {
+                    "x": 700,
+                    "y": 70
+                  },
+                  {
+                    "x": 700,
+                    "y": 30
+                  },
+                  {
+                    "x": 710,
+                    "y": 30
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xk4vyjq478",
+              "a": {
+                "node": "xuokrxpp0p",
+                "port": "xymf87c32p"
+              },
+              "b": {
+                "node": "xxwhev2fmn",
+                "port": "xpfstxusym"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": true,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": true
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 550,
+                    "y": 110
+                  },
+                  {
+                    "x": 700,
+                    "y": 110
+                  },
+                  {
+                    "x": 700,
+                    "y": 170
+                  },
+                  {
+                    "x": 710,
+                    "y": 170
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xyub3j1esu",
+              "a": {
+                "node": "x49tf8uc1q",
+                "port": "xwh04psm12"
+              },
+              "b": {
+                "node": "xhz0f2z7n5",
+                "port": "xumwp7dziq"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": false,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": false
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 550,
+                    "y": 310
+                  },
+                  {
+                    "x": 650,
+                    "y": 310
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            },
+            {
+              "id": "xm138omk5z",
+              "a": {
+                "node": "xhz0f2z7n5",
+                "port": "xwsgn3orw6"
+              },
+              "b": {
+                "node": "xux4fhcz1f",
+                "port": "xrgocaifet"
+              },
+              "name": "",
+              "kind": "signal",
+              "arrow": false,
+              "arrowSize": 9,
+              "manual": null,
+              "voltage": "",
+              "current": "",
+              "color": "#536b8c",
+              "afLineFormat": {
+                "color": "#536b8c",
+                "width": 2,
+                "dash": "solid",
+                "arrow": false
+              },
+              "currentUnit": "A",
+              "afShowElectrical": true,
+              "afLabelSize": 14,
+              "afRouteOnly": {
+                "version": 1,
+                "grid": 10,
+                "points": [
+                  {
+                    "x": 750,
+                    "y": 310
+                  },
+                  {
+                    "x": 810,
+                    "y": 310
+                  }
+                ],
+                "manualSignature": "null"
+              }
+            }
+          ],
+          "junctions": [],
+          "theme": {
+            "english": "Source Han Sans TC",
+            "chinese": "Source Han Sans TC",
+            "title": 26.6666666667,
+            "subtitle": 14,
+            "label": 11,
+            "metric": 14
+          },
+          "heading": null,
+          "texts": [
+            {
+              "id": "goldtext1",
+              "text": "Golden: LCD module",
+              "x": 40,
+              "y": -80,
+              "w": 400,
+              "size": 18,
+              "color": "#14202C",
+              "bold": true,
+              "italic": false
+            }
+          ],
+          "afLinePresets": [],
+          "afGrid": {
+            "version": 1,
+            "size": 10,
+            "show": true,
+            "enabled": true
+          },
+          "afFrames": [
+            {
+              "id": "frame1",
+              "title": "LCD 面板",
+              "x": 230,
+              "y": -70,
+              "w": 800,
+              "h": 480,
+              "style": "dash",
+              "color": "teal"
+            }
+          ]
+        },
+        "camera": {
+          "x": 106.40366972477065,
+          "y": 395.8110091743119,
+          "z": 0.7908256880733945
+        }
+      }
+    ],
+    "customStyles": [
+      null
+    ],
+    "archflowLocalization": {
+      "locale": "zh-Hant",
+      "bindings": {
+        "nodes": {
+          "xhkue1tue4": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 0
+          },
+          "x4hkyda2s8": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 1
+          },
+          "xdmirp92ud": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 2
+          },
+          "xin2x23ziu": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 3
+          },
+          "xs2xqk7hrh": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 4
+          },
+          "xbklm0hgv4": {
+            "field": "partNumber",
+            "key": "function",
+            "index": 5
+          }
+        },
+        "designs": {
+          "xwihpr65ho": {
+            "type": "function",
+            "index": 0
+          }
+        }
+      },
+      "catalog": {
+        "new": "建立新專案",
+        "lang": "介面語言",
+        "variant": "內建範本",
+        "variants": [
+          "01 / 系統平台架構",
+          "02 / 聯網感測平台"
+        ],
+        "power": [
+          "01 / 分散式電源架構",
+          "02 / 獨立電源區域"
+        ],
+        "schedule": [
+          "01 / 產品開發流程",
+          "02 / 工程變更流程"
+        ],
+        "note": "可編輯的架構參考範本。日期與電氣數值預設留白，不代表電路模擬或元件規格。",
+        "templates": "專業範本",
+        "function": [
+          "系統控制器",
+          "主機介面",
+          "資料擷取",
+          "通訊模組",
+          "系統監測",
+          "參考時脈"
+        ],
+        "function2": [
+          "閘道控制器",
+          "感測前端",
+          "訊號處理",
+          "網路介面",
+          "本機儲存",
+          "參考時脈"
+        ],
+        "powerNodes": [
+          "輸入保護",
+          "主電源轉換",
+          "運算電源區",
+          "介面電源區",
+          "類比電源區",
+          "監控模組"
+        ],
+        "powerNodes2": [
+          "輸入保護",
+          "區域電源分配",
+          "主電源區",
+          "隔離電源區",
+          "輔助電源區",
+          "電源監控"
+        ],
+        "tasks": [
+          "需求基準確認",
+          "架構審查",
+          "細部設計",
+          "整合準備",
+          "驗證審查",
+          "發行準備",
+          "文件建置",
+          "文件審查",
+          "交付準備"
+        ],
+        "tasks2": [
+          "變更受理",
+          "影響評估",
+          "實作計畫",
+          "設計更新",
+          "驗證資料",
+          "變更發行",
+          "文件更新",
+          "獨立審查",
+          "交付檢查"
+        ],
+        "fnDesc": "六個模組的平台架構，清楚區分訊號路徑、共用分支與參考時脈。",
+        "powerDesc": "六個方塊的電源區域架構，包含分配、獨立負載與監控，不預設電氣數值。",
+        "scheduleDesc": "九個任務的交付流程，包含審查節點與獨立文件分支，日期由使用者設定。",
+        "home": "讓架構更清晰，讓設計更直覺。",
+        "intro": "在同一個工作台整理功能架構、電源區域與專案時程。選擇設計類型，開始建立第一張設計。",
+        "project": "新專案",
+        "badge": "參考範本",
+        "startExamples": "使用專業範本開始"
+      }
+    },
+    "applicationVersion": "1.8-rc4",
+    "wiringMode": "direct-ports",
+    "camera": {
+      "x": 106.40366972477065,
+      "y": 395.8110091743119,
+      "z": 0.7908256880733945
+    },
+    "cameras": {
+      "circuit": {
+        "x": 106.40366972477065,
+        "y": 395.8110091743119,
+        "z": 0.7908256880733945
+      },
+      "current": {
+        "x": 0,
+        "y": 0,
+        "z": 1
+      }
+    }
+  },
+  "routes": {
+    "mode": "routes",
+    "base": {
+      "geo": {
+        "grid": 10,
+        "boxes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 60,
+            "w": 200,
+            "h": 180
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 220,
+            "y": 70,
+            "w": 30,
+            "h": 140
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 350,
+            "y": 10,
+            "w": 200,
+            "h": 160
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 710,
+            "y": -20,
+            "w": 260,
+            "h": 100
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 710,
+            "y": 120,
+            "w": 260,
+            "h": 100
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 350,
+            "y": 250,
+            "w": 200,
+            "h": 120
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 650,
+            "y": 290,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 810,
+            "y": 290,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 920,
+            "y": -340,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 950,
+            "y": -90,
+            "w": 40,
+            "h": 40
+          }
+        ],
+        "anchors": {
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+            "x": 130,
+            "y": 110
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+            "x": 220,
+            "y": 90
+          },
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+            "x": 130,
+            "y": 150
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+            "x": 220,
+            "y": 130
+          },
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+            "x": 130,
+            "y": 200
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+            "x": 220,
+            "y": 170
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+            "x": 250,
+            "y": 130
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+            "x": 350,
+            "y": 90
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+            "x": 250,
+            "y": 170
+          },
+          "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+            "x": 350,
+            "y": 310
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+            "x": 550,
+            "y": 70
+          },
+          "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+            "x": 710,
+            "y": 30
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+            "x": 550,
+            "y": 110
+          },
+          "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+            "x": 710,
+            "y": 170
+          },
+          "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+            "x": 550,
+            "y": 310
+          },
+          "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+            "x": 650,
+            "y": 310
+          },
+          "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+            "x": 750,
+            "y": 310
+          },
+          "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+            "x": 810,
+            "y": 310
+          }
+        }
+      },
+      "paths": {
+        "xi1pfpfzrv": [
+          {
+            "x": 130,
+            "y": 110
+          },
+          {
+            "x": 210,
+            "y": 110
+          },
+          {
+            "x": 210,
+            "y": 90
+          },
+          {
+            "x": 220,
+            "y": 90
+          }
+        ],
+        "xy3rp5x0o4": [
+          {
+            "x": 130,
+            "y": 150
+          },
+          {
+            "x": 210,
+            "y": 150
+          },
+          {
+            "x": 210,
+            "y": 130
+          },
+          {
+            "x": 220,
+            "y": 130
+          }
+        ],
+        "xhxgyxejap": [
+          {
+            "x": 130,
+            "y": 200
+          },
+          {
+            "x": 140,
+            "y": 200
+          },
+          {
+            "x": 140,
+            "y": 170
+          },
+          {
+            "x": 220,
+            "y": 170
+          }
+        ],
+        "x25l1brpot": [
+          {
+            "x": 250,
+            "y": 130
+          },
+          {
+            "x": 260,
+            "y": 130
+          },
+          {
+            "x": 260,
+            "y": 90
+          },
+          {
+            "x": 350,
+            "y": 90
+          }
+        ],
+        "xp3zibqxyr": [
+          {
+            "x": 250,
+            "y": 170
+          },
+          {
+            "x": 260,
+            "y": 170
+          },
+          {
+            "x": 260,
+            "y": 310
+          },
+          {
+            "x": 350,
+            "y": 310
+          }
+        ],
+        "x1e8hx1g5p": [
+          {
+            "x": 550,
+            "y": 70
+          },
+          {
+            "x": 700,
+            "y": 70
+          },
+          {
+            "x": 700,
+            "y": 30
+          },
+          {
+            "x": 710,
+            "y": 30
+          }
+        ],
+        "xk4vyjq478": [
+          {
+            "x": 550,
+            "y": 110
+          },
+          {
+            "x": 700,
+            "y": 110
+          },
+          {
+            "x": 700,
+            "y": 170
+          },
+          {
+            "x": 710,
+            "y": 170
+          }
+        ],
+        "xyub3j1esu": [
+          {
+            "x": 550,
+            "y": 310
+          },
+          {
+            "x": 650,
+            "y": 310
+          }
+        ],
+        "xm138omk5z": [
+          {
+            "x": 750,
+            "y": 310
+          },
+          {
+            "x": 810,
+            "y": 310
+          }
+        ]
+      },
+      "labels": {},
+      "metrics": {
+        "invalid": 0,
+        "crossings": 0,
+        "overlap": 0,
+        "bends": 14,
+        "length": 1300,
+        "shared": 0,
+        "unrelated": 0,
+        "rejoined": 0,
+        "labelConflicts": 0,
+        "unwanted": 0
+      }
+    },
+    "candidates": [
+      {
+        "kind": "preserved",
+        "nodes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 60,
+            "ports": [
+              {
+                "id": "xcl144al2u",
+                "side": "r",
+                "t": 0.5,
+                "off": 50
+              },
+              {
+                "id": "ximk77udab",
+                "side": "r",
+                "t": 0.5,
+                "off": 90
+              },
+              {
+                "id": "xln465qfe5",
+                "side": "r",
+                "t": 1,
+                "off": 140
+              }
+            ]
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 220,
+            "y": 70,
+            "ports": [
+              {
+                "id": "xybch890vc",
+                "side": "l",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "xh1lg9rzi6",
+                "side": "r",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "x2wfa96000",
+                "side": "l",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xjeplpt4y3",
+                "side": "r",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xa05cl71j1",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xpxzh8f45m",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "x7cb10p7sn",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xhh5sw5izx",
+                "side": "r",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xwp6wsirzt",
+                "side": "l",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xl9aieb0rd",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xgqlydr5y0",
+                "side": "l",
+                "t": 1,
+                "off": 120
+              },
+              {
+                "id": "x46vxudclk",
+                "side": "r",
+                "t": 1,
+                "off": 120
+              }
+            ]
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 350,
+            "y": 10,
+            "ports": [
+              {
+                "id": "xpaaasqdp8",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xkdu4gdc2f",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xymf87c32p",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              }
+            ]
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 710,
+            "y": -20,
+            "ports": [
+              {
+                "id": "xqs31ybnf2",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 710,
+            "y": 120,
+            "ports": [
+              {
+                "id": "xpfstxusym",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 350,
+            "y": 250,
+            "ports": [
+              {
+                "id": "xzi91y4dz4",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xwh04psm12",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              }
+            ]
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 650,
+            "y": 290,
+            "ports": [
+              {
+                "id": "xumwp7dziq",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwsgn3orw6",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 810,
+            "y": 290,
+            "ports": [
+              {
+                "id": "xrgocaifet",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwuyyjhanu",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 920,
+            "y": -340,
+            "ports": [
+              {
+                "id": "xbp7leuv5h",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xt5qo6rqhd",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 950,
+            "y": -90,
+            "ports": [
+              {
+                "id": "xinysjrm37",
+                "side": "t",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          }
+        ],
+        "geo": {
+          "grid": 10,
+          "boxes": [
+            {
+              "id": "x9g9kv1npx",
+              "x": -70,
+              "y": 60,
+              "w": 200,
+              "h": 180
+            },
+            {
+              "id": "xreqvga5y2",
+              "x": 220,
+              "y": 70,
+              "w": 30,
+              "h": 140
+            },
+            {
+              "id": "xuokrxpp0p",
+              "x": 350,
+              "y": 10,
+              "w": 200,
+              "h": 160
+            },
+            {
+              "id": "xbcb9jm20h",
+              "x": 710,
+              "y": -20,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "xxwhev2fmn",
+              "x": 710,
+              "y": 120,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "x49tf8uc1q",
+              "x": 350,
+              "y": 250,
+              "w": 200,
+              "h": 120
+            },
+            {
+              "id": "xhz0f2z7n5",
+              "x": 650,
+              "y": 290,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xux4fhcz1f",
+              "x": 810,
+              "y": 290,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xzs7jedej6",
+              "x": 920,
+              "y": -340,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xe8vw57gfr",
+              "x": 950,
+              "y": -90,
+              "w": 40,
+              "h": 40
+            }
+          ],
+          "anchors": {
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+              "x": 130,
+              "y": 110
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+              "x": 220,
+              "y": 90
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+              "x": 130,
+              "y": 150
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+              "x": 220,
+              "y": 130
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+              "x": 130,
+              "y": 200
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+              "x": 220,
+              "y": 170
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+              "x": 250,
+              "y": 130
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+              "x": 350,
+              "y": 90
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+              "x": 250,
+              "y": 170
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+              "x": 350,
+              "y": 310
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+              "x": 550,
+              "y": 70
+            },
+            "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+              "x": 710,
+              "y": 30
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+              "x": 550,
+              "y": 110
+            },
+            "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+              "x": 710,
+              "y": 170
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+              "x": 550,
+              "y": 310
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+              "x": 650,
+              "y": 310
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+              "x": 750,
+              "y": 310
+            },
+            "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+              "x": 810,
+              "y": 310
+            }
+          }
+        },
+        "paths": {
+          "xi1pfpfzrv": [
+            {
+              "x": 130,
+              "y": 110
+            },
+            {
+              "x": 210,
+              "y": 110
+            },
+            {
+              "x": 210,
+              "y": 90
+            },
+            {
+              "x": 220,
+              "y": 90
+            }
+          ],
+          "xy3rp5x0o4": [
+            {
+              "x": 130,
+              "y": 150
+            },
+            {
+              "x": 210,
+              "y": 150
+            },
+            {
+              "x": 210,
+              "y": 130
+            },
+            {
+              "x": 220,
+              "y": 130
+            }
+          ],
+          "xhxgyxejap": [
+            {
+              "x": 130,
+              "y": 200
+            },
+            {
+              "x": 210,
+              "y": 200
+            },
+            {
+              "x": 210,
+              "y": 170
+            },
+            {
+              "x": 220,
+              "y": 170
+            }
+          ],
+          "x25l1brpot": [
+            {
+              "x": 250,
+              "y": 130
+            },
+            {
+              "x": 340,
+              "y": 130
+            },
+            {
+              "x": 340,
+              "y": 90
+            },
+            {
+              "x": 350,
+              "y": 90
+            }
+          ],
+          "xp3zibqxyr": [
+            {
+              "x": 250,
+              "y": 170
+            },
+            {
+              "x": 340,
+              "y": 170
+            },
+            {
+              "x": 340,
+              "y": 310
+            },
+            {
+              "x": 350,
+              "y": 310
+            }
+          ],
+          "x1e8hx1g5p": [
+            {
+              "x": 550,
+              "y": 70
+            },
+            {
+              "x": 700,
+              "y": 70
+            },
+            {
+              "x": 700,
+              "y": 30
+            },
+            {
+              "x": 710,
+              "y": 30
+            }
+          ],
+          "xk4vyjq478": [
+            {
+              "x": 550,
+              "y": 110
+            },
+            {
+              "x": 700,
+              "y": 110
+            },
+            {
+              "x": 700,
+              "y": 170
+            },
+            {
+              "x": 710,
+              "y": 170
+            }
+          ],
+          "xyub3j1esu": [
+            {
+              "x": 550,
+              "y": 310
+            },
+            {
+              "x": 650,
+              "y": 310
+            }
+          ],
+          "xm138omk5z": [
+            {
+              "x": 750,
+              "y": 310
+            },
+            {
+              "x": 810,
+              "y": 310
+            }
+          ]
+        },
+        "labels": {},
+        "metrics": {
+          "invalid": 0,
+          "crossings": 0,
+          "overlap": 0,
+          "bends": 14,
+          "length": 1300,
+          "shared": 0,
+          "unrelated": 0,
+          "rejoined": 0,
+          "labelConflicts": 0,
+          "unwanted": 0
+        },
+        "changes": {
+          "blocks": 0,
+          "ports": 0,
+          "routes": 3,
+          "labels": 0
+        }
+      }
+    ],
+    "errors": [
+      "逐條改善：目前沒有能在不增加交叉、重疊或標註衝突下改善的線路。"
+    ]
+  },
+  "layout": {
+    "mode": "layout",
+    "base": {
+      "geo": {
+        "grid": 10,
+        "boxes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 60,
+            "w": 200,
+            "h": 180
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 220,
+            "y": 70,
+            "w": 30,
+            "h": 140
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 350,
+            "y": 10,
+            "w": 200,
+            "h": 160
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 710,
+            "y": -20,
+            "w": 260,
+            "h": 100
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 710,
+            "y": 120,
+            "w": 260,
+            "h": 100
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 350,
+            "y": 250,
+            "w": 200,
+            "h": 120
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 650,
+            "y": 290,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 810,
+            "y": 290,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 920,
+            "y": -340,
+            "w": 100,
+            "h": 40
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 950,
+            "y": -90,
+            "w": 40,
+            "h": 40
+          }
+        ],
+        "anchors": {
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+            "x": 130,
+            "y": 110
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+            "x": 220,
+            "y": 90
+          },
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+            "x": 130,
+            "y": 150
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+            "x": 220,
+            "y": 130
+          },
+          "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+            "x": 130,
+            "y": 200
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+            "x": 220,
+            "y": 170
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+            "x": 250,
+            "y": 130
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+            "x": 350,
+            "y": 90
+          },
+          "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+            "x": 250,
+            "y": 170
+          },
+          "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+            "x": 350,
+            "y": 310
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+            "x": 550,
+            "y": 70
+          },
+          "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+            "x": 710,
+            "y": 30
+          },
+          "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+            "x": 550,
+            "y": 110
+          },
+          "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+            "x": 710,
+            "y": 170
+          },
+          "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+            "x": 550,
+            "y": 310
+          },
+          "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+            "x": 650,
+            "y": 310
+          },
+          "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+            "x": 750,
+            "y": 310
+          },
+          "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+            "x": 810,
+            "y": 310
+          }
+        }
+      },
+      "paths": {
+        "xi1pfpfzrv": [
+          {
+            "x": 130,
+            "y": 110
+          },
+          {
+            "x": 210,
+            "y": 110
+          },
+          {
+            "x": 210,
+            "y": 90
+          },
+          {
+            "x": 220,
+            "y": 90
+          }
+        ],
+        "xy3rp5x0o4": [
+          {
+            "x": 130,
+            "y": 150
+          },
+          {
+            "x": 210,
+            "y": 150
+          },
+          {
+            "x": 210,
+            "y": 130
+          },
+          {
+            "x": 220,
+            "y": 130
+          }
+        ],
+        "xhxgyxejap": [
+          {
+            "x": 130,
+            "y": 200
+          },
+          {
+            "x": 140,
+            "y": 200
+          },
+          {
+            "x": 140,
+            "y": 170
+          },
+          {
+            "x": 220,
+            "y": 170
+          }
+        ],
+        "x25l1brpot": [
+          {
+            "x": 250,
+            "y": 130
+          },
+          {
+            "x": 260,
+            "y": 130
+          },
+          {
+            "x": 260,
+            "y": 90
+          },
+          {
+            "x": 350,
+            "y": 90
+          }
+        ],
+        "xp3zibqxyr": [
+          {
+            "x": 250,
+            "y": 170
+          },
+          {
+            "x": 260,
+            "y": 170
+          },
+          {
+            "x": 260,
+            "y": 310
+          },
+          {
+            "x": 350,
+            "y": 310
+          }
+        ],
+        "x1e8hx1g5p": [
+          {
+            "x": 550,
+            "y": 70
+          },
+          {
+            "x": 700,
+            "y": 70
+          },
+          {
+            "x": 700,
+            "y": 30
+          },
+          {
+            "x": 710,
+            "y": 30
+          }
+        ],
+        "xk4vyjq478": [
+          {
+            "x": 550,
+            "y": 110
+          },
+          {
+            "x": 700,
+            "y": 110
+          },
+          {
+            "x": 700,
+            "y": 170
+          },
+          {
+            "x": 710,
+            "y": 170
+          }
+        ],
+        "xyub3j1esu": [
+          {
+            "x": 550,
+            "y": 310
+          },
+          {
+            "x": 650,
+            "y": 310
+          }
+        ],
+        "xm138omk5z": [
+          {
+            "x": 750,
+            "y": 310
+          },
+          {
+            "x": 810,
+            "y": 310
+          }
+        ]
+      },
+      "labels": {},
+      "metrics": {
+        "invalid": 0,
+        "crossings": 0,
+        "overlap": 0,
+        "bends": 14,
+        "length": 1300,
+        "shared": 0,
+        "unrelated": 0,
+        "rejoined": 0,
+        "labelConflicts": 0,
+        "unwanted": 0
+      }
+    },
+    "candidates": [
+      {
+        "kind": "preserved",
+        "nodes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 60,
+            "ports": [
+              {
+                "id": "xcl144al2u",
+                "side": "r",
+                "t": 0.5,
+                "off": 50
+              },
+              {
+                "id": "ximk77udab",
+                "side": "r",
+                "t": 0.5,
+                "off": 90
+              },
+              {
+                "id": "xln465qfe5",
+                "side": "r",
+                "t": 1,
+                "off": 140
+              }
+            ]
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 220,
+            "y": 70,
+            "ports": [
+              {
+                "id": "xybch890vc",
+                "side": "l",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "xh1lg9rzi6",
+                "side": "r",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "x2wfa96000",
+                "side": "l",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xjeplpt4y3",
+                "side": "r",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xa05cl71j1",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xpxzh8f45m",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "x7cb10p7sn",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xhh5sw5izx",
+                "side": "r",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xwp6wsirzt",
+                "side": "l",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xl9aieb0rd",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xgqlydr5y0",
+                "side": "l",
+                "t": 1,
+                "off": 120
+              },
+              {
+                "id": "x46vxudclk",
+                "side": "r",
+                "t": 1,
+                "off": 120
+              }
+            ]
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 350,
+            "y": 10,
+            "ports": [
+              {
+                "id": "xpaaasqdp8",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xkdu4gdc2f",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xymf87c32p",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              }
+            ]
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 710,
+            "y": -20,
+            "ports": [
+              {
+                "id": "xqs31ybnf2",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 710,
+            "y": 120,
+            "ports": [
+              {
+                "id": "xpfstxusym",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 350,
+            "y": 250,
+            "ports": [
+              {
+                "id": "xzi91y4dz4",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xwh04psm12",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              }
+            ]
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 650,
+            "y": 290,
+            "ports": [
+              {
+                "id": "xumwp7dziq",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwsgn3orw6",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 810,
+            "y": 290,
+            "ports": [
+              {
+                "id": "xrgocaifet",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwuyyjhanu",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 920,
+            "y": -340,
+            "ports": [
+              {
+                "id": "xbp7leuv5h",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xt5qo6rqhd",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 950,
+            "y": -90,
+            "ports": [
+              {
+                "id": "xinysjrm37",
+                "side": "t",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          }
+        ],
+        "geo": {
+          "grid": 10,
+          "boxes": [
+            {
+              "id": "x9g9kv1npx",
+              "x": -70,
+              "y": 60,
+              "w": 200,
+              "h": 180
+            },
+            {
+              "id": "xreqvga5y2",
+              "x": 220,
+              "y": 70,
+              "w": 30,
+              "h": 140
+            },
+            {
+              "id": "xuokrxpp0p",
+              "x": 350,
+              "y": 10,
+              "w": 200,
+              "h": 160
+            },
+            {
+              "id": "xbcb9jm20h",
+              "x": 710,
+              "y": -20,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "xxwhev2fmn",
+              "x": 710,
+              "y": 120,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "x49tf8uc1q",
+              "x": 350,
+              "y": 250,
+              "w": 200,
+              "h": 120
+            },
+            {
+              "id": "xhz0f2z7n5",
+              "x": 650,
+              "y": 290,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xux4fhcz1f",
+              "x": 810,
+              "y": 290,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xzs7jedej6",
+              "x": 920,
+              "y": -340,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xe8vw57gfr",
+              "x": 950,
+              "y": -90,
+              "w": 40,
+              "h": 40
+            }
+          ],
+          "anchors": {
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+              "x": 130,
+              "y": 110
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+              "x": 220,
+              "y": 90
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+              "x": 130,
+              "y": 150
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+              "x": 220,
+              "y": 130
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+              "x": 130,
+              "y": 200
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+              "x": 220,
+              "y": 170
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+              "x": 250,
+              "y": 130
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+              "x": 350,
+              "y": 90
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+              "x": 250,
+              "y": 170
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+              "x": 350,
+              "y": 310
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+              "x": 550,
+              "y": 70
+            },
+            "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+              "x": 710,
+              "y": 30
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+              "x": 550,
+              "y": 110
+            },
+            "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+              "x": 710,
+              "y": 170
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+              "x": 550,
+              "y": 310
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+              "x": 650,
+              "y": 310
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+              "x": 750,
+              "y": 310
+            },
+            "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+              "x": 810,
+              "y": 310
+            }
+          }
+        },
+        "paths": {
+          "xi1pfpfzrv": [
+            {
+              "x": 130,
+              "y": 110
+            },
+            {
+              "x": 210,
+              "y": 110
+            },
+            {
+              "x": 210,
+              "y": 90
+            },
+            {
+              "x": 220,
+              "y": 90
+            }
+          ],
+          "xy3rp5x0o4": [
+            {
+              "x": 130,
+              "y": 150
+            },
+            {
+              "x": 210,
+              "y": 150
+            },
+            {
+              "x": 210,
+              "y": 130
+            },
+            {
+              "x": 220,
+              "y": 130
+            }
+          ],
+          "xhxgyxejap": [
+            {
+              "x": 130,
+              "y": 200
+            },
+            {
+              "x": 210,
+              "y": 200
+            },
+            {
+              "x": 210,
+              "y": 170
+            },
+            {
+              "x": 220,
+              "y": 170
+            }
+          ],
+          "x25l1brpot": [
+            {
+              "x": 250,
+              "y": 130
+            },
+            {
+              "x": 340,
+              "y": 130
+            },
+            {
+              "x": 340,
+              "y": 90
+            },
+            {
+              "x": 350,
+              "y": 90
+            }
+          ],
+          "xp3zibqxyr": [
+            {
+              "x": 250,
+              "y": 170
+            },
+            {
+              "x": 340,
+              "y": 170
+            },
+            {
+              "x": 340,
+              "y": 310
+            },
+            {
+              "x": 350,
+              "y": 310
+            }
+          ],
+          "x1e8hx1g5p": [
+            {
+              "x": 550,
+              "y": 70
+            },
+            {
+              "x": 700,
+              "y": 70
+            },
+            {
+              "x": 700,
+              "y": 30
+            },
+            {
+              "x": 710,
+              "y": 30
+            }
+          ],
+          "xk4vyjq478": [
+            {
+              "x": 550,
+              "y": 110
+            },
+            {
+              "x": 700,
+              "y": 110
+            },
+            {
+              "x": 700,
+              "y": 170
+            },
+            {
+              "x": 710,
+              "y": 170
+            }
+          ],
+          "xyub3j1esu": [
+            {
+              "x": 550,
+              "y": 310
+            },
+            {
+              "x": 650,
+              "y": 310
+            }
+          ],
+          "xm138omk5z": [
+            {
+              "x": 750,
+              "y": 310
+            },
+            {
+              "x": 810,
+              "y": 310
+            }
+          ]
+        },
+        "labels": {},
+        "metrics": {
+          "invalid": 0,
+          "crossings": 0,
+          "overlap": 0,
+          "bends": 14,
+          "length": 1300,
+          "shared": 0,
+          "unrelated": 0,
+          "rejoined": 0,
+          "labelConflicts": 0,
+          "unwanted": 0
+        },
+        "changes": {
+          "blocks": 0,
+          "ports": 0,
+          "routes": 3,
+          "labels": 0
+        }
+      },
+      {
+        "kind": "expanded",
+        "nodes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": -70,
+            "y": 320,
+            "ports": [
+              {
+                "id": "xcl144al2u",
+                "side": "r",
+                "t": 0.5,
+                "off": 50
+              },
+              {
+                "id": "ximk77udab",
+                "side": "r",
+                "t": 0.5,
+                "off": 90
+              },
+              {
+                "id": "xln465qfe5",
+                "side": "r",
+                "t": 1,
+                "off": 140
+              }
+            ]
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 410,
+            "y": 340,
+            "ports": [
+              {
+                "id": "xybch890vc",
+                "side": "l",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "xh1lg9rzi6",
+                "side": "r",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "x2wfa96000",
+                "side": "l",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xjeplpt4y3",
+                "side": "r",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xa05cl71j1",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xpxzh8f45m",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "x7cb10p7sn",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xhh5sw5izx",
+                "side": "r",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xwp6wsirzt",
+                "side": "l",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xl9aieb0rd",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xgqlydr5y0",
+                "side": "l",
+                "t": 1,
+                "off": 120
+              },
+              {
+                "id": "x46vxudclk",
+                "side": "r",
+                "t": 1,
+                "off": 120
+              }
+            ]
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 620,
+            "y": 240,
+            "ports": [
+              {
+                "id": "xpaaasqdp8",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xkdu4gdc2f",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xymf87c32p",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              }
+            ]
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 1220,
+            "y": 190,
+            "ports": [
+              {
+                "id": "xqs31ybnf2",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 1220,
+            "y": 420,
+            "ports": [
+              {
+                "id": "xpfstxusym",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 620,
+            "y": 630,
+            "ports": [
+              {
+                "id": "xzi91y4dz4",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xwh04psm12",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              }
+            ]
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 1120,
+            "y": 700,
+            "ports": [
+              {
+                "id": "xumwp7dziq",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwsgn3orw6",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 1380,
+            "y": 700,
+            "ports": [
+              {
+                "id": "xrgocaifet",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwuyyjhanu",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 1560,
+            "y": -340,
+            "ports": [
+              {
+                "id": "xbp7leuv5h",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xt5qo6rqhd",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 1610,
+            "y": 70,
+            "ports": [
+              {
+                "id": "xinysjrm37",
+                "side": "t",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          }
+        ],
+        "geo": {
+          "grid": 10,
+          "boxes": [
+            {
+              "id": "x9g9kv1npx",
+              "x": -70,
+              "y": 320,
+              "w": 200,
+              "h": 180
+            },
+            {
+              "id": "xreqvga5y2",
+              "x": 410,
+              "y": 340,
+              "w": 30,
+              "h": 140
+            },
+            {
+              "id": "xuokrxpp0p",
+              "x": 620,
+              "y": 240,
+              "w": 200,
+              "h": 160
+            },
+            {
+              "id": "xbcb9jm20h",
+              "x": 1220,
+              "y": 190,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "xxwhev2fmn",
+              "x": 1220,
+              "y": 420,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "x49tf8uc1q",
+              "x": 620,
+              "y": 630,
+              "w": 200,
+              "h": 120
+            },
+            {
+              "id": "xhz0f2z7n5",
+              "x": 1120,
+              "y": 700,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xux4fhcz1f",
+              "x": 1380,
+              "y": 700,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xzs7jedej6",
+              "x": 1560,
+              "y": -340,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xe8vw57gfr",
+              "x": 1610,
+              "y": 70,
+              "w": 40,
+              "h": 40
+            }
+          ],
+          "anchors": {
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+              "x": 130,
+              "y": 370
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+              "x": 410,
+              "y": 360
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+              "x": 130,
+              "y": 410
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+              "x": 410,
+              "y": 400
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+              "x": 130,
+              "y": 460
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+              "x": 410,
+              "y": 440
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+              "x": 440,
+              "y": 400
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+              "x": 620,
+              "y": 320
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+              "x": 440,
+              "y": 440
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+              "x": 620,
+              "y": 690
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+              "x": 820,
+              "y": 300
+            },
+            "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+              "x": 1220,
+              "y": 240
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+              "x": 820,
+              "y": 340
+            },
+            "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+              "x": 1220,
+              "y": 470
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+              "x": 820,
+              "y": 690
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+              "x": 1120,
+              "y": 720
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+              "x": 1220,
+              "y": 720
+            },
+            "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+              "x": 1380,
+              "y": 720
+            }
+          }
+        },
+        "paths": {
+          "xi1pfpfzrv": [
+            {
+              "x": 130,
+              "y": 370
+            },
+            {
+              "x": 400,
+              "y": 370
+            },
+            {
+              "x": 400,
+              "y": 360
+            },
+            {
+              "x": 410,
+              "y": 360
+            }
+          ],
+          "xy3rp5x0o4": [
+            {
+              "x": 130,
+              "y": 410
+            },
+            {
+              "x": 400,
+              "y": 410
+            },
+            {
+              "x": 400,
+              "y": 400
+            },
+            {
+              "x": 410,
+              "y": 400
+            }
+          ],
+          "xhxgyxejap": [
+            {
+              "x": 130,
+              "y": 460
+            },
+            {
+              "x": 400,
+              "y": 460
+            },
+            {
+              "x": 400,
+              "y": 440
+            },
+            {
+              "x": 410,
+              "y": 440
+            }
+          ],
+          "x25l1brpot": [
+            {
+              "x": 440,
+              "y": 400
+            },
+            {
+              "x": 610,
+              "y": 400
+            },
+            {
+              "x": 610,
+              "y": 320
+            },
+            {
+              "x": 620,
+              "y": 320
+            }
+          ],
+          "xp3zibqxyr": [
+            {
+              "x": 440,
+              "y": 440
+            },
+            {
+              "x": 610,
+              "y": 440
+            },
+            {
+              "x": 610,
+              "y": 690
+            },
+            {
+              "x": 620,
+              "y": 690
+            }
+          ],
+          "x1e8hx1g5p": [
+            {
+              "x": 820,
+              "y": 300
+            },
+            {
+              "x": 1210,
+              "y": 300
+            },
+            {
+              "x": 1210,
+              "y": 240
+            },
+            {
+              "x": 1220,
+              "y": 240
+            }
+          ],
+          "xk4vyjq478": [
+            {
+              "x": 820,
+              "y": 340
+            },
+            {
+              "x": 1210,
+              "y": 340
+            },
+            {
+              "x": 1210,
+              "y": 470
+            },
+            {
+              "x": 1220,
+              "y": 470
+            }
+          ],
+          "xyub3j1esu": [
+            {
+              "x": 820,
+              "y": 690
+            },
+            {
+              "x": 1110,
+              "y": 690
+            },
+            {
+              "x": 1110,
+              "y": 720
+            },
+            {
+              "x": 1120,
+              "y": 720
+            }
+          ],
+          "xm138omk5z": [
+            {
+              "x": 1220,
+              "y": 720
+            },
+            {
+              "x": 1380,
+              "y": 720
+            }
+          ]
+        },
+        "labels": {},
+        "metrics": {
+          "invalid": 0,
+          "crossings": 0,
+          "overlap": 0,
+          "bends": 16,
+          "length": 3050,
+          "shared": 0,
+          "unrelated": 0,
+          "rejoined": 0,
+          "labelConflicts": 0,
+          "unwanted": 0
+        },
+        "changes": {
+          "blocks": 10,
+          "ports": 0,
+          "routes": 9,
+          "labels": 0
+        }
+      },
+      {
+        "kind": "layered",
+        "nodes": [
+          {
+            "id": "x9g9kv1npx",
+            "x": 120,
+            "y": 580,
+            "ports": [
+              {
+                "id": "xcl144al2u",
+                "side": "r",
+                "t": 0.5,
+                "off": 50
+              },
+              {
+                "id": "ximk77udab",
+                "side": "r",
+                "t": 0.5,
+                "off": 90
+              },
+              {
+                "id": "xln465qfe5",
+                "side": "r",
+                "t": 1,
+                "off": 140
+              }
+            ]
+          },
+          {
+            "id": "xreqvga5y2",
+            "x": 720,
+            "y": 460,
+            "ports": [
+              {
+                "id": "xybch890vc",
+                "side": "l",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "xh1lg9rzi6",
+                "side": "r",
+                "t": 0,
+                "off": 20
+              },
+              {
+                "id": "x2wfa96000",
+                "side": "l",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xjeplpt4y3",
+                "side": "r",
+                "t": 0.5,
+                "off": 40
+              },
+              {
+                "id": "xa05cl71j1",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xpxzh8f45m",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "x7cb10p7sn",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xhh5sw5izx",
+                "side": "r",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xwp6wsirzt",
+                "side": "l",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xl9aieb0rd",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              },
+              {
+                "id": "xgqlydr5y0",
+                "side": "l",
+                "t": 1,
+                "off": 120
+              },
+              {
+                "id": "x46vxudclk",
+                "side": "r",
+                "t": 1,
+                "off": 120
+              }
+            ]
+          },
+          {
+            "id": "xuokrxpp0p",
+            "x": 1320,
+            "y": 270,
+            "ports": [
+              {
+                "id": "xpaaasqdp8",
+                "side": "l",
+                "t": 0.5,
+                "off": 80
+              },
+              {
+                "id": "xkdu4gdc2f",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xymf87c32p",
+                "side": "r",
+                "t": 0.5,
+                "off": 100
+              }
+            ]
+          },
+          {
+            "id": "xbcb9jm20h",
+            "x": 2520,
+            "y": 160,
+            "ports": [
+              {
+                "id": "xqs31ybnf2",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "xxwhev2fmn",
+            "x": 2520,
+            "y": 430,
+            "ports": [
+              {
+                "id": "xpfstxusym",
+                "side": "l",
+                "t": 0.5,
+                "off": 50
+              }
+            ]
+          },
+          {
+            "id": "x49tf8uc1q",
+            "x": 1320,
+            "y": 660,
+            "ports": [
+              {
+                "id": "xzi91y4dz4",
+                "side": "l",
+                "t": 0.5,
+                "off": 60
+              },
+              {
+                "id": "xwh04psm12",
+                "side": "r",
+                "t": 0.5,
+                "off": 60
+              }
+            ]
+          },
+          {
+            "id": "xhz0f2z7n5",
+            "x": 1920,
+            "y": 700,
+            "ports": [
+              {
+                "id": "xumwp7dziq",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwsgn3orw6",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xux4fhcz1f",
+            "x": 2520,
+            "y": 700,
+            "ports": [
+              {
+                "id": "xrgocaifet",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xwuyyjhanu",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xzs7jedej6",
+            "x": 120,
+            "y": 160,
+            "ports": [
+              {
+                "id": "xbp7leuv5h",
+                "side": "l",
+                "t": 0.5,
+                "off": 20
+              },
+              {
+                "id": "xt5qo6rqhd",
+                "side": "r",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          },
+          {
+            "id": "xe8vw57gfr",
+            "x": 120,
+            "y": 370,
+            "ports": [
+              {
+                "id": "xinysjrm37",
+                "side": "t",
+                "t": 0.5,
+                "off": 20
+              }
+            ]
+          }
+        ],
+        "geo": {
+          "grid": 10,
+          "boxes": [
+            {
+              "id": "x9g9kv1npx",
+              "x": 120,
+              "y": 580,
+              "w": 200,
+              "h": 180
+            },
+            {
+              "id": "xreqvga5y2",
+              "x": 720,
+              "y": 460,
+              "w": 30,
+              "h": 140
+            },
+            {
+              "id": "xuokrxpp0p",
+              "x": 1320,
+              "y": 270,
+              "w": 200,
+              "h": 160
+            },
+            {
+              "id": "xbcb9jm20h",
+              "x": 2520,
+              "y": 160,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "xxwhev2fmn",
+              "x": 2520,
+              "y": 430,
+              "w": 260,
+              "h": 100
+            },
+            {
+              "id": "x49tf8uc1q",
+              "x": 1320,
+              "y": 660,
+              "w": 200,
+              "h": 120
+            },
+            {
+              "id": "xhz0f2z7n5",
+              "x": 1920,
+              "y": 700,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xux4fhcz1f",
+              "x": 2520,
+              "y": 700,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xzs7jedej6",
+              "x": 120,
+              "y": 160,
+              "w": 100,
+              "h": 40
+            },
+            {
+              "id": "xe8vw57gfr",
+              "x": 120,
+              "y": 370,
+              "w": 40,
+              "h": 40
+            }
+          ],
+          "anchors": {
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xcl144al2u\"}": {
+              "x": 320,
+              "y": 630
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xybch890vc\"}": {
+              "x": 720,
+              "y": 480
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"ximk77udab\"}": {
+              "x": 320,
+              "y": 670
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xa05cl71j1\"}": {
+              "x": 720,
+              "y": 520
+            },
+            "{\"node\":\"x9g9kv1npx\",\"port\":\"xln465qfe5\"}": {
+              "x": 320,
+              "y": 720
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xwp6wsirzt\"}": {
+              "x": 720,
+              "y": 560
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xpxzh8f45m\"}": {
+              "x": 750,
+              "y": 520
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xpaaasqdp8\"}": {
+              "x": 1320,
+              "y": 350
+            },
+            "{\"node\":\"xreqvga5y2\",\"port\":\"xl9aieb0rd\"}": {
+              "x": 750,
+              "y": 560
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xzi91y4dz4\"}": {
+              "x": 1320,
+              "y": 720
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xkdu4gdc2f\"}": {
+              "x": 1520,
+              "y": 330
+            },
+            "{\"node\":\"xbcb9jm20h\",\"port\":\"xqs31ybnf2\"}": {
+              "x": 2520,
+              "y": 210
+            },
+            "{\"node\":\"xuokrxpp0p\",\"port\":\"xymf87c32p\"}": {
+              "x": 1520,
+              "y": 370
+            },
+            "{\"node\":\"xxwhev2fmn\",\"port\":\"xpfstxusym\"}": {
+              "x": 2520,
+              "y": 480
+            },
+            "{\"node\":\"x49tf8uc1q\",\"port\":\"xwh04psm12\"}": {
+              "x": 1520,
+              "y": 720
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xumwp7dziq\"}": {
+              "x": 1920,
+              "y": 720
+            },
+            "{\"node\":\"xhz0f2z7n5\",\"port\":\"xwsgn3orw6\"}": {
+              "x": 2020,
+              "y": 720
+            },
+            "{\"node\":\"xux4fhcz1f\",\"port\":\"xrgocaifet\"}": {
+              "x": 2520,
+              "y": 720
+            }
+          }
+        },
+        "paths": {
+          "xi1pfpfzrv": [
+            {
+              "x": 320,
+              "y": 630
+            },
+            {
+              "x": 710,
+              "y": 630
+            },
+            {
+              "x": 710,
+              "y": 480
+            },
+            {
+              "x": 720,
+              "y": 480
+            }
+          ],
+          "xy3rp5x0o4": [
+            {
+              "x": 320,
+              "y": 670
+            },
+            {
+              "x": 330,
+              "y": 670
+            },
+            {
+              "x": 330,
+              "y": 530
+            },
+            {
+              "x": 710,
+              "y": 530
+            },
+            {
+              "x": 710,
+              "y": 520
+            },
+            {
+              "x": 720,
+              "y": 520
+            }
+          ],
+          "xhxgyxejap": [
+            {
+              "x": 320,
+              "y": 720
+            },
+            {
+              "x": 710,
+              "y": 720
+            },
+            {
+              "x": 710,
+              "y": 560
+            },
+            {
+              "x": 720,
+              "y": 560
+            }
+          ],
+          "x25l1brpot": [
+            {
+              "x": 750,
+              "y": 520
+            },
+            {
+              "x": 1310,
+              "y": 520
+            },
+            {
+              "x": 1310,
+              "y": 350
+            },
+            {
+              "x": 1320,
+              "y": 350
+            }
+          ],
+          "xp3zibqxyr": [
+            {
+              "x": 750,
+              "y": 560
+            },
+            {
+              "x": 1310,
+              "y": 560
+            },
+            {
+              "x": 1310,
+              "y": 720
+            },
+            {
+              "x": 1320,
+              "y": 720
+            }
+          ],
+          "x1e8hx1g5p": [
+            {
+              "x": 1520,
+              "y": 330
+            },
+            {
+              "x": 2510,
+              "y": 330
+            },
+            {
+              "x": 2510,
+              "y": 210
+            },
+            {
+              "x": 2520,
+              "y": 210
+            }
+          ],
+          "xk4vyjq478": [
+            {
+              "x": 1520,
+              "y": 370
+            },
+            {
+              "x": 2510,
+              "y": 370
+            },
+            {
+              "x": 2510,
+              "y": 480
+            },
+            {
+              "x": 2520,
+              "y": 480
+            }
+          ],
+          "xyub3j1esu": [
+            {
+              "x": 1520,
+              "y": 720
+            },
+            {
+              "x": 1920,
+              "y": 720
+            }
+          ],
+          "xm138omk5z": [
+            {
+              "x": 2020,
+              "y": 720
+            },
+            {
+              "x": 2520,
+              "y": 720
+            }
+          ]
+        },
+        "labels": {},
+        "metrics": {
+          "invalid": 0,
+          "crossings": 1,
+          "overlap": 80,
+          "bends": 16,
+          "length": 6260,
+          "shared": 0,
+          "unrelated": 80,
+          "rejoined": 0,
+          "labelConflicts": 0,
+          "unwanted": 80
+        },
+        "changes": {
+          "blocks": 10,
+          "ports": 0,
+          "routes": 9,
+          "labels": 0
+        }
+      }
+    ],
+    "errors": [
+      "逐條改善：目前沒有能在不增加交叉、重疊或標註衝突下改善的線路。"
+    ]
+  }
+}
