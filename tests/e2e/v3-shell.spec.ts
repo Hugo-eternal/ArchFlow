@@ -539,3 +539,49 @@ test('project contents panel (V2.10.1 look, 3.46c): groups, search, click select
   expect(errors).toEqual([]);
 });
 
+
+test('properties panel head and drawing settings (V2.10.1 look, 3.46d)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const pane = page.getByRole('complementary', { name: '屬性' });
+  // nothing selected: hint and drawing settings
+  await expect(pane.locator('.af-insp-kind')).toHaveText('未選取');
+  await expect(pane.locator('.af-insp-hint')).toHaveText('選取方塊、線路或文字開始編輯');
+  const pins = pane.getByRole('radiogroup', { name: '接點名稱' });
+  await expect(pins.getByRole('radio', { name: '方塊內' })).toHaveAttribute('aria-checked', 'true');
+  await pins.getByRole('radio', { name: '方塊外' }).click();
+  await expect(pins.getByRole('radio', { name: '方塊外' })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('.af-toast')).toContainText('接點名稱改放在方塊外');
+  const labels = () => page.evaluate(() => (window as unknown as { archflow: { data(): { blocks: { ports: { label: string }[] }[] } } }).archflow.data().blocks.flatMap(b => b.ports.map(p => p.label)));
+  expect(new Set(await labels())).toEqual(new Set(['outside']));
+  // one undo step
+  await page.locator('svg.af-canvas').focus();
+  await page.keyboard.press('Control+z');
+  await expect.poll(async () => new Set(await labels())).toEqual(new Set(['inside']));
+
+  // a block: kind and name
+  await page.getByRole('navigation', { name: '專案內容' }).getByRole('button', { name: '微控制器' }).click();
+  await expect(pane.locator('.af-insp-kind')).toHaveText('方塊');
+  await expect(pane.locator('.af-insp-name')).toHaveText('微控制器');
+  await expect(pins).toHaveCount(0);
+  // collapse from the head, open again from the command bar
+  await pane.getByRole('button', { name: '收合屬性面板' }).click();
+  await expect(pane).toBeHidden();
+  await page.getByRole('button', { name: '屬性面板' }).click();
+  await expect(pane).toBeVisible();
+
+  // a schedule task
+  await page.locator('.af-design-trigger').click();
+  await page.getByRole('menuitem', { name: '新增設計' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await expect(pane.locator('.af-insp-hint')).toHaveText('選取任務或連線開始編輯');
+  const first = page.getByRole('navigation', { name: '專案內容' }).getByRole('button').first();
+  const title = (await first.locator('.af-outline-label').textContent()) ?? '';
+  await first.click();
+  await expect(pane.locator('.af-insp-kind')).toHaveText('任務');
+  await expect(pane.locator('.af-insp-name')).toHaveText(title);
+  expect(errors).toEqual([]);
+});

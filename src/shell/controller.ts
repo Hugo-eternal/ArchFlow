@@ -13,7 +13,7 @@ import { frameApi, installHosts, installToolHosts } from './embedded';
 import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
 import { ModelError, type ItemRef } from '../model/types';
-import { addBlock, addFrame, addPort, addText, adoptNewBlock, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addFrame, addPort, addText, adoptNewBlock, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, setPortLabelMode, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { alignable, alignBlocks, arrangePorts, type AlignAxis } from '../model/arrange';
 import { estimateWidth, type Measure } from '../render/texts';
@@ -401,6 +401,14 @@ export function shellCommands(): Command<Shell>[] {
         if (!r.ok) return;
         const invalid = [...s.routesFor(s.data()).values()].filter(x => !x.valid).length;
         if (invalid) s.notify('wire.rerouteInvalid', { count: invalid }, 'error'); else s.notify('wire.rerouted');
+      },
+    },
+    // V2 drawing settings "port names inside / outside" (afPinLabels): every shown pin name, one undo step
+    {
+      id: 'layout.portLabels', label: 'cmd.portLabels', group: 'layout', enabled: canEdit,
+      run: (s, arg) => {
+        const mode = arg === 'outside' ? 'outside' : 'inside';
+        if (s.edit(d => setPortLabelMode(d, mode)).ok) s.notify(mode === 'inside' ? 'toast.portLabelsInside' : 'toast.portLabelsOutside');
       },
     },
     // V2 #rcClearRoutes: clear the wire selection (the routing scope), without deleting anything

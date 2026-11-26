@@ -3,22 +3,22 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-3);
+  padding: 12px 0 0;
   font: var(--text-sm) / var(--leading-normal) var(--font-ui);
   color: var(--color-text);
 }
 .af-inspector-empty { margin: 0; color: var(--color-muted); }
 
 .af-field { display: flex; flex-direction: column; gap: var(--space-1); }
-.af-field-label, .af-segmented legend { font-weight: var(--weight-medium); color: var(--color-ink-2); }
+.af-field-label, .af-segmented legend { font-size: 12px; font-weight: var(--weight-medium); color: var(--color-muted); }
 .af-field-row { display: flex; align-items: center; gap: var(--space-2); }
 .af-field-row > input:not([type="color"]), .af-field-row > select, .af-field-row > textarea {
   flex: 1;
   min-width: 0;
   min-height: var(--touch-target);
   padding: var(--space-1) var(--space-2);
-  border: var(--border-width) solid var(--color-rule-2);
-  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--color-rule);
+  border-radius: 6px;
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
@@ -72,16 +72,24 @@
 .af-toggle { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); }
 .af-toggle input { width: var(--space-4); height: var(--space-4); accent-color: var(--color-accent); }
 
-.af-field-group { border-top: var(--border-width) solid var(--color-rule); padding-top: var(--space-2); }
+/* V2 details.fb-group: a rule between groups, the summary with a caret */
+.af-field-group { border-top: var(--border-width) solid var(--chrome-line); padding: 0 2px 4px; }
 .af-field-group > summary {
   cursor: pointer;
   min-height: var(--touch-target);
   display: flex;
   align-items: center;
-  font-weight: var(--weight-bold);
-  color: var(--color-ink);
+  gap: 6px;
+  padding: 12px 0;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--color-text);
 }
-.af-field-group > .af-field { margin-top: var(--space-2); }
+.af-field-group > summary::-webkit-details-marker { display: none; }
+.af-field-group > summary::before { content: '\25B8'; font-size: 11px; color: var(--color-text); }
+.af-field-group[open] > summary::before { content: '\25BE'; }
+.af-field-group > .af-field { margin-bottom: var(--space-3); }
 .af-inspector :focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
 
 @media (prefers-reduced-motion: no-preference) {

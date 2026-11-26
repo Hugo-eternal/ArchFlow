@@ -69,6 +69,7 @@ export function makeBlock(d: BlockDiagram, at: Point, view: BlockView = d.view):
     b.role = 'converter';
     b.metrics = { voltage: { value: '', show: false }, current: { value: '', show: false } };
   }
+  if (d.portLabels === 'outside') for (const p of b.ports) p.label = 'outside';
   return b;
 }
 
@@ -140,6 +141,7 @@ export function addPort(d: BlockDiagram, blockId: string, type = 'in', side: Sid
   let i = 1;
   while (b.ports.some(p => p.name === prefix + i)) i++;
   const p = makePort(prefix + i, side, t ?? 0.5, type);
+  if (data.portLabels === 'outside') p.label = 'outside';
   b.ports.push(p);
   const grid = data.grid?.snap === true;
   if (t === undefined) {
@@ -422,3 +424,22 @@ export function adoptNewBlock(d: BlockDiagram, id: string): BlockDiagram {
   }
   return Object.keys(patch).length ? updateBlock(d, id, patch) : d;
 }
+
+/** Where pin names sit in this drawing: 'inside' / 'outside' when every shown pin agrees, else null. */
+export function portLabelMode(d: BlockDiagram): 'inside' | 'outside' | null {
+  const modes = new Set(d.blocks.flatMap(b => b.ports.map(p => p.label)).filter(m => m !== 'hidden'));
+  if (modes.size === 0) return d.portLabels === 'outside' ? 'outside' : 'inside';
+  return modes.size === 1 ? ([...modes][0] as 'inside' | 'outside') : null;
+}
+
+/**
+ * Put the names of all shown pins inside or outside their blocks (V2 "drawing settings · port
+ * names", afPinLabels); new pins follow. Hidden names stay hidden.
+ */
+export function setPortLabelMode(d: BlockDiagram, mode: 'inside' | 'outside'): BlockDiagram {
+  const data = clone(d);
+  data.portLabels = mode;
+  for (const b of data.blocks) for (const p of b.ports) if (p.label !== 'hidden') p.label = mode;
+  return data;
+}
+

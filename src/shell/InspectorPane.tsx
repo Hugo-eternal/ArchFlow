@@ -8,6 +8,48 @@ import type { CanvasSelection } from '../designs/module';
 import type { Design } from '../io/schema-types';
 import type { Shell } from './controller';
 import { useVersion } from './use-store';
+import { Icon } from './icons';
+import { blockHead, scheduleHead, type SelectionHead } from './selection-head';
+import { portLabelMode } from '../model/diagram';
+import type { ScheduleData } from '../io/schema-types';
+
+/** V2 .af2-insp-head: icon, kind, name (or a hint when idle), collapse button. */
+function Head({ shell, head }: { shell: Shell; head: SelectionHead }) {
+  return (
+    <div className={`af-insp-head${head.idle ? ' is-idle' : ''}`}>
+      <span className="af-insp-icon" aria-hidden="true"><Icon name={head.icon} /></span>
+      <div className="af-insp-title">
+        <span className="af-insp-kind">{t(head.kind)}</span>
+        {head.idle ? <span className="af-insp-hint">{head.name}</span> : <strong className="af-insp-name">{head.name}</strong>}
+      </div>
+      <button type="button" className="af-btn icon" aria-label={t('inspector.collapse')} data-tip={t('inspector.collapse')}
+        onClick={() => void shell.run('view.toggleInspector')}><Icon name="panelCollapse" /></button>
+    </div>
+  );
+}
+
+/** Nothing selected in a block diagram (V2 .af15-empty): drawing settings and what to select. */
+function DrawingSettings({ shell }: { shell: Shell }) {
+  const mode = portLabelMode(shell.data());
+  return (
+    <div className="af-insp-empty">
+      <div className="af-insp-drawing">
+        <p className="af-insp-sub">{t('inspector.drawing')}</p>
+        <div className="af-insp-row" role="radiogroup" aria-label={t('inspector.drawing.portLabels')}>
+          <span className="af-insp-row-label" aria-hidden="true">{t('inspector.drawing.portLabels')}</span>
+          <span className="af-insp-seg">
+            {(['inside', 'outside'] as const).map(m => (
+              <button key={m} type="button" role="radio" aria-checked={mode === m} onClick={() => void shell.run('layout.portLabels', m)}>
+                {t(`inspector.drawing.portLabels.${m}`)}
+              </button>
+            ))}
+          </span>
+        </div>
+      </div>
+      <p className="af-insp-help">{t('inspector.drawing.help')}</p>
+    </div>
+  );
+}
 
 /** Open / closed inspector groups, remembered per browser (V2 L10536; key prefix archflow:). */
 const GROUPS_KEY = 'archflow:inspector-groups';
@@ -66,7 +108,7 @@ export function InspectorPane({ shell }: { shell: Shell }) {
   if (shell.module?.canvas) {
     return (
       <aside className="af-inspector-pane" aria-label={t('inspector.title')} hidden={!shell.inspectorOpen}>
-        <h2 className="af-pane-title">{t('inspector.title')}</h2>
+        {shell.store.activeDesign?.type === 'schedule' && <Head shell={shell} head={scheduleHead(shell.store.data(shell.store.activeDesignId) as ScheduleData, shell.item)} />}
         <DrawingInspector key={shell.store.activeDesignId} shell={shell} />
       </aside>
     );
@@ -82,7 +124,7 @@ function BlockInspectorPane({ shell }: { shell: Shell }) {
 
   useEffect(() => {
     if (!ref.current || !shell.isBlockDiagram) return;
-    const i = blockInspector(ref.current, shell.store, { onRefused: r => shell.refused(r as never), groupState: groupStorage });
+    const i = blockInspector(ref.current, shell.store, { onRefused: r => shell.refused(r as never), groupState: groupStorage, emptyText: null });
     insp.current = i;
     return () => { i.destroy(); insp.current = null; };
   }, [shell, designId]);
@@ -96,8 +138,8 @@ function BlockInspectorPane({ shell }: { shell: Shell }) {
 
   return (
     <aside className="af-inspector-pane" aria-label={t('inspector.title')} hidden={!shell.inspectorOpen}>
-      <h2 className="af-pane-title">{t('inspector.title')}</h2>
-      {sel.length > 1 && <p className="af-inspector-multi">{t('inspector.multi', { count: sel.length })}</p>}
+      {shell.isBlockDiagram && <Head shell={shell} head={blockHead(shell.data(), sel)} />}
+      {shell.isBlockDiagram && sel.length === 0 && <DrawingSettings shell={shell} />}
       <div ref={ref} />
     </aside>
   );

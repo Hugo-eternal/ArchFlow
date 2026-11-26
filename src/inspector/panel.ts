@@ -27,6 +27,8 @@ export interface PanelOptions<D, S> {
   debounceMs?: number;
   /** Select another item (custom fields: lists that jump to an item). */
   select?: (sel: S) => void;
+  /** Text shown when nothing is selected (default inspector.empty); null = nothing (the shell shows its own). */
+  emptyText?: MessageKey | null;
   /** Where open / closed groups are remembered (default: in this panel only). */
   groupState?: { get(key: string): boolean | undefined; set(key: string, open: boolean): void };
   doc?: Document;
@@ -77,7 +79,7 @@ export class InspectorPanel<D, S> {
   }
 
   /** Build the panel for a selection (null = nothing selected: show `empty`). */
-  show(specs: readonly FieldSpec<D, S>[], sel: S | null, empty: MessageKey = 'inspector.empty'): void {
+  show(specs: readonly FieldSpec<D, S>[], sel: S | null, empty: MessageKey | null = this.o.emptyText === undefined ? 'inspector.empty' : this.o.emptyText): void {
     this.flush();
     this.specs = specs;
     this.sel = sel;
@@ -132,14 +134,16 @@ export class InspectorPanel<D, S> {
 
   // ------------------------------------------------------------------ building
 
-  private build(empty: MessageKey = 'inspector.empty'): void {
+  private build(empty: MessageKey | null = 'inspector.empty'): void {
     this.built.clear();
     this.customs = [];
     const frag = this.doc.createDocumentFragment();
     if (this.sel === null) {
-      const p = this.el('p', 'af-inspector-empty');
-      p.textContent = t(empty);
-      frag.append(p);
+      if (empty) {
+        const p = this.el('p', 'af-inspector-empty');
+        p.textContent = t(empty);
+        frag.append(p);
+      }
       this.signature = '';
     } else {
       const data = this.o.data();

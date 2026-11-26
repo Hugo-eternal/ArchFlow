@@ -179,3 +179,32 @@ describe('model/diagram', () => {
     expect(m.updateText(tx.data, tx.id, { text: 'x'.repeat(30000) }).texts[0].text).toHaveLength(LIMITS.text);
   });
 });
+
+describe('drawing-wide pin name position (V2 afPinLabels, 3.46d)', () => {
+  const diagram = () => {
+    let d = m.emptyDiagram();
+    d = m.addBlock(d, m.makeBlock(d, { x: 0, y: 0 })).data;
+    d = m.addBlock(d, m.makeBlock(d, { x: 300, y: 0 })).data;
+    return d;
+  };
+  it('reports one mode when every shown pin agrees, null when they differ', () => {
+    const d = diagram();
+    expect(m.portLabelMode(d)).toBe('inside');
+    const mixed = m.updatePort(d, d.blocks[0].id, d.blocks[0].ports[0].id, { label: 'outside' });
+    expect(m.portLabelMode(mixed)).toBeNull();
+    const hidden = m.updatePort(d, d.blocks[0].id, d.blocks[0].ports[0].id, { label: 'hidden' });
+    expect(m.portLabelMode(hidden)).toBe('inside');
+  });
+  it('moves every shown pin name, keeps hidden ones, and new pins follow', () => {
+    const d0 = diagram();
+    const d1 = m.updatePort(d0, d0.blocks[0].id, d0.blocks[0].ports[0].id, { label: 'hidden' });
+    const d = m.setPortLabelMode(d1, 'outside');
+    expect(d1.portLabels).toBeUndefined(); // input unchanged
+    expect(d.portLabels).toBe('outside');
+    expect(d.blocks.flatMap(b => b.ports.map(p => p.label))).toEqual(['hidden', 'outside', 'outside', 'outside']);
+    expect(m.makeBlock(d, { x: 0, y: 300 }).ports.every(p => p.label === 'outside')).toBe(true);
+    const added = m.addPort(d, d.blocks[1].id, 'in');
+    expect(added.data.blocks[1].ports.find(p => p.id === added.id)!.label).toBe('outside');
+    expect(m.portLabelMode(m.setPortLabelMode(d, 'inside'))).toBe('inside');
+  });
+});
