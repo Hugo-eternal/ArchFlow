@@ -56,6 +56,7 @@
 .af-arrow.af-wire-bus { fill: var(--wire-bus); }
 .af-arrow { stroke: none; }
 .af-wire-group.is-invalid .af-wire { stroke: var(--color-danger); stroke-dasharray: 6 4; }
+.af-wire-group.is-muted { opacity: var(--wire-muted-opacity); }
 .af-wire-selected { fill: none; stroke: var(--color-selection); stroke-width: 9px; stroke-linejoin: round; }
 .af-wire-label {
   fill: var(--wire-label);

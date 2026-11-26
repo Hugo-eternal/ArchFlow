@@ -30,10 +30,12 @@ function withFont(html) {
 let browser = null;
 let users = 0;
 
-export async function openApp({ locale = 'zh-Hant', viewport = { width: 1500, height: 950 } } = {}) {
+/** `now`: fix the page clock (Date) for output that prints today's date (sequence export). */
+export async function openApp({ locale = 'zh-Hant', viewport = { width: 1500, height: 950 }, now = null } = {}) {
   if (!browser) browser = await chromium.launch();
   users++;
   const page = await browser.newPage({ viewport });
+  if (now) await page.clock.setFixedTime(now);
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   // Load the font-injected document as the wrapper's iframe srcdoc does. Start from a blank

@@ -17,7 +17,7 @@ test('function: starter template, then a blank design, then save', async ({ page
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
 
-  await expect(page.getByRole('radio', { name: '功能方塊圖' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: '方塊圖', exact: true })).toBeChecked();
   await expect(page.getByRole('radio', { name: '範本：入門方塊圖' })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.getByRole('button', { name: /入門方塊圖/ })).toHaveAttribute('aria-current', 'page');
@@ -141,5 +141,47 @@ test('function: LCD module template and connector settings', async ({ page }) =>
   await expect(page.locator('svg.af-canvas .af-conn-num')).toHaveCount(8);
   d = await data(page);
   expect(d.wires.length).toBeLessThan(9);       // wires on the removed left side are gone
+  expect(errors).toEqual([]);
+});
+
+test('function: switch between the function and power views (button, Shift+V), saved, not undoable, export view', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+
+  const views = page.getByRole('group', { name: '檢視' });
+  const fn = views.getByRole('button', { name: '功能檢視' }), pw = views.getByRole('button', { name: '電源檢視' });
+  await expect(fn).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('svg.af-canvas .af-wire-group.is-muted')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '復原' })).toBeDisabled();
+
+  await pw.click();
+  await expect(pw).toHaveAttribute('aria-pressed', 'true');
+  // signal wires fade in the power view; the project is unsaved; nothing to undo
+  const signal = (await data(page)).wires.filter(w => (w as { kind: string }).kind !== 'power').length;
+  expect(signal).toBeGreaterThan(0);
+  await expect(page.locator('svg.af-canvas .af-wire-group.is-muted')).toHaveCount(signal);
+  await expect(page.locator('.af-project-name')).toContainText('•');
+  await expect(page.getByRole('button', { name: '復原' })).toBeDisabled();
+
+  // Shift+V on the canvas goes back
+  await page.locator('svg.af-canvas').focus();
+  await page.keyboard.press('Shift+V');
+  await expect(fn).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.press('Shift+V');
+  await expect(pw).toHaveAttribute('aria-pressed', 'true');
+
+  // the export dialog starts on the current view and can pick the other one
+  await page.getByRole('button', { name: '匯出' }).click();
+  const dlg = page.getByRole('dialog');
+  await expect(dlg.getByRole('radio', { name: /電源檢視/ })).toBeChecked();
+  await dlg.getByRole('radio', { name: /功能檢視/ }).check();
+  const [svg] = await Promise.all([page.waitForEvent('download'), dlg.getByRole('button', { name: '下載' }).click()]);
+  expect(fs.readFileSync(await svg.path(), 'utf8')).not.toMatch(/opacity="0\.35"/);
+
+  // saved with the file
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  expect(JSON.parse(fs.readFileSync(await save.path(), 'utf8')).designs[0].data.view).toBe('power');
   expect(errors).toEqual([]);
 });

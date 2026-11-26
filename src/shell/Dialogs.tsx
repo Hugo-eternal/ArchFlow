@@ -8,6 +8,7 @@ import { svgToPng, PNG_SCALES } from '../export/png';
 import { readability } from '../export/readability';
 import { ExportError } from '../export/errors';
 import { downloadBlob } from '../io/project-file';
+import type { BlockView } from '../io/schema-types';
 import type { Shell, DesignChoice } from './controller';
 
 function Modal({ title, onClose, children, wide }: { title: MessageKey; onClose: () => void; children: ReactNode; wide?: boolean }) {
@@ -75,13 +76,14 @@ export function ExportDialog({ shell }: { shell: Shell }) {
   const [page, setPage] = useState<PageSize>(DEFAULT_PAGE);
   const [scale, setScale] = useState(1);
   const [transparent, setTransparent] = useState(false);
+  const [view, setView] = useState<BlockView>(() => shell.view);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<MessageKey | null>(null);
   const data = shell.data();
   const exp = useMemo<SvgExport | ExportError>(() => {
     const m = shell.module;
-    try { return exportSvg(data, { transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
-  }, [data, transparent, shell]);
+    try { return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, extras: m?.exportExtras }); } catch (e) { if (e instanceof ExportError) return e; throw e; }
+  }, [data, view, transparent, shell]);
   const result = exp instanceof ExportError ? null : fitPage(exp, page);
   const report = result ? readability(data, result, shell.routesFor(data), shell.measure) : null;
 
@@ -107,6 +109,15 @@ export function ExportDialog({ shell }: { shell: Shell }) {
             <legend>{t('export.format')}</legend>
             {(['svg', 'png'] as const).map(f => (
               <label key={f}><input type="radio" name="af-export-format" value={f} checked={format === f} onChange={() => setFormat(f)} /><span>{f.toUpperCase()}</span></label>
+            ))}
+          </fieldset>
+          <fieldset className="af-form-field af-choice">
+            <legend>{t('export.view')}</legend>
+            {(['function', 'power'] as const).map(v => (
+              <label key={v}>
+                <input type="radio" name="af-export-view" value={v} checked={view === v} onChange={() => setView(v)} />
+                <span>{t(`view.mode.${v}`)}{v === data.view ? ` ${t('export.view.current')}` : ''}</span>
+              </label>
             ))}
           </fieldset>
           <label className="af-form-field">

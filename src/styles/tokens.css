@@ -44,6 +44,7 @@
   --wire-width-power: 2.6px;
   --wire-width-clock: 2.2px;
   --wire-width-bus: 3.6px;
+  --wire-muted-opacity: 0.35;   /* signal / clock / bus wires in the power view (3.27a) */
 
   /* schedule task status (V2 L3378) */
   --status-todo: #5F6C77;

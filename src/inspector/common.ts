@@ -5,7 +5,7 @@
 // V2 sources (legacy/app.zh-Hant.html): base inspector L314 (ref, part number, title, wire name
 // / kind / arrow / arrow size 4–24), appearance fields L519 / L3125, port table L3047, line
 // format panel L1463, text controls L2219–L2303.
-import type { Block, BlockDiagram, BlockStyle, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
+import type { Block, BlockDiagram, BlockStyle, BlockView, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
 import { LIMITS, type ItemRef } from '../model/types';
 import { blockOf, fitFrame, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
 import { FILE_LIMITS } from '../io/schema';
@@ -66,6 +66,15 @@ export const TEXT_ALIGNS = ['left', 'center', 'right'] as const;
 
 /** Fallback colours the colour pickers show for "theme default" (V2 defaults). */
 const FALLBACK = { fill: '#ffffff', border: '#243e5d', text: '#243e5d', wire: '#243e5d', background: '#ffffff' };
+
+/**
+ * A field shown only in one view of the block diagram (plan §2.2.1: power fields appear in the
+ * power view only; the data stays in both). Combines with the field's own `visible`.
+ */
+export function inView<F extends BlockField>(view: BlockView, field: F): F {
+  const own = field.visible;
+  return { ...field, visible: (d: BlockDiagram, s: ItemRef) => d.view === view && (!own || own(d, s)) };
+}
 
 export function blockFields(): BlockField[] {
   return [

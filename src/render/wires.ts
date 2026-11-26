@@ -5,7 +5,7 @@
 // drawJunctions L356 (+ look L1081), edgeLabel L349 / L1442 (µA from p13Current), p13 label look L1465 (size, weight, halo), line format
 // dashes L1400. Label de-duplication (L3099) and manual label marks dragging belong to
 // interaction (3.20).
-import type { BlockDiagram, LineFormat, Wire } from '../io/schema-types';
+import type { BlockDiagram, BlockView, LineFormat, Wire } from '../io/schema-types';
 import { near, toPathData, type Point } from '../core/geometry';
 import type { Route } from '../router/full-path';
 import { h, r2, type VNode } from './vnode';
@@ -14,11 +14,12 @@ export const DASH: Record<string, string | undefined> = { solid: undefined, dash
 const KINDS = new Set(['signal', 'power', 'clock', 'bus']);
 export const LABEL_SIZE = 14;
 
-/** Text of a wire's label: name, plus voltage / current when shown (V2 edgeLabel). */
-export function wireLabel(w: Wire): string {
+/** Text of a wire's label: name, plus voltage / current when shown (V2 edgeLabel) — only in
+ *  the power view; the function view draws power wires without their values (plan §2.2.1). */
+export function wireLabel(w: Wire, view: BlockView): string {
   const parts = [w.name];
   const e = w.electrical;
-  if (e?.show) {
+  if (e?.show && view === 'power') {
     if (e.voltage) parts.push(/[a-z]$/i.test(e.voltage) ? e.voltage : `${e.voltage} V`);
     if (e.current) parts.push(/[a-z]$/i.test(e.current) ? e.current : `${e.current} ${e.unit === 'uA' ? '\u00b5A' : e.unit ?? 'A'}`);
   }
@@ -48,7 +49,10 @@ function strokeOf(w: Wire): { cls: string; color?: string } {
 
 export interface WireRenderOptions { selected?: ReadonlySet<string> }
 
-function wireNode(w: Wire, route: Route, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions): VNode {
+/** In the power view everything but power wires is drawn faded (plan §2.2.1). */
+export const isMuted = (w: Wire, view: BlockView) => view === 'power' && w.kind !== 'power';
+
+function wireNode(w: Wire, route: Route, view: BlockView, markers: Map<string, LineFormat & { kindColor: string }>, opts: WireRenderOptions): VNode {
   const s = strokeOf(w), d = toPathData(route.ps);
   // an arrow never points into a junction; `bothEnds` adds one at the start (V2 edge.afBoth, L4112)
   const arrowEnd = w.line.arrow && !('junction' in w.b);
@@ -61,8 +65,8 @@ function wireNode(w: Wire, route: Route, markers: Map<string, LineFormat & { kin
     if (arrowStart) markerStart = `url(#${id})`;
   }
   const style = [s.color && `stroke:${s.color}`, w.line.width && `stroke-width:${w.line.width}px`].filter(Boolean).join(';') || undefined;
-  const text = wireLabel(w), pos = text ? labelPosition(w, route.ps) : null;
-  return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
+  const text = wireLabel(w, view), pos = text ? labelPosition(w, route.ps) : null;
+  return h('g', { class: `af-wire-group${route.valid ? '' : ' is-invalid'}${isMuted(w, view) ? ' is-muted' : ''}${opts.selected?.has(w.id) ? ' is-selected' : ''}`, 'data-wire': w.id }, [
     opts.selected?.has(w.id) ? h('path', { class: 'af-wire-selected', d }) : null,
     h('path', { class: s.cls, d, style, 'stroke-dasharray': DASH[w.line.dash], 'marker-end': marker, 'marker-start': markerStart }),
     pos ? h('text', {
@@ -81,10 +85,11 @@ function markerDefs(markers: Map<string, LineFormat & { kindColor: string }>): V
   }, [h('path', { d: 'M0 0L10 5L0 10z', class: `af-arrow ${f.kindColor}`, style: f.color ? `fill:${f.color}` : undefined })])));
 }
 
-/** Wires (in model order) with their markers, then junction dots on top. */
+/** Wires (in model order) with their markers, then junction dots on top. Labels and fading
+ *  follow `d.view`. */
 export function wiresLayer(d: BlockDiagram, routes: ReadonlyMap<string, Route>, opts: WireRenderOptions = {}): VNode {
   const markers = new Map<string, LineFormat & { kindColor: string }>();
-  const wires = d.wires.filter(w => routes.has(w.id)).map(w => wireNode(w, routes.get(w.id)!, markers, opts));
+  const wires = d.wires.filter(w => routes.has(w.id)).map(w => wireNode(w, routes.get(w.id)!, d.view, markers, opts));
   return h('g', { class: 'af-wires' }, [
     markerDefs(markers),
     ...wires,

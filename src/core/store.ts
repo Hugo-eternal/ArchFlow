@@ -146,6 +146,12 @@ export class Store {
   /** Several updates as one undo step; rolled back if fn throws. */
   batch<R>(fn: () => R): R { return this.requireActive().history.batch(fn); }
 
+  /** Change a presentation setting of the active design (e.g. its view): saved, marks the
+   *  project unsaved, but is not an undo step (History.amend). */
+  amend(fn: (data: Design['data']) => Design['data']): boolean {
+    return this.requireActive().history.amend(fn);
+  }
+
   undo(): boolean { return this.activeDesign?.history.undo() ?? false; }
   redo(): boolean { return this.activeDesign?.history.redo() ?? false; }
 

@@ -18,7 +18,8 @@ const inEditor = (app, fn) => app.page.evaluate(async src => {
 describe('golden: sequence design', () => {
   let app, project;
   beforeAll(async () => {
-    app = await openApp();
+    // the export preview prints today's date: fix it to the day the golden was recorded
+    app = await openApp({ now: new Date(2026, 10, 25, 12, 0, 0) });
     project = await loadGolden(app, TYPE);
     await app.page.waitForTimeout(1200);
   });

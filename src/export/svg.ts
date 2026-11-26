@@ -7,7 +7,7 @@
 // wires / clean look, L1567 drop grid handles, L1674 drop selection, L1744 drop label leaders,
 // L1856 drop mark outlines. V3 never draws those overlays into an export, so the clean-up
 // layers have nothing to remove. Schedule export (L754) belongs to designs/schedule (3.29).
-import type { BlockDiagram } from '../io/schema-types';
+import type { BlockDiagram, BlockView } from '../io/schema-types';
 import { blocksLayer, type BlockRenderOptions } from '../render/blocks';
 import { wiresLayer } from '../render/wires';
 import { framesLayer, frameTab } from '../render/frames';
@@ -39,6 +39,8 @@ export interface SvgExportOptions {
   extras?: (ctx: ExportContext) => { below?: VNode[]; above?: VNode[]; bounds?: Bounds[] };
   /** Extra drawing on blocks (DesignModule.decorate). */
   decorate?: BlockRenderOptions['decorate'];
+  /** Draw in this view instead of the diagram's own (export dialog choice, plan §2.2.1). */
+  view?: BlockView;
   /** Routes already computed for this data (the canvas has them). */
   routes?: ReadonlyMap<string, Route>;
 }
@@ -98,7 +100,9 @@ function splitDefs(n: VNode, defs: VNode[]): VNode {
   return { ...n, children: n.children.filter(c => (c.tag === 'defs' ? (defs.push(...c.children), false) : true)).map(c => splitDefs(c, defs)) };
 }
 
-export function exportSvg(d: BlockDiagram, o: SvgExportOptions = {}): SvgExport {
+export function exportSvg(data: BlockDiagram, o: SvgExportOptions = {}): SvgExport {
+  // the view only changes the drawing, never positions or routes
+  const d = o.view && o.view !== data.view ? { ...data, view: o.view } : data;
   if (!d.blocks.length && !d.texts.length) throw new ExportError('empty');
   const measure = o.measure ?? estimateWidth;
   const theme = o.theme ?? 'light';

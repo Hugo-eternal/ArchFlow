@@ -52,10 +52,10 @@ describe('render/wires matches V2 drawEdges', () => {
 describe('render/wires', () => {
   const wire = (over: Partial<Wire> = {}): Wire => ({ id: 'w', a: { block: 'A', port: 'p' }, b: { block: 'B', port: 'q' }, name: 'SDA', kind: 'signal', line: { color: '', width: 2, dash: 'solid', arrow: true }, locked: false, ...over });
   it('label text and placement', () => {
-    expect(wireLabel(wire())).toBe('SDA');
-    expect(wireLabel(wire({ name: '', electrical: { voltage: '3.3', current: '200', unit: 'mA', show: true } }))).toBe('3.3 V · 200 mA');
-    expect(wireLabel(wire({ electrical: { voltage: '5V', current: '', show: false } }))).toBe('SDA');
-    expect(wireLabel(wire({ name: '', electrical: { voltage: '5V', current: '20', unit: 'uA', show: true } }))).toBe('5V · 20 \u00b5A');
+    expect(wireLabel(wire(), 'power')).toBe('SDA');
+    expect(wireLabel(wire({ name: '', electrical: { voltage: '3.3', current: '200', unit: 'mA', show: true } }), 'power')).toBe('3.3 V · 200 mA');
+    expect(wireLabel(wire({ electrical: { voltage: '5V', current: '', show: false } }), 'power')).toBe('SDA');
+    expect(wireLabel(wire({ name: '', electrical: { voltage: '5V', current: '20', unit: 'uA', show: true } }), 'power')).toBe('5V · 20 \u00b5A');
     const ps = [{ x: 0, y: 0 }, { x: 30, y: 0 }, { x: 30, y: 200 }, { x: 60, y: 200 }];
     expect(labelPosition(wire(), ps)).toEqual({ x: 38, y: 93, anchor: 'start' });
     expect(labelPosition(wire({ label: { mark: { x: 5, y: 6, angle: 0 } } }), ps)).toEqual({ x: 5, y: 6, anchor: 'middle' });

@@ -96,6 +96,24 @@ export class History<T> {
     return true;
   }
 
+  /**
+   * Change a presentation setting without an undo step: fn is applied to the present state and
+   * to every undo / redo snapshot, so undo neither reverts it nor is blocked by it. Marks dirty
+   * when anything changed (step 3.27a: the block-diagram view is saved but not undoable).
+   */
+  amend(fn: (state: T) => T): boolean {
+    if (this.batching) throw new Error('amend inside a batch');
+    const apply = (s: string) => JSON.stringify(fn(JSON.parse(s) as T));
+    const next = apply(this.current);
+    if (next === this.current) return false;
+    this.current = next;
+    this.past = this.past.map(apply);
+    this.future = this.future.map(apply);
+    this.dirty = true;
+    this.emit();
+    return true;
+  }
+
   /** Replace the state without an undo step (loading a file); clears history. */
   reset(state: T): void {
     this.current = JSON.stringify(state);
