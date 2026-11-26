@@ -14,7 +14,7 @@ export interface CanvasContext {
   store: Store;
   gestures: Gestures;
   /** An editor with its own undo (embedded vendor editors, 3.30): undo / redo go there. */
-  embeddedHistory?(): { undo(): void; redo(): void; canUndo(): boolean; canRedo(): boolean } | null;
+  embeddedHistory?(): { undo(): void; redo(): void; canUndo?(): boolean; canRedo?(): boolean } | null;
   refused?(r: Extract<CommitResult, { ok: false }>): void;
 }
 
@@ -43,12 +43,12 @@ export function canvasCommands(): Command<CanvasContext>[] {
   return [
     {
       id: 'history.undo', label: 'cmd.undo', group: 'edit', shortcut: 'Mod+Z',
-      enabled: c => { const e = c.embeddedHistory?.(); return e ? e.canUndo() : !c.gestures.busy && !!c.store.activeDesign?.history.canUndo; },
+      enabled: c => { const e = c.embeddedHistory?.(); return e ? (e.canUndo?.() ?? true) : !c.gestures.busy && !!c.store.activeDesign?.history.canUndo; },
       run: c => { const e = c.embeddedHistory?.(); if (e) { e.undo(); return; } c.store.undo(); c.gestures.select([]); },
     },
     {
       id: 'history.redo', label: 'cmd.redo', group: 'edit', shortcut: ['Mod+Shift+Z', 'Mod+Y'],
-      enabled: c => { const e = c.embeddedHistory?.(); return e ? e.canRedo() : !c.gestures.busy && !!c.store.activeDesign?.history.canRedo; },
+      enabled: c => { const e = c.embeddedHistory?.(); return e ? (e.canRedo?.() ?? true) : !c.gestures.busy && !!c.store.activeDesign?.history.canRedo; },
       run: c => { const e = c.embeddedHistory?.(); if (e) { e.redo(); return; } c.store.redo(); c.gestures.select([]); },
     },
     {

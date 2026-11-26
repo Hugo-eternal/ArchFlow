@@ -2,7 +2,7 @@
 // editor reads `window.parent[<host>]` once when its bundle starts, so the host objects are
 // published on this window when the shell starts and always talk to the current shell.
 //
-// V2: window.afSeqHost (legacy L5563): getDoc / change / status / toast / save / palette /
+// V2: window.afSeqHost (legacy L5563), window.afFlowHost (L5765, plus `images`): getDoc / change / status / toast / save / palette /
 // shortcuts / title / modal / ready / poke. Documents coming back are cleaned by the module
 // (sanitize) and stored without a V3 undo step: the editor keeps its own undo, and the shell's
 // undo / redo commands are routed to it (Shell.embeddedHistory).
@@ -36,6 +36,7 @@ function hostFor(shell: Shell, module: DesignModule) {
     modal(_open: boolean) { /* the editor's dialogs stay inside its frame */ },
     ready() { shell.embeddedReady(); },
     poke() { /* V2 closed its own menus; the V3 shell has none open over the frame */ },
+    ...module.embedded!.hostExtras?.(),
   };
 }
 

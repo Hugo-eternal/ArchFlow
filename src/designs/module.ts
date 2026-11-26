@@ -98,11 +98,15 @@ export interface EmbeddedEditor<D> {
   api: string;
   /** Clean a document the editor reports before it is stored. */
   sanitize(doc: unknown): D;
+  /** Extra members of the host object (e.g. the flowchart editor's shared image store). */
+  hostExtras?(): Record<string, unknown>;
 }
 
 /** The API a vendor editor exposes in its frame (the part the shell uses). */
 export interface EmbeddedApi {
-  undo(): void; redo(): void; canUndo(): boolean; canRedo(): boolean;
+  undo(): void; redo(): void;
+  /** Missing in editors that do not report it (flowchart): the shell keeps undo / redo enabled. */
+  canUndo?(): boolean; canRedo?(): boolean;
   openExport?(): void;
   load?(id: string, doc: unknown): void;
 }
