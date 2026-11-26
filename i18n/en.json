@@ -470,5 +470,8 @@
   "tools.close": "Close",
   "tool.bom.name": "RSI BOM Converter",
   "tool.bom.desc": "BOM Excel to the RSI format",
-  "tool.bom.long": "Upload a BOM Excel file, classify parts by part number and download it in the RSI format."
+  "tool.bom.long": "Upload a BOM Excel file, classify parts by part number and download it in the RSI format.",
+  "tool.edid.name": "EDID Generator",
+  "tool.edid.desc": "Build an EDID from panel timing",
+  "tool.edid.long": "Enter the panel timing to build a 256-byte EDID; export .bin, .hex, a C array or Python flashing code."
 }

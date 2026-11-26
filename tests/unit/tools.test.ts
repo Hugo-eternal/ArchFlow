@@ -1,10 +1,11 @@
-// module: tools:bom, shell — step 3.32: the tool registry, the BOM tool's frame document and host
+// module: tools:bom, tools:edid, shell — step 3.32: the tool registry, the BOM tool's frame document and host
 // object, and opening / closing tools in the shell (frames stay mounted after closing, as V2).
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ToolRegistry } from '../../src/tools/module';
 import { bomTool } from '../../src/tools/bom';
+import { edidTool } from '../../src/tools/edid';
 import { installToolHosts } from '../../src/shell/embedded';
 import { Shell } from '../../src/shell/controller';
 import { createRegistry, createTools } from '../../src/app';
@@ -24,6 +25,12 @@ describe('tools', () => {
     expect(doc.startsWith('<!doctype html><html lang="en">')).toBe(true);
     expect(doc).toContain(fs.readFileSync(path.join(ROOT, 'vendor/rsi-bom/style.css'), 'utf8'));
     expect(doc).toContain(fs.readFileSync(path.join(ROOT, 'vendor/rsi-bom/bundle.js'), 'utf8'));
+  });
+
+  it('EDID: the frame document is the vendor page as is (V2 srcdoc); host afEdidHost', () => {
+    expect(edidTool.srcdoc('zh-Hant')).toBe(fs.readFileSync(path.join(ROOT, 'vendor/tools/edid.html'), 'utf8'));
+    expect(edidTool.host).toBe('afEdidHost');
+    expect(createTools().list().map(x => x.id)).toEqual(['bom', 'edid']);
   });
 
   it('shell: open from the command, close through the host object; opened frames are remembered', async () => {

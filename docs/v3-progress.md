@@ -84,7 +84,7 @@
 - [x] 3.31 `designs/flowchart` vendor 轉接（實際跑 L3：改到 interaction / shell）
 ### 3H 工具
 - [x] 3.32 `tools/bom`（實際跑 L3：工具框架改到 shell）
-- [ ] 3.33 `tools/edid`（L2）
+- [x] 3.33 `tools/edid`（L2）
 - [ ] 3.34 `tools/hex`（L2）
 - [ ] 3.35 `tools/pattern`（L2）
 ### 3I 自動整理
@@ -112,8 +112,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3H 工具進行中（3.32 BOM ✓，工具框架完成）
-- **下一步**：3.33 `tools/edid`（L2）。框架已在 3.32 完成，只需：`src/tools/edid/index.ts`（`ToolModule`：`srcdoc` 直接回傳 `vendor/tools/edid.html` 的內容（`?raw`；它是完整頁面，V2 `mg.replaceAll('<#/script','</script>')`——vendor 檔已是替換後內容，`tests/unit/vendor.test.js` 確認與 V2 注入的 srcdoc 相同），`host: 'afEdidHost'`）、i18n `tool.edid.name / desc / long`（V2 文字：EDID Generator /「由面板時序產生 EDID」/「填入面板時序產生 256 bytes EDID，匯出 .bin、.hex、C 陣列或 Python 燒錄程式碼。」）、在 `app.ts` `createTools` 註冊、`tests/unit/tools.test.ts` 與 `v3-tools.spec.ts` 各加一項（期待文字「產生 EDID 基本區塊」，見 V2 `tests/e2e/tools.spec.js`）。3.34 hex（`afHexHost`，另有載入檔案顯示位元組的 E2E）、3.35 pattern（`afPgHost`，`allow` 需 `clipboard-read *; clipboard-write *; fullscreen *; window-management *` 與 `allowFullscreen`）同樣做法。
+- **目前階段**：階段 3（模組化重構）——3H 工具進行中（3.32 BOM ✓、3.33 EDID ✓）
+- **下一步**：3.34 `tools/hex`（L2）：照 3.33——`src/tools/hex/index.ts`（`vendor/tools/hex.html?raw` 原樣當 srcdoc，host `afHexHost`）、i18n `tool.hex.name / desc / long`（V2：Hex/Bin Editor & Compare /「檢視、編輯、比對 .bin／.hex」/「開啟 .bin 或 Intel HEX：查看位址與校驗、直接改位元組，或比對兩個檔案的差異。」）、`createTools` 註冊、`tools.test` 一項、`v3-tools.spec` 兩項（開啟顯示「支援的格式」並由 host 關閉；載入 .bin 後顯示 `DE AD BE EF`，見 V2 `tests/e2e/tools.spec.js`）。之後 3.35 pattern（`afPgHost`，`allow: 'clipboard-read *; clipboard-write *; fullscreen *; window-management *'`、`allowFullscreen: true`）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -227,10 +227,11 @@
   - 未做：V2 在切換語言時把範本來源的列名 / 備註換成另一語系（`a4`）；V2 的 toast「復原」按鈕（V3 用殼層復原鍵）。
 - 流程圖 vendor 轉接（3.31）：`src/designs/flowchart/`——`index.ts`（`flowchartDesign`：`embedded: { title, srcdoc, host: 'afFlowHost', api: 'afFlowApi', sanitize, hostExtras: () => ({ images }) }`；`images` 是 window 上的 `__afFlowImages` Map（同 V2 jd，圖片只在記憶體、不寫入專案檔——V2 也是如此）；範本經過一次清理，同 V2 `uu(qf())`）、`sanitize.ts`（V2 `Pf` 移植：10 種圖形與預設大小、上限 500 / 1000 / 12、配色 / 線寬清單、是 / 否 → Y / N；無法讀取時回傳空流程圖）、`templates/templates.json`（V2 的「LCD 面板上電流程」，由 V2 引擎產生（自動排版 `Bd` 不需移植），兩語系幾何相同，文字 @i18n）。`EmbeddedApi.canUndo / canRedo` 改為選填（流程圖編輯器沒有），沒有時殼層的復原 / 重做一直可按；`EmbeddedEditor.hostExtras`。測試：`tests/golden/flowchart.v3.test.ts`（範本與 V2 建立的文件相同、清理、srcdoc）、`tests/e2e/v3-flowchart.spec.ts`（流程圖編輯器的匯出是按鈕選單，不是 dialog）。
 - 工具框架與 BOM（3.32）：`src/tools/module.ts`（`ToolModule { id, label, description, long, srcdoc(lang), host, allow?, allowFullscreen? }`、`ToolRegistry`）、`src/tools/bom/index.ts`（`vendor/rsi-bom` 以 `?raw` 組 srcdoc，同 V2 `Z4`，host `afRsiHost`）；`app.ts` `createTools()`，`new Shell(designs, tools)`（tools 選填，預設空）。殼層：`Shell.tool` / `openedTools` / `openTool` / `closeTool`，命令 `tool.open.<id>`（群組 `tools`）；`shell/embedded.ts` `installToolHosts`（`{ lang, close, toast }`，同 V2）。`App.tsx`：`ToolsSection`（啟動畫面「小工具」磚塊，V2 af2-tools-home）、`ToolsMenu`（工作區工具列下拉選單）、`ToolDialog`（全畫面遮罩 + role=dialog，開過的工具 iframe 保留、只顯示目前的；關閉：工具自己的 host.close、「關閉」按鈕、Esc（焦點在 iframe 外時）、點遮罩）；工具開啟時殼層快捷鍵停用。移除啟動畫面過時的「後續步驟接上」說明（`start.moreTypesLater`）。測試：`tests/unit/tools.test.ts`、`tests/e2e/v3-tools.spec.ts`。
+- EDID（3.33）：`src/tools/edid/index.ts`——`vendor/tools/edid.html` 原樣當 srcdoc（完整頁面；語言由 host.lang 決定），host `afEdidHost`；`createTools` 註冊；測試：`tools.test`、`v3-tools.spec`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.32：模組標註、i18n（472 個 key）、token、vendor、型別、建置（dist 1.44 MB）、產物檢查、Vitest 44 檔 352 項、Playwright 25 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，啟動畫面下方「小工具」→「RSI BOM Converter」開啟、上傳 BOM Excel 試轉換、按「關閉」或 Esc 回到原畫面；建立專案後由工具列「小工具」選單再開一次。前一步 3.31：L3（模組標註、i18n（466 個 key）、token、vendor、型別、建置（dist 1.07 MB）、產物檢查、Vitest 43 檔 349 項、Playwright 24 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，啟動畫面選「流程圖」→ 建立，應顯示「LCD 面板上電流程」；在編輯器左側點「處理」新增圖形後標題出現 •、按殼層「復原」撤銷；「匯出」打開編輯器的匯出選單（PNG / SVG / Mermaid / JSON）。
+- **最後通過的驗證層級**：L2（3.33：模組標註、i18n、token、vendor、產物檢查（dist 1.53 MB）、`tools.test`（4 項）、`v3-tools.spec`（2 項）、冒煙 E2E 通過）。前一步 3.32：L3（模組標註、i18n（472 個 key）、token、vendor、型別、建置（dist 1.44 MB）、產物檢查、Vitest 44 檔 352 項、Playwright 25 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，啟動畫面下方「小工具」→「RSI BOM Converter」開啟、上傳 BOM Excel 試轉換、按「關閉」或 Esc 回到原畫面；建立專案後由工具列「小工具」選單再開一次。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

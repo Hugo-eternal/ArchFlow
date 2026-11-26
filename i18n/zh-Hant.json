@@ -470,5 +470,8 @@
   "tools.close": "關閉",
   "tool.bom.name": "RSI BOM Converter",
   "tool.bom.desc": "BOM Excel 轉成 RSI 格式",
-  "tool.bom.long": "上傳 BOM Excel，依料號分類、組出 Specifications，下載 RSI 格式。"
+  "tool.bom.long": "上傳 BOM Excel，依料號分類、組出 Specifications，下載 RSI 格式。",
+  "tool.edid.name": "EDID Generator",
+  "tool.edid.desc": "由面板時序產生 EDID",
+  "tool.edid.long": "填入面板時序產生 256 bytes EDID，匯出 .bin、.hex、C 陣列或 Python 燒錄程式碼。"
 }

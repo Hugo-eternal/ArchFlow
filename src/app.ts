@@ -8,6 +8,7 @@ import { sequenceDesign } from './designs/sequence';
 import { flowchartDesign } from './designs/flowchart';
 import { ToolRegistry } from './tools/module';
 import { bomTool } from './tools/bom';
+import { edidTool } from './tools/edid';
 
 export function createRegistry(): DesignRegistry {
   const r = new DesignRegistry();
@@ -21,6 +22,7 @@ export function createRegistry(): DesignRegistry {
 export function createTools(): ToolRegistry {
   const r = new ToolRegistry();
   r.register(bomTool);
+  r.register(edidTool);
   return r;
 }
 

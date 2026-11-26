@@ -1,4 +1,4 @@
-// module: tools:bom — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
+// module: tools:bom, tools:edid — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
 // from the workspace tools menu, shows its page, and closes through its host object (the V2
 // vendor interface), the close button or Escape; its frame stays mounted, hidden.
 import { test, expect } from '@playwright/test';
@@ -36,5 +36,18 @@ test('RSI BOM Converter: start screen tile, workspace menu, closes three ways', 
   await page.getByLabel('小工具').selectOption({ label: 'RSI BOM Converter' });
   await dialog.getByRole('button', { name: '關閉' }).click();
   await expect(dialog).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('EDID Generator opens from the start screen, shows its page and closes through its host', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: /^EDID Generator/ }).click();
+  const frame = page.locator('iframe.af-tool-frame[title="EDID Generator"]');
+  await expect(frame).toBeVisible();
+  await expect(page.frameLocator('iframe.af-tool-frame[title="EDID Generator"]').locator('body')).toContainText('產生 EDID 基本區塊', { timeout: 15000 });
+  await page.evaluate(() => (window as unknown as { afEdidHost: { close(): void } }).afEdidHost.close());
+  await expect(frame).toBeHidden();
   expect(errors).toEqual([]);
 });
