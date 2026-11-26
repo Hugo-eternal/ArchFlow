@@ -21,3 +21,11 @@ THIS SOFTWARE.
 ## Vendor editors and tools (`vendor/`)
 
 Taken verbatim from ArchFlow V2.10.1; see each directory's `VENDOR.md`.
+
+## Source Han Sans TC (`vendor/fonts/source-han-sans-tc.css`)
+
+A subset of Source Han Sans TC (regular and bold), embedded as woff2 data URLs exactly as in the
+ArchFlow V2.10.1 release file (`index.html`, `AF_FONT_CSS`), so the interface looks the same on
+computers without the font. Source Han Sans is © 2014–2021 Adobe (http://www.adobe.com/), with
+Reserved Font Name "Source". Licensed under the SIL Open Font License, Version 1.1
+(https://openfontlicense.org).

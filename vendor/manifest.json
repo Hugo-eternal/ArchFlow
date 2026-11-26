@@ -64,6 +64,14 @@
       "bytes": 247142,
       "sha256": "0c42bfaf68cc9f4cdcb21b54dd105056359b9ea5879f9899a0715b6240a957b9",
       "what": "Pattern Generator (standalone page)"
+    },
+    "fonts/source-han-sans-tc.css": {
+      "variable": "AF_FONT_CSS",
+      "source": "index.html",
+      "lines": "3-3",
+      "bytes": 5670948,
+      "sha256": "49341234a9fdccd7bb902007e2acaeffd9ce805d95c3f1c1933ce6f1a1717768",
+      "what": "Source Han Sans TC subset, regular and bold, as @font-face with woff2 data URLs (SIL OFL 1.1)"
     }
   }
 }

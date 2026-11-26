@@ -122,6 +122,7 @@
 - [x] 3.46d4 `shell`：字體與 V2.10.1 一致（使用者要求「字體跟 v2 一樣」）：介面字型堆疊改為 V2 `--af-ui` 的順序、等寬字型為 V2 `--af-mono`、`text-rendering: optimizeLegibility`；逐元素比對 V2 實際 computed style 修正字重／字級（版本標籤、快捷鍵標示、主要按鈕 700→600，專案名 600，設計名 13.5 px，儲存狀態 12 px，左側數量用等寬字，圖面設定列 500 12 px，單位 500）（L3）
 - [x] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
 - [x] 3.46f `shell`：啟動畫面照 V2.10.1——左右分欄、步驟編號、設計類型卡（圖示＋說明）、範本／空白分段、範本卡、右側預覽與小工具卡、頂部語言與工具連結（L3）
+- [x] 3.46d5 `shell` / `vendor`：內嵌字型（使用者要求字體跟 V2 一樣的根本原因）：V2 發佈檔 `index.html` 第 3 行 `AF_FONT_CSS` 內嵌思源黑體 TC 子集（regular 100–549、bold 550–900，woff2 data URL），插入 app 與上電時序／流程圖／BOM 的 frame；V3 先前沒有，未安裝思源黑體的電腦會改用微軟正黑體。`scripts/extract-vendor.mjs` 一併抽出為 `vendor/fonts/source-han-sans-tc.css`（manifest 記來源 index.html L3，`check:vendor` 會驗證），`src/styles/fonts.ts`（`installFonts` 放進 app、`FONT_CSS` 放進三個 frame 的 srcdoc、`fontsReady` 在量測文字前等字型，最多 3 秒），授權寫入 THIRD_PARTY.md（SIL OFL 1.1）。dist 7.8 MB（V2 index.html 13 MB）。已知：啟動畫面預覽是 `<img>` 裡的 SVG，用不到網頁字型（與匯出 PNG 相同限制）（L3）
 - [ ] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4；版本號已改，等 3.46 完成後人工驗收與發佈決定）
 
@@ -278,7 +279,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.46f：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 413 項、Playwright V3 35 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46d5：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 415 項、Playwright V3 35 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

@@ -75,12 +75,28 @@ for (let i = 0; i < ITEMS.length; i++) {
   if (results[0][i].content !== results[1][i].content) throw new Error(`${ITEMS[i].dir}/${ITEMS[i].file} differs between zh-Hant and en`);
 }
 
-const items = results[0];
+// the embedded Source Han Sans TC subset lives in the V2 wrapper, index.html line 3
+// (`const AF_FONT_CSS="@font-face…"`); V2 put it in a <style id="af2-fonts"> of the app and of each editor frame
+function extractFont() {
+  const lines = fs.readFileSync('index.html', 'utf8').split('\n');
+  const n = lines.findIndex(l => l.startsWith('const AF_FONT_CSS='));
+  if (n < 0) throw new Error('AF_FONT_CSS not found in index.html');
+  // the line goes on after the literal (afWithFont): scan to the closing quote
+  const rest = lines[n].slice('const AF_FONT_CSS='.length);
+  if (rest[0] !== '"') throw new Error('AF_FONT_CSS is not a string literal');
+  let j = 1;
+  while (j < rest.length && rest[j] !== '"') j += rest[j] === '\\' ? 2 : 1;
+  const literal = rest.slice(0, j + 1);
+  const value = new Function(`"use strict";return ${literal};`)();
+  return { dir: 'fonts', file: 'source-han-sans-tc.css', name: 'AF_FONT_CSS', what: 'Source Han Sans TC subset, regular and bold, as @font-face with woff2 data URLs (SIL OFL 1.1)', src: 'index.html', from: n + 1, to: n + 1, content: value };
+}
+
+const items = [...results[0], extractFont()];
 const manifest = {
   source: 'ArchFlow V2.10.1, legacy/app.zh-Hant.html (identical in legacy/app.en.html)',
   generatedBy: 'scripts/extract-vendor.mjs',
   files: Object.fromEntries(items.map(it => [`${it.dir}/${it.file}`, {
-    variable: it.name, lines: `${it.from}-${it.to}`, bytes: Buffer.byteLength(it.content), sha256: sha256(it.content), what: it.what,
+    variable: it.name, ...(it.src === 'index.html' ? { source: 'index.html' } : {}), lines: `${it.from}-${it.to}`, bytes: Buffer.byteLength(it.content), sha256: sha256(it.content), what: it.what,
   }])),
 };
 
@@ -119,7 +135,7 @@ for (const dir of [...new Set(items.map(it => it.dir))]) {
     '',
     '| File | V2 variable | Lines in legacy/app.zh-Hant.html | Bytes | SHA-256 |',
     '|---|---|---|---|---|',
-    ...own.map(it => { const f = manifest.files[`${it.dir}/${it.file}`]; return `| \`${it.file}\` | \`${it.name}\` | ${f.lines} | ${f.bytes} | \`${f.sha256.slice(0, 16)}…\` |`; }),
+    ...own.map(it => { const f = manifest.files[`${it.dir}/${it.file}`]; return `| \`${it.file}\` | \`${it.name}\`${it.src === 'index.html' ? ' (index.html)' : ''} | ${f.lines} | ${f.bytes} | \`${f.sha256.slice(0, 16)}…\` |`; }),
     '',
     '## What it is',
     '',
@@ -129,7 +145,10 @@ for (const dir of [...new Set(items.map(it => it.dir))]) {
   if (main?.host) {
     lines.push('## Host interface (provided by V3, see src/designs/* or src/tools/*)', '', '```', main.host, '```', '');
   }
-  if (!own.some(it => it.unescapeScript)) {
+  if (dir === 'fonts') {
+    lines.push('## How V2 used it', '', 'The V2 wrapper (index.html) inserted it as `<style id="af2-fonts">` into the app and into the',
+      'sequence, flowchart and BOM frames. V3 does the same (src/styles/fonts.ts). Licence: SIL Open Font License 1.1 (THIRD_PARTY.md).', '');
+  } else if (!own.some(it => it.unescapeScript)) {
     lines.push('## How V2 mounted it', '', 'An iframe whose `srcdoc` is:', '', '```html',
       '<!doctype html><html lang="zh-Hant|en"><head><meta charset="utf-8"><style>{embedded fonts}</style>',
       '<style>{style.css}</style></head><body><div id="root"></div><script>{bundle.js}</script></body></html>', '```', '');
