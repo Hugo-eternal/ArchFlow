@@ -91,7 +91,7 @@
 - [x] 3.36 `layout/` 呼叫圖：以 `v4Generate` 為入口列出實際用到的函式（L0）
 - [x] 3.37a `layout/` golden 錄製（V2 引擎在 golden 圖上的候選結果）＋資料轉接層＋量測 / 幾何（`roMetrics`、`ssClassify`、`roGeometry` 等，與 V2 base 指標一致）（L3）
 - [x] 3.37b `layout/` 繞線（`roAdapters`、`roFind`、`uiRouteOne`、`ssRouteOne`、`uiRoutes`；routes 模式的路徑與 V2 一致）（L3）
-- [ ] 3.37c `layout/` 線路標籤（`uiDefaultLabels`、`uiLiveLabels`、`uiArrangeLabels`、`uiLabelRect`；與 V2 一致）（L3）
+- [x] 3.37c `layout/` 線路標籤（`uiDefaultLabels`、`uiLiveLabels`、`uiArrangeLabels`、`uiLabelRect`；與 V2 一致）（L3）
 - [ ] 3.37d `layout/` 排列、候選、保護檢查、逐條改善與入口 `organize()`（layout 模式與 V2 一致、決定性）（L3）
 - [ ] 3.38 `layout/` 整理預覽（RC4）（L3）
 ### 3J 完整殼層
@@ -115,8 +115,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3I 自動整理：3.37a（golden、轉接、量測）、3.37b（繞線）完成
-- **下一步**：3.37c `layout/labels.ts` 線路標籤：移植 `uiMeasure`（L1711，改用 `render/texts` 的 `Measure`）、`uiDefaultLabels`（L1712）、`uiLiveLabels`（L1713 + L1812；V2 讀 DOM 上的標籤位置——V3 改用 `render/wires.labelPosition` / `wire.label.mark`）、`uiArrangeLabels`（L1714 + L1762 + L1814，三層都要）、`v4Mark`（L1797；V3 `wire.label.mark`）。驗證：golden 各候選的 `labels`（x / y / w / h）。**注意**：標籤寬度 `w` 依瀏覽器 canvas 量字（Arial 500）——golden 的 w 是 Chromium 量的，V3 單元測試用估算量測會不同；比對時以 golden 的 w / h 當輸入（V2 `uiDefaultLabels` 只用 w 決定外框），或在 Chromium 內跑（`tests/helpers/load-app.js` 有瀏覽器可用，參考 `render.blocks.test.ts` 的做法）。之後 3.37d：排列（`uiLayout` L1695、`uiFrozenNodes` / `uiPortFrozen`、`uiOrderPorts`）、候選（`uiCandidate` 兩層、`uiChanges`、`uiVerify` / `uiProtected`）、`v4Refine` 與入口 `organize()`。
+- **目前階段**：階段 3（模組化重構）——3I 自動整理：3.37a（golden、轉接、量測）、3.37b（繞線）、3.37c（標籤）完成
+- **下一步**：3.37d `layout/place.ts` + `layout/candidate.ts` + `layout/plan.ts`：移植 `uiLayout`（L1695：preserved / expanded / layered，對齊格點，凍結 `uiFrozenNodes` L1691 / `uiPortFrozen` L1692）、`uiOrderPorts`（L1703，RC4 權限 `ports: false` 時不呼叫——仍要移植嗎？呼叫圖列在 `uiCandidate` 裡，但 `permissions.ports` 在 RC4 一律 false：可不移植並註記）、`uiCandidate`（L1718 + L1759）、`uiChanges`（L1716）、`uiVerify` / `uiProtected`（L1717 / L1690）、`v4Refine`（L1823–L1841）與入口（`v4Generate` L1847 的運算部分：上限 60 方塊 / 100 線、routes 模式只有 preserved、layout 模式三種、refine、選最佳）。驗證：golden 各候選的方塊座標（`nodes`）、paths、labels、metrics、changes 計數，與 `refined` 候選（scrambled）。V3 的 `liveLabels` 在 scrambled 圖上與 V2 畫面位置不同（見 3.37c），所以原圖 labelConflicts 可能不同——比對整體結果時以 golden 的 base labels 當輸入。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -236,10 +236,11 @@
 - 自動整理呼叫圖（3.36）：`docs/v3-layout-callgraph.md`（流程、62 個引擎函式的行號 / 大小 / 作用 / V3 落點、覆寫鏈、外部依賴對照、要鎖定的行為）；產生腳本 `scripts/audit/layout-callgraph.mjs`（從 `v4Generate` 等入口沿引擎前綴展開，解析 `const X=Y;` 覆寫別名；`--json`）。
 - 自動整理 3.37a：golden `tests/golden/layout.test.js`——V2 引擎在閉包內（`roCopy` 等全域都取不到），只能經 `window.ArchFlowRC4.plan()`：開啟整理對話框（`autoArrange()`）→ 等「完成」→ 讀 plan（base 與所有候選的 m / geo / paths / labels / metrics / changes）；切 `#v4Mode` 為 layout 再讀一次。三份：golden function、power、打亂座標的入門方塊圖（`tests/golden/layout/scrambled.project.json` 固定檔，因為新建專案的 id 是隨機的）。快照 `tests/golden/layout/__snapshots__/{function,power,scrambled}.json`（連跑三次一致）。V3：`src/layout/model.ts`（引擎資料形狀：nodes / edges、端點 `{ node, port }` / `{ junction }`、錨點以端點 JSON 為鍵——沿用 V2 用語以便逐行移植；`fromDiagram`、`geometry`（方塊尺寸 = w / h、錨點 = `core/grid.portPoint`）、`currentPaths`、`endDir`、`pairs` / `rect` / `sameAt` / `copy` / `endKey`）、`src/layout/metrics.ts`（`validPath`、`overlap`、`cross`、`pathMetrics`、`source` / `commonPrefix` / `pathOverlap` / `classify`、`labelRect`（含旋轉）、`rectOverlap`、`labelConflicts`、`noOverlap`、`measure`、`score`、`allowed`）。測試 `tests/unit/layout.metrics.test.ts`：三份 golden 的幾何、目前路徑、原圖與每個候選的指標都與 V2 相同。
 - 自動整理 3.37b：`src/layout/route.ts`——`adapters`（V2 roAdapters）、`find`（V2 roFind：A* 在方塊 / 既有線附近的格線上，懲罰重疊、交叉與過近平行；與 `router/find-path` 不同）、`sharedCost` / `routeShared`（V2 ssCost / ssRouteOne：同源線共用起點）、`routes`（V2 uiRoutes 第二層：同源一起、長的先繞）；時間預算改為 `Clock { now, deadline }`（預設 `NO_LIMIT`）。V2 第一層 `uiRoutes`（L1708）與 `uiRouteOne` / `uiRouteCost` 被第二層完全取代、從不執行——未移植（呼叫圖文件已註記）。`router/find-path` 的 `Heap` 改為 export 重用。測試 `tests/unit/layout.route.test.ts`：三份 golden、routes / layout 模式每個候選（以 V2 候選的方塊位置為輸入）的路徑都與 V2 完全相同。golden 錄製改為不四捨五入接腳 `t`（3.37a 時誤差 0.5 會讓測試以為接腳位置不同），重錄 function 快照。
+- 自動整理 3.37c：`src/layout/labels.ts`——`labelWidth`（量字 + 10，Measure 由外部傳入）、`defaultLabels`（V2 uiDefaultLabels；文字 = `render/wires.wireLabel(wire, view)`，`EngineModel` 新增 `view`）、`liveLabels`（V2 讀畫面標籤位置，V3 用 `render/wires.labelPosition`；手動標記釘住）、`arrangeLabels`（V2 三層：逐段試位置與計分、同源分支版本取衝突較少者、手動標記不動）。V2 `afUnifiedLabel`（上次整理存的標籤）V3 沒有對應欄位，該分支不移植。測試 `tests/unit/layout.labels.test.ts`（量字用 golden 記錄的寬度）：每個候選的標籤位置與 V2 相同（x 容差 0.5，因 golden 寬度四捨五入）；**已知差異**：scrambled 圖上 V3 畫布的標籤位置（最長段、上方 7 px）與 V2 畫面（最後一段 > 95 px 的水平段、避讓位移）不同，屬於 `render/wires` 與 V2 晚期標籤圖層的差異（3.19 記錄過標籤去重未移植），整理引擎本身一致。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.37b：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 47 檔 381 項、Playwright 28 項（`--workers=1`）全數通過）。前一步 3.37a：L3（模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 46 檔 368 項（含 V2 引擎 golden 錄製 `tests/golden/layout.test.js`）、Playwright 28 項（`--workers=1`）全數通過）。
+- **最後通過的驗證層級**：L3（3.37c：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 48 檔 396 項、Playwright 28 項（`--workers=1`）全數通過）。前一步 3.37b：L3（模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 47 檔 381 項、Playwright 28 項（`--workers=1`）全數通過）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

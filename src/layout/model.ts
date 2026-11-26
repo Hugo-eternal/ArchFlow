@@ -5,7 +5,7 @@
 //
 // V2: roGeometry L1580 / L1679 (boxes, anchors, grid), roCurrentPaths L1589, roLocked L1572,
 // roDir L1583, roRect / roPairs L1579, roSame L1572.
-import type { Block, BlockDiagram, Junction, Port, Wire } from '../io/schema-types';
+import type { Block, BlockDiagram, BlockView, Junction, Port, Wire } from '../io/schema-types';
 import { dir, simplify, type Point, type Side } from '../core/geometry';
 import { gridSize, portPoint } from '../core/grid';
 import type { Route } from '../router/full-path';
@@ -14,7 +14,7 @@ export type EngineEnd = { node: string; port: string } | { junction: string };
 
 export interface EngineNode { id: string; x: number; y: number; w: number; h: number; locked: boolean; ports: Port[] }
 export interface EngineEdge { id: string; a: EngineEnd; b: EngineEnd; locked: boolean; wire: Wire }
-export interface EngineModel { nodes: EngineNode[]; edges: EngineEdge[]; junctions: Junction[]; grid: number; snap: boolean }
+export interface EngineModel { nodes: EngineNode[]; edges: EngineEdge[]; junctions: Junction[]; grid: number; snap: boolean; view: BlockView }
 
 export interface EngineBox { id: string; x: number; y: number; w: number; h: number; ports: Port[] }
 export interface Geometry { boxes: EngineBox[]; anchors: Record<string, Point>; grid: number }
@@ -37,7 +37,7 @@ export function fromDiagram(d: BlockDiagram): EngineModel {
   return {
     nodes: d.blocks.map(b => ({ id: b.id, x: b.x, y: b.y, w: b.w, h: b.h, locked: b.locked, ports: copy(b.ports) })),
     edges: d.wires.map(w => ({ id: w.id, a: toEnd(w.a), b: toEnd(w.b), locked: w.locked, wire: copy(w) })),
-    junctions: copy(d.junctions), grid: gridSize(d.grid), snap: d.grid.snap,
+    junctions: copy(d.junctions), grid: gridSize(d.grid), snap: d.grid.snap, view: d.view,
   };
 }
 
