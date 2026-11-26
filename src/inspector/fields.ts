@@ -34,6 +34,8 @@ export interface TextField<D, S> extends Valued<D, S, string> {
   kind: 'text'; maxLength?: number; placeholder?: MessageKey;
   /** 'date': the browser's date input (value "YYYY-MM-DD" or ''). */
   inputType?: 'date';
+  /** Common values offered while typing (a <datalist>; any other value is still allowed). */
+  suggestions?: readonly string[];
 }
 export interface TextareaField<D, S> extends Valued<D, S, string> { kind: 'textarea'; maxLength?: number; rows?: number; placeholder?: MessageKey }
 export interface NumberField<D, S> extends Valued<D, S, number> {

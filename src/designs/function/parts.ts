@@ -241,3 +241,23 @@ export function decorationBounds(b: Block, measure: Measure = estimateWidth): { 
   }
   return out;
 }
+
+const VALUE_UNIT: Partial<Record<string, string>> = { res: 'Ω', bead: 'Ω', cap: 'F', capp: 'F', ind: 'H', fuse: 'A', xtal: 'Hz', vcc: 'V' };
+
+/**
+ * A part's value tidied as V2 did (normValue, legacy L4268): "u" → "µ", "4.7k" / "4.7 kohm" →
+ * "4.7kΩ", a bare number with an SI prefix gets the part's unit (Ω, F, H, A, Hz, V; a crystal
+ * "32.768k" → "32.768kHz"); a supply's value is a rail ("3v3" → "3.3V"); at most 24 characters.
+ */
+export function normValue(kind: string, v: string): string {
+  const unit = VALUE_UNIT[kind];
+  let s = String(v || '').trim().replace(/(\d)\s*u(?=[FHA]?$|$)/i, '$1µ');
+  // "4.7k" → "4.7kΩ": V2 did this for every kind (a crystal's "32.768k" became "32.768kΩ");
+  // V3 only for parts measured in ohms, for unknown kinds, or with "ohm" written out
+  s = s.replace(/(\d)\s*([kKmM])\s*(ohm|Ω)?$/, (all: string, d: string, u: string, ohm?: string) =>
+    (unit === 'Ω' || ohm || !unit ? `${d}${u === 'K' ? 'k' : u}Ω` : all));
+  if (!s) return s;
+  if (unit && /^\d+(\.\d+)?\s*[pnµmkKMG]?$/.test(s)) s = s.replace(/\s+/g, '') + (kind === 'xtal' && /[kKM]$/.test(s) ? 'Hz' : unit);
+  if (kind === 'vcc') s = normRail(s) || s;
+  return s.slice(0, 24);
+}

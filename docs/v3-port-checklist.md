@@ -404,9 +404,9 @@
 | L3681 workflow order, duration, quick fixes | 欄位順序、工期、設定日期 | ☑ | 3.43b |
 | L3705 hints | 狀態提示 | ☑ | 空白提示、說明對話框（3.40 / 3.41） |
 | L3923–L4124 symbols / badges / library / voltage / saved / exports | 零件符號、電壓徽章、零件庫插入、電壓設定、存檔與匯出 | ☑ | `designs/function/parts` 與 rails（3.25） |
-| L4142 drop a library part | （空區塊，沒有程式） | ✂ | 無內容 |
+| L4142 drop a library part | 從零件庫拖曳零件放到畫布（dragover / drop，L4276–L4281） | ✂ | V3 以命令列「插入零件」選單放在畫面中央（3.25）；不提供拖放（零件庫在 V3 不是常駐面板） |
 | L4146 / L4177 free connection / join a wire | 零件端點連到方塊 / 線上 | ☑ | 3.43e |
-| L4267 values | 零件數值：自動補單位（Ω / F / H / A / Hz / V、u→µ、k/M）、常用值清單 | ☐ | **缺口 → 3.43i**：V3 的 `PARTS` 有常用值資料但沒有提供選擇，也不補單位 |
+| L4267 values | 零件數值：自動補單位（Ω / F / H / A / Hz / V、u→µ、k/M）、常用值清單 | ☑ | `parts.normValue`（修正 V2 對非電阻也補 Ω 的問題）、數值欄位的常用值清單（V2 有資料但沒有顯示）（3.43i） |
 | L4307–L4423 frames | 區域外框：成員、繪製、選取、連同內容移動、四角縮放、編輯、按鍵 | ☑ | 3.26a（「拖曳畫出新外框」改為依選取建立，3.26a 已記錄） |
 | L4470–L4576 connectors | 連接器幾何、繪製、面板、貼齊框邊、存檔 | ☑ | 3.26b |
 | L10466–L10483 V2.8 | 每接腳名稱位置、字級欄位移到「文字」 | ☑ | port.label（3.18 / 3.21）、3.43c |

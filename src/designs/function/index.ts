@@ -18,7 +18,7 @@ import { h } from '../../render/vnode';
 import type { FieldSpec } from '../../inspector/fields';
 import { localize, type DesignCommandContext, type DesignModule } from '../module';
 import {
-  PARTS, badgesNode, cleanRails, decorationBounds, isTwoPin, makePart, normRail, partItem, partNode,
+  PARTS, badgesNode, cleanRails, decorationBounds, isTwoPin, makePart, normRail, normValue, partItem, partNode,
   reshapePart, setPartValue, sizesFor, type PartKind,
 } from './parts';
 import {
@@ -56,7 +56,9 @@ function partFields(b: Block): F[] {
       kind: 'text', key: 'partValue', label: k === 'vcc' ? 'part.field.voltage' : 'part.field.label', maxLength: 200,
       placeholder: k === 'vcc' ? 'part.field.voltageHint' : 'part.field.labelHint',
       get: (d, s) => blockOf(d, s).partNumber,
-      set: (d, s, v) => setPartValue(d, s.id, k === 'vcc' ? normRail(v) || v.trim() : v.trim()),
+      // units filled in, common values offered (V2 normValue L4268; V2 kept the preset lists but never showed them)
+      suggestions: partItem(k)?.presets,
+      set: (d, s, v) => setPartValue(d, s.id, normValue(k, v)),
     });
   }
   fields.push({

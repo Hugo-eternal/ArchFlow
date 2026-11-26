@@ -238,6 +238,13 @@ export class InspectorPanel<D, S> {
       b.control = c;
       const row = this.el('div', 'af-field-row');
       row.append(c);
+      if (f.kind === 'text' && f.suggestions?.length) {
+        const list = this.el('datalist');
+        list.id = `${id}-list`;
+        for (const v of f.suggestions) { const o = this.el('option'); o.value = v; list.append(o); }
+        c.setAttribute('list', list.id);
+        row.append(list);
+      }
       if (f.kind === 'number' && f.unit) {
         const u = this.el('span', 'af-field-unit');
         u.textContent = f.unit;
