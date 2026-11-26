@@ -46,6 +46,8 @@ export interface DesignModule<D = Design['data']> {
   templates: readonly DesignTemplate[];
   /** A blank design (no template) or a copy of a template, texts in the current language. */
   create(opts?: { template?: string }): NewDesign<D>;
+  /** Items of a design the command palette can go to (blocks, tasks), at most 400. */
+  findItems?(d: D): FindItem[];
   /** 'canvas' = the shared canvas / inspector; 'embedded' = a vendor editor in an iframe (3.30–3.31). */
   editor: 'canvas' | 'embedded';
 
@@ -113,6 +115,18 @@ export interface EmbeddedApi {
 
 /** What is selected on a canvas design that draws itself ('design' = nothing: the design-wide panel). */
 export interface CanvasSelection { kind: string; id: string }
+
+/** An item the command palette can go to (V2 palette "Go to block / task"): selected and centred. */
+export interface FindItem {
+  id: string;
+  label: string;
+  /** Second line (other title, reference …). */
+  hint: string;
+  /** Where to centre the view, in design coordinates. */
+  at: { x: number; y: number };
+  /** What to select (a block-diagram ItemRef, or a canvas design's selection). */
+  select: CanvasSelection;
+}
 
 /** A canvas design's own drawing and editing (the shell pans / zooms it, routes pointer and keys). */
 export interface CanvasDrawing<D> {

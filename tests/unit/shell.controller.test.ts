@@ -21,11 +21,11 @@ describe('shell controller', () => {
     expect(s.enabled('project.open')).toBe(true);
   });
 
-  it('registers every V3 command that replaces a V2 hidden button, except those of 3.40 / 3.41', () => {
+  it('registers every V3 command that replaces a V2 hidden button, except those of 3.41', () => {
     const s = new Shell();
-    // help, statistics, fonts, the design manager and "arrange selected ports" come with the
-    // command palette / tools centre (3.40, 3.41)
-    const later = new Set(['help.open', 'view.stats', 'theme.cjkFont', 'theme.latinFont', 'design.manage', 'layout.arrangeSelectedPorts']);
+    // statistics, fonts, the design manager and "arrange selected ports" come with the
+    // tools centre / status bar (3.41)
+    const later = new Set(['view.stats', 'theme.cjkFont', 'theme.latinFont', 'design.manage', 'layout.arrangeSelectedPorts']);
     const ids = [...new Set(Object.values(V2_HIDDEN_ELEMENT_COMMANDS).filter((x): x is string => !!x))];
     const missing = ids.filter(id => !later.has(id) && !s.registry.has(id));
     expect(missing).toEqual([]);

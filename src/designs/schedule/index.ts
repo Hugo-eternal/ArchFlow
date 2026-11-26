@@ -118,4 +118,14 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
     refusal: e => (e instanceof ScheduleEditError || e instanceof ScheduleError ? `schedule.error.${e.code}` as MessageKey : null),
   },
   commands: scheduleCommands(),
+  // V2 palette "Go to task": the task's display reference (T01 …) as hint
+  findItems(d) {
+    let boxes: ReturnType<typeof layout>['boxes'] | null = null;
+    try { boxes = layout(d).boxes; } catch (e) { if (!(e instanceof ScheduleError)) throw e; }
+    return d.tasks.slice(0, 400).flatMap(x => {
+      const b = boxes?.get(x.id);
+      if (!b || !x.title) return [];
+      return [{ id: x.id, label: x.title, hint: b.ref, at: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, select: { kind: 'task', id: x.id } }];
+    });
+  },
 };

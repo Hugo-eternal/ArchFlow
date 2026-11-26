@@ -153,6 +153,7 @@ function menus(shell: Shell): { key: MessageKey; entries: MenuEntry[] }[] {
       entries: [
         ...(shell.isBlockDiagram ? [{ id: 'view.mode.function' }, { id: 'view.mode.power' }, 'sep' as const] : []),
         ...(shell.module?.embedded ? [] : [{ id: 'view.fit' }, { id: 'view.zoomIn' }, { id: 'view.zoomOut' }, 'sep' as const, { id: 'view.toggleInspector' }]),
+        'sep', { id: 'palette.open' }, { id: 'help.open' },
       ],
     },
     { key: 'tools.menu', entries: tools },
@@ -227,6 +228,11 @@ export function AppBar({ shell }: { shell: Shell }) {
           {menus(shell).map(m => <MenuButton key={m.key} shell={shell} label={t(m.key)} entries={m.entries} />)}
         </nav>
         <div className="af-appbar-actions">
+          <button type="button" className="af-button af-search" disabled={!shell.enabled('palette.open')} onClick={() => void shell.run('palette.open')}
+            aria-keyshortcuts={shortcutText(shell, 'palette.open') || undefined} title={`${t('cmd.palette')} (${shortcutText(shell, 'palette.open')})`}>
+            <span>{t('palette.open')}</span>
+            <kbd className="af-menu-kbd" aria-hidden="true">{shortcutText(shell, 'palette.open')}</kbd>
+          </button>
           <CommandButton shell={shell} id="project.save" />
           <CommandButton shell={shell} id="export.open" primary />
           <LocaleSelect />

@@ -71,7 +71,8 @@ function eventChordId(ev: KeyLike, mac: boolean): string | null {
 /** Human-readable shortcut for menus and tooltips: "Ctrl+Shift+Z" or "⌘⇧Z". */
 export function formatShortcut(spec: string, mac = false): string {
   const c = parseShortcut(spec);
-  const key = c.key === ' ' ? 'Space' : c.key.length === 1 ? c.key.toUpperCase() : c.key[0].toUpperCase() + c.key.slice(1);
+  const named: Record<string, string> = { ' ': 'Space', arrowleft: '\u2190', arrowup: '\u2191', arrowright: '\u2192', arrowdown: '\u2193', escape: 'Esc' };
+  const key = named[c.key] ?? (c.key.length === 1 ? c.key.toUpperCase() : c.key[0].toUpperCase() + c.key.slice(1));
   if (mac) return `${c.mod ? '⌘' : ''}${c.alt ? '⌥' : ''}${c.shift ? '⇧' : ''}${key}`;
   return [c.mod && 'Ctrl', c.alt && 'Alt', c.shift && 'Shift', key].filter(Boolean).join('+');
 }

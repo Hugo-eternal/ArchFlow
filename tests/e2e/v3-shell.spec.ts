@@ -288,3 +288,58 @@ test('app bar and command bar (3.39): one row each, menus by keyboard, rename, d
   await expect(page.locator('.af-project-name')).toHaveText('電源板');
   expect(errors).toEqual([]);
 });
+
+test('command palette and help (3.40): Ctrl+K, search, keyboard, go to a block; Ctrl+? shortcuts', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await expect(page.locator('svg.af-canvas [data-block]').first()).toBeVisible();
+
+  // Ctrl+K opens the palette with focus in the search field
+  await page.keyboard.press('Control+k');
+  const palette = page.getByRole('dialog', { name: '指令面板' });
+  const search = palette.getByRole('combobox', { name: '搜尋' });
+  await expect(search).toBeFocused();
+  await expect(palette.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
+
+  // type, move with the arrows, Enter runs the active option
+  await search.fill('新增');
+  await expect(palette.getByRole('option', { name: /新增方塊/ })).toBeVisible();
+  await search.fill('新增方塊');
+  await page.keyboard.press('Enter');
+  await expect(palette).toBeHidden();
+  const count = await page.evaluate(() => (window as unknown as { archflow: { data(): { blocks: unknown[] } } }).archflow.data().blocks.length);
+  expect(count).toBe(5);
+
+  // recent first; Escape closes and focus returns
+  await page.getByRole('button', { name: /搜尋指令/ }).click();
+  await expect(palette.locator('.af-palette-section').first()).toHaveText('最近使用');
+  await page.keyboard.press('Escape');
+  await expect(palette).toBeHidden();
+  await expect(page.getByRole('button', { name: /搜尋指令/ })).toBeFocused();
+
+  // nothing found
+  await page.keyboard.press('Control+k');
+  await search.fill('zzzz');
+  await expect(palette).toContainText('找不到「zzzz」');
+
+  // go to a block: selected in the properties panel
+  await search.fill('微控制器');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('complementary', { name: '屬性' }).getByRole('textbox').first()).toHaveValue('MCU'); // the block shown as 微控制器 (part number)
+
+  // Ctrl+? opens help with the shortcuts list
+  await page.locator('svg.af-canvas').click({ position: { x: 10, y: 10 } });
+  await page.keyboard.press('Control+Shift+?');
+  const help = page.getByRole('dialog', { name: '說明與快捷鍵' });
+  await expect(help).toBeVisible();
+  await expect(help.getByRole('table', { name: '編輯' })).toContainText('Ctrl+Z');
+  await expect(help.getByRole('table', { name: '檢視與說明' })).toContainText('Ctrl+K');
+  await page.screenshot({ path: path.resolve(HERE, '../../test-results/v3-help.png') });
+  await help.getByRole('button', { name: '關閉' }).click();
+  await expect(help).toBeHidden();
+  expect(errors).toEqual([]);
+});

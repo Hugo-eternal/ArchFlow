@@ -22,6 +22,8 @@ describe('shortcuts', () => {
     expect(formatShortcut('Mod+Shift+Z')).toBe('Ctrl+Shift+Z');
     expect(formatShortcut('Mod+Shift+Z', true)).toBe('⌘⇧Z');
     expect(formatShortcut('Delete')).toBe('Delete');
+    expect(formatShortcut('Shift+ArrowLeft')).toBe('Shift+\u2190');
+    expect(formatShortcut('Escape')).toBe('Esc');
   });
 });
 

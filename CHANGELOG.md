@@ -96,3 +96,8 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 - V2 的上方是 app bar + 命令列（ribbon），按鈕實際上是去點隱藏的 V1 按鈕。V3 改為：app bar（品牌、專案名稱（點一下可重新命名專案）、未存檔標記、目前設計；選單「檔案 / 編輯 / 設計 / 檢視 / 小工具」；右側「儲存」「匯出」與語言）+ 命令列（依設計類型只顯示該類型的命令，分「歷程 / 插入 / 整理 / 時程 / 檢視」群組；放不下時橫向捲動，窄視窗隱藏群組標題）。選單依 WAI-ARIA menu button 模式，可用方向鍵 / Home / End / Esc 操作。（`tests/e2e/v3-shell.spec.ts`「app bar and command bar」）
 - 「小工具」由下拉選單改為選單按鈕。「新專案」移到「檔案」選單。
 - 新增命令：重新繞線（V2 `#reroute`：清除選取線路或全部線路的手動路徑；鎖定的線不變）、清除選線（V2 `#rcClearRoutes`：只取消線路的選取，不刪除線路）、複製設計（V2 `#duplicateDesign`；副本不帶復原歷程）、從範本新增設計（V2 `#examplesBtn`，開啟新增設計對話框）、重新命名專案、返回目前專案（V2 `#startCancel`，從啟動畫面回到尚未關閉的專案）。時程的命令 id 改為 V2 對照表預定的 `schedule.addBranch` / `schedule.autoArrange`。（`tests/unit/shell.controller.test.ts`）
+
+### 殼層：指令面板與快捷鍵（3.40）
+- 指令面板（Ctrl+K / ⌘K，或 app bar「搜尋指令」）：同 V2 af2-palette，列出「最近使用」（本次開啟期間，最多 5 個，不存檔）、目前可用的指令（含快捷鍵）、其他設計、目前設計的方塊（顯示料號優先）/ 時程任務；每個字都要出現在名稱、提示或指令 id 中。選方塊 / 任務會選取並置中。（`tests/unit/shell.palette.test.ts`、`tests/e2e/v3-shell.spec.ts`「command palette and help」）
+- 「說明與快捷鍵」（Ctrl+? 或「檢視」選單）：V2 `#helpDialog` 的說明改寫為 V3 實際有的操作（V2 提到的「雙擊插入直角繞線」「從轉角拖分支」「輸入 / 輸出鎖點」「依內容縮合」等 V3 尚未提供，不寫進去），快捷鍵表由命令註冊表自動產生，不會與實際按鍵不一致。
+- 快捷鍵顯示：方向鍵顯示為 ← ↑ → ↓、Escape 顯示為 Esc。

@@ -5,14 +5,14 @@
 import { CommandRegistry, type Command } from '../core/commands';
 import { Store } from '../core/store';
 import { t, type MessageKey, type Vars } from '../core/i18n';
-import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
+import { centreOn, fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, BlockView, Camera, Design, DesignType } from '../io/schema-types';
-import type { CanvasSelection, DesignModule, DesignRegistry, EmbeddedApi } from '../designs/module';
+import type { CanvasSelection, DesignModule, DesignRegistry, EmbeddedApi, FindItem } from '../designs/module';
 import { frameApi, installHosts, installToolHosts } from './embedded';
 import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
-import { ModelError } from '../model/types';
+import { ModelError, type ItemRef } from '../model/types';
 import { addBlock, addFrame, addPort, addText, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { estimateWidth, type Measure } from '../render/texts';
@@ -28,6 +28,8 @@ export type Dialog =
   | null
   | { kind: 'export' }
   | { kind: 'organize' }
+  | { kind: 'palette' }
+  | { kind: 'help' }
   | { kind: 'newDesign' }
   | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
   | { kind: 'confirm'; title: MessageKey; message: MessageKey; vars?: Vars; ok: () => void };
@@ -74,6 +76,8 @@ export class Shell {
   /** The tool shown over the shell (V2 af2-tooldlg), and the tools opened so far (their frames stay mounted). */
   tool: string | null = null;
   openedTools: string[] = [];
+  /** Commands run from the palette, most recent first (V2 palette "Recent"; not saved). */
+  recentCommands: string[] = [];
 
   constructor(readonly designs: DesignRegistry, readonly tools: ToolRegistry = new ToolRegistry()) {
     this.gestures = new Gestures({
@@ -179,6 +183,18 @@ export class Shell {
     if (!this.isBlockDiagram || this.view === view) return;
     this.store.amend(d => ({ ...(d as BlockDiagram), view }));
     this.notify(view === 'power' ? 'view.mode.powerOn' : 'view.mode.functionOn');
+  }
+
+  rememberCommand(id: string): void {
+    this.recentCommands = [id, ...this.recentCommands.filter(x => x !== id)].slice(0, 5);
+  }
+
+  /** Select a palette item (block, task) and centre the view on it (V2 D.reveal). */
+  reveal(item: FindItem): void {
+    if (this.isBlockDiagram) this.gestures.select([item.select as ItemRef]);
+    else this.selectItem(item.select);
+    this.store.setCamera(centreOn(this.camera, item.at, this.viewport));
+    this.ui.emit();
   }
 
   /** Show a tool over the shell; its frame stays mounted after closing (V2 kept it, hidden). */
@@ -370,6 +386,9 @@ export function shellCommands(): Command<Shell>[] {
     },
     // the organize dialog (V2 RC4 v4Open): compare candidates, apply one as a single undo step
     { id: 'layout.arrangePreview', label: 'cmd.organize', group: 'view', enabled: s => canEdit(s) && s.store.data(s.store.activeDesignId) !== undefined, run: s => s.openDialog({ kind: 'organize' }) },
+    // V2 af2-palette (Ctrl+K) and the shortcuts / help sheet (Ctrl+?, V2 #helpBtn)
+    { id: 'palette.open', label: 'cmd.palette', group: 'help', shortcut: 'Mod+K', enabled: hasProject, run: s => s.openDialog({ kind: 'palette' }) },
+    { id: 'help.open', label: 'cmd.help', group: 'help', shortcut: 'Mod+?', run: s => s.openDialog({ kind: 'help' }) },
     { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },
     { id: 'view.zoomIn', label: 'cmd.zoomIn', group: 'view', shortcut: 'Mod+=', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1.2, s.viewport)) },
     { id: 'view.zoomOut', label: 'cmd.zoomOut', group: 'view', shortcut: 'Mod+-', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1 / 1.2, s.viewport)) },

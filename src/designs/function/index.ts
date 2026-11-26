@@ -226,6 +226,12 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   },
   commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand, ...ROLES.map(powerBlockCommand)],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
+  // V2 palette: blocks by display name (part number first, as drawn), other title and reference as hint
+  findItems: d => d.blocks.slice(0, 400).flatMap(b => {
+    const label = b.partNumber || b.title;
+    if (!label) return [];
+    return [{ id: b.id, label, hint: [b.partNumber && b.title !== label ? b.title : '', b.ref].filter(Boolean).join(' \u00b7 '), at: { x: b.x + b.w / 2, y: b.y + b.h / 2 }, select: { kind: 'block', id: b.id } }];
+  }),
   legend: d => {
     const items = voltageLegend(d);
     return items.length ? { title: 'power.legend.title', items: items.map(i => ({ swatch: `af-rail-${i.band}`, text: i.text })) } : null;

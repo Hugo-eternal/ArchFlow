@@ -10,6 +10,7 @@ import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
 import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
 import { OrganizeDialog } from './OrganizeDialog';
+import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AppBar, CommandButton, LocaleSelect, useLocale } from './AppBar';
 
 function FileInput({ shell }: { shell: Shell }) {
@@ -238,6 +239,8 @@ export function App({ shell }: { shell: Shell }) {
       {dlg?.kind === 'export' && <ExportDialog shell={shell} />}
       {dlg?.kind === 'newDesign' && <NewDesignDialog shell={shell} />}
       {dlg?.kind === 'organize' && <OrganizeDialog shell={shell} />}
+      {dlg?.kind === 'palette' && <PaletteDialog shell={shell} />}
+      {dlg?.kind === 'help' && <HelpDialog shell={shell} />}
       <ToolDialog shell={shell} />
     </>
   );
