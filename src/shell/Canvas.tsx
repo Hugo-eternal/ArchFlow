@@ -64,7 +64,7 @@ export function Canvas({ shell }: { shell: Shell }) {
       framesLayer(d.frames, { selected: ids('frame'), measure: shell.measure }),
       ...(extra.below ?? []),
       wiresLayer(d, routes, { selected: new Set([...ids('wire'), ...ids('junction')]), tone: m?.wireTone && (w => m.wireTone!(w, d)) }),
-      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate, footer: m?.blockFooter && ((b, x) => m.blockFooter!(b, x, shell.measure)) }),
+      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate, footer: m?.blockFooter && ((b, x) => m.blockFooter!(b, x, shell.measure)), faded: m?.blockFaded && ((b, x) => m.blockFaded!(b, x)) }),
       textsLayer(d.texts, { selected: ids('text'), measure: shell.measure }),
       ...(extra.above ?? []),
       overlay(shell),

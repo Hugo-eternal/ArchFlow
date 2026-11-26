@@ -20,6 +20,8 @@ export interface BlockRenderOptions {
   /** A strip along the bottom of a block (the power view's metric table): the title rows are
    *  centred in the space above it. */
   footer?: BlockFooter;
+  /** Blocks drawn faded (power view: blocks unrelated to power, 3.29b c). */
+  faded?: (b: Block, d: BlockDiagram) => boolean;
 }
 
 export type BlockFooter = (b: Block, d: BlockDiagram) => { height: number; node: VNode } | null;
@@ -102,7 +104,7 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
   });
 
   return h('g', {
-    class: `af-block${isPart ? ' af-part' : ''}${opts.selected?.has(b.id) ? ' is-selected' : ''}${b.locked ? ' is-locked' : ''}`,
+    class: `af-block${isPart ? ' af-part' : ''}${opts.selected?.has(b.id) ? ' is-selected' : ''}${b.locked ? ' is-locked' : ''}${opts.faded?.(b, d) ? ' is-faded' : ''}`,
     // power view: the accent bar follows the power role unless the block has its own accent (3.27c)
     'data-block': b.id, 'data-role': d.view === 'power' && !isPart && b.role ? b.role : undefined, style: styleOf(b),
   }, [

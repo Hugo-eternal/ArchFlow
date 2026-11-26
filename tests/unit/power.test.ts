@@ -16,7 +16,7 @@ import { exportSvg } from '../../src/export/svg';
 import { routeAll } from '../../src/router/full-path';
 import { wiresLayer } from '../../src/render/wires';
 import { functionDesign } from '../../src/designs/function';
-import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
+import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, unrelatedToPower, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
 import type { BlockDiagram } from '../../src/io/schema-types';
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -151,6 +151,19 @@ describe('power wires coloured by rail voltage (3.29b b)', () => {
     const src = exportSvg(arrow, { wireTone: functionDesign.wireTone }).source;
     expect(src).toContain(`stroke="${high}"`);
     expect(src).toMatch(new RegExp(`<marker[^>]*>\\s*<path[^>]*fill="${high}"`));
+  });
+});
+
+describe('blocks unrelated to power are faded in the power view (3.29b c)', () => {
+  it('no power / ground pin and no power wire: faded; supplies and powered blocks are not', () => {
+    setLocale('zh-Hant');
+    const d = { ...functionDesign.create({ template: 'starter' }).data, view: 'power' as const };
+    expect(d.blocks.map(b => [b.partNumber, unrelatedToPower(b, d)])).toEqual([['感測器', true], ['微控制器', false], ['無線模組', true], ['電源', false]]);
+    expect(d.blocks.some(b => unrelatedToPower(b, { ...d, view: 'function' }))).toBe(false);
+    expect(goldenPower().blocks.some(b => unrelatedToPower(b, goldenPower()))).toBe(false);
+    const src = exportSvg(d, { blockFaded: functionDesign.blockFaded }).source;
+    expect(src.match(/opacity="0\.4"/g)).toHaveLength(2);
+    expect(exportSvg({ ...d, view: 'function' }, { blockFaded: functionDesign.blockFaded }).source).not.toMatch(/opacity="0\.4"/);
   });
 });
 

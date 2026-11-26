@@ -331,3 +331,17 @@ export function wireRail(w: Wire, d: BlockDiagram): string | undefined {
   return v ? railBand(v) : undefined;
 }
 
+// ---------------------------------------------------------------- unrelated blocks (3.29b c, plan §2.2.2)
+
+const POWER_PORTS = new Set(['power', 'gnd']);
+
+/**
+ * In the power view a block is faded when nothing about it is power: no power / ground pin, no
+ * power wire attached, and it is not a supply / ground symbol.
+ */
+export function unrelatedToPower(b: Block, d: BlockDiagram): boolean {
+  if (d.view !== 'power') return false;
+  if (b.part && (b.part.kind === 'vcc' || b.part.kind === 'gnd')) return false;
+  if (b.ports.some(p => POWER_PORTS.has(p.type))) return false;
+  return !d.wires.some(w => w.kind === 'power' && [w.a, w.b].some(e => 'block' in e && e.block === b.id));
+}

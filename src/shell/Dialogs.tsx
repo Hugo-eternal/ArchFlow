@@ -91,7 +91,7 @@ export function ExportDialog({ shell }: { shell: Shell }) {
         if (!out.node) throw new ExportError('empty');
         return exportDrawing(out.node, drawing.bounds(raw), { transparent });
       }
-      return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, footer: m?.blockFooter, wireTone: m?.wireTone, extras: m?.exportExtras });
+      return exportSvg(data, { view, transparent, measure: shell.measure, routes: shell.routesFor(data), decorate: m?.decorate, footer: m?.blockFooter, wireTone: m?.wireTone, blockFaded: m?.blockFaded, extras: m?.exportExtras });
     } catch (e) { if (e instanceof ExportError) return e; throw e; }
   }, [data, view, transparent, shell]);
   const result = exp instanceof ExportError ? null : fitPage(exp, page);

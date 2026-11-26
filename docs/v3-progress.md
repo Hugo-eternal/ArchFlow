@@ -112,8 +112,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3——3.29b 進行中（a 畫布警示 ✓、b 電源線依電壓上色 ✓；c～e 未做）
-- **下一步**：3.29b-c 與電源無關的方塊在電源檢視變淡（plan §2.2.2 c：沒有 power 類型接腳、也沒接到 power 線的方塊；共用 render 只加一個 class，透明度用 token，類似 3.27a 的 `is-muted` / `--wire-muted-opacity`），之後 d（電壓圖例：`renderExtras` / `exportExtras`，畫布角落要固定在螢幕位置——renderExtras 目前畫在世界座標，需決定放在 Canvas 的覆蓋層或用世界座標放在內容右上角，匯出時放在內容旁）、e（工具列依檢視切換插入選單），每項一個 commit；全部完成才勾選 3.29b。
+- **目前階段**：階段 3——3.29b 進行中（a 畫布警示 ✓、b 電源線依電壓上色 ✓、c 無關方塊變淡 ✓；d、e 未做）
+- **下一步**：3.29b-d 電壓圖例（plan §2.2.2 d：電源檢視在畫布角落與匯出中顯示「顏色 ↔ 電壓」；列出圖中實際出現的電壓與其色帶（`wireVoltage` / 方塊電壓 → `railBand`）。畫布：固定在螢幕角落的覆蓋層（不隨平移縮放，可放在 `.af-stage` 內，像 `.af-view-switch`），由 design 模組提供資料（例如新 hook 或 `renderExtras` 回傳），文字 i18n；匯出：用 `exportExtras.above` 在內容右下方畫圖例並加入 bounds），之後 e（工具列依檢視切換插入選單），每項一個 commit；全部完成才勾選 3.29b。
 - **已排入**：3.29b 已排入，範圍見 plan §2.2.2。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -219,10 +219,11 @@
   - 未做：V2 的原地天數編輯器（點天數標籤直接輸入，L641–L645）改由面板處理；深色主題下 mint / slate / amber 沿用亮色卡片顏色（只有工程藍有深色版本）。
 - 3.29b-a 畫布警示：`power.ts` `loadBadgeText` / `loadBadgeBox` / `loadWarning`（電源檢視、非零件 / 連接器、有下游需求的方塊：方塊下方徽章「⚠ 下游需求 ≈ x / 額定 y (p%)」，≥85% 銅色虛線外框、>100% 紅色實線外框；圖示 + 百分比，不只靠顏色），經 `functionDesign.decorate` 畫在畫布與匯出，`exportExtras` 加入徽章與外框範圍。token `--load-*`（亮 / 暗，新增 5 組對比）。測試：`power.test`「load warnings」。
 - 3.29b-b 電源線依電壓上色：`render/wires` 新增 `WireRenderOptions.tone(w)`（回傳色帶名稱時加 `is-rail-<band>`、箭頭用 `af-rail-<band>` 與對應 marker，且**不使用線自己的顏色**——V2 在每條線都寫了 #334e70，若自訂色優先就永遠不會上色；功能檢視仍用線自己的顏色）；`DesignModule.wireTone`、`exportSvg({ wireTone })`、Canvas / 匯出對話框傳入。`power.ts` `wireVoltage`（線的電氣標註，否則起點方塊的電壓）、`wireRail`（電源檢視的 power 線 → `railBand`）。canvas.css `.af-wire-group.is-rail-*`（放在 is-invalid 之前，無效路線仍顯示紅色）；`check:tokens` 新增 7 組 `--rail-*` 對畫布底色 3:1。測試：`power.test`「power wires coloured by rail voltage」。
+- 3.29b-c 無關方塊變淡：`render/blocks` 新增 `BlockRenderOptions.faded(b, d)` → class `is-faded`（`--block-faded-opacity: 0.4`）；`DesignModule.blockFaded`、`exportSvg({ blockFaded })`。`power.ts` `unrelatedToPower`：電源檢視中，沒有 power / gnd 接腳、沒接 power 線、也不是電源 / 接地符號的方塊（gnd 也算電源相關——決定記錄於此）。測試：`power.test`「blocks unrelated to power are faded」。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.29b-b：模組標註、i18n、token（184 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 332 項、Playwright 22 項全數通過）。前一步 3.29：L3（模組標註、i18n（398 個 key）、token（175 個、144 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 328 項、Playwright 22 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，建立「專案時程」→ 點任務卡改名稱 / 日期 / 狀態；拖曳任務框與軸上圓點（靠近其他圓點會吸附並出現虛線）；「新增任務」「新增分支」「重新排列」；空白處點一下後在屬性面板換主題、改字級；匯出 SVG。
+- **最後通過的驗證層級**：L3（3.29b-c：模組標註、i18n、token（185 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 333 項、Playwright 22 項全數通過）。前一步 3.29：L3（模組標註、i18n（398 個 key）、token（175 個、144 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 328 項、Playwright 22 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，建立「專案時程」→ 點任務卡改名稱 / 日期 / 狀態；拖曳任務框與軸上圓點（靠近其他圓點會吸附並出現虛線）；「新增任務」「新增分支」「重新排列」；空白處點一下後在屬性面板換主題、改字級；匯出 SVG。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

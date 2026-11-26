@@ -24,6 +24,8 @@
 [data-role="converter"] { --block-accent: var(--role-converter); }
 [data-role="distribution"] { --block-accent: var(--role-distribution); }
 [data-role="load"] { --block-accent: var(--role-load); }
+/* power view: blocks unrelated to power are faded (render/blocks faded; 3.29b c) */
+.af-block.is-faded { opacity: var(--block-faded-opacity); }
 /* power view: downstream load vs rating (designs/function/power.ts loadWarning; 3.29b a) */
 .af-load-outline { fill: none; stroke-width: 2.5px; }
 .af-load.is-near .af-load-outline { stroke: var(--load-near); stroke-dasharray: 6 4; }

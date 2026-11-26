@@ -59,6 +59,8 @@ export interface DesignModule<D = Design['data']> {
   blockDiagram?: true;
   /** Extra drawing on a block (part symbols, connector pins …), used by render/blocks `decorate`. */
   decorate?(b: Block, d: BlockDiagram): VNode | null;
+  /** Blocks drawn faded (power view: unrelated to power, 3.29b). */
+  blockFaded?(b: Block, d: BlockDiagram): boolean;
   /** Colour band of a wire without its own colour (power view: rail by voltage, 3.29b). */
   wireTone?(w: import('../io/schema-types').Wire, d: BlockDiagram): string | undefined;
   /** A strip along the bottom of a block (the power view's metric table, 3.27b). */
