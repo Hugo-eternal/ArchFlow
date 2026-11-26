@@ -113,7 +113,14 @@
 - [x] 3.43i `designs/function`：零件數值——自動補單位、常用值清單（V2 L4267 normValue）（L2）
 - [x] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [x] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
-- [ ] 3.45 版本號統一為 V3.0.0（L4）
+- [ ] 3.46a `shell`：V2.10.1 外觀——圖示集（取自 V2 bundle 用到的圖示）、按鈕元件、app bar（logo、版本標籤、專案名 / 設計下拉、搜尋框、未儲存標示、中／EN、新建／開啟／匯出／儲存／說明）（L3）
+- [ ] 3.46b `shell`：V2.10.1 命令列（側欄切換、新增方塊、元件庫、區域框、新增文字、復原／重做、整理預覽、重新配線、格線與對齊｜版面與字體、範本、適合畫面、屬性面板切換；時程等其他設計各自的命令列）（L3）
+- [ ] 3.46c `shell`：左側「專案內容」（搜尋、依類型分組的方塊／分支接點清單、時程任務清單；點選即選取並置中），設計管理移到 app bar 的設計下拉（L3）
+- [ ] 3.46d `shell` / `inspector`：屬性面板標頭（圖示、類別、名稱、收合）與 V2 群組樣式、未選取時的「圖面設定」；選取時的浮動工具列（名稱／輸入／輸出／顏色／刪除／更多）（L3）
+- [ ] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
+- [ ] 3.46f `shell`：啟動畫面照 V2.10.1——左右分欄、步驟編號、設計類型卡（圖示＋說明）、範本／空白分段、範本卡、右側預覽與小工具卡、頂部語言與工具連結（L3）
+- [ ] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
+- [ ] 3.45 版本號統一為 V3.0.0（L4；版本號已改，等 3.46 完成後人工驗收與發佈決定）
 
 ## 階段 4：Skill、CI、修改層級驗證
 - [ ] 4.1 `CLAUDE.md`：架構概要、dev/test/build 指令、硬性規則（L0）
@@ -126,8 +133,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3.45 版本號已改為 3.0.0（`src/version.ts`、`package.json` / `package-lock.json`、`CHANGELOG.md` 標題），L4 自動部分全數通過；**等使用者人工驗收與發佈決定後才勾選 3.45**
-- **下一步**：(1) 使用者照驗收清單開 `dist/ArchFlow.html` 實測，回報問題就修（每個修正一個 commit）；(2) 使用者決定 `index.html`（目前仍是 V2.10.1 發佈檔、由 `tools/pack.mjs` 產生）是否改由 V3 取代、`legacy/` 與 `tools/pack.mjs` 是否保留——**不要自行覆蓋 index.html**；(3) 兩者完成後勾選 3.45、更新 CHANGELOG（若有修正），進入階段 4（`docs/v3-prompts.md` 階段 4：CLAUDE.md、skills、classify-change、CI）。
+- **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
+- **下一步**：3.46a。基準截圖在 `docs/v2-screens/`（start / workspace / block-selected，1440 × 900，zh-TW；之後各步驟補拍需要的畫面：在 Chromium 開 `index.html`，`frame({ name: 'app' })` 內按 V2 的「建立專案」）。V2 殼層的 CSS 在 legacy L4664–L5130（`af2-*`：app bar 50 px、cmdbar 44 px、menus、sheets、toasts、start），React 元件在 L5563 / L5766 的 bundle（圖示為內嵌 SVG path，`(0,ct.jsx)(Tn,…)` 這類元件；先列出 V2 用到的圖示名稱與 path，存成 `src/shell/icons.tsx`，註明來源與授權——V2 的圖示若來自 Lucide（ISC），在 THIRD_PARTY 註明）。顏色沿用 `tokens.css`（3.4 已依 V2 色票建立），缺的 token 補上。每一步以同尺寸截圖與 `docs/v2-screens` 並排比對，在交接記錄剩餘差異。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
