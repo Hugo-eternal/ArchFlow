@@ -33,7 +33,7 @@
   background: var(--color-surface);
 }
 .af-field-row > input[type="color"][data-empty="true"] { opacity: 0.5; }
-.af-field-unit { color: var(--color-muted); }
+.af-field-unit { color: var(--color-muted); font-weight: var(--weight-medium); }
 .af-field-reset, .af-field-action {
   min-height: var(--touch-target);
   padding: 0 var(--space-2);

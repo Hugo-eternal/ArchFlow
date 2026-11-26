@@ -69,7 +69,7 @@
 .af-kbd {
   display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; box-sizing: border-box;
   border: var(--border-width) solid var(--chrome-line); border-bottom-width: 2px; border-radius: var(--radius-sm);
-  background: var(--chrome); color: var(--color-faint); font: var(--weight-bold) 10.5px/1 var(--font-ui);
+  background: var(--chrome); color: var(--color-faint); font: var(--weight-semibold) 10.5px/1 var(--font-ui);
 }
 
 /* app bar */
@@ -85,12 +85,12 @@
 .af-logo-line { stroke: var(--logo-b); }
 .af-logo-dot { fill: var(--logo-dot); }
 .af-wordmark { font-weight: var(--weight-bold); font-size: 15px; letter-spacing: -.2px; color: var(--color-text); }
-.af-ver { font: var(--weight-bold) 10.5px/1 var(--font-ui); color: var(--color-faint); border: var(--border-width) solid var(--chrome-line); border-radius: var(--radius-sm); padding: 3px 5px; }
+.af-ver { font: var(--weight-semibold) 10.5px/1 var(--font-ui); color: var(--color-faint); border: var(--border-width) solid var(--chrome-line); border-radius: var(--radius-sm); padding: 3px 5px; }
 .af-crumbs { display: flex; align-items: center; gap: 2px; min-width: 0; flex: 0 1 auto; }
 .af-project-name {
   min-width: 5ch; max-width: 26ch; height: 32px; box-sizing: border-box; padding: 0 var(--space-2);
   border: var(--border-width) solid transparent; border-radius: var(--radius-md); background: transparent;
-  color: var(--color-text); font: var(--weight-bold) 14px var(--font-ui);
+  color: var(--color-text); font: var(--weight-semibold) 14px var(--font-ui);
 }
 .af-project-name:hover { background: var(--chrome-soft); }
 .af-project-name:focus { background: var(--chrome); border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-tint); outline: none; }
@@ -98,7 +98,7 @@
 .af-design-trigger {
   display: inline-flex; align-items: center; gap: var(--space-2); height: 34px; padding: 0 var(--space-2) 0 5px;
   border: var(--border-width) solid transparent; border-radius: var(--radius-md); background: transparent;
-  color: var(--color-text); font: var(--weight-medium) 14px var(--font-ui); cursor: pointer; max-width: 320px;
+  color: var(--color-text); font: var(--weight-medium) 13.5px var(--font-ui); cursor: pointer; max-width: 320px;
 }
 .af-design-trigger:hover, .af-design-trigger[aria-expanded="true"] { background: var(--chrome-soft); }
 .af-kind-dot { width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; background: var(--chrome-soft); color: var(--chrome-text-2); }
@@ -117,7 +117,7 @@
 .af-search-keys { display: flex; gap: 3px; }
 .af-save-state {
   display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 var(--space-2); border: 0; border-radius: 15px;
-  background: transparent; color: var(--color-muted); font: var(--weight-medium) 12.5px var(--font-ui); cursor: pointer; white-space: nowrap;
+  background: transparent; color: var(--color-muted); font: var(--weight-medium) 12px var(--font-ui); cursor: pointer; white-space: nowrap;
 }
 .af-save-state:hover { background: var(--chrome-soft); }
 .af-save-state[data-state="dirty"] { color: var(--dirty-text); }
@@ -138,7 +138,7 @@
 .af-btn .af-icon { color: var(--chrome-text-2); }
 .af-btn.ghost:hover:not(:disabled), .af-btn.icon:hover:not(:disabled) { background: var(--chrome-soft); }
 .af-btn.icon { width: 32px; padding: 0; }
-.af-btn.primary { background: var(--color-accent); color: var(--color-on-accent); font-weight: var(--weight-bold); }
+.af-btn.primary { background: var(--color-accent); color: var(--color-on-accent); font-weight: var(--weight-semibold); }
 .af-btn.primary .af-icon { color: var(--color-on-accent); }
 .af-btn.primary:hover:not(:disabled) { background: var(--color-accent-hover); }
 .af-btn:disabled { color: var(--chrome-disabled); cursor: default; }
@@ -189,7 +189,7 @@
 .af-tool:disabled { color: var(--chrome-disabled); cursor: default; }
 .af-tool:disabled .af-icon { color: var(--chrome-disabled-icon); }
 .af-tool.is-icon { width: 32px; padding: 0; justify-content: center; }
-.af-tool.is-primary { background: var(--color-accent); color: var(--color-on-accent); font-weight: var(--weight-bold); padding: 0 13px 0 10px; margin-right: 2px; }
+.af-tool.is-primary { background: var(--color-accent); color: var(--color-on-accent); font-weight: var(--weight-semibold); padding: 0 13px 0 10px; margin-right: 2px; }
 .af-tool.is-primary .af-icon, .af-tool.is-primary:hover:not(:disabled) .af-icon { color: var(--color-on-accent); }
 .af-tool.is-primary:hover:not(:disabled) { background: var(--color-accent-hover); color: var(--color-on-accent); }
 .af-tool.is-toggle[aria-pressed="true"] .af-icon { color: var(--color-accent); }
@@ -234,7 +234,7 @@
   border-top: var(--border-width) solid var(--chrome-line);
   font-size: 12px; font-weight: 600; color: var(--color-muted);
 }
-.af-outline-count { padding: 0 6px; border-radius: 4px; font-weight: 500; }
+.af-outline-count { padding: 0 6px; border-radius: 4px; font: var(--weight-medium) 12px var(--font-mono); }
 .af-outline ul { list-style: none; margin: 0; padding: 0; }
 .af-outline-item {
   display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 40px; margin: 4px 0; padding: 11px 10px;
@@ -333,11 +333,11 @@
 .af-insp-drawing { margin-bottom: 12px; padding-bottom: 12px; border-bottom: var(--border-width) solid var(--color-rule-2); }
 .af-insp-sub { margin: 0 0 6px; font-size: 12px; font-weight: 600; color: var(--color-text); }
 .af-insp-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.af-insp-row-label { font-size: 12.5px; }
+.af-insp-row-label { font-size: 12px; font-weight: var(--weight-medium); }
 .af-insp-seg { display: inline-flex; flex: 1; max-width: 180px; padding: 2px; border: var(--border-width) solid var(--color-rule); border-radius: 7px; }
 .af-insp-seg button {
   flex: 1; min-height: 28px; padding: 0 10px; border: 0; border-radius: 5px;
-  background: none; color: var(--color-text); font: inherit; font-size: 12.5px; cursor: pointer;
+  background: none; color: var(--color-text); font: inherit; font-size: 12px; font-weight: var(--weight-medium); cursor: pointer;
 }
 .af-insp-seg button[aria-checked="true"] { background: var(--color-accent); color: var(--color-on-accent); }
 .af-insp-seg button:focus-visible { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
@@ -497,7 +497,7 @@
 .af-help:focus { outline: none; }
 
 /* status bar (V2 af2-status): design type, counts, warnings … saved state, zoom */
-.af-status-kind { font-weight: var(--weight-medium); color: var(--color-ink-2); }
+.af-status-kind { font-weight: var(--weight-semibold); color: var(--color-ink-2); }
 .af-status-stats { color: var(--color-muted); font-variant-numeric: tabular-nums; }
 .af-status-saved { color: var(--color-muted); }
 .af-status-saved.is-dirty { color: var(--color-accent); }
