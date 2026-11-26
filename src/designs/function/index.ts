@@ -26,7 +26,7 @@ import {
   snapConnectorsToFrames, updateConnector, type ConnKind,
 } from './connector';
 import { insertLcd, lcdOrigin } from './lcd';
-import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields, unrelatedToPower, wireRail, voltageLegend, legendNode, LEGEND } from './power';
+import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields, unrelatedToPower, wireRail, voltageLegend, legendNode, LEGEND, makePowerBlock, ROLES } from './power';
 import { contentBounds } from '../../export/svg';
 import { estimateWidth } from '../../render/texts';
 import starter from './templates/starter.json';
@@ -156,6 +156,22 @@ function connectorCommand(kind: ConnKind): Command<DesignCommandContext> {
   };
 }
 
+/** Power view insert menu: a preset block per power role (3.29b e). */
+function powerBlockCommand(role: (typeof ROLES)[number]): Command<DesignCommandContext> {
+  return {
+    id: `power.insert.${role}`, label: `power.role.${role}` as MessageKey, group: 'power-blocks',
+    enabled: c => !c.gestures.busy && c.store.activeDesign?.type === 'function' && c.data().view === 'power',
+    run: c => {
+      const d = c.data(), at = c.viewCentre();
+      const b = makePowerBlock(d, at, role);
+      const spot = freeSpot(d, b.w, b.h, at, d.grid.snap ? gridSize(d.grid) : 1);
+      let id = '';
+      const r = c.edit(x => { const out = addBlock(x, { ...b, x: spot.x, y: spot.y }); id = out.id; return out.data; });
+      if (r.ok) c.gestures.select([{ kind: 'block', id }]);
+    },
+  };
+}
+
 const lcdCommand: Command<DesignCommandContext> = {
   id: 'template.lcd', label: 'lcd.template', group: 'templates',
   enabled: c => !c.gestures.busy && c.store.activeDesign?.type === 'function',
@@ -208,7 +224,7 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     if (!b) return [];
     return b.connector ? connectorFields() : b.part ? partFields(b) : [railsField, ...powerBlockFields()];
   },
-  commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand],
+  commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand, ...ROLES.map(powerBlockCommand)],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
   legend: d => {
     const items = voltageLegend(d);

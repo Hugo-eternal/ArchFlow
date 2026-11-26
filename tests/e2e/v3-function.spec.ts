@@ -198,7 +198,13 @@ test('function: power view — power settings in the panel, metric strip on the 
   await select(3);
   await expect(panel.getByLabel('電壓', { exact: true })).toHaveCount(0);
 
+  await expect(page.getByLabel('插入零件')).toBeVisible();
   await page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' }).click();
+  // the insert menu follows the view (3.29b e)
+  await expect(page.getByLabel('插入零件')).toHaveCount(0);
+  await page.getByLabel('插入電源方塊').selectOption({ label: '負載' });
+  expect((await data(page)).blocks.at(-1)).toMatchObject({ partNumber: '負載' });
+  await page.getByRole('button', { name: '復原' }).click();
   await select(3);
   const volt = panel.getByLabel('電壓', { exact: true });
   await volt.fill('5');

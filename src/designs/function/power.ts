@@ -8,7 +8,7 @@
 // unit (stored in A, shown in mA ×1000), L3843 af24 downstream demand / typed value turns the
 // figure on / negative rails. (L3857, power pins on new blocks, is in model/diagram makeBlock.)
 import type { Block, BlockDiagram, ItemRef, Metric, MetricKey, Wire } from '../../model/types';
-import { updateBlock, updateWire } from '../../model/diagram';
+import { makeBlock, makePort, updateBlock, updateWire } from '../../model/diagram';
 import { t, type MessageKey } from '../../core/i18n';
 import type { FieldSpec } from '../../inspector/fields';
 import { inView } from '../../inspector/common';
@@ -387,4 +387,28 @@ export function legendNode(items: readonly LegendItem[], x: number, y: number, m
       }),
     ]),
   };
+}
+
+// ---------------------------------------------------------------- power blocks (3.29b e, plan §2.2.2)
+
+/**
+ * A preset block of a power role, as the power-view insert menu adds it: a source has only an
+ * output, a load only a supply input (as in V2's power example); converters and distribution
+ * keep VIN / OUT. Figures are prepared (hidden until a value is typed).
+ */
+export function makePowerBlock(d: BlockDiagram, at: { x: number; y: number }, role: (typeof ROLES)[number]): Block {
+  const b = makeBlock(d, at, 'power');
+  b.role = role;
+  b.partNumber = t(`power.role.${role}` as MessageKey);
+  const hidden = (): Metric => ({ value: '', show: false });
+  if (role === 'source') {
+    b.ports = [makePort('OUT', 'r', 0.5, 'power')];
+    b.metrics = { voltage: hidden(), current: hidden() };
+  } else if (role === 'load') {
+    b.ports = [makePort('VDD', 'l', 0.5, 'power')];
+    b.metrics = { voltage: hidden(), current: hidden() };
+  } else if (role === 'converter') {
+    b.metrics = { voltage: hidden(), current: hidden(), efficiency: hidden() };
+  }
+  return b;
 }

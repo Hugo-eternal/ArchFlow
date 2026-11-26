@@ -16,7 +16,7 @@ import { exportSvg } from '../../src/export/svg';
 import { routeAll } from '../../src/router/full-path';
 import { wiresLayer } from '../../src/render/wires';
 import { functionDesign } from '../../src/designs/function';
-import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, unrelatedToPower, voltageLegend, legendNode, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
+import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, unrelatedToPower, voltageLegend, legendNode, makePowerBlock, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
 import type { BlockDiagram } from '../../src/io/schema-types';
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -183,6 +183,19 @@ describe('voltage legend (3.29b d)', () => {
     const lg = legendNode(voltageLegend(d), 0, 0, estimateWidth)!;
     expect(e.viewBox[1] + e.viewBox[3]).toBeGreaterThan(Math.max(...d.blocks.map(b => b.y + b.h)) + lg.box.h);
     expect(exportSvg({ ...d, view: 'function' }, { extras: functionDesign.exportExtras }).source).not.toContain(t('power.legend.title'));
+  });
+});
+
+describe('power view insert menu (3.29b e)', () => {
+  it('preset blocks per role: pins and prepared figures', () => {
+    const d = m.emptyDiagram('power');
+    const pins = (r: 'source' | 'converter' | 'distribution' | 'load') => makePowerBlock(d, { x: 0, y: 0 }, r).ports.map(p => `${p.name}:${p.type}:${p.side}`);
+    expect(pins('source')).toEqual(['OUT:power:r']);
+    expect(pins('load')).toEqual(['VDD:power:l']);
+    expect(pins('converter')).toEqual(['VIN:power:l', 'OUT:power:r']);
+    const c = makePowerBlock(d, { x: 0, y: 0 }, 'converter');
+    expect([c.role, c.partNumber, Object.keys(c.metrics)]).toEqual(['converter', '電源轉換', ['voltage', 'current', 'efficiency']]);
+    expect(makePowerBlock(d, { x: 0, y: 0 }, 'distribution').role).toBe('distribution');
   });
 });
 

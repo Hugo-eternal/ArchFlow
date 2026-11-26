@@ -110,6 +110,9 @@ function CommandPicker({ shell, groups, label }: { shell: Shell; groups: { id: s
   );
 }
 
+/** Power view insert menu (3.29b e): preset blocks per power role. */
+const POWER_GROUPS: { id: string; label: MessageKey }[] = [{ id: 'power-blocks', label: 'power.insert.group' }];
+
 const PART_GROUPS: { id: string; label: MessageKey }[] = [
   { id: 'parts', label: 'part.group.parts' }, { id: 'connectors', label: 'part.group.connectors' }, { id: 'templates', label: 'part.group.templates' },
 ];
@@ -201,7 +204,9 @@ function Workspace({ shell }: { shell: Shell }) {
             <CommandButton shell={shell} id="text.add" />
             <CommandButton shell={shell} id="frame.add" />
           </>}
-          <CommandPicker shell={shell} groups={PART_GROUPS} label="part.insert" />
+          {shell.view === 'power'
+            ? <CommandPicker shell={shell} groups={POWER_GROUPS} label="power.insert" />
+            : <CommandPicker shell={shell} groups={PART_GROUPS} label="part.insert" />}
           {(shell.module?.commands ?? []).filter(c => c.group === 'schedule').map(c => <CommandButton key={c.id} shell={shell} id={c.id} />)}
           {shell.isBlockDiagram && <CommandButton shell={shell} id="selection.delete" />}
           <span className="af-toolbar-sep" aria-hidden="true" />

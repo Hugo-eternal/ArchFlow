@@ -147,4 +147,15 @@ describe('shell view commands', () => {
     const s = new Shell();
     for (const id of ['view.mode.function', 'view.mode.power', 'view.mode.toggle']) expect(s.enabled(id), id).toBe(false);
   });
+
+  it('power blocks can be inserted in the power view only (3.29b e)', async () => {
+    const s = new Shell();
+    s.newProject('P', { type: 'function' });
+    expect(s.enabled('power.insert.load')).toBe(false);
+    await s.run('view.mode.power');
+    expect(s.enabled('power.insert.load')).toBe(true);
+    await s.run('power.insert.source');
+    expect(s.data().blocks[0]).toMatchObject({ role: 'source' });
+    expect(s.gestures.selection).toEqual([{ kind: 'block', id: s.data().blocks[0].id }]);
+  });
 });

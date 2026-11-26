@@ -79,7 +79,7 @@
 - [x] 3.27c `designs/function`「入門電源樹 / Starter power tree」範本（V2 引擎產生並轉成 V3，`data.view: 'power'`，加到 `functionDesign.templates`；新增設計對話框選它時以電源檢視開啟）；golden power 在電源檢視下完整 `compareSvg` 比對 V2 匯出（方塊標題位置含量測帶）；角色配色（使用者決定新增）（L2）（實際跑 L3：改到 render / styles）
 - [x] 3.28 `designs/schedule`：時間軸版面與渲染（實際跑 L3：改到 shell / designs/module / styles）
 - [x] 3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（實際跑 L3：改到 shell / inspector / export / io/schema）
-- [ ] 3.29b `designs/function` 方塊圖兩種檢視的 UI/UX 優化（L2；若改到 render / styles 共用檔則跑 L3）
+- [x] 3.29b `designs/function` 方塊圖兩種檢視的 UI/UX 優化（L2；若改到 render / styles 共用檔則跑 L3）（a～e 各一個 commit，皆跑 L3）
 - [ ] 3.30 `designs/sequence` vendor 轉接（L2）
 - [ ] 3.31 `designs/flowchart` vendor 轉接（L2）
 ### 3H 工具
@@ -112,9 +112,9 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3——3.29b 進行中（a 畫布警示 ✓、b 電源線依電壓上色 ✓、c 無關方塊變淡 ✓、d 電壓圖例 ✓；e 未做）
-- **下一步**：3.29b-e 工具列依檢視切換插入選單（plan §2.2.2 e：電源檢視顯示「電源來源 / 轉換器 / 分配 / 負載」預設方塊——design 命令群組，例如 `power.insert.<role>`，插入 `makeBlock` 後設定 `role` 與對應量測欄位；功能檢視維持零件 / 連接器 / 範本。`App.tsx` 的 `CommandPicker` 依 `shell.view` 選群組）。完成後勾選 3.29b，再做 3.30 `designs/sequence`。
-- **已排入**：3.29b 已排入，範圍見 plan §2.2.2。
+- **目前階段**：階段 3（模組化重構）——3.29b（方塊圖兩種檢視的差異化呈現 a～e）已完成
+- **下一步**：3.30 `designs/sequence` vendor 轉接（L2）。vendor 檔在 `vendor/`（電源時序 bundle.js + style.css，`check:vendor` 確保逐字不變），iframe 組裝方式與 host 介面寫在該目錄 `VENDOR.md`；golden `tests/golden/sequence.test.js`（V2 版，在 iframe 內 `afSeqApi`）。V3 殼層目前只有 canvas 設計：要為 `editor: 'embedded'` 加一條路徑（Canvas 區域換成 iframe srcdoc，資料進出用 vendor 的 host API，存檔時取回 doc 寫入 `SequenceDoc`，`io/schema` 的 sequenceSchema 已有外層驗證）；匯出 / 全圖 / 復原等殼層命令對 embedded 設計的行為要決定（V2 由 vendor 自己處理）。
+- **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -221,10 +221,12 @@
 - 3.29b-b 電源線依電壓上色：`render/wires` 新增 `WireRenderOptions.tone(w)`（回傳色帶名稱時加 `is-rail-<band>`、箭頭用 `af-rail-<band>` 與對應 marker，且**不使用線自己的顏色**——V2 在每條線都寫了 #334e70，若自訂色優先就永遠不會上色；功能檢視仍用線自己的顏色）；`DesignModule.wireTone`、`exportSvg({ wireTone })`、Canvas / 匯出對話框傳入。`power.ts` `wireVoltage`（線的電氣標註，否則起點方塊的電壓）、`wireRail`（電源檢視的 power 線 → `railBand`）。canvas.css `.af-wire-group.is-rail-*`（放在 is-invalid 之前，無效路線仍顯示紅色）；`check:tokens` 新增 7 組 `--rail-*` 對畫布底色 3:1。測試：`power.test`「power wires coloured by rail voltage」。
 - 3.29b-c 無關方塊變淡：`render/blocks` 新增 `BlockRenderOptions.faded(b, d)` → class `is-faded`（`--block-faded-opacity: 0.4`）；`DesignModule.blockFaded`、`exportSvg({ blockFaded })`。`power.ts` `unrelatedToPower`：電源檢視中，沒有 power / gnd 接腳、沒接 power 線、也不是電源 / 接地符號的方塊（gnd 也算電源相關——決定記錄於此）。測試：`power.test`「blocks unrelated to power are faded」。
 - 3.29b-d 電壓圖例：`power.ts` `voltageLegend`（電源檢視中 power 線與方塊電壓的不重複值，高到低，各自 `railBand`）、`legendNode`（匯出用 SVG 圖例）；`DesignModule.legend(d)` → `{ title, items: { swatch, text }[] }`，殼層 `CanvasLegend` 以固定覆蓋層畫在畫布左下角（`.af-canvas-legend`，不隨平移縮放、`pointer-events: none`）；匯出由 `exportExtras.above` 畫在內容下方（左對齊、間距 24）並加入 bounds。i18n `power.legend.title`。測試：`power.test`「voltage legend」、`v3-function.spec` 入門電源樹那項檢查圖例。
+- 3.29b-e 依檢視切換插入選單：`power.ts` `makePowerBlock(d, at, role)`（來源只有 OUT、負載只有 VDD（同 V2 電源範例），轉換器 / 分配為 VIN / OUT；名稱 = 角色名稱；量測欄位預先建立但隱藏，轉換器另有效率）；命令 `power.insert.<role>`（群組 `power-blocks`，只在電源檢視啟用）；`App.tsx` 工具列在電源檢視改用「插入電源方塊」選單（`POWER_GROUPS`），功能檢視維持「插入零件」。測試：`power.test`「power view insert menu」、`view-mode.test`、`v3-function.spec` 第 6 項。
+- 3.29b 無障礙檢查：警示有圖示與百分比文字（不只靠顏色）、新增 token 都通過 `check:tokens`、沒有新增動畫（`prefers-reduced-motion` 不受影響）、圖例覆蓋層有 `aria-label`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.29b-d：模組標註、i18n、token（185 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 335 項、Playwright 22 項全數通過）。前一步 3.29：L3（模組標註、i18n（398 個 key）、token（175 個、144 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 328 項、Playwright 22 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，建立「專案時程」→ 點任務卡改名稱 / 日期 / 狀態；拖曳任務框與軸上圓點（靠近其他圓點會吸附並出現虛線）；「新增任務」「新增分支」「重新排列」；空白處點一下後在屬性面板換主題、改字級；匯出 SVG。
+- **最後通過的驗證層級**：L3（3.29b-e：模組標註、i18n、token（185 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 337 項、Playwright 22 項全數通過）。前一步 3.29：L3（模組標註、i18n（401 個 key）、token（175 個、144 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 328 項、Playwright 22 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，建立「專案時程」→ 點任務卡改名稱 / 日期 / 狀態；拖曳任務框與軸上圓點（靠近其他圓點會吸附並出現虛線）；「新增任務」「新增分支」「重新排列」；空白處點一下後在屬性面板換主題、改字級；匯出 SVG。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦
