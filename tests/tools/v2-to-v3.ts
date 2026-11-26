@@ -151,6 +151,8 @@ function convertWire(e: Raw): Wire {
   if (typeof e.afLabelSize === 'number') label.size = e.afLabelSize;
   if (typeof e.afLabelPreset === 'string') label.preset = e.afLabelPreset;
   if (e.afLabelMark && Number.isFinite(e.afLabelMark.x)) label.mark = { x: e.afLabelMark.x, y: e.afLabelMark.y, angle: num(e.afLabelMark.angle) };
+  const u = e.afUnifiedLabel;
+  if (u && Number.isFinite(u.x) && Number.isFinite(u.y) && typeof u.signature === 'string') label.auto = { x: u.x, y: u.y, signature: u.signature };
   if (Object.keys(label).length) wire.label = label;
   return wire;
 }

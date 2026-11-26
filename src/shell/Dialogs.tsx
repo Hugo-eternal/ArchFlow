@@ -11,7 +11,7 @@ import { downloadBlob } from '../io/project-file';
 import type { BlockView } from '../io/schema-types';
 import type { Shell, DesignChoice } from './controller';
 
-function Modal({ title, onClose, children, wide }: { title: MessageKey; onClose: () => void; children: ReactNode; wide?: boolean }) {
+export function Modal({ title, onClose, children, wide }: { title: MessageKey; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const close = useRef(onClose);
   close.current = onClose;

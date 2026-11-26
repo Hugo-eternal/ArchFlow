@@ -252,3 +252,46 @@ test('function: the starter power tree template opens in the power view', async 
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '功能檢視' })).toHaveAttribute('aria-pressed', 'true');
   expect(errors).toEqual([]);
 });
+
+test('organize (3.38): nothing to apply on a tidy diagram; routes mode keeps blocks and undoes in one step; layered layout', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const dialog = page.getByRole('dialog', { name: '自動整理' });
+  const apply = dialog.getByRole('button', { name: '套用' });
+
+  // the starter template is tidy: no candidate can be applied
+  await page.getByRole('button', { name: '自動整理' }).click();
+  await expect(apply).toBeDisabled();
+  await dialog.getByRole('button', { name: '取消' }).click();
+
+  // scramble the blocks (one undo step)
+  await page.evaluate(() => { const s = (window as unknown as { archflow: { edit(f: (d: { blocks: { x: number; y: number }[]; wires: { route?: unknown }[] }) => unknown): void } }).archflow; s.edit(d => ({ ...d, blocks: d.blocks.map((b, i) => ({ ...b, x: [700, 60, 720, 80][i], y: [400, 420, 40, 60][i] })), wires: d.wires.map(w => ({ ...w, route: undefined })) })); });
+  const before = await data(page) as unknown as { blocks: { x: number; y: number }[]; wires: { route?: unknown }[] };
+
+  await page.getByRole('button', { name: '自動整理' }).click();
+  await expect(dialog.getByText('可套用').first()).toBeVisible();
+  await expect(apply).toBeEnabled();
+  await apply.click();
+  await expect(dialog).toHaveCount(0);
+  const after = await data(page) as unknown as { blocks: { x: number; y: number }[]; wires: { route?: unknown }[] };
+  expect(after.blocks.map(b => [b.x, b.y])).toEqual(before.blocks.map(b => [b.x, b.y]));
+  expect(after.wires.some(w => w.route)).toBe(true);
+  await page.getByRole('button', { name: '復原' }).click();
+  expect((await data(page) as unknown as { wires: { route?: unknown }[] }).wires.some(w => w.route)).toBe(false);
+
+  // rearrange blocks: the layered candidate
+  await page.getByRole('button', { name: '自動整理' }).click();
+  await dialog.getByRole('radio', { name: '重新排列方塊' }).check();
+  await dialog.getByRole('radio', { name: '依連接關係分層' }).check();
+  await expect(apply).toBeEnabled();
+  await apply.click();
+  const g = await data(page) as unknown as { blocks: { x: number; y: number; w: number; h: number }[] };
+  expect(g.blocks.map(b => [b.x, b.y])).not.toEqual(before.blocks.map(b => [b.x, b.y]));
+  for (let i = 0; i < g.blocks.length; i++) for (let j = i + 1; j < g.blocks.length; j++) {
+    const a = g.blocks[i], b = g.blocks[j];
+    expect(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y).toBe(true);
+  }
+  expect(errors).toEqual([]);
+});

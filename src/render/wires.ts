@@ -6,7 +6,7 @@
 // dashes L1400. Label de-duplication (L3099) and manual label marks dragging belong to
 // interaction (3.20).
 import type { BlockDiagram, BlockView, LineFormat, Wire } from '../io/schema-types';
-import { near, toPathData, type Point } from '../core/geometry';
+import { near, simplify, toPathData, type Point } from '../core/geometry';
 import type { Route } from '../router/full-path';
 import { h, r2, type VNode } from './vnode';
 
@@ -26,9 +26,12 @@ export function wireLabel(w: Wire, view: BlockView): string {
   return parts.filter(Boolean).join(' · ');
 }
 
-/** Where the label goes: the manual mark, else above the middle of the longest segment. */
+/** Where the label goes: the manual mark, else organize's spot for this route (label.auto), else above the middle of the longest segment. */
 export function labelPosition(w: Wire, ps: readonly Point[]): { x: number; y: number; anchor: 'middle' | 'start' } | null {
   if (w.label?.mark) return { x: w.label.mark.x, y: w.label.mark.y, anchor: 'middle' };
+  // where organize placed it, while the wire still runs the same way (V2 afUnifiedLabel, 3.38)
+  const auto = w.label?.auto;
+  if (auto && auto.signature === JSON.stringify(simplify(ps).map(p => ({ x: p.x, y: p.y })))) return { x: auto.x, y: auto.y, anchor: 'middle' };
   if (ps.length < 2) return null;
   let longest = -1, li = 0;
   for (let i = 0; i < ps.length - 1; i++) {

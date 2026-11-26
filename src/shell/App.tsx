@@ -9,6 +9,7 @@ import { useVersion } from './use-store';
 import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
 import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
+import { OrganizeDialog } from './OrganizeDialog';
 
 function useLocale(): string {
   const [l, setL] = useState(getLocale());
@@ -288,6 +289,7 @@ function Workspace({ shell }: { shell: Shell }) {
           {(shell.module?.commands ?? []).filter(c => c.group === 'schedule').map(c => <CommandButton key={c.id} shell={shell} id={c.id} />)}
           {shell.isBlockDiagram && <CommandButton shell={shell} id="selection.delete" />}
           <span className="af-toolbar-sep" aria-hidden="true" />
+          {shell.isBlockDiagram && <CommandButton shell={shell} id="layout.arrangePreview" />}
           {!shell.module?.embedded && <>
             <CommandButton shell={shell} id="view.fit" />
             <CommandButton shell={shell} id="view.toggleInspector" />
@@ -343,6 +345,7 @@ export function App({ shell }: { shell: Shell }) {
       {dlg?.kind === 'confirm' && <ConfirmDialog key="confirm" shell={shell} d={dlg} />}
       {dlg?.kind === 'export' && <ExportDialog shell={shell} />}
       {dlg?.kind === 'newDesign' && <NewDesignDialog shell={shell} />}
+      {dlg?.kind === 'organize' && <OrganizeDialog shell={shell} />}
       <ToolDialog shell={shell} />
     </>
   );

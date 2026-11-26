@@ -162,7 +162,11 @@ export interface Wire {
                                      // `route` stays the only place for path points
   labelOffset?: Point;               // reserved (3.26c): label offset from its automatic position
   electrical?: { voltage: string; current: string; unit?: 'A' | 'mA' | 'uA'; show: boolean };
-  label?: { size?: number; preset?: string; mark?: { x: number; y: number; angle: number } };
+  label?: {
+    size?: number; preset?: string;
+    mark?: { x: number; y: number; angle: number };          // V2: afLabelMark (dragged by hand, stays put)
+    auto?: { x: number; y: number; signature: string };      // V2: afUnifiedLabel — where organize put the label, valid while the route's JSON equals `signature` (3.38)
+  };
 }
 
 export interface Junction { id: string; x: number; y: number; name: string }

@@ -27,6 +27,7 @@ export interface Message { key: MessageKey; vars?: Vars; tone: 'info' | 'error' 
 export type Dialog =
   | null
   | { kind: 'export' }
+  | { kind: 'organize' }
   | { kind: 'newDesign' }
   | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
   | { kind: 'confirm'; title: MessageKey; message: MessageKey; vars?: Vars; ok: () => void };
@@ -316,6 +317,8 @@ export function shellCommands(): Command<Shell>[] {
         if (r.ok) s.gestures.select([{ kind: 'frame', id }]);
       },
     },
+    // the organize dialog (V2 RC4 v4Open): compare candidates, apply one as a single undo step
+    { id: 'layout.arrangePreview', label: 'cmd.organize', group: 'view', enabled: s => canEdit(s) && s.store.data(s.store.activeDesignId) !== undefined, run: s => s.openDialog({ kind: 'organize' }) },
     { id: 'view.fit', label: 'cmd.viewFit', group: 'view', shortcut: 'F', enabled: hasProject, run: s => s.fitView() },
     { id: 'view.zoomIn', label: 'cmd.zoomIn', group: 'view', shortcut: 'Mod+=', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1.2, s.viewport)) },
     { id: 'view.zoomOut', label: 'cmd.zoomOut', group: 'view', shortcut: 'Mod+-', enabled: hasProject, run: s => s.store.setCamera(zoomBy(s.camera, 1 / 1.2, s.viewport)) },

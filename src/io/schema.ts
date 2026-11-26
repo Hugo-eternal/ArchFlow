@@ -142,7 +142,10 @@ const wire = obj({
   route: opt(arr(point, FILE_LIMITS.route)), locked: bool,
   routing: opt(oneOf('auto', 'manual')), labelOffset: opt(point),
   electrical: opt(obj({ voltage: str(), current: str(), unit: opt(unit), show: bool })),
-  label: opt(obj({ size: opt(num({ min: 0, max: 400 })), preset: opt(str()), mark: opt(obj({ x: coord, y: coord, angle: num({ min: -360, max: 360 }) })) })),
+  label: opt(obj({
+    size: opt(num({ min: 0, max: 400 })), preset: opt(str()), mark: opt(obj({ x: coord, y: coord, angle: num({ min: -360, max: 360 }) })),
+    auto: opt(obj({ x: coord, y: coord, signature: str(200_000) })),
+  })),
 });
 const junction = obj({ id, x: coord, y: coord, name: str() });
 const textBox = obj({
