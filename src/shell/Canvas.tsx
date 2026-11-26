@@ -1,7 +1,7 @@
 // The block-diagram canvas: one <svg>. The drawing is render/* VNodes mounted on every change
 // (the draft while dragging); pointer input goes to interaction/gestures, the wheel zooms.
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { t, getLocale, type MessageKey } from '../core/i18n';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { t, type MessageKey } from '../core/i18n';
 import { backgroundOf } from '../core/camera';
 import { gridSize } from '../core/grid';
 import { blocksLayer } from '../render/blocks';
@@ -14,6 +14,7 @@ import type { Shell } from './controller';
 import type { CanvasSelection } from '../designs/module';
 import type { Design } from '../io/schema-types';
 import { useVersion } from './use-store';
+import { useLocale } from './AppBar';
 
 const pointer = (svg: SVGSVGElement, e: { clientX: number; clientY: number; button: number; shiftKey: boolean; metaKey: boolean; ctrlKey: boolean; altKey: boolean }): PointerIn => {
   const r = svg.getBoundingClientRect();
@@ -111,12 +112,15 @@ export function Canvas({ shell }: { shell: Shell }) {
 function EmbeddedFrame({ shell }: { shell: Shell }) {
   const ref = useRef<HTMLIFrameElement>(null);
   const m = shell.module!.embedded!;
-  const [srcdoc] = useState(() => m.srcdoc(getLocale() === 'en' ? 'en' : 'zh-Hant'));
+  // the vendor editor takes its language when it loads: a language switch reloads it (the
+  // document is in the store already; the editor's own undo history starts over)
+  const lang = useLocale() === 'en' ? 'en' : 'zh-Hant';
+  const srcdoc = useMemo(() => m.srcdoc(lang), [m, lang]);
   useEffect(() => {
     shell.setFrame(ref.current);
     return () => shell.setFrame(null);
-  }, [shell]);
-  return <iframe ref={ref} className="af-embedded-frame" title={t(m.title)} srcDoc={srcdoc} allow="clipboard-read; clipboard-write" />;
+  }, [shell, lang]);
+  return <iframe key={lang} ref={ref} className="af-embedded-frame" title={t(m.title)} srcDoc={srcdoc} allow="clipboard-read; clipboard-write" />;
 }
 
 /** data-* attributes of an element and its ancestors up to the drawing (nearest wins). */

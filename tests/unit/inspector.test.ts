@@ -40,6 +40,13 @@ beforeEach(() => { setLocale('zh-Hant'); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); });
 
 describe('panel construction', () => {
+  it('a block selected, then the store switches to a design that is not a block diagram: no error, nothing shown (3.41 fix)', () => {
+    const s = setup();
+    s.insp.show({ kind: 'block', id: 'A' });
+    expect(() => s.store.addDesign('sequence', 'Seq', { name: '', rails: [] }, { activate: true })).not.toThrow();
+    expect(s.root.querySelector('[data-field]')).toBeNull();
+  });
+
   it('shows the empty message with no selection', () => {
     const s = setup();
     s.insp.show(null);

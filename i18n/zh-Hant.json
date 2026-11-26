@@ -559,5 +559,13 @@
   "help.views": "方塊圖有功能檢視與電源檢視（Shift+V 切換），只改呈現，不改資料。",
   "help.organize": "「自動整理」列出幾種方案的前後對照與指標，套用後可一次復原；整理是啟發式的，不保證交叉最少。",
   "help.disclaimer": "電壓、電流為手動標註；電源檢視的下游需求只做加總，不模擬電路，也不檢查元件或線材額定值。相同標籤不會自動相連。",
-  "help.palette": "按 {keys} 開啟指令面板，可搜尋指令、切換設計或前往方塊 / 任務。"
+  "help.palette": "按 {keys} 開啟指令面板，可搜尋指令、切換設計或前往方塊 / 任務。",
+  "status.stats.diagram": "{blocks} 個方塊 · {ports} 個接腳 · {wires} 條線路 · {junctions} 個分支接點",
+  "status.stats.schedule": "{tasks} 個任務 · {forks} 個分支點",
+  "status.saved": "已儲存",
+  "status.unsaved": "未儲存",
+  "toast.dismiss": "關閉通知",
+  "toast.region": "通知",
+  "hint.empty.diagram": "空白方塊圖：按 B 或「新增方塊」開始，再從接腳拖曳到另一個接腳建立連線。",
+  "hint.empty.schedule": "還沒有任務：按「新增任務」建立起點，再接續任務或新增分支。"
 }

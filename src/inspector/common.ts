@@ -236,6 +236,10 @@ export interface BlockInspector {
  */
 export function blockInspector(root: HTMLElement, store: Store, options: Partial<PanelOptions<BlockDiagram, ItemRef>> = {}): BlockInspector {
   const data = () => store.data(store.activeDesignId) as BlockDiagram;
+  // the store can switch to a design that is not a block diagram before the shell unmounts this
+  // panel (adding / switching designs with a block selected): then nothing here is shown
+  const isDiagram = (d: unknown): d is BlockDiagram => !!d && Array.isArray((d as BlockDiagram).blocks);
+  const present = (sel: ItemRef) => { const d = data(); return isDiagram(d) && exists(d, sel); };
   const panel = new InspectorPanel<BlockDiagram, ItemRef>(root, {
     data,
     commit: edit => commitEdit(store, edit),
@@ -245,13 +249,13 @@ export function blockInspector(root: HTMLElement, store: Store, options: Partial
   const show = (sel: ItemRef | null, extra: readonly BlockField[] = []) => {
     current = { sel, extra };
     const fields = sel ? commonFields(sel) : null;
-    if (!sel || !fields || !exists(data(), sel)) panel.show([], null);
+    if (!sel || !fields || !present(sel)) panel.show([], null);
     else panel.show([...fields, ...extra], sel);
   };
   const off = store.subscribe(() => {
     const sel = current.sel;
-    if (sel && !exists(data(), sel)) show(null);
-    else panel.sync();
+    if (sel && !present(sel)) show(null);
+    else if (isDiagram(data())) panel.sync();
   });
   return { panel, show, destroy: () => { off(); panel.destroy(); } };
 }

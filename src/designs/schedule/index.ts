@@ -118,6 +118,13 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
     refusal: e => (e instanceof ScheduleEditError || e instanceof ScheduleError ? `schedule.error.${e.code}` as MessageKey : null),
   },
   commands: scheduleCommands(),
+  // V2 #stats for a branching schedule: tasks and fork points
+  stats(d) {
+    const kids = new Map<string, number>();
+    for (const l of d.links) kids.set(l.from, (kids.get(l.from) ?? 0) + 1);
+    return t('status.stats.schedule', { tasks: d.tasks.length, forks: [...kids.values()].filter(n => n > 1).length });
+  },
+  emptyHint: d => (d.tasks.length ? null : 'hint.empty.schedule'),
   // V2 palette "Go to task": the task's display reference (T01 …) as hint
   findItems(d) {
     let boxes: ReturnType<typeof layout>['boxes'] | null = null;

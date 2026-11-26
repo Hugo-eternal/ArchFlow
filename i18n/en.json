@@ -559,5 +559,13 @@
   "help.views": "A block diagram has a function view and a power view (Shift+V); switching changes the drawing only, not the data.",
   "help.organize": "Organize lists a few layouts with before / after previews and metrics; applying one is a single undo step. It is heuristic and does not guarantee the fewest crossings.",
   "help.disclaimer": "Voltages and currents are manual annotations; the power view only sums downstream demand. Nothing is simulated, and part or cable ratings are not checked. Equal labels are not connected.",
-  "help.palette": "Press {keys} for the command palette: search commands, switch designs or go to a block / task."
+  "help.palette": "Press {keys} for the command palette: search commands, switch designs or go to a block / task.",
+  "status.stats.diagram": "{blocks} blocks · {ports} pins · {wires} wires · {junctions} junctions",
+  "status.stats.schedule": "{tasks} tasks · {forks} fork points",
+  "status.saved": "Saved",
+  "status.unsaved": "Unsaved",
+  "toast.dismiss": "Dismiss",
+  "toast.region": "Notifications",
+  "hint.empty.diagram": "Empty diagram: press B or Add block to start, then drag from one pin to another to connect them.",
+  "hint.empty.schedule": "No tasks yet: press Add task to create the start, then continue or add a branch."
 }

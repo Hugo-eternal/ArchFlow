@@ -343,3 +343,59 @@ test('command palette and help (3.40): Ctrl+K, search, keyboard, go to a block; 
   await expect(help).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test('status bar, notifications, empty hint and language switch without reload (3.41)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: '空白設計' }).check();
+  await page.getByRole('button', { name: '建立專案' }).click();
+
+  // empty canvas: guidance; the status bar has the type, counts, saved state and zoom
+  const bar = page.locator('.af-statusbar');
+  await expect(page.locator('.af-empty-hint')).toContainText('按 B');
+  await expect(bar).toContainText('方塊圖');
+  await expect(bar).toContainText('0 個方塊 · 0 個接腳 · 0 條線路 · 0 個分支接點');
+  await expect(bar).toContainText('已儲存');
+  await page.getByRole('button', { name: '新增方塊' }).click();
+  await expect(page.locator('.af-empty-hint')).toHaveCount(0);
+  await expect(bar).toContainText('1 個方塊 · 2 個接腳'); // a new block has its default pins
+  await expect(bar).toContainText('未儲存');
+
+  // a notification can be closed, and closes by itself
+  await page.getByRole('button', { name: '檔案', exact: true }).click();
+  await page.getByRole('menuitem', { name: '儲存' }).click();
+  const toast = page.locator('.af-toast').filter({ hasText: '已儲存' });
+  await expect(toast).toHaveAttribute('role', 'status');
+  await toast.getByRole('button', { name: '關閉通知' }).click();
+  await expect(toast).toHaveCount(0);
+  await page.getByRole('button', { name: '新增方塊' }).click();
+  await page.getByRole('button', { name: '檔案', exact: true }).click();
+  await page.getByRole('menuitem', { name: '儲存' }).click();
+  await expect(page.locator('.af-toast')).toHaveCount(1);
+  await expect(page.locator('.af-toast')).toHaveCount(0, { timeout: 6000 });
+
+  // a power-sequence design in the vendor editor, then switch the language: no page reload,
+  // project kept, shell and editor in English
+  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '電源時序' }).check();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: '新增電源軌' }).first()).toBeVisible();
+  await page.evaluate(() => { (window as unknown as { marker: number }).marker = 1; });
+  await page.getByLabel('介面語言').selectOption('en');
+  expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
+  await expect(page.getByRole('button', { name: 'File', exact: true })).toBeVisible();
+  await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: 'Add rail' }).first()).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Designs' }).getByRole('button')).toHaveCount(5);
+  await expect(bar).toContainText('Unsaved');
+  // the editor still edits the project after the reload in English
+  const rails = () => page.evaluate(() => ((window as unknown as { archflow: { data(): { rails: unknown[] } } }).archflow.data().rails.length));
+  const n = await rails();
+  await page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: 'Add rail' }).first().click();
+  await expect.poll(rails).toBe(n + 1);
+  // a tool opened now is in English too
+  await page.getByRole('button', { name: 'Tools', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Pattern Generator' }).click();
+  await expect(page.getByRole('dialog', { name: 'Pattern Generator' })).toBeVisible();
+  expect(errors).toEqual([]);
+});

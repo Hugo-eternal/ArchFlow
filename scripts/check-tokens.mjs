@@ -41,7 +41,7 @@ const PAIRS = [
   ['--color-text', '--color-surface', 4.5], ['--color-text', '--color-board', 4.5], ['--color-text', '--color-surface-2', 4.5],
   ['--color-muted', '--color-surface', 4.5], ['--color-muted', '--color-board', 4.5], ['--color-faint', '--color-surface', 4.5],
   ['--color-on-ink', '--color-ink', 4.5], ['--color-on-ink-2', '--color-ink', 4.5],
-  ['--color-on-accent', '--color-accent', 4.5], ['--color-accent', '--color-surface', 4.5], ['--color-danger', '--color-surface', 4.5],
+  ['--color-on-accent', '--color-accent', 4.5], ['--color-on-toast', '--color-toast', 4.5], ['--color-on-accent', '--color-danger', 4.5], ['--color-accent', '--color-surface', 4.5], ['--color-danger', '--color-surface', 4.5],
   ['--color-text', '--color-accent-tint', 4.5], ['--color-text', '--color-selection', 4.5],
   ['--wire-signal', '--color-board', 3], ['--wire-power', '--color-board', 3], ['--wire-clock', '--color-board', 3], ['--wire-bus', '--color-board', 3],
   ['--color-rule', '--color-surface', 1.2],

@@ -196,7 +196,7 @@ export const V2_HIDDEN_ELEMENT_COMMANDS: Record<string, string | null> = {
   designBtn: 'design.switch',
   examplesBtn: 'design.loadExample',
   helpBtn: 'help.open',
-  stats: 'view.stats',
+  stats: null,                // V2 #stats was status text; V3's status bar shows DesignModule.stats
   chineseFont: 'theme.cjkFont',
   englishFont: 'theme.latinFont',
   // not commands: elements the V2 shell only read or measured

@@ -105,13 +105,35 @@ function ToolDialog({ shell }: { shell: Shell }) {
         </div>
         {shell.openedTools.map(id => {
           const tl = shell.tools.get(id)!;
-          if (!docs.current.has(id)) docs.current.set(id, tl.srcdoc(lang));
+          // a tool takes its language when it loads: after a language switch it reloads (its unsaved work is lost)
+          const doc = `${id}:${lang}`;
+          if (!docs.current.has(doc)) docs.current.set(doc, tl.srcdoc(lang));
           return (
-            <iframe key={id} ref={el => { frames.current.set(id, el); }} className="af-tool-frame" title={t(tl.label)} hidden={id !== open}
-              srcDoc={docs.current.get(id)} allow={tl.allow} allowFullScreen={tl.allowFullscreen} />
+            <iframe key={doc} ref={el => { frames.current.set(id, el); }} className="af-tool-frame" title={t(tl.label)} hidden={id !== open}
+              srcDoc={docs.current.get(doc)} allow={tl.allow} allowFullScreen={tl.allowFullscreen} />
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** Notifications over the workspace (V2 af2-toasts): newest last, at most 3; info closes after
+ *  3.2 s, errors after 6 s (V2 6 s for toasts with an action); each has a close button. */
+function Toasts({ shell }: { shell: Shell }) {
+  const timers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
+  useEffect(() => {
+    for (const x of shell.toasts) if (!timers.current.has(x.id)) timers.current.set(x.id, setTimeout(() => { timers.current.delete(x.id); shell.dismissToast(x.id); }, x.tone === 'error' ? 6000 : 3200));
+  });
+  useEffect(() => () => { for (const h of timers.current.values()) clearTimeout(h); }, []);
+  return (
+    <div className="af-toasts" aria-label={t('toast.region')}>
+      {shell.toasts.map(x => (
+        <div key={x.id} className={`af-toast${x.tone === 'error' ? ' is-error' : ''}`} role={x.tone === 'error' ? 'alert' : 'status'}>
+          <span>{t(x.key, x.vars)}</span>
+          <button type="button" className="af-toast-close" aria-label={t('toast.dismiss')} onClick={() => shell.dismissToast(x.id)}>{'\u00d7'}</button>
+        </div>
+      ))}
     </div>
   );
 }
@@ -190,6 +212,9 @@ function Workspace({ shell }: { shell: Shell }) {
   const s = shell.store;
   const d = s.activeDesign;
   const invalid = shell.isBlockDiagram ? [...shell.routesFor(shell.data()).values()].filter(r => !r.valid).length : 0;
+  const m = shell.module, data = d ? s.data(d.id) : undefined;
+  const stats = m?.stats && data ? m.stats(data as never) : '';
+  const hint = m?.emptyHint && data ? m.emptyHint(data as never) : null;
   return (
     <div className="af-shell">
       <AppBar shell={shell} />
@@ -199,16 +224,21 @@ function Workspace({ shell }: { shell: Shell }) {
           <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />
           <CanvasLegend shell={shell} />
+          {hint && <p className="af-empty-hint">{t(hint)}</p>}
         </section>
         <InspectorPane shell={shell} />
       </div>
       <footer className="af-statusbar">
-        <Status shell={shell} />
+        {d && <span className="af-status-kind">{t(`design.type.${d.type}` as MessageKey)}</span>}
+        {stats && <span className="af-status-stats">{stats}</span>}
         {invalid > 0 && <span className="af-status-warning">{t('status.invalidRoutes', { count: invalid })}</span>}
         {shell.embeddedStatus.text && <span className="af-status-embedded">{shell.embeddedStatus.text}</span>}
         {shell.embeddedStatus.warn && <span className="af-status-warning">{shell.embeddedStatus.warn}</span>}
+        <span className="af-spacer" />
+        <span className={`af-status-saved${s.dirty ? ' is-dirty' : ''}`}>{t(s.dirty ? 'status.unsaved' : 'status.saved')}</span>
         {!shell.module?.embedded && <span className="af-status-zoom">{t('status.zoom', { zoom: Math.round(shell.camera.z * 100) })}</span>}
       </footer>
+      <Toasts shell={shell} />
     </div>
   );
 }

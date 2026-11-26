@@ -24,6 +24,10 @@ import { Emitter } from './use-store';
 
 export type Screen = 'start' | 'workspace';
 export interface Message { key: MessageKey; vars?: Vars; tone: 'info' | 'error' }
+/** A notification shown over the workspace (V2 af2-toast): at most 3, newest last. */
+export interface Toast extends Message { id: number }
+export const TOAST_MAX = 3;
+let toastSeq = 0;
 export type Dialog =
   | null
   | { kind: 'export' }
@@ -58,6 +62,7 @@ export class Shell {
   readonly gestures: Gestures;
   screen: Screen = 'start';
   message: Message | null = null;
+  toasts: Toast[] = [];
   dialog: Dialog = null;
   inspectorOpen = true;
   viewport: Viewport = { w: 800, h: 600 };
@@ -113,8 +118,17 @@ export class Shell {
   run(id: string, arg?: unknown): Promise<boolean> { return this.registry.run(id, this, arg); }
   enabled(id: string): boolean { return this.registry.isEnabled(id, this); }
 
-  notify(key: MessageKey, vars?: Vars, tone: Message['tone'] = 'info'): void { this.message = { key, vars, tone }; this.ui.emit(); }
-  refused(r: Refusal): void { this.message = { key: 'canvas.refused.text', vars: { text: refusalText(r) }, tone: 'error' }; this.ui.emit(); }
+  notify(key: MessageKey, vars?: Vars, tone: Message['tone'] = 'info'): void {
+    this.message = { key, vars, tone };
+    this.toasts = [...this.toasts, { ...this.message, id: ++toastSeq }].slice(-TOAST_MAX);
+    this.ui.emit();
+  }
+  refused(r: Refusal): void { this.notify('canvas.refused.text', { text: refusalText(r) }, 'error'); }
+  dismissToast(id: number): void {
+    if (!this.toasts.some(x => x.id === id)) return;
+    this.toasts = this.toasts.filter(x => x.id !== id);
+    this.ui.emit();
+  }
   openDialog(d: Dialog): void { this.dialog = d; this.ui.emit(); }
   closeDialog(): void { this.dialog = null; this.ui.emit(); }
   setViewport(v: Viewport): void { this.viewport = v; }
@@ -127,6 +141,7 @@ export class Shell {
     this.gestures.select([]);
     this.screen = 'workspace';
     this.message = null;
+    this.toasts = [];
     this.pendingFit = !!choice.template;
     this.ui.emit();
   }
@@ -150,6 +165,7 @@ export class Shell {
       this.gestures.select([]);
       this.screen = 'workspace';
       this.pendingFit = false;
+      this.toasts = [];
       this.notify('file.opened');
     } else {
       this.notify(openMessage(r), r.reason === 'invalid' ? { count: r.errors.length } : undefined, 'error');

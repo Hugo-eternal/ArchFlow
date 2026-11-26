@@ -97,7 +97,8 @@
 ### 3J 完整殼層
 - [x] 3.39 `shell`：app bar、命令列（L3）
 - [x] 3.40 `shell`：指令面板、快捷鍵（L3）
-- [ ] 3.41 `shell`：Tools 中心、狀態列、提示、語系切換（不重新載入）（L3）
+- [x] 3.41 `shell`：Tools 中心、狀態列、提示、語系切換（不重新載入）（L3）
+- [ ] 3.41b `designs/function`：版面設定——對齊 / 格線（V2 workspaceManage 面板）、版面與字體（V2 #chineseFont / #englishFont 與字級）、依連線排列接腳（V2 afArrangeSelectedIO）（L3；改到 render 字型時加跑 golden）
 ### 3K 收尾
 - [ ] 3.42 CSS 整併：移除重複規則與多餘 `!important`（L1）
 - [ ] 3.43 移植清單全部勾選；確認刪除項目（audit §4）都未移植（L3）
@@ -115,8 +116,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3J 完整殼層：3.39、3.40 完成
-- **下一步**：3.41 `shell`：Tools 中心、狀態列、提示、語系切換（不重新載入）（L3）。V2 對照表還沒註冊的命令（`shell.controller.test`「registers every V3 command …」的 `later`）：`view.stats`（V2 #stats：方塊 / 線路 / 接點數量，放狀態列）、`theme.cjkFont`、`theme.latinFont`（V2 版面與字體；schema 有 `theme` 嗎？先查 `io/schema-types`）、`design.manage`（V2 workspaceManage：設計管理）、`layout.arrangeSelectedPorts`（V2 afArrangeSelectedIO：排列選取方塊的接腳）——逐一註冊或在 `V2_HIDDEN_ELEMENT_COMMANDS` 改為 null 並註明理由，最後把 `later` 清空。語系切換目前已不重新載入（`setLocale` + `onLocaleChange`），3.41 要確認所有畫面（含 vendor iframe、工具）跟著切換或寫明限制。
+- **目前階段**：階段 3（模組化重構）——3J 完整殼層：3.39–3.41 完成，3.41b 已排入
+- **下一步**：3.41b（新增於 3.41：V2 對照表剩下的 4 個命令是完整功能，不是殼層的一部分，所以獨立成一步）。內容：(1) `design.manage`——V2「對齊／格線」面板（`#maintenanceWorkspace` = `uxHorizontal` 所在的對齊按鈕列 + `ggBar`：格線顯示、格距 5–40 與 10/20/40 快捷、預覽／套用格線對齊、檢查格線）；V3 目前**沒有任何格線設定介面**（`grid` 只能來自範本 / 檔案），對齊工具也還沒有。先用 `grep -o` 讀 V2 `uxHorizontal` 父元素的按鈕與 gg* 的 onclick，決定 V3 的對話框或面板；格線對齊可用 `core/grid.normalize`。(2) `theme.cjkFont` / `theme.latinFont`——V2「版面與字體」對話框（中文字體 3 選 1、英文字體、IC 型號 / 副標 / 標籤 / 量測字級，`diagramTheme()`）；V3 schema 已有 `BlockDiagram.theme`（`latinFont`、`cjkFont`、四個字級），`render/blocks` 只用字級、**沒用字型**——要補上 font-family（畫布與匯出），注意匯出 SVG 黃金檔。(3) `layout.arrangeSelectedPorts`——V2 `afArrangeIO(n, true, direction)`（legacy L1263：in → 左 / out → 右、未鎖接腳依連線另一端的平均座標排序、放到 0.06–0.88 的槽位並避開鎖定接腳）；V3 接腳沒有鎖定（3.11 決定），選取一個方塊時可用。完成後把 `shell.controller.test`「registers every V3 command …」的 `later` 清空。之後是 3K 收尾（3.42 起）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -241,10 +242,11 @@
 - 整理預覽 3.38：存檔新增 `wire.label.auto?: { x, y, signature }`（使用者決定；`io/schema` / `schema-types`、轉換器對應 V2 `afUnifiedLabel`；`render/wires.labelPosition` 在沒有手動 mark 且 signature = 目前路徑（simplify 後的 JSON）時使用）。`src/layout/apply.ts`：`applyCandidate`（再驗證一次、寫回方塊座標、變更的線（refined 時所有未鎖的線）寫入 `wire.route` + `routing: 'manual'`、標籤寫入 `label.auto`；寫回後 `routeAll` 必須等於預覽路徑，否則 `ApplyError('mismatch')`）、`routeSignature`、`previewOf`。殼層：命令 `layout.arrangePreview`（V2 隱藏按鈕對照表預定的 id；工具列「自動整理」，只在方塊圖）、`src/shell/OrganizeDialog.tsx`（模式 radio、候選 radiogroup 與「可套用」、前後對照（`render/*` 畫在共同 viewBox）、指標表、錯誤訊息 i18n、套用前以資料 JSON 比對是否已改變——`store.data()` 每次回傳新副本，不能用物件相等）；`Dialogs.Modal` 改為 export。計算目前同步執行（60 方塊 / 100 線上限內），尚未做 V2 的分段讓出與取消。測試：`tests/unit/layout.apply.test.ts`、`v3-function.spec`「organize」。
 - 殼層 3.39：`src/shell/AppBar.tsx`——`AppBar`（`header.af-appbar`：品牌、專案名稱按鈕 → `project.rename`、未存檔「•」、目前設計；`nav.af-menubar` 的 `MenuButton`（WAI-ARIA menu button：ArrowDown / ArrowUp 開在第一 / 最後一項、Home / End、Esc 回到按鈕、Tab 或點外面關閉；沒註冊的命令與多餘分隔線自動略過）；右側 `project.save`、`export.open`、`LocaleSelect`）與 `CommandBar`（`.af-cmdbar` role=toolbar「工具列」：依設計類型分組 `af-cmd-group`，不換行、放不下時橫向捲動，≤ 1280 px 隱藏群組標題）。`CommandButton` / `CommandPicker` / `LocaleSelect` / `useLocale` 從 `App.tsx` 移到這裡。新增命令（controller）：`project.create`（參數 `{ name, choice }`，啟動畫面表單走它）、`project.newFromExamples`、`project.cancelNew`、`project.rename`、`design.duplicate`、`design.loadExample`、`wire.reroute`、`wire.clearRoutes`；時程命令 id 改為 `schedule.addBranch` / `schedule.autoArrange`。E2E 中未存檔標記改查 `.af-unsaved`（不再在專案名稱內）、「新專案」改從「檔案」選單、「小工具」改為選單按鈕（名稱相同的選單按鈕要用 `exact: true`，否則會同時匹配「新增設計」等按鈕）。
 - 殼層 3.40：`src/shell/palette.ts`（`paletteItems(shell)`：recent / cmd / design / item 四段，隱藏需要參數或無意義的命令（`palette.open`、`design.switch`、`project.create`、`selection.nudge*`）與停用的命令；`filterPalette` 每個字都要出現；最近使用存在 `Shell.recentCommands`（`rememberCommand`，5 個，不存檔））、`src/shell/shortcuts.ts`（`shortcutLabel`：所有快捷鍵以「 / 」串接；`shortcutSections`：依命令 group 分節、同名命令併成一列）、`src/shell/PaletteDialog.tsx`（`PaletteDialog`：combobox + listbox、`aria-activedescendant`、上下鍵 / PageUp / PageDown / Ctrl+Home / Ctrl+End、Enter、Esc、點外面關閉、焦點回原處；`HelpDialog`：用法說明 + 快捷鍵表）。`DesignModule.findItems?(d)` → `FindItem { id, label, hint, at, select }`（function：方塊，料號優先；schedule：任務，提示為 T01…），`Shell.reveal(item)` 選取並 `centreOn`。命令：`palette.open`（Mod+K，需要專案）、`help.open`（Mod+?）。`formatShortcut` 方向鍵改為箭頭、Escape 改為 Esc。
+- 殼層 3.41：狀態列（`App.tsx` Workspace footer：設計類型、`DesignModule.stats?(d)`、無法繞通、vendor 狀態、`af-spacer`、已儲存 / 未儲存、縮放）；通知 `Shell.toasts`（`notify` 同時設 `message`（測試與啟動畫面仍讀它）並推入 toasts，最多 `TOAST_MAX` 3、`dismissToast(id)`；`newProject` / 開檔成功時清空；`Toasts` 元件負責計時 3.2 s / 6 s）；`DesignModule.emptyHint?(d)` → `.af-empty-hint`；語系切換：`EmbeddedFrame` 的 srcdoc 依 `useLocale()` 重算、iframe `key={lang}`（重新 `setFrame`），`ToolDialog` 的文件快取 key 改為 `id:lang`。新 token `--color-toast` / `--color-on-toast`（深色模式 ink 與 on-accent 同色，不能共用）。V2 對照表 `stats` 改為 null（狀態列文字，不是命令）。修正 `inspector/common.blockInspector`：store 切到非方塊圖時不讀 `blocks`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.40：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 51 檔 421 項、Playwright 31 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3（3.41：模組標註、i18n、token（172 組對比）、vendor、型別、建置、產物檢查、Vitest 52 檔 426 項、Playwright 32 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

@@ -226,6 +226,8 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   },
   commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand, ...ROLES.map(powerBlockCommand)],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
+  stats: d => t('status.stats.diagram', { blocks: d.blocks.length, ports: d.blocks.reduce((n, b) => n + b.ports.length, 0), wires: d.wires.length, junctions: d.junctions.length }),
+  emptyHint: d => (d.blocks.length || d.texts.length || d.frames.length ? null : 'hint.empty.diagram'),
   // V2 palette: blocks by display name (part number first, as drawn), other title and reference as hint
   findItems: d => d.blocks.slice(0, 400).flatMap(b => {
     const label = b.partNumber || b.title;

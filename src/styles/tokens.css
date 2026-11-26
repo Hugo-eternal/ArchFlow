@@ -17,6 +17,8 @@
   --color-muted: #5F6C77;
   --color-faint: #5C6872;
   --color-on-accent: #FFFFFF;
+  --color-toast: #14202C;         /* notification background */
+  --color-on-toast: #FFFFFF;
 
   /* chrome (app bar) */
   --color-ink: #14202C;
@@ -296,6 +298,8 @@
     --color-accent-hover: #8DBBE8;
     --color-accent-tint: #1C3247;
     --color-on-accent: #0B1117;
+    --color-toast: #E3E9EE;
+    --color-on-toast: #0B1117;
     --color-copper-tint: #3A2A16;
     --color-danger: #F08A7E;
     --color-success: #5CC495;
@@ -388,6 +392,8 @@
   --color-accent-hover: #8DBBE8;
   --color-accent-tint: #1C3247;
   --color-on-accent: #0B1117;
+  --color-toast: #E3E9EE;
+  --color-on-toast: #0B1117;
   --color-copper-tint: #3A2A16;
   --color-danger: #F08A7E;
   --color-success: #5CC495;
