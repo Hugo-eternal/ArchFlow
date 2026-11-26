@@ -9,6 +9,7 @@ import { setLocale, t } from '../../src/core/i18n';
 import { GridError } from '../../src/core/grid';
 import { ModelError } from '../../src/model/types';
 import { V2_HIDDEN_ELEMENT_COMMANDS } from '../../src/core/commands';
+import * as m from '../../src/model/diagram';
 
 beforeEach(() => setLocale('zh-Hant'));
 
@@ -20,14 +21,59 @@ describe('shell controller', () => {
     expect(s.enabled('project.open')).toBe(true);
   });
 
-  it('registers the V3 commands that replace V2 hidden buttons available so far', () => {
+  it('registers every V3 command that replaces a V2 hidden button, except those of 3.40 / 3.41', () => {
     const s = new Shell();
-    const now = ['block.add', 'text.add', 'selection.delete', 'history.undo', 'view.fit', 'view.toggleInspector', 'export.open',
-      'project.save', 'project.open', 'project.new', 'design.add', 'design.rename', 'design.delete', 'design.switch'];
-    for (const id of now) {
-      expect(s.registry.has(id), id).toBe(true);
-      expect(Object.values(V2_HIDDEN_ELEMENT_COMMANDS)).toContain(id);
-    }
+    // help, statistics, fonts, the design manager and "arrange selected ports" come with the
+    // command palette / tools centre (3.40, 3.41)
+    const later = new Set(['help.open', 'view.stats', 'theme.cjkFont', 'theme.latinFont', 'design.manage', 'layout.arrangeSelectedPorts']);
+    const ids = [...new Set(Object.values(V2_HIDDEN_ELEMENT_COMMANDS).filter((x): x is string => !!x))];
+    const missing = ids.filter(id => !later.has(id) && !s.registry.has(id));
+    expect(missing).toEqual([]);
+  });
+
+  it('3.39 commands: create / cancel from the start screen, rename, duplicate, reroute', async () => {
+    const s = new Shell();
+    expect(s.enabled('project.cancelNew')).toBe(false);
+    await s.run('project.create', { name: 'P', choice: { type: 'function' } });
+    expect(s.screen).toBe('workspace');
+    expect(s.store.projectName).toBe('P');
+    await s.run('project.new');
+    expect(s.screen).toBe('start');
+    expect(s.enabled('project.cancelNew')).toBe(true);
+    await s.run('project.cancelNew');
+    expect(s.screen).toBe('workspace');
+
+    await s.run('project.rename');
+    expect(s.dialog).toMatchObject({ kind: 'prompt', value: 'P' });
+    (s.dialog as { ok: (v: string) => void }).ok('  Q  ');
+    expect(s.store.projectName).toBe('Q');
+    expect(s.store.dirty).toBe(true);
+
+    await s.run('block.add');
+    await s.run('block.add');
+    const [a, b] = s.data().blocks;
+    s.edit(d => {
+      let x = m.addPort(d, a.id, 'out').data;
+      x = m.addPort(x, b.id, 'in').data;
+      return m.connect(x, { block: a.id, port: x.blocks[0].ports[0].id }, { block: b.id, port: x.blocks[1].ports[0].id }).data;
+    });
+    s.edit(d => ({ ...d, wires: d.wires.map(w => ({ ...w, route: [{ x: 1, y: 1 }] })) }));
+    const steps = s.store.activeDesign!.history.undoDepth;
+    await s.run('wire.reroute');
+    expect(s.data().wires[0].route).toBeUndefined();
+    expect(s.store.activeDesign!.history.undoDepth).toBe(steps + 1);
+    s.gestures.select([{ kind: 'wire', id: s.data().wires[0].id }, { kind: 'block', id: a.id }]);
+    expect(s.enabled('wire.clearRoutes')).toBe(true);
+    await s.run('wire.clearRoutes');
+    expect(s.gestures.selection).toEqual([{ kind: 'block', id: a.id }]);
+
+    const first = s.store.activeDesignId;
+    await s.run('design.duplicate');
+    expect(s.store.designs).toHaveLength(2);
+    expect(s.store.activeDesignId).not.toBe(first);
+    expect(s.store.activeDesign!.name).toBe(`${s.store.designs[0].name} 副本`);
+    expect(s.data()).toEqual(s.store.data(first));
+    expect(s.store.activeDesign!.history.canUndo).toBe(false);
   });
 
   it('adds blocks, ports and text at the view centre as one undo step each', async () => {

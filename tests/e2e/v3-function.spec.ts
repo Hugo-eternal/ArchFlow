@@ -162,7 +162,7 @@ test('function: switch between the function and power views (button, Shift+V), s
   const signal = (await data(page)).wires.filter(w => (w as { kind: string }).kind !== 'power').length;
   expect(signal).toBeGreaterThan(0);
   await expect(page.locator('svg.af-canvas .af-wire-group.is-muted')).toHaveCount(signal);
-  await expect(page.locator('.af-project-name')).toContainText('•');
+  await expect(page.locator('.af-unsaved')).toBeVisible();
   await expect(page.getByRole('button', { name: '復原' })).toBeDisabled();
 
   // Shift+V on the canvas goes back

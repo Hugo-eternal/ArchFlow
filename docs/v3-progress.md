@@ -95,7 +95,7 @@
 - [x] 3.37d `layout/` 排列、候選、保護檢查、逐條改善與入口 `organize()`（layout 模式與 V2 一致、決定性）（L3）
 - [x] 3.38 `layout/` 整理預覽（RC4）（實際 L4：存檔欄位 `wire.label.auto`）
 ### 3J 完整殼層
-- [ ] 3.39 `shell`：app bar、命令列（L3）
+- [x] 3.39 `shell`：app bar、命令列（L3）
 - [ ] 3.40 `shell`：指令面板、快捷鍵（L3）
 - [ ] 3.41 `shell`：Tools 中心、狀態列、提示、語系切換（不重新載入）（L3）
 ### 3K 收尾
@@ -115,8 +115,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3I 自動整理全部完成（3.36–3.38）；接著 3J 完整殼層
-- **下一步**：3.39 `shell`：app bar、命令列（L3）。先讀 `docs/v3-prompts.md` 階段 3 與 `docs/v3-plan.md` 對殼層的要求，以及 `src/core/commands.ts` 的 `V2_HIDDEN_ELEMENT_COMMANDS`（42 個 V2 隱藏按鈕 → V3 命令 id，殼層 3.39–3.41 必須註冊每個非 null 的命令；目前已註冊的可用 `shell.controller.test` 的 `now` 清單查）。目前工具列一行塞了所有按鈕、在 1300 px 寬就換成兩行（見 3.38 截圖），app bar 需重新規劃（分組、選單、溢出收合；UI/UX 規則用 `.claude/skills/ui-ux-pro-max`）。可沿用交接「階段 3 殼層 UI/UX 要求」清單（無障礙、24 px 點擊範圍、小螢幕收合等）。
+- **目前階段**：階段 3（模組化重構）——3J 完整殼層：3.39 完成
+- **下一步**：3.40 `shell`：指令面板、快捷鍵（L3）。指令面板列出 `shell.registry` 所有可執行命令（名稱 + 快捷鍵，停用的灰掉），Mod+K 開啟（V2 app bar 有搜尋鈕 `.af2-search`）；快捷鍵說明（help.open）。V2 對照表還沒註冊的命令（`shell.controller.test`「registers every V3 command …」的 `later`）：`help.open`、`view.stats`、`theme.cjkFont`、`theme.latinFont`、`design.manage`、`layout.arrangeSelectedPorts`——3.40 / 3.41 要逐一註冊或在對照表註明不做的理由，並把 `later` 清空。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -239,10 +239,11 @@
 - 自動整理 3.37c：`src/layout/labels.ts`——`labelWidth`（量字 + 10，Measure 由外部傳入）、`defaultLabels`（V2 uiDefaultLabels；文字 = `render/wires.wireLabel(wire, view)`，`EngineModel` 新增 `view`）、`liveLabels`（V2 讀畫面標籤位置，V3 用 `render/wires.labelPosition`；手動標記釘住）、`arrangeLabels`（V2 三層：逐段試位置與計分、同源分支版本取衝突較少者、手動標記不動）。V2 `afUnifiedLabel`（上次整理存的標籤）V3 沒有對應欄位，該分支不移植。測試 `tests/unit/layout.labels.test.ts`（量字用 golden 記錄的寬度）：每個候選的標籤位置與 V2 相同（x 容差 0.5，因 golden 寬度四捨五入）；**已知差異**：scrambled 圖上 V3 畫布的標籤位置（最長段、上方 7 px）與 V2 畫面（最後一段 > 95 px 的水平段、避讓位移）不同，屬於 `render/wires` 與 V2 晚期標籤圖層的差異（3.19 記錄過標籤去重未移植），整理引擎本身一致。
 - 自動整理 3.37d：`src/layout/place.ts`（`LayoutError`、`frozenNodes`、`portFrozen`、`place`（V2 uiLayout：expanded 自左上角放大 1.65 倍、layered 依連接分層，含接點時 layered 拒絕、有環拒絕））；`src/layout/plan.ts`（`changesOf`、`verify`（V2 uiVerify：去掉位置後模型不可變、未授權 / 凍結的方塊 / 接腳 / 線不可動、方塊不可重疊）、`candidate`（V2 uiCandidate 兩層）、`refine`（V2 v4Refine：最多 3 輪逐條改善）、`organize(d, { mode, ids, measure, clock, labels })`（V2 v4Generate 的運算：上限 60 方塊 / 100 線、routes 只有 preserved、layout 三種、refined 插在最前、選最佳）、`ready`、`hasChanges`、`LIMITS`）。`uiOrderPorts` 只在可移動接腳時呼叫，整理對話框永遠 `ports: false`——未移植。測試 `tests/unit/layout.plan.test.ts`：三份 golden 兩種模式，候選種類 / 順序 / 方塊座標 / 路徑 / 標籤 / 指標 / 變更數全與 V2 相同；打亂圖選中逐條改善且可套用；layout 模式有選取線、超過上限時拒絕；鎖定方塊不動；有接點時 layered 拒絕。
 - 整理預覽 3.38：存檔新增 `wire.label.auto?: { x, y, signature }`（使用者決定；`io/schema` / `schema-types`、轉換器對應 V2 `afUnifiedLabel`；`render/wires.labelPosition` 在沒有手動 mark 且 signature = 目前路徑（simplify 後的 JSON）時使用）。`src/layout/apply.ts`：`applyCandidate`（再驗證一次、寫回方塊座標、變更的線（refined 時所有未鎖的線）寫入 `wire.route` + `routing: 'manual'`、標籤寫入 `label.auto`；寫回後 `routeAll` 必須等於預覽路徑，否則 `ApplyError('mismatch')`）、`routeSignature`、`previewOf`。殼層：命令 `layout.arrangePreview`（V2 隱藏按鈕對照表預定的 id；工具列「自動整理」，只在方塊圖）、`src/shell/OrganizeDialog.tsx`（模式 radio、候選 radiogroup 與「可套用」、前後對照（`render/*` 畫在共同 viewBox）、指標表、錯誤訊息 i18n、套用前以資料 JSON 比對是否已改變——`store.data()` 每次回傳新副本，不能用物件相等）；`Dialogs.Modal` 改為 export。計算目前同步執行（60 方塊 / 100 線上限內），尚未做 V2 的分段讓出與取消。測試：`tests/unit/layout.apply.test.ts`、`v3-function.spec`「organize」。
+- 殼層 3.39：`src/shell/AppBar.tsx`——`AppBar`（`header.af-appbar`：品牌、專案名稱按鈕 → `project.rename`、未存檔「•」、目前設計；`nav.af-menubar` 的 `MenuButton`（WAI-ARIA menu button：ArrowDown / ArrowUp 開在第一 / 最後一項、Home / End、Esc 回到按鈕、Tab 或點外面關閉；沒註冊的命令與多餘分隔線自動略過）；右側 `project.save`、`export.open`、`LocaleSelect`）與 `CommandBar`（`.af-cmdbar` role=toolbar「工具列」：依設計類型分組 `af-cmd-group`，不換行、放不下時橫向捲動，≤ 1280 px 隱藏群組標題）。`CommandButton` / `CommandPicker` / `LocaleSelect` / `useLocale` 從 `App.tsx` 移到這裡。新增命令（controller）：`project.create`（參數 `{ name, choice }`，啟動畫面表單走它）、`project.newFromExamples`、`project.cancelNew`、`project.rename`、`design.duplicate`、`design.loadExample`、`wire.reroute`、`wire.clearRoutes`；時程命令 id 改為 `schedule.addBranch` / `schedule.autoArrange`。E2E 中未存檔標記改查 `.af-unsaved`（不再在專案名稱內）、「新專案」改從「檔案」選單、「小工具」改為選單按鈕（名稱相同的選單按鈕要用 `exact: true`，否則會同時匹配「新增設計」等按鈕）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4 自動項目（3.38：模組標註、i18n、token、vendor、型別、建置（dist 1.86 MB）、產物檢查、Vitest 50 檔 413 項、Playwright 29 項（`--workers=1`）全數通過；遷移：schemaVersion 維持 3、`io/migrate` 仍空、`io.project-file` / `io.schema` 29 項通過）。**人工驗收待使用者確認**：開 `dist/ArchFlow.html`，建立入門方塊圖，把方塊拖亂後按工具列「自動整理」——兩種方式、各方案前後對照與指標、「可套用」標示；套用後一次「復原」回到原狀；存檔再開啟，整理後的標籤位置保留（線路改動後標籤回到預設位置）。前一步 3.37d：L3（模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 49 檔 405 項、Playwright 28 項（`--workers=1`）全數通過）。
+- **最後通過的驗證層級**：L3（3.39：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 50 檔 414 項、Playwright 30 項（`--workers=1`）全數通過；app bar / 命令列在 1440 / 1300 / 1024 px 各為一行、頁面無橫向捲動）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

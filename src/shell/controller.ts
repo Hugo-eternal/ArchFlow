@@ -13,7 +13,7 @@ import { frameApi, installHosts, installToolHosts } from './embedded';
 import { ToolRegistry } from '../tools/module';
 import type { Selection } from '../core/store';
 import { ModelError } from '../model/types';
-import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
+import { addBlock, addFrame, addPort, addText, clearRoutes, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
 import { routeAll, type Route } from '../router/full-path';
 import { estimateWidth, type Measure } from '../render/texts';
 import { Gestures } from '../interaction/gestures';
@@ -247,6 +247,40 @@ export function shellCommands(): Command<Shell>[] {
       id: 'design.add', label: 'cmd.designAdd', group: 'design', enabled: hasProject,
       run: s => s.openDialog({ kind: 'newDesign' }),
     },
+    // the start screen's form (V2 #createProject, its "load examples" box = a template choice)
+    {
+      id: 'project.create', label: 'start.create', group: 'project', enabled: s => s.screen === 'start',
+      run: (s, arg) => { const a = (arg ?? {}) as { name?: string; choice?: DesignChoice }; s.newProject(a.name ?? '', a.choice); },
+    },
+    {
+      id: 'project.newFromExamples', label: 'cmd.projectFromExample', group: 'project', enabled: s => s.screen === 'start',
+      run: (s, arg) => { const m = s.designs.list()[0]; s.newProject(typeof arg === 'string' ? arg : '', { type: m.type, template: m.templates[0]?.id }); },
+    },
+    // back to the open project from the start screen (V2 #startCancel)
+    {
+      id: 'project.cancelNew', label: 'start.cancel', group: 'project', enabled: s => s.screen === 'start' && !!s.store.activeDesign,
+      run: s => { s.screen = 'workspace'; s.ui.emit(); },
+    },
+    {
+      id: 'project.rename', label: 'cmd.projectRename', group: 'project', enabled: hasProject,
+      run: s => s.openDialog({
+        kind: 'prompt', title: 'cmd.projectRename', label: 'start.projectName', value: s.store.projectName,
+        ok: name => { if (name.trim()) s.store.rename(name.trim().slice(0, 100)); s.closeDialog(); },
+      }),
+    },
+    {
+      id: 'design.duplicate', label: 'cmd.designDuplicate', group: 'design', enabled: hasProject,
+      run: s => {
+        const d = s.store.activeDesign!;
+        s.gestures.cancel();
+        s.gestures.select([]);
+        s.store.addDesign(d.type, t('design.copyName', { name: d.name }), JSON.parse(JSON.stringify(s.store.data(d.id))), { activate: true });
+        s.pendingFit = true;
+        s.ui.emit();
+      },
+    },
+    // V2 #examplesBtn: a design from a template, through the new-design dialog
+    { id: 'design.loadExample', label: 'cmd.designFromExample', group: 'design', enabled: hasProject, run: s => s.openDialog({ kind: 'newDesign' }) },
     {
       id: 'design.rename', label: 'cmd.designRename', group: 'design', enabled: hasProject,
       run: s => {
@@ -316,6 +350,23 @@ export function shellCommands(): Command<Shell>[] {
         const r = s.edit(x => { const out = addFrame(x, rect, t('frame.defaultName', { n: x.frames.length + 1 })); id = out.id; return out.data; });
         if (r.ok) s.gestures.select([{ kind: 'frame', id }]);
       },
+    },
+    // V2 #reroute: drop the manual route of the selected wires, or of every wire when none is selected
+    {
+      id: 'wire.reroute', label: 'cmd.wireReroute', group: 'wire', enabled: s => canEdit(s) && s.data().wires.length > 0,
+      run: s => {
+        const ids = s.gestures.selection.filter(i => i.kind === 'wire').map(i => i.id);
+        const r = s.edit(x => clearRoutes(x, ids.length ? ids : undefined));
+        if (!r.ok) return;
+        const invalid = [...s.routesFor(s.data()).values()].filter(x => !x.valid).length;
+        if (invalid) s.notify('wire.rerouteInvalid', { count: invalid }, 'error'); else s.notify('wire.rerouted');
+      },
+    },
+    // V2 #rcClearRoutes: clear the wire selection (the routing scope), without deleting anything
+    {
+      id: 'wire.clearRoutes', label: 'cmd.wireClearSelection', group: 'wire',
+      enabled: s => canEdit(s) && s.gestures.selection.some(i => i.kind === 'wire'),
+      run: s => s.gestures.select(s.gestures.selection.filter(i => i.kind !== 'wire')),
     },
     // the organize dialog (V2 RC4 v4Open): compare candidates, apply one as a single undo step
     { id: 'layout.arrangePreview', label: 'cmd.organize', group: 'view', enabled: s => canEdit(s) && s.store.data(s.store.activeDesignId) !== undefined, run: s => s.openDialog({ kind: 'organize' }) },

@@ -155,8 +155,8 @@ describe('panel and shell', () => {
     await s.run('schedule.append');
     expect(s.store.data(s.store.activeDesignId).tasks).toHaveLength(n + 1);
     expect(s.item?.kind).toBe('task');
-    expect(s.enabled('schedule.branch')).toBe(true);
-    await s.run('schedule.branch');
+    expect(s.enabled('schedule.addBranch')).toBe(true);
+    await s.run('schedule.addBranch');
     expect(s.store.data(s.store.activeDesignId).tasks).toHaveLength(n + 3);
     s.store.undo();
     expect(s.store.data(s.store.activeDesignId).tasks).toHaveLength(n + 1);

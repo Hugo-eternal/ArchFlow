@@ -27,13 +27,13 @@ test('flowchart: template in the vendor editor, edits saved, undo through the sh
   const frame = page.frameLocator('iframe[title="流程圖編輯器"]');
   await expect(frame.getByText('上電開始').first()).toBeVisible();
   await expect(page.locator('.af-statusbar')).toContainText('16 個圖形');
-  await expect(page.locator('.af-project-name')).not.toContainText('•');
+  await expect(page.locator('.af-unsaved')).toHaveCount(0);
   const n = await nodes(page);
 
   // add a shape from the editor's palette
   await frame.getByRole('button', { name: /^處理/ }).first().click();
   await expect.poll(() => nodes(page)).toBe(n + 1);
-  await expect(page.locator('.af-project-name')).toContainText('•');
+  await expect(page.locator('.af-unsaved')).toBeVisible();
 
   await page.getByRole('button', { name: '復原' }).click();
   await expect.poll(() => nodes(page)).toBe(n);

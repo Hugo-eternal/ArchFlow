@@ -61,19 +61,71 @@
 }
 
 /* workspace */
-.af-shell { display: grid; grid-template-rows: auto 1fr auto; height: 100%; }
+.af-shell { display: grid; grid-template-rows: auto auto 1fr auto; height: 100%; }
+
+/* app bar (V2 af2-appbar): brand, project / design, menus, save · export · language — one row */
 .af-appbar {
-  display: flex; align-items: center; gap: var(--space-3);
+  display: flex; align-items: center; gap: var(--space-2);
   min-height: var(--appbar-height);
   padding: var(--space-1) var(--space-3);
   background: var(--color-surface);
   border-bottom: var(--border-width) solid var(--color-rule);
 }
-.af-appbar-title { display: flex; align-items: baseline; gap: var(--space-2); min-width: 0; }
-.af-brand { font-weight: var(--weight-bold); color: var(--color-ink); }
-.af-project-name { color: var(--color-ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.af-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); flex: 1; }
-.af-toolbar-sep { width: var(--border-width); align-self: stretch; margin: var(--space-1) var(--space-1); background: var(--color-rule); }
+.af-brand { font-weight: var(--weight-bold); color: var(--color-ink); white-space: nowrap; }
+.af-crumbs { display: flex; align-items: center; gap: var(--space-1); min-width: 0; flex: 0 1 auto; }
+.af-project-name {
+  min-height: var(--touch-target); max-width: 28ch; padding: 0 var(--space-2);
+  border: var(--border-width) solid transparent; border-radius: var(--radius-sm); background: transparent;
+  color: var(--color-ink-2); font: inherit; cursor: pointer;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.af-project-name:hover { background: var(--color-hover); }
+.af-unsaved { color: var(--color-accent); font-weight: var(--weight-bold); }
+.af-crumb-sep { color: var(--color-faint); }
+.af-crumb-design { color: var(--color-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 24ch; }
+.af-menubar { display: flex; align-items: center; gap: var(--space-1); flex: 1; min-width: 0; }
+.af-appbar-actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+
+/* menu button + menu (WAI-ARIA menu button) */
+.af-menu { position: relative; }
+.af-menu-button { border-color: transparent; background: transparent; gap: var(--space-1); }
+.af-menu-caret { font-size: var(--text-xs); color: var(--color-muted); }
+.af-menu-button[aria-expanded="true"] { background: var(--color-hover); border-color: var(--color-rule-2); }
+.af-menu-list {
+  position: absolute; top: calc(100% + var(--space-1)); left: 0; z-index: var(--z-menu);
+  display: flex; flex-direction: column; min-width: 220px; padding: var(--space-1);
+  background: var(--color-surface); border: var(--border-width) solid var(--color-rule-2);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-pop);
+}
+.af-menu-item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  min-height: var(--touch-target); padding: 0 var(--space-3);
+  border: 0; border-radius: var(--radius-sm); background: transparent;
+  color: var(--color-text); font-size: var(--text-sm); text-align: left; cursor: pointer; white-space: nowrap;
+}
+.af-menu-item:hover:not(:disabled), .af-menu-item:focus-visible { background: var(--color-hover); }
+.af-menu-item:disabled { color: var(--color-faint); cursor: default; }
+.af-menu-kbd { font-family: inherit; font-size: var(--text-xs); color: var(--color-muted); }
+.af-menu-sep { height: var(--border-width); margin: var(--space-1) 0; background: var(--color-rule); }
+
+/* command bar (V2 af2-cmdbar): the active design's commands in captioned groups; one row that
+   scrolls sideways when it does not fit */
+.af-cmdbar {
+  display: flex; align-items: center; gap: var(--space-3);
+  min-height: var(--appbar-height);
+  padding: var(--space-1) var(--space-3);
+  overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+  background: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-rule);
+}
+.af-cmd-group { display: flex; align-items: center; gap: var(--space-1); flex-shrink: 0; }
+.af-cmd-group + .af-cmd-group { padding-left: var(--space-3); border-left: var(--border-width) solid var(--color-rule); }
+.af-cmd-caption { font-size: var(--text-xs); color: var(--color-muted); margin-right: var(--space-1); white-space: nowrap; }
+@media (max-width: 1280px) { .af-cmd-caption { display: none; } }
+@media (max-width: 720px) {
+  .af-brand, .af-crumb-sep, .af-crumb-design { display: none; }
+  .af-appbar { flex-wrap: wrap; }
+}
 
 .af-body { display: grid; grid-template-columns: 220px 1fr auto; min-height: 0; }
 .af-designs {

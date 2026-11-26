@@ -119,7 +119,8 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   expect(source).not.toContain('var(');
 
   // reopen the saved file from a new project
-  await page.getByRole('button', { name: '新專案' }).click();
+  await page.getByRole('button', { name: '檔案', exact: true }).click();
+  await page.getByRole('menuitem', { name: '新專案' }).click();
   await expect(page.getByRole('button', { name: '建立專案' })).toBeVisible();
   const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: '開啟 JSON 專案' }).click()]);
   await chooser.setFiles(await save.path());
@@ -222,5 +223,68 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   const source = fs.readFileSync(await svg.path(), 'utf8');
   expect(source).toContain('>需求確認<');
   expect(source.toLowerCase()).toContain('fill="#f6faf9"');
+  expect(errors).toEqual([]);
+});
+
+test('app bar and command bar (3.39): one row each, menus by keyboard, rename, duplicate, back from the start screen', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  for (const width of [1440, 1300, 1024]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('file://' + DIST);
+    await page.getByRole('button', { name: '建立專案' }).click();
+    for (const sel of ['header.af-appbar', '.af-cmdbar']) {
+      const h = await page.locator(sel).evaluate(e => e.getBoundingClientRect().height);
+      expect(h, `${sel} at ${width}px`).toBeLessThanOrEqual(60); // one row: a 44 px button + padding + border
+    }
+    // the page itself never scrolls sideways
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.screenshot({ path: path.resolve(HERE, '../../test-results/v3-appbar-1024.png') });
+
+  // keyboard: ArrowDown opens on the first item, ArrowUp wraps to the last enabled, Escape returns focus
+  const file = page.getByRole('button', { name: '檔案', exact: true });
+  await file.focus();
+  await page.keyboard.press('ArrowDown');
+  const menu = page.getByRole('menu', { name: '檔案' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: '新專案' })).toBeFocused();
+  await page.keyboard.press('ArrowUp');
+  await expect(menu.getByRole('menuitem', { name: '匯出' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(file).toBeFocused();
+  // a click outside closes it
+  await file.click();
+  await expect(menu).toBeVisible();
+  await page.locator('svg.af-canvas').click({ position: { x: 20, y: 20 } });
+  await expect(menu).toBeHidden();
+
+  // rename the project from its name in the app bar
+  await page.locator('.af-project-name').click();
+  await page.getByRole('dialog').getByRole('textbox').fill('電源板');
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await expect(page.locator('.af-project-name')).toHaveText('電源板');
+  await expect(page.locator('.af-unsaved')).toBeVisible();
+
+  // duplicate the design from the design menu
+  await page.getByRole('button', { name: '設計', exact: true }).click();
+  await page.getByRole('menuitem', { name: '複製設計' }).click();
+  await expect(page.getByRole('navigation', { name: '設計清單' }).getByRole('button', { name: /副本/ })).toHaveCount(1);
+
+  // the command bar follows the design type: a schedule has its own commands, no block insert
+  await page.getByRole('button', { name: '新增設計' }).click();
+  await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  const bar = page.getByRole('toolbar', { name: '工具列' });
+  await expect(bar.getByRole('button', { name: '新增任務' })).toBeVisible();
+  await expect(bar.getByRole('button', { name: '新增方塊' })).toHaveCount(0);
+
+  // back from the start screen without losing the project
+  await page.getByRole('button', { name: '檔案', exact: true }).click();
+  await page.getByRole('menuitem', { name: '新專案' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
+  await page.getByRole('button', { name: '返回目前專案' }).click();
+  await expect(page.locator('.af-project-name')).toHaveText('電源板');
   expect(errors).toEqual([]);
 });

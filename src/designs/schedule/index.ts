@@ -52,7 +52,7 @@ function scheduleCommands(): Command<DesignCommandContext>[] {
       run: c => { let id = ''; if (c.editDesign(d => { const r = appendTask(d as ScheduleData, t('schedule.task.newTitle'), selectedTask(c)); id = r.id; return r.data; })) added(c, id); },
     },
     {
-      id: 'schedule.branch', label: 'cmd.scheduleBranch', group: 'schedule', enabled: c => isSchedule(c) && !!selectedTask(c),
+      id: 'schedule.addBranch', label: 'cmd.scheduleBranch', group: 'schedule', enabled: c => isSchedule(c) && !!selectedTask(c),
       run: c => {
         const parent = selectedTask(c)!;
         let id = '';
@@ -60,7 +60,7 @@ function scheduleCommands(): Command<DesignCommandContext>[] {
       },
     },
     {
-      id: 'schedule.arrange', label: 'cmd.scheduleArrange', group: 'schedule', enabled: isSchedule,
+      id: 'schedule.autoArrange', label: 'cmd.scheduleArrange', group: 'schedule', enabled: isSchedule,
       run: c => { if (c.editDesign(d => resetOffsets(d as ScheduleData))) { c.fitView(); c.notify('schedule.arranged'); } },
     },
   ];

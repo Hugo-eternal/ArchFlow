@@ -27,14 +27,14 @@ test('sequence: template in the vendor editor, edits saved, undo through the she
   const frame = page.frameLocator('iframe[title="上電時序編輯器"]');
   await expect(frame.getByText('VBAT（KL30）').first()).toBeVisible();
   await expect(page.locator('.af-statusbar')).toContainText('全部上電完成於');
-  await expect(page.locator('.af-project-name')).not.toContainText('•');
+  await expect(page.locator('.af-unsaved')).toHaveCount(0);
   const n = await rails(page);
   expect(n).toBe(12);
 
   // an edit inside the editor comes back to the project
   await frame.getByRole('button', { name: '新增電源軌' }).first().click();
   await expect.poll(() => rails(page)).toBe(n + 1);
-  await expect(page.locator('.af-project-name')).toContainText('•');
+  await expect(page.locator('.af-unsaved')).toBeVisible();
 
   // the shell's undo is the editor's undo
   const undo = page.getByRole('button', { name: '復原' });

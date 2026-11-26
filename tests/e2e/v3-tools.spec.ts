@@ -29,11 +29,17 @@ test('RSI BOM Converter: start screen tile, workspace menu, closes three ways', 
 
   // from the workspace tools menu; Escape and the close button
   await page.getByRole('button', { name: '建立專案' }).click();
-  await page.getByLabel('小工具').selectOption({ label: 'RSI BOM Converter' });
+  await page.getByRole('button', { name: '小工具' }).click();
+  await page.getByRole('menuitem', { name: 'RSI BOM Converter' }).click();
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await page.getByLabel('小工具').selectOption({ label: 'RSI BOM Converter' });
+  // keyboard: ArrowDown opens the menu on its first item (RSI BOM Converter), Enter runs it
+  await page.getByRole('button', { name: '小工具' }).focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByRole('menuitem', { name: 'RSI BOM Converter' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: '關閉' }).click();
   await expect(dialog).toBeHidden();
   expect(errors).toEqual([]);
