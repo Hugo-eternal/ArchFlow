@@ -152,6 +152,12 @@ export class Store {
     return this.requireActive().history.amend(fn);
   }
 
+  /** New data for a design from an editor with its own undo (History.replace); any design, not only the active one. */
+  setData(id: string, data: Design['data']): void {
+    const e = this.entries.find(d => d.id === id);
+    if (e) e.history.replace(data);
+  }
+
   undo(): boolean { return this.activeDesign?.history.undo() ?? false; }
   redo(): boolean { return this.activeDesign?.history.redo() ?? false; }
 

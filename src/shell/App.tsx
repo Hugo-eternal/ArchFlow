@@ -210,8 +210,10 @@ function Workspace({ shell }: { shell: Shell }) {
           {(shell.module?.commands ?? []).filter(c => c.group === 'schedule').map(c => <CommandButton key={c.id} shell={shell} id={c.id} />)}
           {shell.isBlockDiagram && <CommandButton shell={shell} id="selection.delete" />}
           <span className="af-toolbar-sep" aria-hidden="true" />
-          <CommandButton shell={shell} id="view.fit" />
-          <CommandButton shell={shell} id="view.toggleInspector" />
+          {!shell.module?.embedded && <>
+            <CommandButton shell={shell} id="view.fit" />
+            <CommandButton shell={shell} id="view.toggleInspector" />
+          </>}
           <CommandButton shell={shell} id="export.open" primary />
         </div>
         <LocaleSelect />
@@ -228,7 +230,9 @@ function Workspace({ shell }: { shell: Shell }) {
       <footer className="af-statusbar">
         <Status shell={shell} />
         {invalid > 0 && <span className="af-status-warning">{t('status.invalidRoutes', { count: invalid })}</span>}
-        <span className="af-status-zoom">{t('status.zoom', { zoom: Math.round(shell.camera.z * 100) })}</span>
+        {shell.embeddedStatus.text && <span className="af-status-embedded">{shell.embeddedStatus.text}</span>}
+        {shell.embeddedStatus.warn && <span className="af-status-warning">{shell.embeddedStatus.warn}</span>}
+        {!shell.module?.embedded && <span className="af-status-zoom">{t('status.zoom', { zoom: Math.round(shell.camera.z * 100) })}</span>}
       </footer>
     </div>
   );

@@ -1,0 +1,680 @@
+[
+ {
+  "id": "display",
+  "label": "@i18n:template.sequence.display.name",
+  "name": "@i18n:template.sequence.display.name",
+  "doc": {
+   "name": "@i18n:template.sequence.display.doc",
+   "rails": [
+    {
+     "id": "vbat",
+     "name": "@i18n:template.sequence.display.vbat.name",
+     "kind": "rail",
+     "v": 12,
+     "color": "#5B6876",
+     "note": "@i18n:template.sequence.display.vbat.note",
+     "on": {
+      "after": null,
+      "delay": 0,
+      "ramp": 2
+     },
+     "off": {
+      "after": "v5",
+      "delay": 20,
+      "ramp": 5
+     },
+     "tk": "display.vbat"
+    },
+    {
+     "id": "kl15",
+     "name": "@i18n:template.sequence.display.kl15.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#5B6876",
+     "note": "@i18n:template.sequence.display.kl15.note",
+     "on": {
+      "after": null,
+      "delay": 20,
+      "ramp": 0
+     },
+     "off": {
+      "after": null,
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "display.kl15"
+    },
+    {
+     "id": "wake",
+     "name": "@i18n:template.sequence.display.wake.name",
+     "kind": "pulse",
+     "v": "",
+     "color": "#2E6E62",
+     "note": "@i18n:template.sequence.display.wake.note",
+     "on": {
+      "after": "kl15",
+      "delay": 1,
+      "ramp": 0,
+      "fall": {
+       "label": "",
+       "after": "por",
+       "edge": "end",
+       "delay": 5,
+       "maybe": true
+      }
+     },
+     "off": {
+      "after": "kl15",
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "display.wake"
+    },
+    {
+     "id": "v5",
+     "name": "@i18n:template.sequence.display.v5.name",
+     "kind": "rail",
+     "v": 5,
+     "color": "#9A6A26",
+     "note": "",
+     "on": {
+      "after": "kl15",
+      "delay": 5,
+      "ramp": 1.5
+     },
+     "off": {
+      "after": "v3ao",
+      "delay": 1,
+      "ramp": 2
+     },
+     "tk": "display.v5"
+    },
+    {
+     "id": "v3ao",
+     "name": "3V3_AO",
+     "kind": "rail",
+     "v": 3.3,
+     "color": "#9A6A26",
+     "note": "",
+     "on": {
+      "after": "v5",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "v18",
+      "delay": 1,
+      "ramp": 1.5
+     },
+     "tk": "display.v3ao"
+    },
+    {
+     "id": "v18",
+     "name": "1V8_IO",
+     "kind": "rail",
+     "v": 1.8,
+     "color": "#2B5C8A",
+     "note": "",
+     "on": {
+      "after": "v3ao",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "v11",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "display.v18"
+    },
+    {
+     "id": "v11",
+     "name": "1V1_DDR",
+     "kind": "rail",
+     "v": 1.1,
+     "color": "#5B5394",
+     "note": "",
+     "on": {
+      "after": "v18",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "v08",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "display.v11"
+    },
+    {
+     "id": "v08",
+     "name": "0V8_CORE",
+     "kind": "rail",
+     "v": 0.8,
+     "color": "#2B5C8A",
+     "note": "",
+     "on": {
+      "after": "v11",
+      "delay": 1,
+      "ramp": 0.8
+     },
+     "off": {
+      "after": "por",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "display.v08"
+    },
+    {
+     "id": "por",
+     "name": "@i18n:template.sequence.display.por.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#A33A32",
+     "note": "@i18n:template.sequence.display.por.note",
+     "on": {
+      "after": "v08",
+      "delay": 10,
+      "ramp": 0
+     },
+     "off": {
+      "after": "lvds",
+      "delay": 1,
+      "ramp": 0
+     },
+     "tk": "display.por"
+    },
+    {
+     "id": "lvds",
+     "name": "@i18n:template.sequence.display.lvds.name",
+     "kind": "data",
+     "v": "",
+     "color": "#2B5C8A",
+     "note": "@i18n:template.sequence.display.lvds.note",
+     "on": {
+      "after": "por",
+      "delay": 50,
+      "ramp": 0
+     },
+     "off": {
+      "after": "panel",
+      "delay": 5,
+      "ramp": 0
+     },
+     "tk": "display.lvds"
+    },
+    {
+     "id": "panel",
+     "name": "@i18n:template.sequence.display.panel.name",
+     "kind": "rail",
+     "v": 10.6,
+     "color": "#2E6E62",
+     "note": "@i18n:template.sequence.display.panel.note",
+     "on": {
+      "after": "lvds",
+      "delay": 10,
+      "ramp": 3
+     },
+     "off": {
+      "after": "blen",
+      "delay": 200,
+      "ramp": 5
+     },
+     "tk": "display.panel"
+    },
+    {
+     "id": "blen",
+     "name": "@i18n:template.sequence.display.blen.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#2A6F8C",
+     "note": "@i18n:template.sequence.display.blen.note",
+     "on": {
+      "after": "panel",
+      "delay": 200,
+      "ramp": 0
+     },
+     "off": {
+      "after": "kl15",
+      "delay": 1,
+      "ramp": 0
+     },
+     "tk": "display.blen"
+    }
+   ],
+   "tk": "display"
+  }
+ },
+ {
+  "id": "lcd",
+  "label": "@i18n:template.sequence.lcd.name",
+  "name": "@i18n:template.sequence.lcd.name",
+  "doc": {
+   "name": "@i18n:template.sequence.lcd.doc",
+   "rails": [
+    {
+     "id": "vdd",
+     "name": "@i18n:template.sequence.lcd.vdd.name",
+     "kind": "rail",
+     "v": 3.3,
+     "color": "#9A6A26",
+     "note": "@i18n:template.sequence.lcd.vdd.note",
+     "on": {
+      "after": null,
+      "delay": 0,
+      "ramp": 1
+     },
+     "off": {
+      "after": "sig",
+      "delay": 10,
+      "ramp": 1.5
+     },
+     "tk": "lcd.vdd"
+    },
+    {
+     "id": "sig",
+     "name": "@i18n:template.sequence.lcd.sig.name",
+     "kind": "data",
+     "v": "",
+     "color": "#2B5C8A",
+     "note": "",
+     "on": {
+      "after": "vdd",
+      "delay": 5,
+      "ramp": 0
+     },
+     "off": {
+      "after": "avdd",
+      "delay": 5,
+      "ramp": 0
+     },
+     "tk": "lcd.sig"
+    },
+    {
+     "id": "avdd",
+     "name": "@i18n:template.sequence.lcd.avdd.name",
+     "kind": "rail",
+     "v": 10.6,
+     "color": "#2E6E62",
+     "note": "",
+     "on": {
+      "after": "sig",
+      "delay": 20,
+      "ramp": 3
+     },
+     "off": {
+      "after": "vgl",
+      "delay": 2,
+      "ramp": 5
+     },
+     "tk": "lcd.avdd"
+    },
+    {
+     "id": "vgl",
+     "name": "@i18n:template.sequence.lcd.vgl.name",
+     "kind": "rail",
+     "v": -7,
+     "color": "#8A3B6B",
+     "note": "@i18n:template.sequence.lcd.vgl.note",
+     "on": {
+      "after": "avdd",
+      "delay": 2,
+      "ramp": 2
+     },
+     "off": {
+      "after": "vgh",
+      "delay": 2,
+      "ramp": 3
+     },
+     "tk": "lcd.vgl"
+    },
+    {
+     "id": "vgh",
+     "name": "@i18n:template.sequence.lcd.vgh.name",
+     "kind": "rail",
+     "v": 15,
+     "color": "#5B4E9A",
+     "note": "",
+     "on": {
+      "after": "vgl",
+      "delay": 2,
+      "ramp": 2
+     },
+     "off": {
+      "after": "bl",
+      "delay": 200,
+      "ramp": 3
+     },
+     "tk": "lcd.vgh"
+    },
+    {
+     "id": "bl",
+     "name": "@i18n:template.sequence.lcd.bl.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#2A6F8C",
+     "note": "@i18n:template.sequence.lcd.bl.note",
+     "on": {
+      "after": "vgh",
+      "delay": 200,
+      "ramp": 0
+     },
+     "off": {
+      "after": null,
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "lcd.bl"
+    }
+   ],
+   "tk": "lcd"
+  }
+ },
+ {
+  "id": "fpga",
+  "label": "@i18n:template.sequence.fpga.name",
+  "name": "@i18n:template.sequence.fpga.name",
+  "doc": {
+   "name": "@i18n:template.sequence.fpga.doc",
+   "rails": [
+    {
+     "id": "in12",
+     "name": "@i18n:template.sequence.fpga.in12.name",
+     "kind": "rail",
+     "v": 12,
+     "color": "#5B6876",
+     "note": "",
+     "on": {
+      "after": null,
+      "delay": 0,
+      "ramp": 2
+     },
+     "off": {
+      "after": "vint",
+      "delay": 5,
+      "ramp": 4
+     },
+     "tk": "fpga.in12"
+    },
+    {
+     "id": "vint",
+     "name": "VCCINT",
+     "kind": "rail",
+     "v": 0.85,
+     "color": "#2B5C8A",
+     "note": "",
+     "on": {
+      "after": "in12",
+      "delay": 2,
+      "ramp": 1
+     },
+     "off": {
+      "after": "vaux",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "fpga.vint"
+    },
+    {
+     "id": "vaux",
+     "name": "@i18n:template.sequence.fpga.vaux.name",
+     "kind": "rail",
+     "v": 1.8,
+     "color": "#9A6A26",
+     "note": "",
+     "on": {
+      "after": "vint",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "vcco",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "fpga.vaux"
+    },
+    {
+     "id": "vcco",
+     "name": "VCCO I/O Bank",
+     "kind": "rail",
+     "v": 3.3,
+     "color": "#2E6E62",
+     "note": "",
+     "on": {
+      "after": "vaux",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "mgt",
+      "delay": 0.5,
+      "ramp": 1
+     },
+     "tk": "fpga.vcco"
+    },
+    {
+     "id": "mgt",
+     "name": "@i18n:template.sequence.fpga.mgt.name",
+     "kind": "rail",
+     "v": 1,
+     "color": "#5B5394",
+     "note": "",
+     "on": {
+      "after": "vcco",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "prog",
+      "delay": 0,
+      "ramp": 1
+     },
+     "tk": "fpga.mgt"
+    },
+    {
+     "id": "clk",
+     "name": "@i18n:template.sequence.fpga.clk.name",
+     "kind": "clock",
+     "v": "",
+     "color": "#5B6876",
+     "note": "@i18n:template.sequence.fpga.clk.note",
+     "on": {
+      "after": "vcco",
+      "delay": 2,
+      "ramp": 0
+     },
+     "off": {
+      "after": "prog",
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "fpga.clk"
+    },
+    {
+     "id": "prog",
+     "name": "@i18n:template.sequence.fpga.prog.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#A33A32",
+     "note": "",
+     "on": {
+      "after": "mgt",
+      "delay": 5,
+      "ramp": 0
+     },
+     "off": {
+      "after": null,
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "fpga.prog"
+    },
+    {
+     "id": "initb",
+     "name": "INIT_B",
+     "kind": "signalLow",
+     "v": "",
+     "color": "#9A6A26",
+     "note": "@i18n:template.sequence.fpga.initb.note",
+     "on": {
+      "after": "prog",
+      "delay": 1,
+      "ramp": 0
+     },
+     "off": {
+      "after": "done",
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "fpga.initb"
+    },
+    {
+     "id": "done",
+     "name": "@i18n:template.sequence.fpga.done.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#2A6F8C",
+     "note": "",
+     "on": {
+      "after": "prog",
+      "delay": 40,
+      "ramp": 0
+     },
+     "off": {
+      "after": "prog",
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "fpga.done"
+    }
+   ],
+   "tk": "fpga"
+  }
+ },
+ {
+  "id": "mcu",
+  "label": "@i18n:template.sequence.mcu.name",
+  "name": "@i18n:template.sequence.mcu.name",
+  "doc": {
+   "name": "@i18n:template.sequence.mcu.doc",
+   "rails": [
+    {
+     "id": "i12",
+     "name": "@i18n:template.sequence.mcu.i12.name",
+     "kind": "rail",
+     "v": 12,
+     "color": "#5B6876",
+     "note": "",
+     "on": {
+      "after": null,
+      "delay": 0,
+      "ramp": 2
+     },
+     "off": {
+      "after": "m5",
+      "delay": 2,
+      "ramp": 4
+     },
+     "tk": "mcu.i12"
+    },
+    {
+     "id": "m5",
+     "name": "5V0",
+     "kind": "rail",
+     "v": 5,
+     "color": "#9A6A26",
+     "note": "",
+     "on": {
+      "after": "i12",
+      "delay": 2,
+      "ramp": 1.5
+     },
+     "off": {
+      "after": "v33",
+      "delay": 0.5,
+      "ramp": 2
+     },
+     "tk": "mcu.m5"
+    },
+    {
+     "id": "v33",
+     "name": "3V3",
+     "kind": "rail",
+     "v": 3.3,
+     "color": "#2B5C8A",
+     "note": "",
+     "on": {
+      "after": "m5",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "rst",
+      "delay": 1,
+      "ramp": 1.5
+     },
+     "tk": "mcu.v33"
+    },
+    {
+     "id": "v18m",
+     "name": "1V8",
+     "kind": "rail",
+     "v": 1.8,
+     "color": "#5B5394",
+     "note": "@i18n:template.sequence.mcu.v18m.note",
+     "on": {
+      "after": "m5",
+      "delay": 1,
+      "ramp": 1
+     },
+     "off": {
+      "after": "rst",
+      "delay": 1,
+      "ramp": 1.5
+     },
+     "tk": "mcu.v18m"
+    },
+    {
+     "id": "rst",
+     "name": "@i18n:template.sequence.mcu.rst.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#A33A32",
+     "note": "",
+     "on": {
+      "after": "v33",
+      "delay": 200,
+      "ramp": 0
+     },
+     "off": {
+      "after": "per",
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "mcu.rst"
+    },
+    {
+     "id": "per",
+     "name": "@i18n:template.sequence.mcu.per.name",
+     "kind": "signal",
+     "v": "",
+     "color": "#2E6E62",
+     "note": "",
+     "on": {
+      "after": "rst",
+      "delay": 50,
+      "ramp": 0
+     },
+     "off": {
+      "after": null,
+      "delay": 0,
+      "ramp": 0
+     },
+     "tk": "mcu.per"
+    }
+   ],
+   "tk": "mcu"
+  }
+ }
+]

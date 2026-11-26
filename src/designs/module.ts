@@ -49,6 +49,9 @@ export interface DesignModule<D = Design['data']> {
   /** 'canvas' = the shared canvas / inspector; 'embedded' = a vendor editor in an iframe (3.30–3.31). */
   editor: 'canvas' | 'embedded';
 
+  // ---- designs edited in a vendor iframe (sequence 3.30, flowchart 3.31)
+  embedded?: EmbeddedEditor<D>;
+
   // ---- canvas designs that draw themselves (schedule, 3.28)
   /** Drawing and extent of a canvas design that is not a block diagram. */
   canvas?: CanvasDrawing<D>;
@@ -77,6 +80,31 @@ export interface DesignModule<D = Design['data']> {
   afterMove?(d: BlockDiagram, movedIds: readonly string[]): BlockDiagram;
   /** Export additions (and the bounds they need). */
   exportExtras?: SvgExportOptions['extras'];
+}
+
+/**
+ * A design edited by a vendor editor in an iframe (V2 bundles without source, docs/v3-audit.md
+ * §5): the shell mounts `srcdoc`, publishes a host object on its own window under `host` (the
+ * editor reads `window.parent[host]` when it starts) and talks to `window[api]` in the frame.
+ */
+export interface EmbeddedEditor<D> {
+  /** Accessible name of the frame. */
+  title: MessageKey;
+  /** The frame document (vendor style + bundle) for a language. */
+  srcdoc(lang: 'zh-Hant' | 'en'): string;
+  /** Global name of the host object the editor reads from its parent window. */
+  host: string;
+  /** Global name of the API the editor sets in the frame. */
+  api: string;
+  /** Clean a document the editor reports before it is stored. */
+  sanitize(doc: unknown): D;
+}
+
+/** The API a vendor editor exposes in its frame (the part the shell uses). */
+export interface EmbeddedApi {
+  undo(): void; redo(): void; canUndo(): boolean; canRedo(): boolean;
+  openExport?(): void;
+  load?(id: string, doc: unknown): void;
 }
 
 /** What is selected on a canvas design that draws itself ('design' = nothing: the design-wide panel). */

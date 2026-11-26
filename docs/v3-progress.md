@@ -80,7 +80,7 @@
 - [x] 3.28 `designs/schedule`：時間軸版面與渲染（實際跑 L3：改到 shell / designs/module / styles）
 - [x] 3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（實際跑 L3：改到 shell / inspector / export / io/schema）
 - [x] 3.29b `designs/function` 方塊圖兩種檢視的 UI/UX 優化（L2；若改到 render / styles 共用檔則跑 L3）（a～e 各一個 commit，皆跑 L3）
-- [ ] 3.30 `designs/sequence` vendor 轉接（L2）
+- [x] 3.30 `designs/sequence` vendor 轉接（實際跑 L3：改到 core / shell / interaction）
 - [ ] 3.31 `designs/flowchart` vendor 轉接（L2）
 ### 3H 工具
 - [ ] 3.32 `tools/bom`（L2）
@@ -112,8 +112,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3.29b（方塊圖兩種檢視的差異化呈現 a～e）已完成
-- **下一步**：3.30 `designs/sequence` vendor 轉接（L2）。vendor 檔在 `vendor/`（電源時序 bundle.js + style.css，`check:vendor` 確保逐字不變），iframe 組裝方式與 host 介面寫在該目錄 `VENDOR.md`；golden `tests/golden/sequence.test.js`（V2 版，在 iframe 內 `afSeqApi`）。V3 殼層目前只有 canvas 設計：要為 `editor: 'embedded'` 加一條路徑（Canvas 區域換成 iframe srcdoc，資料進出用 vendor 的 host API，存檔時取回 doc 寫入 `SequenceDoc`，`io/schema` 的 sequenceSchema 已有外層驗證）；匯出 / 全圖 / 復原等殼層命令對 embedded 設計的行為要決定（V2 由 vendor 自己處理）。
+- **目前階段**：階段 3（模組化重構）——3.30（電源時序 vendor 轉接）已完成
+- **下一步**：3.31 `designs/flowchart` vendor 轉接（L2）。照 3.30 的做法：`vendor/flowchart-editor/VENDOR.md` 的 host 是 `window.afFlowHost = { lang, images, getDoc(), change(doc, designId), title(), ready() }`、API `afFlowApi = { load, undo, redo, openExport, closeMenus }`（**沒有 canUndo / canRedo**：`EmbeddedApi` 的 canUndo / canRedo 需改成選填，殼層復原鍵在沒有時就一直啟用或改由 vendor 自己的按鈕）。先從 V2 shell（legacy L5563 一帶，搜尋 `afFlowHost`）讀完整 host 物件（`images` 是什麼、清理函式、範本目錄、新建設計預設文件），再寫 `src/designs/flowchart/`（module + sanitize + templates，文字 @i18n）。golden：`tests/golden/flowchart.test.js`（V2 版，SVG / .flow.json / Mermaid 匯出），V3 新增「範本與 V2 建立的文件相同」比對。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -223,10 +223,12 @@
 - 3.29b-d 電壓圖例：`power.ts` `voltageLegend`（電源檢視中 power 線與方塊電壓的不重複值，高到低，各自 `railBand`）、`legendNode`（匯出用 SVG 圖例）；`DesignModule.legend(d)` → `{ title, items: { swatch, text }[] }`，殼層 `CanvasLegend` 以固定覆蓋層畫在畫布左下角（`.af-canvas-legend`，不隨平移縮放、`pointer-events: none`）；匯出由 `exportExtras.above` 畫在內容下方（左對齊、間距 24）並加入 bounds。i18n `power.legend.title`。測試：`power.test`「voltage legend」、`v3-function.spec` 入門電源樹那項檢查圖例。
 - 3.29b-e 依檢視切換插入選單：`power.ts` `makePowerBlock(d, at, role)`（來源只有 OUT、負載只有 VDD（同 V2 電源範例），轉換器 / 分配為 VIN / OUT；名稱 = 角色名稱；量測欄位預先建立但隱藏，轉換器另有效率）；命令 `power.insert.<role>`（群組 `power-blocks`，只在電源檢視啟用）；`App.tsx` 工具列在電源檢視改用「插入電源方塊」選單（`POWER_GROUPS`），功能檢視維持「插入零件」。測試：`power.test`「power view insert menu」、`view-mode.test`、`v3-function.spec` 第 6 項。
 - 3.29b 無障礙檢查：警示有圖示與百分比文字（不只靠顏色）、新增 token 都通過 `check:tokens`、沒有新增動畫（`prefers-reduced-motion` 不受影響）、圖例覆蓋層有 `aria-label`。
+- 電源時序 vendor 轉接（3.30）：`src/designs/sequence/`——`index.ts`（`sequenceDesign`：`editor: 'embedded'`、`embedded: { title, srcdoc(lang), host: 'afSeqHost', api: 'afSeqApi', sanitize }`；`sequenceSrcdoc` 以 `?raw` 匯入 `vendor/sequence-editor/bundle.js` / `style.css`，同 V2 `o4`（尚未內嵌字型，3.44 處理）；空白設計 `{ name: '', rails: [] }`；範本照 V2 `Ff` 原樣不經清理）、`sanitize.ts`（V2 `jf` 移植：編輯器回傳的文件才清理，會補 `edge: 'end'` 等預設值）、`templates/templates.json`（V2 `bd` 的 4 個範本 display / lcd / fpga / mcu，兩語系文字改 `@i18n:template.sequence.*`，ASCII 且兩語相同的字串保留原文）。`DesignModule.embedded` / `EmbeddedApi`；`src/shell/embedded.ts`：`installHosts`（Shell 建構時把每個 embedded 模組的 host 物件掛到 window；vendor 在 bundle 啟動時讀 `window.parent[host]`）、`frameApi`。Host：getDoc（目前設計）、change（sanitize 後 `Store.setData` → `History.replace`：不進 V3 復原、清空歷史、標記未存檔，同 V2 重設 past）、status（狀態列 `.af-status-embedded`）、toast（`embedded.status` 訊息）、save、title、ready；palette / shortcuts / modal / poke 為空實作（V3 尚無命令面板）。`Shell`：`frame` / `setFrame` / `embeddedReady` / `embeddedStatus` / `embeddedHistory()`；`CanvasContext.embeddedHistory`——`history.undo` / `redo` 改呼叫編輯器的 undo / redo；`export.open` 對 embedded 設計呼叫 `api.openExport()`。`Canvas.tsx` `EmbeddedFrame`（iframe srcdoc，依設計 id 重新掛載）；屬性面板、「全圖」「屬性面板」按鈕、縮放比例對 embedded 設計隱藏。測試：`tests/golden/sequence.v3.test.ts`（範本 / 清理 / srcdoc、首個範本與 V2 建立的文件相同）、`tests/e2e/v3-sequence.spec.ts`、`core.history-store.test`。
+  - 未做：V2 在切換語言時把範本來源的列名 / 備註換成另一語系（`a4`）；V2 的 toast「復原」按鈕（V3 用殼層復原鍵）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.29b-e：模組標註、i18n、token（185 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 337 項、Playwright 22 項全數通過）。前一步 3.29：L3（模組標註、i18n（401 個 key）、token（175 個、144 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 328 項、Playwright 22 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，建立「專案時程」→ 點任務卡改名稱 / 日期 / 狀態；拖曳任務框與軸上圓點（靠近其他圓點會吸附並出現虛線）；「新增任務」「新增分支」「重新排列」；空白處點一下後在屬性面板換主題、改字級；匯出 SVG。
+- **最後通過的驗證層級**：L3（3.30：模組標註、i18n（447 個 key）、token、vendor、型別、建置（dist 0.76 MB）、產物檢查、Vitest 42 檔 344 項、Playwright 23 項（`--workers=1`）全數通過）。**人工驗收（建議）**：開 `dist/ArchFlow.html`，啟動畫面選「電源時序」→ 建立，編輯器應顯示「車用顯示控制器」範本、狀態列顯示「全部上電完成於 …」；在編輯器新增一列後標題出現 •、按殼層「復原」會撤銷；存檔再開啟內容不變；「匯出」開啟編輯器自己的匯出對話框。前一步 3.29b：L3（模組標註、i18n、token（185 個、154 組對比）、vendor、型別、建置、產物檢查、Vitest 41 檔 337 項、Playwright 22 項全數通過）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

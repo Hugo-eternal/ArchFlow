@@ -8,7 +8,8 @@ import { t, type MessageKey, type Vars } from '../core/i18n';
 import { fit, toWorld, unionBounds, zoomBy, IDENTITY, type Viewport } from '../core/camera';
 import { GridError, gridSize } from '../core/grid';
 import type { BlockDiagram, BlockView, Camera, Design, DesignType } from '../io/schema-types';
-import type { CanvasSelection, DesignModule, DesignRegistry } from '../designs/module';
+import type { CanvasSelection, DesignModule, DesignRegistry, EmbeddedApi } from '../designs/module';
+import { frameApi, installHosts } from './embedded';
 import type { Selection } from '../core/store';
 import { ModelError } from '../model/types';
 import { addBlock, addFrame, addPort, addText, BLOCK_DEFAULT, FRAME, freeSpot, makeBlock, TEXT_DEFAULT } from '../model/diagram';
@@ -59,6 +60,11 @@ export class Shell {
   measure: Measure = estimateWidth;
   /** Fit the view once the canvas knows its size (new design from a template, opened file). */
   pendingFit = false;
+  /** The mounted vendor editor frame (embedded designs), set by the canvas. */
+  frame: HTMLIFrameElement | null = null;
+  /** The vendor editor's status line (e.g. "all rails up after 42 ms") and warning. */
+  embeddedStatus = { text: '', warn: '' };
+  private frameReady = false;
   /** Set by the canvas: open the browser's file picker. */
   pickFile: () => void = () => {};
   private routeCache: { data: BlockDiagram | null; routes: Map<string, Route> } = { data: null, routes: new Map() };
@@ -74,6 +80,7 @@ export class Shell {
       adjustMove: (d, ids) => this.module?.afterMove?.(d, ids) ?? d,
       refused: r => this.refused(r),
     });
+    installHosts(this, typeof window !== 'undefined' ? window : ({} as Window));
     this.registry.registerAll(canvasCommands() as unknown as Command<Shell>[]);
     this.registry.registerAll(shellCommands());
     for (const m of designs.list()) if (m.commands) this.registry.registerAll(m.commands as unknown as Command<Shell>[]);
@@ -165,6 +172,14 @@ export class Shell {
     this.store.amend(d => ({ ...(d as BlockDiagram), view }));
     this.notify(view === 'power' ? 'view.mode.powerOn' : 'view.mode.functionOn');
   }
+
+  setEmbeddedStatus(text: string, warn: string): void { this.embeddedStatus = { text, warn }; this.ui.emit(); }
+  embeddedReady(): void { this.frameReady = true; this.ui.emit(); }
+  /** Called by the canvas when it mounts / drops the frame. */
+  setFrame(frame: HTMLIFrameElement | null): void { this.frame = frame; this.frameReady = false; this.embeddedStatus = { text: '', warn: '' }; this.ui.emit(); }
+
+  /** Undo / redo of an embedded design go to its editor (V2 routed Ctrl+Z into the frame). */
+  embeddedHistory(): EmbeddedApi | null { return this.module?.embedded && this.frameReady ? frameApi(this) : null; }
 
   /** The selected item of a canvas design that draws itself (null when none or gone after undo). */
   get item(): CanvasSelection | null {
@@ -295,6 +310,8 @@ export function shellCommands(): Command<Shell>[] {
       run: s => s.setView(s.view === 'power' ? 'function' : 'power'),
     },
     { id: 'view.toggleInspector', label: 'cmd.toggleInspector', group: 'view', enabled: hasProject, run: s => { s.inspectorOpen = !s.inspectorOpen; s.ui.emit(); } },
-    { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && (s.isBlockDiagram || !!s.module?.canvas), run: s => s.openDialog({ kind: 'export' }) },
+    { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && (s.isBlockDiagram || !!s.module?.canvas || !!s.embeddedHistory()?.openExport),
+      // an embedded editor has its own export dialog (V2 openExport)
+      run: s => { const api = s.module?.embedded ? s.embeddedHistory() : null; if (api?.openExport) api.openExport(); else s.openDialog({ kind: 'export' }); } },
   ];
 }

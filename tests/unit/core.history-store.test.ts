@@ -173,3 +173,26 @@ describe('Store', () => {
     expect((s.data(s.activeDesignId) as BlockDiagram).grid).toEqual({ size: 10, show: true, snap: true });
   });
 });
+
+describe('History.replace / Store.setData (editors with their own undo, 3.30)', () => {
+  it('replaces the state without an undo step, clears history, marks dirty; unchanged is a no-op', () => {
+    const h = new History({ n: 0 });
+    h.commit({ n: 1 });
+    h.markSaved();
+    h.replace({ n: 1 });
+    expect(h.dirty).toBe(false);
+    h.replace({ n: 2 });
+    expect([h.present, h.canUndo, h.canRedo, h.dirty]).toEqual([{ n: 2 }, false, false, true]);
+  });
+
+  it('setData targets any design by id', () => {
+    const s = new Store();
+    s.newProject('P', { type: 'sequence', name: 'A', data: { name: '', rails: [] } });
+    const a = s.activeDesignId;
+    s.addDesign('sequence', 'B', { name: '', rails: [] }, { activate: true });
+    s.setData(a, { name: 'x', rails: [] });
+    expect(s.data(a)).toEqual({ name: 'x', rails: [] });
+    expect(s.dirty).toBe(true);
+  });
+});
+

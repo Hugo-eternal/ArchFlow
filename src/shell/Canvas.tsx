@@ -1,7 +1,7 @@
 // The block-diagram canvas: one <svg>. The drawing is render/* VNodes mounted on every change
 // (the draft while dragging); pointer input goes to interaction/gestures, the wheel zooms.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { t, type MessageKey } from '../core/i18n';
+import { t, getLocale, type MessageKey } from '../core/i18n';
 import { backgroundOf } from '../core/camera';
 import { gridSize } from '../core/grid';
 import { blocksLayer } from '../render/blocks';
@@ -82,6 +82,7 @@ export function Canvas({ shell }: { shell: Shell }) {
     svg.dataset.invalid = String(invalidCount(routes));
   }, [shell, version]);
 
+  if (shell.module?.embedded) return <EmbeddedFrame shell={shell} />;
   if (shell.module?.canvas) return <DrawingCanvas shell={shell} />;
   if (!shell.isBlockDiagram) return <div className="af-canvas af-canvas-empty">{t('canvas.unsupported')}</div>;
 
@@ -101,6 +102,21 @@ export function Canvas({ shell }: { shell: Shell }) {
       <g ref={layerRef} className="af-world" />
     </svg>
   );
+}
+
+/**
+ * A design edited by a vendor editor: its iframe (V2 mounted the same srcdoc). The editor reads
+ * the host object from this window (shell/embedded.ts) and loads the active design's document.
+ */
+function EmbeddedFrame({ shell }: { shell: Shell }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const m = shell.module!.embedded!;
+  const [srcdoc] = useState(() => m.srcdoc(getLocale() === 'en' ? 'en' : 'zh-Hant'));
+  useEffect(() => {
+    shell.setFrame(ref.current);
+    return () => shell.setFrame(null);
+  }, [shell]);
+  return <iframe ref={ref} className="af-embedded-frame" title={t(m.title)} srcDoc={srcdoc} allow="clipboard-read; clipboard-write" />;
 }
 
 /** data-* attributes of an element and its ancestors up to the drawing (nearest wins). */

@@ -57,6 +57,8 @@ function DrawingInspector({ shell }: { shell: Shell }) {
 }
 
 export function InspectorPane({ shell }: { shell: Shell }) {
+  // a vendor editor has its own panels (V2 hid the inspector for sequence / flowchart designs)
+  if (shell.module?.embedded) return null;
   if (shell.module?.canvas) {
     return (
       <aside className="af-inspector-pane" aria-label={t('inspector.title')} hidden={!shell.inspectorOpen}>

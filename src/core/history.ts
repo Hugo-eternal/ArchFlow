@@ -114,6 +114,20 @@ export class History<T> {
     return true;
   }
 
+  /**
+   * A new state from an editor with its own undo (vendor editors, 3.30): no undo step here and
+   * no history kept (V2 reset `past` the same way); marks dirty when it changed.
+   */
+  replace(state: T): void {
+    const s = JSON.stringify(state);
+    if (s === this.current) return;
+    this.current = s;
+    this.past = [];
+    this.future = [];
+    this.dirty = true;
+    this.emit();
+  }
+
   /** Replace the state without an undo step (loading a file); clears history. */
   reset(state: T): void {
     this.current = JSON.stringify(state);
