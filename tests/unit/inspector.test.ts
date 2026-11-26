@@ -57,7 +57,8 @@ describe('panel construction', () => {
     const s = setup();
     s.insp.show({ kind: 'block', id: 'A' });
     const keys = [...s.root.querySelectorAll('[data-field]')].map(e => (e as HTMLElement).dataset.field);
-    expect(keys).toEqual(['title', 'partNumber', 'ref', 'subtitle', 'titleAlign', 'fill', 'border', 'textColor', 'locked']);
+    expect(keys).toEqual(['title', 'partNumber', 'ref', 'subtitle', 'titleAlign', 'fill', 'border', 'textColor',
+      'showTitle', 'free', 'w', 'h', 'scaleText', 'titleSize', 'font-subtitle', 'font-label', 'font-metric', 'fontsToAll', 'locked']);
     for (const c of s.root.querySelectorAll('input:not([type=radio]), textarea, select')) {
       const label = s.root.querySelector(`label[for="${c.id}"]`) ?? c.closest('label');
       expect(label, c.id).not.toBeNull();

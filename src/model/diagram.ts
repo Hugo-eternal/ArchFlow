@@ -345,3 +345,60 @@ export function freeSpot(d: BlockDiagram, w: number, h: number, centre: Point, s
   }
   return { x: x0, y: y0 };
 }
+
+// ---------------------------------------------------------------- block size (V2.9 / V2.10)
+
+/** Size limits: a normal block at least 120 × 60 in steps of 10 (V2.10 resize); a free-size block
+ *  (sizing 'free', V2.9 afFree) has no minimum beyond 20 px. With the grid on, sizes step by the grid. */
+export const BLOCK_SIZE = Object.freeze({ minW: 120, minH: 60, step: 10, freeMin: 20, max: 4000 });
+
+/** Font sizes a block falls back to (V2 defaultTheme, px). */
+const FONT_DEFAULT = { title: 80 / 3, subtitle: 14, label: 11, metric: 14 };
+
+const clampN = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+/**
+ * Set a block's size (V2 fitSize + the resize corner): rounded to the step, at least the minimum.
+ * With `scaleText`, the block's title and per-block font sizes change by the smaller of the width
+ * and height ratios (V2.10 afOnResized; title 12–48 px, others 8–32 px), starting from `theme`.
+ */
+export function resizeBlock(d: BlockDiagram, id: string, w: number, h: number, opts: { scaleText?: boolean; theme?: Partial<Record<keyof typeof FONT_DEFAULT, number>> } = {}): BlockDiagram {
+  const b = blockOf(d, id);
+  if (!b) throw new ModelError('missing', id);
+  const free = b.sizing === 'free', g = d.grid?.snap ? d.grid.size : 0;
+  const step = g || (free ? 1 : BLOCK_SIZE.step);
+  const minW = free ? Math.max(BLOCK_SIZE.freeMin, 2 * g) : BLOCK_SIZE.minW, minH = free ? Math.max(BLOCK_SIZE.freeMin, 2 * g) : BLOCK_SIZE.minH;
+  const nw = clampN(Math.round(w / step) * step, minW, BLOCK_SIZE.max), nh = clampN(Math.round(h / step) * step, minH, BLOCK_SIZE.max);
+  const patch: BlockPatch = { w: nw, h: nh };
+  const f = Math.min(nw / b.w, nh / b.h);
+  if (opts.scaleText && !b.part && Number.isFinite(f) && Math.abs(f - 1) >= 0.02) {
+    const base = { ...FONT_DEFAULT, ...opts.theme };
+    patch.style = { ...b.style, titleSize: clampN((b.style.titleSize ?? base.title) * f, 12, 48) };
+    patch.font = Object.fromEntries((['subtitle', 'label', 'metric'] as const).map(k => [k, clampN((b.font?.[k] ?? base[k]) * f, 8, 32)]));
+  }
+  return updateBlock(d, id, patch);
+}
+
+/** The per-block font sizes (title, subtitle, pin labels, values) of `id` on every other ordinary block (V2.7 "apply to all"). */
+export function applyFontsToAll(d: BlockDiagram, id: string): BlockDiagram {
+  const src = blockOf(d, id), data = clone(d);
+  if (!src) throw new ModelError('missing', id);
+  for (const b of data.blocks) {
+    if (b.id === id || b.part || b.connector) continue;
+    if (src.font) b.font = { ...src.font }; else delete b.font;
+    const style = { ...b.style };
+    if (src.style.titleSize !== undefined) style.titleSize = src.style.titleSize; else delete style.titleSize;
+    b.style = style;
+  }
+  return data;
+}
+
+/** Every ordinary block's own title and font sizes times `f` (V2.7 afScaleText; the theme is scaled by the caller). */
+export function scaleBlockFonts(d: BlockDiagram, f: number): BlockDiagram {
+  const data = clone(d);
+  for (const b of data.blocks) {
+    if (b.style.titleSize !== undefined) b.style = { ...b.style, titleSize: clampN(b.style.titleSize * f, 12, 48) };
+    if (b.font) for (const k of ['subtitle', 'label', 'metric'] as const) if (b.font[k] !== undefined) b.font[k] = clampN(b.font[k]! * f, 8, 32);
+  }
+  return data;
+}

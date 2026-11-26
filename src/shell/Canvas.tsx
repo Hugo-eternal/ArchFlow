@@ -65,7 +65,7 @@ export function Canvas({ shell }: { shell: Shell }) {
       framesLayer(d.frames, { selected: ids('frame'), measure: shell.measure }),
       ...(extra.below ?? []),
       wiresLayer(d, routes, { selected: new Set([...ids('wire'), ...ids('junction')]), tone: m?.wireTone && (w => m.wireTone!(w, d)) }),
-      blocksLayer(d, { selected: ids('block'), theme: d.theme, decorate: m?.decorate, footer: m?.blockFooter && ((b, x) => m.blockFooter!(b, x, shell.measure)), faded: m?.blockFaded && ((b, x) => m.blockFaded!(b, x)) }),
+      blocksLayer(d, { selected: ids('block'), resizable: resizable(d, sel), theme: d.theme, decorate: m?.decorate, footer: m?.blockFooter && ((b, x) => m.blockFooter!(b, x, shell.measure)), faded: m?.blockFaded && ((b, x) => m.blockFaded!(b, x)) }),
       textsLayer(d.texts, { selected: ids('text'), measure: shell.measure }),
       ...(extra.above ?? []),
       overlay(shell),
@@ -121,6 +121,13 @@ function EmbeddedFrame({ shell }: { shell: Shell }) {
     return () => shell.setFrame(null);
   }, [shell, lang]);
   return <iframe key={lang} ref={ref} className="af-embedded-frame" title={t(m.title)} srcDoc={srcdoc} allow="clipboard-read; clipboard-write" />;
+}
+
+/** The one selected block that can be resized (not locked, not a part or connector). */
+function resizable(d: Design['data'] & { blocks: { id: string; locked: boolean; part?: unknown; connector?: unknown }[] }, sel: readonly { kind: string; id: string }[]): string | undefined {
+  if (sel.length !== 1 || sel[0].kind !== 'block') return undefined;
+  const b = d.blocks.find(x => x.id === sel[0].id);
+  return b && !b.locked && !b.part && !b.connector ? b.id : undefined;
 }
 
 /** data-* attributes of an element and its ancestors up to the drawing (nearest wins). */

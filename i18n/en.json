@@ -618,5 +618,21 @@
   "schedule.fixed": "Shifted {count} following task chains; durations unchanged.",
   "schedule.fixedNone": "Nothing needed shifting.",
   "schedule.inserted": "Inserted “{name}”; following tasks now come after it.",
-  "cmd.scheduleFix": "Shift conflicting tasks"
+  "cmd.scheduleFix": "Shift conflicting tasks",
+  "inspector.group.size": "Size and text",
+  "inspector.block.showTitle": "Show main name",
+  "inspector.block.free": "Free size",
+  "inspector.block.freeHint": "No minimum size; with the grid on, sizes still step by the grid. Drag the selected block's bottom-right corner to resize.",
+  "inspector.block.w": "Width",
+  "inspector.block.h": "Height",
+  "inspector.block.scaleText": "Scale text with the block (all blocks)",
+  "inspector.font.title": "Block name size",
+  "inspector.font.subtitle": "Block subtitle size",
+  "inspector.font.label": "Block pin-label size",
+  "inspector.font.metric": "Block value size",
+  "inspector.font.toAll": "Apply these font sizes to all blocks",
+  "fonts.scale": "Scale all text:",
+  "fonts.scaledUp": "All text enlarged by {pct}% (undo available)",
+  "fonts.scaledDown": "All text reduced by {pct}% (undo available)",
+  "inspector.block.scaleTextHint": "When you drag the corner, name, subtitle, pin and value sizes change by the same ratio; this setting is kept in this browser."
 }

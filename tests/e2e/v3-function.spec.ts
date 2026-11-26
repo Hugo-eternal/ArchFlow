@@ -295,3 +295,41 @@ test('organize (3.38): nothing to apply on a tidy diagram; routes mode keeps blo
   }
   expect(errors).toEqual([]);
 });
+
+test('block size and text (3.43c): width field, corner drag with text scaling, hide the main name', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const block = (i: number) => page.evaluate(n => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): { blocks: unknown[] } } }).archflow.data().blocks[n])), i) as Promise<{ id: string; x: number; y: number; w: number; h: number; showTitle: boolean; style: { titleSize?: number } }>;
+  const panel = page.getByRole('complementary', { name: '屬性' });
+
+  const b = await block(1);
+  await page.locator(`svg.af-canvas [data-block="${b.id}"] .af-block-body`).click({ position: { x: 20, y: 20 }, force: true });
+  await expect(panel.getByText('尺寸與字級')).toBeVisible();
+  const w = panel.getByLabel('寬', { exact: true });
+  await w.fill(String(b.w + 40));
+  await w.press('Enter');
+  await expect.poll(async () => (await block(1)).w).toBe(b.w + 40);
+
+  // drag the grip at the bottom-right corner: bigger, text follows (the preference is on)
+  const grip = page.locator('svg.af-canvas .af-block-handle');
+  await expect(grip).toHaveCount(1);
+  const g = (await grip.boundingBox())!;
+  const before = await block(1);
+  await page.mouse.move(g.x + g.width / 2, g.y + g.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(g.x + 80, g.y + 60, { steps: 5 });
+  await page.mouse.up();
+  const after = await block(1);
+  expect(after.w).toBeGreaterThan(before.w);
+  expect(after.style.titleSize ?? 0).toBeGreaterThan(before.style.titleSize ?? 0);
+  await page.getByRole('button', { name: '復原' }).click();
+  await expect.poll(async () => (await block(1)).w).toBe(before.w);
+
+  // no main name (undo cleared the selection: select again)
+  await page.locator(`svg.af-canvas [data-block="${b.id}"] .af-block-body`).click({ position: { x: 20, y: 20 }, force: true });
+  await panel.getByLabel('顯示主名稱').uncheck();
+  await expect(page.locator(`svg.af-canvas [data-block="${b.id}"] .af-block-title`)).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

@@ -14,6 +14,8 @@ import { h, r2, type VNode } from './vnode';
 export interface BlockRenderOptions {
   /** Ids of selected blocks (drawn with a selection outline). */
   selected?: ReadonlySet<string>;
+  /** The block that shows a resize grip (the one selected, resizable block on the canvas). */
+  resizable?: string;
   /** Diagram theme (fonts and sizes) — falls back to the token defaults. */
   theme?: Theme;
   /** Extra drawing for a block (part symbols, connector pins …) added after the body. */
@@ -58,7 +60,7 @@ function titleLayout(b: Block): { x: number; anchor: 'start' | 'middle' | 'end';
   return { x, anchor: hz === 'left' ? 'start' : hz === 'right' ? 'end' : 'middle', top: v === 'top' };
 }
 
-function portNode(b: Block, p: Port, g: number | undefined, connected: boolean): VNode {
+function portNode(b: Block, p: Port, g: number | undefined, connected: boolean, size?: number): VNode {
   const c = portPoint(b, p, g);
   const label = p.label === 'hidden' || !p.name ? null : (() => {
     const out = p.label === 'outside', gap = out ? PORT_LABEL_OUTSIDE : PORT_LABEL_GAP;
@@ -69,6 +71,8 @@ function portNode(b: Block, p: Port, g: number | undefined, connected: boolean):
     return h('text', {
       class: 'af-port-label', x: r2(c.x + dx * gap), y: r2(c.y + dy * gap), 'text-anchor': anchor,
       'dominant-baseline': dy < 0 ? 'auto' : dy > 0 ? 'hanging' : 'central',
+      // the block's or the diagram's pin-label size (V2 --diagram-label-size); else the token
+      style: size ? `font-size:${size}px` : undefined,
     }, p.name);
   })();
   return h('g', { class: 'af-port', 'data-port': p.id, 'data-side': p.side, 'data-connected': connected ? 'true' : 'false' }, [
@@ -115,8 +119,10 @@ export function blockNode(b: Block, d: BlockDiagram, opts: BlockRenderOptions = 
     ...textNodes,
     footer?.node ?? null,
     opts.decorate?.(b, d) ?? null,
-    ...b.ports.map(p => portNode(b, p, g, connected.has(`${b.id}/${p.id}`))),
+    ...b.ports.map(p => portNode(b, p, g, connected.has(`${b.id}/${p.id}`), b.font?.label ?? opts.theme?.label)),
     opts.selected?.has(b.id) ? h('rect', { class: 'af-block-selection', x: r2(b.x - 4), y: r2(b.y - 4), width: r2(b.w + 8), height: r2(b.h + 8), rx: 9 }) : null,
+    // the resize grip of the one selected block (canvas only; interaction/gestures BLOCK_HANDLE)
+    opts.resizable === b.id ? h('rect', { class: 'af-block-handle', x: r2(b.x + b.w - 5), y: r2(b.y + b.h - 5), width: 10, height: 10, rx: 2 }) : null,
   ]);
 }
 

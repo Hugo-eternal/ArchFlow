@@ -7,9 +7,10 @@
 // format panel L1463, text controls L2219–L2303.
 import type { Block, BlockDiagram, BlockStyle, BlockView, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
 import { LIMITS, type ItemRef } from '../model/types';
-import { blockOf, fitFrame, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
+import { applyFontsToAll, blockOf, BLOCK_SIZE, fitFrame, resizeBlock, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
 import { FILE_LIMITS } from '../io/schema';
 import { commitEdit } from '../interaction/commit';
+import { scaleTextOn, setScaleText } from '../core/prefs';
 import type { Store } from '../core/store';
 import { t, type MessageKey } from '../core/i18n';
 import type { FieldOption, FieldSpec } from './fields';
@@ -94,8 +95,68 @@ export function blockFields(): BlockField[] {
         { kind: 'color', key: 'textColor', label: 'inspector.style.text', emptyLabel: 'inspector.color.default', fallback: FALLBACK.text, get: (d, s) => block(d, s).style.text ?? '', set: setStyle('text') },
       ],
     },
+    sizeGroup(),
     { kind: 'toggle', key: 'locked', label: 'inspector.locked', get: (d, s) => block(d, s).locked, set: setBlock('locked') },
   ];
+}
+
+/** px → pt, to half a point (V2 PT); pt → px. */
+const toPt = (px: number) => Math.round(px * 1.5) / 2, toPx = (pt: number) => pt * 4 / 3;
+const DEFAULT_FONT = { title: 80 / 3, subtitle: 14, label: 11, metric: 14 };
+
+/**
+ * Size and text of an ordinary block (V2 "Position and size", V2.7 per-block sizes, V2.9 free size
+ * and no main name, V2.10 scale text with the block). Not for parts and connectors (V2: afSym).
+ */
+function sizeGroup(): BlockField {
+  const ordinary = (d: BlockDiagram, s: ItemRef) => { const b = block(d, s); return !b.part && !b.connector; };
+  const theme = (d: BlockDiagram) => ({ ...DEFAULT_FONT, ...d.theme });
+  const fontField = (k: 'subtitle' | 'label' | 'metric', min: number, max: number): BlockField => ({
+    kind: 'number', key: `font-${k}`, label: `inspector.font.${k}` as MessageKey, unit: 'pt', min, max, step: 0.5,
+    get: (d, s) => toPt(block(d, s).font?.[k] ?? theme(d)[k]),
+    set: (d, s, v) => updateBlock(d, s.id, { font: { ...block(d, s).font, [k]: Math.max(8, Math.min(32, toPx(v))) } }),
+  });
+  return {
+    kind: 'group', key: 'size', label: 'inspector.group.size', visible: ordinary, fields: [
+      { kind: 'toggle', key: 'showTitle', label: 'inspector.block.showTitle', get: (d, s) => block(d, s).showTitle, set: setBlock('showTitle') },
+      { kind: 'toggle', key: 'free', label: 'inspector.block.free', hint: 'inspector.block.freeHint', get: (d, s) => block(d, s).sizing === 'free', set: (d, s, v) => updateBlock(d, s.id, { sizing: v ? 'free' : 'auto' }) },
+      { kind: 'number', key: 'w', label: 'inspector.block.w', unit: 'px', min: BLOCK_SIZE.freeMin, max: BLOCK_SIZE.max, step: 1, get: (d, s) => block(d, s).w, set: (d, s, v) => resizeBlock(d, s.id, v, block(d, s).h, { scaleText: scaleTextOn(), theme: theme(d) }) },
+      { kind: 'number', key: 'h', label: 'inspector.block.h', unit: 'px', min: BLOCK_SIZE.freeMin, max: BLOCK_SIZE.max, step: 1, get: (d, s) => block(d, s).h, set: (d, s, v) => resizeBlock(d, s.id, block(d, s).w, v, { scaleText: scaleTextOn(), theme: theme(d) }) },
+      {
+        kind: 'custom', key: 'scaleText', label: 'inspector.block.scaleText',
+        render: ({ doc, id }) => {
+          const label = doc.createElement('label');
+          label.className = 'af-check';
+          const box = doc.createElement('input');
+          box.type = 'checkbox'; box.id = id; box.checked = scaleTextOn();
+          box.addEventListener('change', () => setScaleText(box.checked));
+          label.append(box, doc.createTextNode(` ${t('inspector.block.scaleText')}`));
+          // a preference of this browser, not of the file
+          const hint = doc.createElement('small');
+          hint.id = `${id}-hint`; hint.className = 'af-field-hint'; hint.textContent = t('inspector.block.scaleTextHint');
+          box.setAttribute('aria-describedby', hint.id);
+          const wrap = doc.createElement('div');
+          wrap.append(label, hint);
+          return wrap;
+        },
+      },
+      {
+        kind: 'number', key: 'titleSize', label: 'inspector.font.title', unit: 'pt', min: 9, max: 36, step: 0.5,
+        get: (d, s) => toPt(block(d, s).style.titleSize ?? theme(d).title),
+        set: (d, s, v) => setStyle('titleSize')(d, s, Math.max(12, Math.min(48, toPx(v)))),
+      },
+      fontField('subtitle', 7, 24), fontField('label', 6, 21), fontField('metric', 7, 24),
+      {
+        kind: 'custom', key: 'fontsToAll', label: 'inspector.font.toAll',
+        render: ({ doc, apply, sel }) => {
+          const b = doc.createElement('button');
+          b.type = 'button'; b.className = 'af-field-action'; b.textContent = t('inspector.font.toAll');
+          b.addEventListener('click', () => apply(dd => applyFontsToAll(dd, sel.id)));
+          return b;
+        },
+      },
+    ],
+  };
 }
 
 export function portFields(): BlockField[] {

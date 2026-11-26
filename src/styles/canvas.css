@@ -176,7 +176,8 @@
 .af-frame-gray .af-frame-name { fill: var(--frame-gray-ink); }
 .af-frame-gray.af-frame-fill .af-frame-box { fill: var(--frame-gray-line); }
 .af-frame-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
-.af-frame-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; }
+.af-frame-handle, .af-block-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; }
+.af-block-handle { cursor: nwse-resize; }
 
 /* connectors (designs/function/connector.ts; V2 .af41-*) */
 .af-conn-glyph { stroke-width: 1.6px; }

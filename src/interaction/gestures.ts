@@ -24,10 +24,12 @@ import { simplify } from '../core/geometry';
 import type { Measure } from '../render/texts';
 import { panBy, toWorld, wheelFactor, zoomAt } from '../core/camera';
 import { gridSize, portPoint, snapIfOn } from '../core/grid';
-import { connect, frameMembers, moveItems, updateFrame, FRAME } from '../model/diagram';
+import { connect, frameMembers, moveItems, resizeBlock, updateFrame, FRAME } from '../model/diagram';
 
 /** Screen px around a selected frame's corner that start a resize. */
 export const FRAME_HANDLE = 8;
+/** Screen px around the selected block's bottom-right corner that start a resize (a 24 px target, WCAG 2.5.8). */
+export const BLOCK_HANDLE = 12;
 import { commitEdit, type CommitResult } from './commit';
 import { hitTest, itemsInRect, nearestPort, normRect, SNAP_RADIUS, JUNCTION_HIT, type Rect } from './hit';
 
@@ -49,6 +51,8 @@ export interface GestureHost {
   adjustMove?(d: BlockDiagram, movedIds: readonly string[]): BlockDiagram;
   /** A commit was refused (lock) or an edit failed. */
   refused?(r: Extract<CommitResult, { ok: false }>): void;
+  /** Resizing a block also scales its text (V2.10 preference). */
+  scaleText?(): boolean;
 }
 
 /** Movement below this many screen px is a click, not a drag. */
@@ -62,6 +66,7 @@ type State =
   | { kind: 'press'; start: PointerIn; world: Point; item: ItemRef; shift: boolean }   // not yet a drag
   | { kind: 'move'; start: Point; ids: string[]; anchor: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'resize'; frame: string; corner: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
+  | { kind: 'blockResize'; block: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'wire'; from: WireEnd; at: Point; to: Point; target: { end: WireEnd; at: Point } | null };
 
 const same = (a: ItemRef, b: ItemRef) => a.kind === b.kind && a.id === b.id && (a.kind !== 'port' || (b.kind === 'port' && a.block === b.block));
@@ -77,7 +82,7 @@ export class Gestures {
 
   /** The diagram to draw: the moving draft during a move, else the store's data. */
   draft(): BlockDiagram {
-    return this.state.kind === 'move' || this.state.kind === 'resize' ? this.state.draft : this.data();
+    return this.state.kind === 'move' || this.state.kind === 'resize' || this.state.kind === 'blockResize' ? this.state.draft : this.data();
   }
 
   isSelected(ref: Pick<ItemRef, 'kind' | 'id'>): boolean { return this.selection.some(s => s.kind === ref.kind && s.id === ref.id); }
@@ -104,6 +109,15 @@ export class Gestures {
           this.state = { kind: 'resize', frame: only.id, corner: c, start: world, before: d, draft: d };
           return;
         }
+      }
+    }
+    // the bottom-right corner of the one selected block resizes it (V2.9 / V2.10 .resize grip)
+    const one = this.selection.length === 1 && this.selection[0].kind === 'block' ? d.blocks.find(b => b.id === this.selection[0].id) : undefined;
+    if (one && !one.locked && !one.part && !one.connector && !ev.shift) {
+      const tol = BLOCK_HANDLE / cam.z;
+      if (Math.abs(world.x - one.x - one.w) <= tol && Math.abs(world.y - one.y - one.h) <= tol) {
+        this.state = { kind: 'blockResize', block: one.id, start: world, before: d, draft: d };
+        return;
       }
     }
     const item = hitTest(d, world, { zoom: cam.z, routes: this.host.routes(), measure: this.host.measure });
@@ -167,6 +181,12 @@ export class Gestures {
         s.to = world;
         this.updateWirePreview();
         return;
+      case 'blockResize': {
+        const b = s.before.blocks.find(x => x.id === s.block)!;
+        s.draft = resizeBlock(s.before, s.block, b.w + world.x - s.start.x, b.h + world.y - s.start.y, { scaleText: this.host.scaleText?.() ?? false, theme: s.before.theme });
+        this.host.changed?.();
+        return;
+      }
       case 'resize': {
         const f = s.before.frames.find(x => x.id === s.frame)!, g = s.before.grid;
         const S = (v: number) => snapIfOn(v, g), dx = world.x - s.start.x, dy = world.y - s.start.y;
@@ -196,6 +216,7 @@ export class Gestures {
         else this.select([s.item]);
         break;
       case 'resize':
+      case 'blockResize':
       case 'move': {
         const out = s.kind === 'move' && this.host.adjustMove ? this.host.adjustMove(s.draft, s.ids) : s.draft;
         const r = commitEdit(this.host.store, () => out);

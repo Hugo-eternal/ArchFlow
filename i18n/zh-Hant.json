@@ -618,5 +618,21 @@
   "schedule.fixed": "已順延 {count} 段後續任務，工期不變。",
   "schedule.fixedNone": "沒有需要順延的任務。",
   "schedule.inserted": "已插入「{name}」，後續任務接在它之後。",
-  "cmd.scheduleFix": "順延衝突任務"
+  "cmd.scheduleFix": "順延衝突任務",
+  "inspector.group.size": "尺寸與字級",
+  "inspector.block.showTitle": "顯示主名稱",
+  "inspector.block.free": "自由尺寸",
+  "inspector.block.freeHint": "沒有最小尺寸，可縮到很小；格線開啟時仍以格距為單位。拖曳選取方塊的右下角也能調整大小。",
+  "inspector.block.w": "寬",
+  "inspector.block.h": "高",
+  "inspector.block.scaleText": "縮放時文字等比例縮放（所有方塊）",
+  "inspector.font.title": "此方塊 名稱字級",
+  "inspector.font.subtitle": "此方塊 副標字級",
+  "inspector.font.label": "此方塊 接腳字級",
+  "inspector.font.metric": "此方塊 數值字級",
+  "inspector.font.toAll": "把此方塊字級套用到全部方塊",
+  "fonts.scale": "整張圖文字比例：",
+  "fonts.scaledUp": "整張圖文字放大 {pct}%（可復原）",
+  "fonts.scaledDown": "整張圖文字縮小 {pct}%（可復原）",
+  "inspector.block.scaleTextHint": "拖曳右下角縮放方塊時，名稱、副標、接腳與數值字級跟著同比例變化；這個設定存在這台電腦的瀏覽器。"
 }

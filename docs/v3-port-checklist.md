@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 12　☑ 240　✂ 54　⤳ 21
+合計 327 層：☐ 8　☑ 244　✂ 54　⤳ 21
 
 ## core / interaction
 
@@ -176,8 +176,8 @@
 | `inspector` | 3843 |  | af15-ux2 | V2.2.4 電源：需求 vs 額定（`setTimeout 50`） | ☑ | 3.27b `demand` / `load` + 自訂欄位（同步產生，無 setTimeout）；輸入數值自動開啟顯示；可輸入負電壓 |
 | `inspector` | 4108 |  | af15-ux2 | V2.3.0：電壓徽章、箭頭「一鍵套用」 | ☑ | 3.25 `functionDesign.inspectorFields`（零件數值 / 大小 / 方向、電壓標示）；雙向箭頭為共用欄位 `bothEnds` |
 | `inspector` | 10536 |  | af-v280-ux | V2.8：記住區段開合（`setTimeout 0/80/250`） | ☑ | 記住區段開合：`InspectorPanel` group open 狀態（3.21） |
-| `inspector` | 10587 |  | af-v290-free | V2.9：自由尺寸開關、精確寬高（`setTimeout 0/80/250`） | ☐ | **缺口 → 3.43c**：自由尺寸開關、精確寬高（`block.sizing` 已存檔，缺編輯介面與調整大小） |
-| `inspector` | 10627 |  | af-v2100-scale | V2.10：文字隨方塊縮放開關（`setTimeout 0/80/250/500`） | ☐ | **缺口 → 3.43c**：文字隨方塊縮放開關（V2.10） |
+| `inspector` | 10587 |  | af-v290-free | V2.9：自由尺寸開關、精確寬高（`setTimeout 0/80/250`） | ☑ | 方塊「尺寸與字級」群組：自由尺寸、寬 / 高（`model/diagram.resizeBlock`）；畫布上拖曳選取方塊右下角（`Gestures` blockResize，3.43c） |
+| `inspector` | 10627 |  | af-v2100-scale | V2.10：文字隨方塊縮放開關（`setTimeout 0/80/250/500`） | ☑ | 「縮放時文字等比例縮放」：`core/prefs.scaleTextOn`（瀏覽器設定）+ `resizeBlock` scaleText（3.43c） |
 | `ioSettings` | 492 |  | script#1 | Keep existing help accurate after removing direct pin creation. | ☑ | 接腳設定：port 欄位（3.21） |
 | `ioSettings` | 1241 |  | script#2 | Function blocks own their port arrays. Power and schedule behavior is unchanged. | ☑ | 方塊自己的接腳陣列：`block.ports`（3.12） |
 | `ioSettings` | 1277 |  | script#2 |  | ☑ | 「依連線排列接腳」：命令 `layout.arrangeSelectedPorts`（3.41b） |
@@ -311,9 +311,9 @@
 | `render` | 3857 |  | af15-ux2 | V2.2.4：電源設計新方塊預設電源接腳 | ☑ | 3.27b `model/diagram.makeBlock`（電源檢視：VIN / OUT，類型 power） |
 | `render` | 4044 |  | af15-ux2 | V2.3.0：零件庫插入位置 | ☑ | 3.25 插入位置改用 `model.freeSpot`（避開方塊 / 徽章 / 線路，CHANGELOG） |
 | `render` | 4424 |  | af15-ux2 | V2.4.0：繪製區域外框 | ☑ | 區域外框：`render/frames`（3.26a） |
-| `render` | 10399 |  | af-v270-sizing | V2.7：每方塊字型 | ☐ | **缺口 → 3.43c**：每方塊字級（`block.font` 已存檔且 render 使用副標，缺編輯介面與標籤 / 量測字級） |
+| `render` | 10399 |  | af-v270-sizing | V2.7：每方塊字型 | ☑ | 每方塊字級：inspector 名稱 / 副標 / 接腳 / 數值字級、「套用到全部方塊」（`applyFontsToAll`）；接腳名稱用 `block.font.label` / `theme.label`（3.43c） |
 | `render` | 10480 |  | af-v280-ux | V2.8：接腳名稱位置 | ☑ | 接腳名稱位置：`port.label` + inspector（3.18 / 3.21） |
-| `render` | 10565 |  | af-v290-free | V2.9：自由尺寸 / 無名稱方塊 | ☐ | **缺口 → 3.43c**：自由尺寸 / 無名稱方塊（`showTitle` 已存檔、render 已用，缺開關） |
+| `render` | 10565 |  | af-v290-free | V2.9：自由尺寸 / 無名稱方塊 | ☑ | 顯示主名稱開關（`showTitle`）、自由尺寸（3.43c） |
 | `render` | 10617 |  | af-v2100-scale | V2.10：名稱置中 | ☑ | 名稱位置九宮格：`titleAlign`（3.18 / 3.21） |
 | `applyCamera` | 1510 |  | script#2 |  | ☑ | `core/camera` + Canvas transform（3.11 / 3.20） |
 | `applyCamera` | 3100 |  | af15-ux2 |  | ☑ | 同上 |

@@ -22,6 +22,7 @@ import { canvasCommands } from '../interaction/commands';
 import { commitEdit, type CommitResult } from '../interaction/commit';
 import { downloadText, openMessage, readProjectBlob, saveProject, type OpenResult } from '../io/project-file';
 import { Emitter } from './use-store';
+import { scaleTextOn } from '../core/prefs';
 
 export type Screen = 'start' | 'workspace';
 export interface Message { key: MessageKey; vars?: Vars; tone: 'info' | 'error' }
@@ -97,6 +98,7 @@ export class Shell {
       changed: () => this.ui.emit(),
       adjustMove: (d, ids) => this.module?.afterMove?.(d, ids) ?? d,
       refused: r => this.refused(r),
+      scaleText: scaleTextOn,
     });
     installHosts(this, typeof window !== 'undefined' ? window : ({} as Window));
     installToolHosts(this, typeof window !== 'undefined' ? window : ({} as Window));

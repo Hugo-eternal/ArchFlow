@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { t, type MessageKey } from '../core/i18n';
 import { checks, gridSize, GRID_MAX, GRID_MIN, GRID_STEP } from '../core/grid';
 import { alignable } from '../model/arrange';
+import { scaleBlockFonts } from '../model/diagram';
 import { CJK_FONTS, cleanTheme, fontStack, LATIN_FONTS, ptToPx, pxToPt, THEME_LIMITS, type ThemeSize } from '../render/theme';
 import type { BlockDiagram, Theme } from '../io/schema-types';
 import type { Shell } from './controller';
@@ -121,6 +122,21 @@ export function FontsDialog({ shell }: { shell: Shell }) {
           IC-2048 {t('fonts.sampleCjk')} <span style={{ fontSize: `${sample.subtitle}px` }}>{t('fonts.sampleSub')}</span>
         </p>
         <p className="af-settings-note">{t('fonts.note')}</p>
+        <div className="af-settings-row" role="group" aria-label={t('fonts.scale')}>
+          <span className="af-settings-note">{t('fonts.scale')}</span>
+          {[['\u221210%', 1 / 1.1], ['+10%', 1.1], ['+25%', 1.25]].map(([label, f]) => (
+            <button key={label as string} type="button" className="af-button" onClick={() => {
+              const k = f as number, base = cleanTheme(shell.data().theme);
+              const scaled = cleanTheme({ ...base, title: base.title * k, subtitle: base.subtitle * k, label: base.label * k, metric: base.metric * k });
+              const r = shell.edit(x => ({ ...scaleBlockFonts(x, k), theme: scaled }));
+              if (r.ok) {
+                setTheme(scaled);
+                setPts(Object.fromEntries(SIZE_FIELDS.map(fl => [fl.key, String(pxToPt(scaled[fl.key]))])) as Record<ThemeSize, string>);
+                shell.notify(k > 1 ? 'fonts.scaledUp' : 'fonts.scaledDown', { pct: Math.round(Math.abs(k - 1) * 100) });
+              }
+            }}>{label as string}</button>
+          ))}
+        </div>
         <div className="af-modal-actions">
           <button type="button" className="af-button" onClick={() => apply(undefined)} disabled={!shell.data().theme}>{t('fonts.reset')}</button>
           <button type="button" className="af-button" onClick={() => shell.closeDialog()}>{t('dialog.cancel')}</button>
