@@ -213,8 +213,9 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   ],
   editor: 'canvas',
   blockDiagram: true,
-  create({ template } = {}) {
-    if (!template) return { name: '', data: emptyDiagram() };
+  // variant 'power': a blank diagram in the power view (V2's separate "power architecture" type)
+  create({ template, variant } = {}) {
+    if (!template) return { name: '', data: emptyDiagram(variant === 'power' ? 'power' : 'function') };
     const tpl = TEMPLATES[template as keyof typeof TEMPLATES];
     if (!tpl) throw new Error(`unknown function template ${template}`);
     const out = localize(tpl) as unknown as { name: string; camera: { x: number; y: number; z: number }; data: BlockDiagram };

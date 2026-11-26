@@ -45,7 +45,7 @@ export interface DesignModule<D = Design['data']> {
   schema: Schema;
   templates: readonly DesignTemplate[];
   /** A blank design (no template) or a copy of a template, texts in the current language. */
-  create(opts?: { template?: string }): NewDesign<D>;
+  create(opts?: { template?: string; variant?: string }): NewDesign<D>;
   /** Counts for the status bar (V2 #stats), e.g. "4 blocks · 6 pins · 3 wires · 0 junctions". */
   stats?(d: D): string;
   /** Guidance shown over an empty canvas (V2 #emptyCanvas). */

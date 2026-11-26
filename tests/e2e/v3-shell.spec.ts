@@ -143,7 +143,7 @@ test('a V2 project file is refused with "legacy format" and nothing changes', as
 
 test('the shell follows the interface language', async ({ page }) => {
   await page.goto('file://' + DIST);
-  await page.getByLabel('介面語言').selectOption('en');
+  await page.getByRole('radiogroup', { name: '介面語言' }).getByRole('radio', { name: 'English' }).click();
   await expect(page.getByRole('button', { name: 'Create project' })).toBeVisible();
   await page.getByRole('button', { name: 'Create project' }).click();
   await expect(page.getByRole('button', { name: 'Add block' })).toBeVisible();
@@ -157,7 +157,7 @@ test('a project schedule from its template is drawn and can be panned', async ({
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
   await page.getByRole('radio', { name: '專案時程' }).check();
-  await expect(page.getByRole('radio', { name: '範本：入門專案時程' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: /^入門時程/ })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.locator('.af-design-trigger')).toContainText(/產品開發流程/);
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(5);
@@ -479,7 +479,7 @@ test('schedule overview (3.43h): span, status, milestones; a milestone in the li
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
   await page.getByRole('radio', { name: '專案時程' }).check();
-  await page.getByRole('radio', { name: '範本：產品開發時程' }).check();
+  await page.getByRole('radio', { name: /^產品開發流程/ }).check();
   await page.getByRole('button', { name: '建立專案' }).click();
   const panel = page.getByRole('complementary', { name: '屬性' });
   const box = panel.getByRole('region', { name: '時程總覽' });
@@ -737,3 +737,32 @@ test('zoom control, tips card and status bar (V2.10.1 look, 3.46e)', async ({ pa
   expect(errors).toEqual([]);
 });
 
+
+test('start screen (V2.10.1 look, 3.46f): five kinds, templates or blank, preview, power architecture', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await expect(page.getByRole('heading', { level: 1, name: '建立新專案' })).toBeVisible();
+  const kinds = page.getByRole('radiogroup', { name: '第一張設計' }).getByRole('radio');
+  await expect(kinds).toHaveCount(5);
+  await expect(page.getByRole('radio', { name: /^功能方塊設計/ })).toHaveAttribute('aria-checked', 'true');
+  // the preview is the chosen template drawn by the app; the caption names it
+  const board = page.getByRole('figure', { name: '預覽' });
+  await expect(board.locator('img')).toBeVisible();
+  await expect(board.locator('figcaption')).toContainText('入門方塊圖 · 4 個方塊 · 最容易上手');
+  // arrow keys move between kinds
+  await page.getByRole('radio', { name: /^功能方塊設計/ }).focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByRole('radio', { name: /^電源架構設計/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByRole('radio', { name: /^電源架構設計/ })).toBeFocused();
+  await expect(page.getByRole('radiogroup', { name: '內建範本' }).getByRole('radio')).toHaveCount(3);
+  await page.getByRole('radio', { name: /^分散式電源架構/ }).click();
+  await expect(board.locator('figcaption')).toContainText('分散式電源架構');
+  // a blank power architecture: a block diagram in the power view
+  await page.getByRole('radio', { name: '空白設計' }).click();
+  await expect(page.getByRole('radiogroup', { name: '內建範本' })).toHaveCount(0);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.af-statusbar')).toContainText('0 個方塊');
+  expect(errors).toEqual([]);
+});

@@ -21,7 +21,7 @@ test('flowchart: template in the vendor editor, edits saved, undo through the sh
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
   await page.getByRole('radio', { name: '流程圖' }).check();
-  await expect(page.getByRole('radio', { name: '範本：LCD 面板上電流程' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: /^LCD 面板上電流程/ })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
 
   const frame = page.frameLocator('iframe[title="流程圖編輯器"]');

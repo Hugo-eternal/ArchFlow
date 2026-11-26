@@ -43,6 +43,15 @@
   --chrome-disabled-icon: #BCC5CB;
   --led-saved: #3E9B6E;
   --side-panel: #FAFBFA;      /* project contents panel (V2 .navigator) */
+  --start-body: #F4F6F8;          /* start screen behind the form (V2 .af2-start-body) */
+  --start-form: rgb(255 255 255 / .9);
+  --start-heading: #142E4B;
+  --kbd-on-accent: rgb(255 255 255 / .14);
+  --kbd-on-accent-line: rgb(255 255 255 / .28);
+  --tool-bom: #1E7145; --tool-bom-tint: #E8F3EC;
+  --tool-edid: #2B5C8A; --tool-edid-tint: #E7EFF7;
+  --tool-hex: #5E4A9C; --tool-hex-tint: #EFEBF8;
+  --tool-pattern: #A55A12; --tool-pattern-tint: #FBEFE3;
   --selbar: #14202C;           /* selection bar (V2 .af2-selbar, --af-ink) */
   --selbar-text: #E7EEF4;
   --selbar-hover: #2C3E50;
@@ -339,6 +348,13 @@
     --chrome-disabled-icon: #56636F;
     --led-saved: #5CC495;
     --side-panel: #18222B;
+    --start-body: #121A22;
+    --start-form: rgb(23 33 43 / .92);
+    --start-heading: #DCE6F0;
+    --tool-bom: #6CC495; --tool-bom-tint: #1B3326;
+    --tool-edid: #8DBBE8; --tool-edid-tint: #1C3247;
+    --tool-hex: #B7A6EE; --tool-hex-tint: #2A2440;
+    --tool-pattern: #E9A764; --tool-pattern-tint: #3A2A1A;
     --selbar: #26384A;
     --selbar-text: #E7EEF4;
     --selbar-hover: #34495E;
@@ -454,6 +470,13 @@
   --chrome-disabled-icon: #56636F;
   --led-saved: #5CC495;
   --side-panel: #18222B;
+  --start-body: #121A22;
+  --start-form: rgb(23 33 43 / .92);
+  --start-heading: #DCE6F0;
+  --tool-bom: #6CC495; --tool-bom-tint: #1B3326;
+  --tool-edid: #8DBBE8; --tool-edid-tint: #1C3247;
+  --tool-hex: #B7A6EE; --tool-hex-tint: #2A2440;
+  --tool-pattern: #E9A764; --tool-pattern-tint: #3A2A1A;
   --selbar: #26384A;
   --selbar-text: #E7EEF4;
   --selbar-hover: #34495E;

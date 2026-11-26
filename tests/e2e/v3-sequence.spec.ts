@@ -20,8 +20,8 @@ test('sequence: template in the vendor editor, edits saved, undo through the she
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
-  await page.getByRole('radio', { name: '電源時序' }).check();
-  await expect(page.getByRole('radio', { name: '範本：車用顯示控制器' })).toBeChecked();
+  await page.getByRole('radio', { name: '上電時序設計' }).check();
+  await expect(page.getByRole('radio', { name: /^車用顯示控制器/ })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
 
   const frame = page.frameLocator('iframe[title="上電時序編輯器"]');

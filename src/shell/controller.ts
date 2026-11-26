@@ -58,7 +58,7 @@ export function refusalText(r: Refusal): string {
 }
 
 /** What a new design starts from: a type and, optionally, one of its templates. */
-export interface DesignChoice { type: DesignType; template?: string; name?: string }
+export interface DesignChoice { type: DesignType; template?: string; name?: string; variant?: string }
 
 export class Shell {
   readonly store = new Store();
@@ -147,7 +147,7 @@ export class Shell {
 
   /** A new project with one design (blank or from a template). */
   newProject(name: string, choice: DesignChoice = { type: this.designs.list()[0].type }): void {
-    const made = this.designs.require(choice.type).create({ template: choice.template });
+    const made = this.designs.require(choice.type).create({ template: choice.template, variant: choice.variant });
     const designName = choice.name?.trim() || made.name || t('design.defaultName', { n: 1 });
     this.store.newProject(name.trim() || t('project.untitled'), { type: choice.type, name: designName, data: made.data });
     this.gestures.select([]);
@@ -160,7 +160,7 @@ export class Shell {
 
   /** Add a design to the open project and switch to it. */
   addDesign(choice: DesignChoice): void {
-    const made = this.designs.require(choice.type).create({ template: choice.template });
+    const made = this.designs.require(choice.type).create({ template: choice.template, variant: choice.variant });
     const name = choice.name?.trim() || made.name || t('design.defaultName', { n: this.store.designs.length + 1 });
     this.gestures.cancel();
     this.gestures.select([]);

@@ -38,27 +38,89 @@
 .af-choice label, .af-check { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); }
 .af-form-error { color: var(--color-danger); }
 
-/* start screen */
-.af-start { min-height: 100%; display: grid; place-items: center; padding: var(--space-6) var(--space-4); }
-.af-start-card {
-  width: min(480px, 100%);
-  padding: var(--space-6);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-rule);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
+/* start screen (V2.10.1 .af2-start) */
+.af-start { display: flex; flex-direction: column; height: 100%; background: var(--color-board); }
+.af-start-top {
+  display: flex; flex: none; align-items: center; gap: 10px; height: 64px; padding: 0 20px 0 24px; box-sizing: border-box;
+  background: var(--chrome); border-bottom: var(--border-width) solid var(--chrome-line);
 }
-.af-start-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.af-start-head h1 { margin: 0; font-size: var(--text-2xl); color: var(--color-ink); }
-.af-start-tagline, .af-start-version { color: var(--color-muted); font-size: var(--text-sm); }
-.af-start-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.af-locale select {
-  min-height: var(--touch-target);
-  border: var(--border-width) solid var(--color-rule-2);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  padding: 0 var(--space-2);
+.af-start-top .af-brand { padding-right: 12px; }
+.af-start-top .af-logo { width: 36px; height: 36px; }
+.af-start-top .af-wordmark { font-size: 23px; font-weight: 750; }
+.af-start-tag { padding-left: 4px; color: var(--color-muted); white-space: nowrap; }
+.af-seg.af-lang button, .af-step .af-seg button { height: 30px; padding: 0 14px; font-size: 13px; }
+.af-tool-entry.is-bom .af-icon { color: var(--tool-bom); }
+.af-tool-entry.is-edid .af-icon { color: var(--tool-edid); }
+.af-tool-entry.is-hex .af-icon { color: var(--tool-hex); }
+.af-tool-entry.is-pattern .af-icon { color: var(--tool-pattern); }
+.af-start-body {
+  position: relative; display: grid; grid-template-columns: 560px 1fr; flex: 1; min-height: 0;
+  background-color: var(--start-body);
+  background-image: linear-gradient(var(--color-rule-2) 1px, transparent 1px), linear-gradient(90deg, var(--color-rule-2) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
+.af-start-form {
+  position: relative; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; padding: 22px 44px 0;
+  background: var(--start-form); border-right: var(--border-width) solid var(--chrome-line);
+}
+.af-start-form h1 { margin: 0 0 4px; font-size: 21px; font-weight: var(--weight-bold); color: var(--start-heading); }
+.af-start-intro { margin: 0 0 14px; color: var(--color-muted); }
+.af-step { margin-bottom: 22px; }
+.af-step h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: 13.5px; font-weight: 650; color: var(--color-text); }
+.af-step-n {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; box-sizing: border-box;
+  border: var(--border-width) solid var(--chrome-hint); border-radius: 50%; font-size: 11px; font-weight: var(--weight-bold); color: var(--chrome-text-2);
+}
+.af-start-field {
+  width: 100%; height: 44px; box-sizing: border-box; padding: 0 13px; border: var(--border-width) solid var(--color-rule); border-radius: 9px;
+  background: var(--color-surface); color: var(--color-text); font: var(--weight-medium) 15px var(--font-ui);
+}
+.af-start-field:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-tint); }
+.af-types, .af-tpls { display: flex; flex-direction: column; gap: 8px; }
+.af-tpls { margin-top: 10px; }
+.af-type, .af-tpl {
+  display: flex; align-items: center; gap: 13px; width: 100%; box-sizing: border-box; text-align: left; cursor: pointer;
+  border: var(--border-width) solid var(--color-rule); background: var(--color-surface); color: var(--color-text); font: var(--weight-medium) 12px var(--font-ui);
+}
+.af-type { min-height: 66px; padding: 12px 14px; border-radius: 10px; }
+.af-tpl { min-height: 56px; padding: 10px 14px 10px 12px; border-radius: 9px; }
+.af-type:hover, .af-tpl:hover { border-color: var(--chrome-hint); }
+.af-type[aria-checked="true"], .af-tpl[aria-checked="true"] { border-color: var(--color-accent); background: var(--side-panel); box-shadow: 0 0 0 1px var(--color-accent); }
+.af-type-icon { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 9px; background: var(--chrome-soft); color: var(--chrome-text-2); }
+.af-type[aria-checked="true"] .af-type-icon { background: var(--color-accent-tint); color: var(--color-accent); }
+.af-type-icon .af-icon { width: 18px; height: 18px; }
+.af-type-text, .af-tpl-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.af-type-text strong { font-size: 14.5px; font-weight: 650; }
+.af-tpl-text strong { font-size: 13.5px; font-weight: 650; }
+.af-type-text small, .af-tpl-text small { color: var(--color-muted); line-height: 1.5; }
+.af-type-text small { font-size: 12.5px; }
+.af-tpl-text small { font-size: 12px; }
+.af-radio { flex: none; width: 18px; height: 18px; box-sizing: border-box; border: var(--border-width) solid var(--chrome-hint); border-radius: 50%; }
+.af-type[aria-checked="true"] .af-radio { border-color: var(--color-accent); box-shadow: inset 0 0 0 4px var(--color-surface); background: var(--color-accent); }
+.af-tpl-num { flex: none; width: 36px; font: var(--weight-bold) 12px var(--font-mono); color: var(--color-muted); }
+.af-tpl-check { color: var(--color-accent); }
+.af-start-foot { margin: 0 0 18px; font-size: 12px; color: var(--color-faint); }
+.af-start-message { margin: 0 0 12px; font-size: 12.5px; color: var(--color-text); }
+.af-start-message.is-error { color: var(--color-danger); }
+.af-start-actions {
+  position: sticky; bottom: 0; display: flex; gap: 10px; margin: auto -44px 0; padding: 14px 44px 18px;
+  background: var(--chrome); border-top: var(--border-width) solid var(--chrome-line);
+}
+.af-btn.large { height: 44px; padding: 0 16px 0 20px; border-radius: 9px; font-size: 15px; }
+.af-btn.primary .af-kbd { margin-left: 4px; background: var(--kbd-on-accent); border-color: var(--kbd-on-accent-line); color: var(--color-on-accent); }
+.af-btn.primary .af-kbd .af-icon { width: 11px; height: 11px; }
+.af-board { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; min-height: 0; margin: 0; padding: 40px 48px 200px; }
+.af-board-stage { display: grid; place-items: center; flex: 1; width: 100%; min-height: 0; }
+.af-board-stage img, .af-board-art { max-width: 100%; max-height: 100%; }
+.af-board-art { width: 100%; height: 100%; }
+.af-art-title { font: var(--weight-bold) 20px var(--font-ui); fill: var(--color-text); }
+.af-art-sub { font: 15px var(--font-ui); fill: var(--color-muted); }
+.af-art-line { fill: none; stroke: var(--color-accent); stroke-width: 2.5; }
+.af-art-axis { fill: none; stroke: var(--color-muted); stroke-width: 2; }
+.af-art-box { fill: var(--color-surface); stroke: var(--chrome-text-2); stroke-width: 2; }
+.af-board figcaption { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 12px; text-align: center; }
+.af-board figcaption strong { font-size: 15px; font-weight: 650; }
+.af-board figcaption span { color: var(--color-muted); }
 
 /* workspace */
 .af-shell { display: flex; flex-direction: column; height: 100%; }
@@ -443,18 +505,32 @@
 /* vendor editor frame (embedded designs, 3.30) */
 .af-embedded-frame { display: block; width: 100%; height: 100%; border: 0; background: var(--color-surface); }
 
-/* tools (3.32; V2 af2-tools-home / af2-tool-scrim / af2-tooldlg) */
-.af-tools-home { margin-top: var(--space-6); }
-.af-tools-home h2 { margin: 0 0 var(--space-2); font-size: var(--text-md, 14px); }
-.af-tools-home h2 small { margin-left: var(--space-2); font-weight: 400; color: var(--color-muted); font-size: var(--text-sm); }
-.af-tool-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-2); }
-.af-tool-tile {
-  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); text-align: left;
-  min-height: var(--touch-target); padding: var(--space-3); border: var(--border-width) solid var(--color-rule-2);
-  border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); cursor: pointer;
+/* tools (3.32; V2 af2-tools-home on the start screen's board, af2-tool-scrim / af2-tooldlg) */
+.af-tools-home {
+  position: absolute; left: 24px; right: 24px; bottom: 28px; padding: 14px 16px 16px;
+  background: var(--start-form); border: var(--border-width) solid var(--chrome-line); border-radius: 12px; box-shadow: var(--shadow-pop);
 }
-.af-tool-tile:hover { background: var(--color-hover); }
-.af-tool-tile small { color: var(--color-muted); font-size: var(--text-sm); line-height: 1.5; }
+.af-tools-home h2 { margin: 0 0 10px; font-size: 13.5px; font-weight: 650; }
+.af-tools-home h2 small { margin-left: 6px; font-size: 12px; font-weight: 400; color: var(--color-muted); }
+.af-tool-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.af-tool-tile {
+  display: flex; align-items: flex-start; gap: 13px; min-height: 103px; padding: 12px 14px; box-sizing: border-box; text-align: left; cursor: pointer;
+  border: var(--border-width) solid var(--color-rule); border-radius: 10px; background: var(--color-surface); color: var(--color-text); font: var(--weight-medium) 12px var(--font-ui);
+}
+.af-tool-tile:hover { border-color: var(--chrome-hint); }
+.af-tool-tile-icon { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 9px; }
+.af-tool-tile-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.af-tool-tile-text strong { font-size: 14.5px; font-weight: 650; }
+.af-tool-tile-text small { font-size: 12.5px; line-height: 1.5; color: var(--color-muted); }
+.af-tool-tile.is-bom .af-tool-tile-icon { background: var(--tool-bom-tint); color: var(--tool-bom); }
+.af-tool-tile.is-edid .af-tool-tile-icon { background: var(--tool-edid-tint); color: var(--tool-edid); }
+.af-tool-tile.is-hex .af-tool-tile-icon { background: var(--tool-hex-tint); color: var(--tool-hex); }
+.af-tool-tile.is-pattern .af-tool-tile-icon { background: var(--tool-pattern-tint); color: var(--tool-pattern); }
+@media (max-width: 1100px) {
+  .af-start-body { grid-template-columns: 1fr; }
+  .af-board { display: none; }
+  .af-start-top .af-tool-entry span, .af-start-tag { display: none; }
+}
 .af-tool-scrim { position: fixed; inset: 0; z-index: var(--z-dialog); display: grid; place-items: center; padding: var(--space-4); background: color-mix(in srgb, var(--color-ink) 40%, transparent); }
 .af-tool-scrim[hidden] { display: none; }
 .af-tool-dialog {

@@ -17,8 +17,8 @@ test('function: starter template, then a blank design, then save', async ({ page
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
 
-  await expect(page.getByRole('radio', { name: '方塊圖', exact: true })).toBeChecked();
-  await expect(page.getByRole('radio', { name: '範本：入門方塊圖' })).toBeChecked();
+  await expect(page.getByRole('radio', { name: /^功能方塊設計/ })).toBeChecked();
+  await expect(page.getByRole('radio', { name: /^入門方塊圖/ })).toBeChecked();
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.locator('.af-design-trigger')).toContainText(/入門方塊圖/);
   const d = await data(page);

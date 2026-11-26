@@ -3,19 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { t, getLocale, type MessageKey } from '../core/i18n';
 import { formatShortcut } from '../core/commands';
-import { APP_CREDIT, APP_VERSION } from '../version';
-import { isMac, type Shell, type DesignChoice } from './controller';
+import { APP_CREDIT } from '../version';
+import { isMac, type Shell } from './controller';
 import type { OutlineItem, OutlineSection } from '../designs/module';
 import { useVersion } from './use-store';
 import { Canvas } from './Canvas';
 import { InspectorPane } from './InspectorPane';
-import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
+import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog } from './Dialogs';
 import { OrganizeDialog } from './OrganizeDialog';
 import { SelectionBar } from './SelectionBar';
 import { ContextMenu } from './ContextMenu';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
-import { AppBar, CommandButton, KIND_ICON, LocaleSelect, shortcutText, useLocale } from './AppBar';
+import { StartScreen } from './StartScreen';
+import { AppBar, KIND_ICON, shortcutText, useLocale } from './AppBar';
 import { Icon, type IconName } from './icons';
 
 function FileInput({ shell }: { shell: Shell }) {
@@ -27,55 +28,7 @@ function FileInput({ shell }: { shell: Shell }) {
   );
 }
 
-function StartScreen({ shell }: { shell: Shell }) {
-  const [name, setName] = useState('');
-  const [choice, setChoice] = useState<DesignChoice>(() => defaultChoice(shell));
-  return (
-    <main className="af-start">
-      <div className="af-start-card">
-        <div className="af-start-head">
-          <h1>{t('app.name')}</h1>
-          <LocaleSelect />
-        </div>
-        <p className="af-start-tagline">{t('app.tagline')}</p>
-        <form onSubmit={e => { e.preventDefault(); void shell.run('project.create', { name, choice }); }}>
-          <label className="af-form-field">
-            <span>{t('start.projectName')}</span>
-            <input value={name} maxLength={100} placeholder={t('project.untitled')} onChange={e => setName(e.target.value)} />
-          </label>
-          <DesignChooser shell={shell} value={choice} onChange={setChoice} legend="start.designType" />
-          <div className="af-start-actions">
-            <button type="submit" className="af-button is-primary">{t('start.create')}</button>
-            <button type="button" className="af-button" onClick={() => shell.pickFile()}>{t('start.open')}</button>
-            {shell.enabled('project.cancelNew') && <CommandButton shell={shell} id="project.cancelNew" />}
-          </div>
-        </form>
-        <ToolsSection shell={shell} />
-        <Status shell={shell} />
-        <p className="af-start-version">{t('app.version', { version: APP_VERSION })}</p>
-      </div>
-    </main>
-  );
-}
 
-/** The tools as tiles (V2 af2-tools-home on the start screen): usable without a project. */
-function ToolsSection({ shell }: { shell: Shell }) {
-  const tools = shell.tools.list();
-  if (!tools.length) return null;
-  return (
-    <section className="af-tools-home" aria-labelledby="af-tools-title">
-      <h2 id="af-tools-title">{t('tools.title')} <small>{t('tools.subtitle')}</small></h2>
-      <div className="af-tool-tiles">
-        {tools.map(tl => (
-          <button key={tl.id} type="button" className={`af-tool-tile is-${tl.id}`} onClick={() => void shell.run(`tool.open.${tl.id}`)}>
-            <strong>{t(tl.label)}</strong>
-            <small>{t(tl.long)}</small>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 /**
  * The tool dialog over the shell (V2 af2-tool-scrim / af2-tooldlg): one iframe per tool opened
@@ -143,14 +96,6 @@ function Toasts({ shell }: { shell: Shell }) {
   );
 }
 
-function Status({ shell }: { shell: Shell }) {
-  const m = shell.message;
-  return (
-    <p className={`af-status-message${m?.tone === 'error' ? ' is-error' : ''}`} role={m?.tone === 'error' ? 'alert' : 'status'}>
-      {m ? t(m.key, m.vars) : ''}
-    </p>
-  );
-}
 
 /** Function / power view of a block diagram: a two-part switch above the canvas (plan §2.2.1). */
 function ViewSwitch({ shell }: { shell: Shell }) {

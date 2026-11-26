@@ -3,7 +3,7 @@
 // shows only the commands of the active design type. Both stay one row: the command bar scrolls
 // sideways when it does not fit and drops its group captions on narrow windows (shell.css).
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
-import { t, getLocale, setLocale, LOCALES, isLocale, onLocaleChange, type MessageKey } from '../core/i18n';
+import { t, getLocale, setLocale, LOCALES, onLocaleChange, type MessageKey } from '../core/i18n';
 import { formatShortcut } from '../core/commands';
 import { APP_VERSION } from '../version';
 import { Icon, type IconName } from './icons';
@@ -15,17 +15,6 @@ export function useLocale(): string {
   return l;
 }
 
-export function LocaleSelect() {
-  const locale = useLocale();
-  return (
-    <label className="af-locale">
-      <span className="af-visually-hidden">{t('locale.switch')}</span>
-      <select value={locale} onChange={e => { if (isLocale(e.target.value)) setLocale(e.target.value); }}>
-        {LOCALES.map(l => <option key={l} value={l}>{t(`locale.${l}` as MessageKey)}</option>)}
-      </select>
-    </label>
-  );
-}
 
 /** The shortcut of a command as shown to the user ('' when it has none). */
 export function shortcutText(shell: Shell, id: string): string {
@@ -223,13 +212,13 @@ function CommandBar({ shell }: { shell: Shell }) {
 }
 
 /** Interface language as a two-part switch (V2 af2-lang), no reload. */
-export function LangSwitch({ className }: { className?: string }) {
+export function LangSwitch({ className, long }: { className?: string; long?: boolean }) {
   const locale = useLocale();
   return (
     <div className={`af-seg af-lang${className ? ' ' + className : ''}`} role="radiogroup" aria-label={t('locale.switch')}>
       {LOCALES.map(l => (
         <button key={l} type="button" role="radio" aria-checked={locale === l} title={t(`locale.${l}` as MessageKey)} onClick={() => setLocale(l)}>
-          {t(`locale.short.${l}` as MessageKey)}
+          {t(`locale.${long ? '' : 'short.'}${l}` as MessageKey)}
         </button>
       ))}
     </div>
