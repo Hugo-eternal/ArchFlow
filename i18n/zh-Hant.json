@@ -860,5 +860,11 @@
   "selbar.delete.wire": "刪除線路",
   "selbar.delete.text": "刪除文字",
   "selbar.delete.task": "刪除任務",
-  "selbar.more": "更多動作"
+  "selbar.more": "更多動作",
+  "cmd.contextMenu": "開啟右鍵選單",
+  "ctx.canvas": "畫布",
+  "ctx.addBlockHere": "在這裡新增方塊",
+  "ctx.addTextHere": "在這裡新增文字",
+  "ctx.rerouteAll": "全部重新配線",
+  "ctx.addTask": "新增任務"
 }

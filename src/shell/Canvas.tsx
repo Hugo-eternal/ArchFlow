@@ -2,7 +2,7 @@
 // (the draft while dragging); pointer input goes to interaction/gestures, the wheel zooms.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { t, type MessageKey } from '../core/i18n';
-import { backgroundOf } from '../core/camera';
+import { backgroundOf, toWorld } from '../core/camera';
 import { gridSize } from '../core/grid';
 import { blocksLayer } from '../render/blocks';
 import { wiresLayer, invalidCount } from '../render/wires';
@@ -15,6 +15,27 @@ import type { CanvasSelection } from '../designs/module';
 import type { Design } from '../io/schema-types';
 import { useVersion } from './use-store';
 import { useLocale } from './AppBar';
+
+/**
+ * Right-click (V2 Fg / ly): an item under the pointer is selected first (kept when already in the
+ * selection), then its menu opens; elsewhere the canvas menu, with the world point for "add here".
+ */
+function contextMenu(shell: Shell, svg: SVGSVGElement, e: { clientX: number; clientY: number; target: EventTarget; preventDefault(): void }): void {
+  e.preventDefault();
+  // the keyboard's context-menu key fires without a pointer position
+  if (e.clientX === 0 && e.clientY === 0) { shell.openContextMenuForSelection(); return; }
+  const el = (e.target as Element).closest?.('[data-block], [data-wire], [data-text], [data-task]');
+  if (el) {
+    const id = (attr: string) => el.getAttribute(attr) ?? '';
+    if (shell.isBlockDiagram) {
+      const ref = el.hasAttribute('data-block') ? { kind: 'block' as const, id: id('data-block') }
+        : el.hasAttribute('data-wire') ? { kind: 'wire' as const, id: id('data-wire') } : { kind: 'text' as const, id: id('data-text') };
+      if (!shell.gestures.selection.some(r => r.kind === ref.kind && r.id === ref.id)) shell.gestures.select([ref]);
+    } else if (el.hasAttribute('data-task')) shell.selectItem({ kind: 'task', id: id('data-task') });
+  }
+  const tg = el ? shell.selectionTarget() : null, r = svg.getBoundingClientRect();
+  shell.openContextMenu(e.clientX, e.clientY, tg ? tg.kind : 'canvas', toWorld(shell.camera, { x: e.clientX - r.left, y: e.clientY - r.top }));
+}
 
 const pointer = (svg: SVGSVGElement, e: { clientX: number; clientY: number; button: number; shiftKey: boolean; metaKey: boolean; ctrlKey: boolean; altKey: boolean }): PointerIn => {
   const r = svg.getBoundingClientRect();
@@ -109,11 +130,11 @@ export function Canvas({ shell }: { shell: Shell }) {
       role="application"
       aria-label={t('canvas.label')}
       tabIndex={0}
-      onPointerDown={e => { const svg = svgRef.current!; svg.setPointerCapture(e.pointerId); svg.focus(); shell.gestures.down(pointer(svg, e)); }}
+      onPointerDown={e => { if (e.button === 2) return; const svg = svgRef.current!; svg.setPointerCapture(e.pointerId); svg.focus(); shell.gestures.down(pointer(svg, e)); }}
       onPointerMove={e => shell.gestures.move(pointer(svgRef.current!, e))}
       onPointerUp={e => { const svg = svgRef.current!; shell.gestures.up(pointer(svg, e)); if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId); }}
       onPointerCancel={() => shell.gestures.cancel()}
-      onContextMenu={e => e.preventDefault()}
+      onContextMenu={e => contextMenu(shell, svgRef.current!, e)}
     >
       <g ref={layerRef} className="af-world" />
     </svg>
@@ -260,7 +281,7 @@ function DrawingCanvas({ shell }: { shell: Shell }) {
         onPointerUp={up}
         onPointerCancel={() => { drag.current = null; redraw(n => n + 1); }}
         onKeyDown={key}
-        onContextMenu={e => e.preventDefault()}
+        onContextMenu={e => { const svg = (e.currentTarget as SVGSVGElement); contextMenu(shell, svg, e); }}
       >
         <g ref={layerRef} className="af-world" />
       </svg>

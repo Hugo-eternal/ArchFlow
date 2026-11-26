@@ -118,7 +118,7 @@
 - [x] 3.46c `shell`：左側「專案內容」（搜尋、依類型分組的方塊／分支接點清單、時程任務清單；點選即選取並置中），設計管理移到 app bar 的設計下拉（L3）
 - [x] 3.46d `shell` / `inspector`：屬性面板標頭（圖示、類別、名稱、收合）與 V2 群組樣式、未選取時的「圖面設定」（L3）
 - [x] 3.46d2 `shell`：選取時的浮動工具列（名稱／輸入／輸出／顏色／刪除／更多；V2 `.af2-selbar`，深色 38 px，跟著選取項目）（L3）
-- [ ] 3.46d3 `shell`：右鍵選單（V2 `Lu` 選取項目動作／`Bg` 畫布動作：在這裡新增方塊、新增文字、整理預覽、全部重新配線、格線與對齊、適合畫面、範本、版面與字體；時程：新增任務、自動調整），與浮動工具列「更多」共用項目（L3）
+- [x] 3.46d3 `shell`：右鍵選單（V2 `Lu` 選取項目動作／`Bg` 畫布動作：在這裡新增方塊、新增文字、整理預覽、全部重新配線、格線與對齊、適合畫面、範本、版面與字體；時程：新增任務、自動調整），與浮動工具列「更多」共用項目（L3）
 - [ ] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
 - [ ] 3.46f `shell`：啟動畫面照 V2.10.1——左右分欄、步驟編號、設計類型卡（圖示＋說明）、範本／空白分段、範本卡、右側預覽與小工具卡、頂部語言與工具連結（L3）
 - [ ] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
@@ -136,7 +136,7 @@
 
 ## 交接
 - **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
-- **下一步**：3.46d3（右鍵選單；V3 目前沒有，畫布上 `onContextMenu` 只是 preventDefault）。3.46d2 完成：`src/shell/SelectionBar.tsx` 浮動選取工具列（V2 `.af2-selbar`）——方塊：名稱（聚焦面板的型號欄）／輸入／輸出、6 個方塊配色、刪除、更多（含雙向接腳、依連線排列接腳）；電路符號：標示／旋轉；線路：名稱／重新配線、8 個線色、實線／虛線／點線、箭頭；文字：刪除／更多；時程任務：改名（F2）／接續／分支。每一格都對應 registry 指令（新增 `item.rename`（F2）、`item.delete`、`block.stylePreset`、`wire.color`、`wire.dash`、`wire.arrow`；`port.add` 帶類型參數時保持選取方塊），位置每格 rAF 追蹤選取項目，上方置中、蓋到其他方塊時改選 V2 的其他五個位置之一；拖曳中隱藏。「更多」目前是下拉選單（V2 是開右鍵選單），3.46d3 做完右鍵選單後兩者共用項目。V2 的配色值見 `controller.ts` 的 `BLOCK_PRESETS` / `WIRE_COLORS`（出處 legacy L168145、`.af15-wire` 色票）。
+- **下一步**：3.46e（畫布周邊：縮放控制、上手提示卡、狀態列）。3.46d3 完成：`src/shell/ContextMenu.tsx` 右鍵選單（V2 `Fg` / `.af2-ctx`）。右鍵點方塊／線路／文字／任務先選取（已在選取中則保留），開該項目選單（與浮動工具列「更多」同一份：`SelectionBar.tsx` 的 `itemMenu`）；點空白處開畫布選單（`canvasMenu`：在這裡新增方塊／文字（`block.add` / `text.add` 帶 `{ at }` 世界座標）、整理預覽、全部重新配線（`wire.reroute` 帶 `'all'`）、格線與對齊、適合畫面、範本、版面與字體；時程：新增任務、自動調整＋共用項）。鍵盤：Shift+F10（新指令 `view.contextMenu`）或選單鍵開選取項目（或畫布）的選單；方向鍵、Home／End、Enter、Esc；滾輪／視窗縮放／點外面關閉。選單項目帶參數時不顯示快捷鍵（快捷鍵不帶參數，意思不同）。右鍵不再觸發拖曳。`Shell.selectionTarget()` 取代 SelectionBar 內的判斷。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -277,7 +277,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.46d2：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 413 項、Playwright V3 32 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46d3：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 413 項、Playwright V3 33 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

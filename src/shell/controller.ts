@@ -89,6 +89,8 @@ export class Shell {
 
   /** The tool shown over the shell (V2 af2-tooldlg), and the tools opened so far (their frames stay mounted). */
   tool: string | null = null;
+  /** The open context menu (V2 .af2-ctx): where (page coordinates), for what, and the world point under it. */
+  contextMenu: { x: number; y: number; kind: string; at: { x: number; y: number }; key: number } | null = null;
   openedTools: string[] = [];
   /** Commands run from the palette, most recent first (V2 palette "Recent"; not saved). */
   recentCommands: string[] = [];
@@ -184,6 +186,37 @@ export class Shell {
   }
 
   /** Centre of the visible canvas in diagram coordinates. */
+  openContextMenu(x: number, y: number, kind: string, at: { x: number; y: number }): void { this.contextMenu = { x, y, kind, at, key: Date.now() }; this.ui.emit(); }
+  closeContextMenu(): void { if (this.contextMenu) { this.contextMenu = null; this.ui.emit(); } }
+  /** What the selection bar / context menu act on (V2 wu: one block, symbol, wire, text or task), with its drawing attribute. */
+  selectionTarget(): { kind: 'block' | 'part' | 'wire' | 'text' | 'task'; id: string; attr: string } | null {
+    if (this.isBlockDiagram) {
+      const sel = this.gestures.selection;
+      if (sel.length !== 1) return null;
+      const one = sel[0];
+      if (one.kind === 'block') {
+        const b = this.data().blocks.find(x => x.id === one.id);
+        return b ? { kind: b.part || b.connector ? 'part' : 'block', id: one.id, attr: 'data-block' } : null;
+      }
+      if (one.kind === 'wire') return { kind: 'wire', id: one.id, attr: 'data-wire' };
+      if (one.kind === 'text') return { kind: 'text', id: one.id, attr: 'data-text' };
+      return null;
+    }
+    const it = this.item;
+    return it?.kind === 'task' ? { kind: 'task', id: it.id, attr: 'data-task' } : null;
+  }
+
+  /** Shift+F10 / the context-menu key: the menu of the selection at its centre, else of the canvas at the view centre. */
+  openContextMenuForSelection(): void {
+    const tg = this.selectionTarget();
+    const canvas = typeof document === 'undefined' ? null : document.querySelector('svg.af-canvas');
+    if (!canvas) return;
+    const el = tg ? canvas.querySelector(`[${tg.attr}="${CSS.escape(tg.id)}"]`) : null;
+    const r = (el ?? canvas).getBoundingClientRect(), c = canvas.getBoundingClientRect();
+    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    this.openContextMenu(x, y, tg ? tg.kind : 'canvas', toWorld(this.camera, { x: x - c.left, y: y - c.top }));
+  }
+
   viewCentre(): { x: number; y: number } { return toWorld(this.camera, { x: this.viewport.w / 2, y: this.viewport.h / 2 }); }
 
   fitView(): void {
@@ -299,6 +332,11 @@ export const BLOCK_PRESETS = [
 /** V2 wire quick colours (inspector .af15-wire swatches). */
 export const WIRE_COLORS = ['#44546A', '#2B5C8A', '#2E6E62', '#9A6A26', '#A33A32', '#5B5394', '#7A8694', '#1C2733'] as const;
 
+const pointArg = (arg: unknown): { x: number; y: number } | null => {
+  const at = (arg as { at?: { x: unknown; y: unknown } } | undefined)?.at;
+  return at && typeof at.x === 'number' && typeof at.y === 'number' && Number.isFinite(at.x) && Number.isFinite(at.y) ? { x: at.x, y: at.y } : null;
+};
+
 const canEdit = (s: Shell) => hasProject(s) && s.isBlockDiagram && !s.gestures.busy;
 
 function confirmDiscard(s: Shell, then: () => void): void {
@@ -372,8 +410,9 @@ export function shellCommands(): Command<Shell>[] {
     },
     {
       id: 'block.add', label: 'cmd.blockAdd', group: 'insert', shortcut: 'B', enabled: canEdit,
-      run: s => {
-        const d = s.data(), c = s.viewCentre();
+      // arg { at }: "add block here" from the context menu (V2 ay: the spot under the pointer)
+      run: (s, arg) => {
+        const d = s.data(), c = pointArg(arg) ?? s.viewCentre();
         const at = freeSpot(d, BLOCK_DEFAULT.w, BLOCK_DEFAULT.h, c, d.grid.snap ? gridSize(d.grid) : 1);
         let id = '';
         const r = s.edit(x => { const out = addBlock(x, makeBlock(x, at)); id = out.id; return adoptNewBlock(out.data, id); });
@@ -394,8 +433,8 @@ export function shellCommands(): Command<Shell>[] {
     },
     {
       id: 'text.add', label: 'cmd.textAdd', group: 'insert', shortcut: 'T', enabled: canEdit,
-      run: s => {
-        const c = s.viewCentre();
+      run: (s, arg) => {
+        const c = pointArg(arg) ?? s.viewCentre();
         let id = '';
         const r = s.edit(x => { const out = addText(x, { x: c.x - TEXT_DEFAULT.w / 2, y: c.y - 20 }, t('text.placeholder')); id = out.id; return out.data; });
         if (r.ok) s.gestures.select([{ kind: 'text', id }]);
@@ -427,8 +466,9 @@ export function shellCommands(): Command<Shell>[] {
     // V2 #reroute: drop the manual route of the selected wires, or of every wire when none is selected
     {
       id: 'wire.reroute', label: 'cmd.wireReroute', group: 'wire', enabled: s => canEdit(s) && s.data().wires.length > 0,
-      run: s => {
-        const ids = s.gestures.selection.filter(i => i.kind === 'wire').map(i => i.id);
+      run: (s, arg) => {
+        // 'all': the context menu's "reroute all wires", whatever is selected
+        const ids = arg === 'all' ? [] : s.gestures.selection.filter(i => i.kind === 'wire').map(i => i.id);
         const r = s.edit(x => clearRoutes(x, ids.length ? ids : undefined));
         if (!r.ok) return;
         const invalid = [...s.routesFor(s.data()).values()].filter(x => !x.valid).length;
@@ -470,6 +510,11 @@ export function shellCommands(): Command<Shell>[] {
     {
       id: 'wire.arrow', label: 'cmd.wireArrow', group: 'wire', enabled: s => canEdit(s) && !!oneOf(s, 'wire'),
       run: s => { const id = oneOf(s, 'wire'); if (id) s.edit(d => { const line = d.wires.find(w => w.id === id)!.line; return updateWire(d, id, { line: { ...line, arrow: !line.arrow } }); }); },
+    },
+    {
+      id: 'view.contextMenu', label: 'cmd.contextMenu', group: 'view', shortcut: 'Shift+F10',
+      enabled: s => hasProject(s) && !s.module?.embedded,
+      run: s => s.openContextMenuForSelection(),
     },
     // V2 drawing settings "port names inside / outside" (afPinLabels): every shown pin name, one undo step
     {

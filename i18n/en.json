@@ -860,5 +860,11 @@
   "selbar.delete.wire": "Delete wire",
   "selbar.delete.text": "Delete text",
   "selbar.delete.task": "Delete task",
-  "selbar.more": "More actions"
+  "selbar.more": "More actions",
+  "cmd.contextMenu": "Open the context menu",
+  "ctx.canvas": "Canvas",
+  "ctx.addBlockHere": "Add block here",
+  "ctx.addTextHere": "Add text here",
+  "ctx.rerouteAll": "Reroute all wires",
+  "ctx.addTask": "Add task"
 }

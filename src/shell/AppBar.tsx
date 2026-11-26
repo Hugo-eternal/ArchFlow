@@ -127,7 +127,8 @@ export function MenuButton({ shell, label, entries, className, buttonClass, trig
           {shown.map((e, i) => {
             if (e === 'sep') return <div key={`sep${i}`} role="separator" className="af-menu-sep" />;
             if ('heading' in e) return <div key={`h${i}`} role="presentation" className="af-menu-head">{e.heading}</div>;
-            const cmd = shell.registry.get(e.id)!, sc = shortcutText(shell, e.id);
+            // a shortcut runs the command without this entry's argument: shown only for plain entries
+            const cmd = shell.registry.get(e.id)!, sc = e.arg === undefined ? shortcutText(shell, e.id) : '';
             return (
               <button key={e.key ?? e.id} type="button" role={e.checked === undefined ? 'menuitem' : 'menuitemradio'} aria-checked={e.checked}
                 className="af-menu-item" tabIndex={-1} disabled={!shell.enabled(e.id)}

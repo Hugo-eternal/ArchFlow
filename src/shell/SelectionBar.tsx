@@ -13,26 +13,8 @@ import { WIRE_DASHES } from '../inspector/common';
 type Kind = 'block' | 'part' | 'wire' | 'text' | 'task';
 interface Action { id: string; arg?: unknown; icon: IconName; label: MessageKey; short?: MessageKey; menuOnly?: boolean }
 
-/** What is selected, as far as the bar is concerned (V2 wu: block / wire / text / task only). */
-function target(shell: Shell): { kind: Kind; id: string; attr: string } | null {
-  if (shell.isBlockDiagram) {
-    const sel = shell.gestures.selection;
-    if (sel.length !== 1) return null;
-    const s = sel[0];
-    if (s.kind === 'block') {
-      const b = shell.data().blocks.find(x => x.id === s.id);
-      return b ? { kind: b.part || b.connector ? 'part' : 'block', id: s.id, attr: 'data-block' } : null;
-    }
-    if (s.kind === 'wire') return { kind: 'wire', id: s.id, attr: 'data-wire' };
-    if (s.kind === 'text') return { kind: 'text', id: s.id, attr: 'data-text' };
-    return null;
-  }
-  const it = shell.item;
-  return it?.kind === 'task' ? { kind: 'task', id: it.id, attr: 'data-task' } : null;
-}
-
 /** The actions of a kind (V2 Lu); `menuOnly` ones are only in "more". */
-function actions(kind: Kind): Action[] {
+export function actions(kind: Kind): Action[] {
   switch (kind) {
     case 'block': return [
       { id: 'item.rename', icon: 'pencil', label: 'selbar.editName', short: 'selbar.name' },
@@ -58,6 +40,27 @@ function actions(kind: Kind): Action[] {
   }
 }
 
+const deleteLabel = (kind: Kind) => `selbar.delete.${kind === 'part' ? 'block' : kind}` as MessageKey;
+
+/** The menu of a selected item (V2 Lu with the menu-only actions, then delete): "more" and the context menu. */
+export function itemMenu(shell: Shell, kind: Kind): MenuEntry[] {
+  const all = actions(kind).filter(a => shell.registry.has(a.id));
+  return [...all.map(a => ({ id: a.id, arg: a.arg, icon: a.icon, label: t(a.label), key: `${a.id}:${String(a.arg ?? '')}` })), 'sep', { id: 'item.delete', icon: 'trash', label: t(deleteLabel(kind)) }];
+}
+
+/** The menu of the canvas (V2 Bg): add here, arrange, grid, fit, templates, typography. */
+export function canvasMenu(shell: Shell, at: { x: number; y: number }): MenuEntry[] {
+  const tail: MenuEntry[] = [
+    { id: 'design.manage', icon: 'grid' }, { id: 'view.fit', icon: 'fit' }, 'sep',
+    { id: 'design.loadExample', icon: 'layoutTemplate' }, { id: 'theme.fonts', icon: 'sliders' },
+  ];
+  if (!shell.isBlockDiagram) return [{ id: 'schedule.append', icon: 'plus', label: t('ctx.addTask') }, { id: 'schedule.autoArrange', icon: 'wand' }, ...tail];
+  return [
+    { id: 'block.add', arg: { at }, icon: 'plus', label: t('ctx.addBlockHere') }, { id: 'text.add', arg: { at }, icon: 'type', label: t('ctx.addTextHere') }, 'sep',
+    { id: 'layout.arrangePreview', icon: 'wand' }, { id: 'wire.reroute', arg: 'all', icon: 'route', label: t('ctx.rerouteAll') }, ...tail,
+  ];
+}
+
 function Dash({ i }: { i: number }) {
   return (
     <svg viewBox="0 0 22 8" aria-hidden="true" className="af-sb-dash">
@@ -70,7 +73,7 @@ export function SelectionBar({ shell }: { shell: Shell }) {
   useVersion(shell.ui);
   useVersion(shell.store);
   const bar = useRef<HTMLDivElement>(null);
-  const tg = target(shell);
+  const tg = shell.selectionTarget();
   const key = tg ? `${tg.kind}:${tg.id}` : '';
 
   // follow the item every frame (camera, drags, layout): above it and centred unless that covers
@@ -106,13 +109,12 @@ export function SelectionBar({ shell }: { shell: Shell }) {
   }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!tg) return null;
-  const all = actions(tg.kind).filter(a => shell.registry.has(a.id));
-  const shown = all.filter(a => !a.menuOnly && shell.enabled(a.id));
+  const shown = actions(tg.kind).filter(a => !a.menuOnly && shell.registry.has(a.id) && shell.enabled(a.id));
   const d = shell.isBlockDiagram ? shell.data() : null;
   const block = tg.kind === 'block' ? d?.blocks.find(b => b.id === tg.id) : undefined;
   const line = tg.kind === 'wire' ? d?.wires.find(w => w.id === tg.id)?.line : undefined;
-  const del = `selbar.delete.${tg.kind === 'part' ? 'block' : tg.kind}` as MessageKey;
-  const more: MenuEntry[] = [...all.map(a => ({ id: a.id, arg: a.arg, icon: a.icon, label: t(a.label), key: `${a.id}:${String(a.arg ?? '')}` })), 'sep', { id: 'item.delete', icon: 'trash', label: t(del) }];
+  const del = deleteLabel(tg.kind);
+  const more = itemMenu(shell, tg.kind);
   const tip = (label: MessageKey, id: string) => { const sc = shortcutText(shell, id); return sc ? `${t(label)} (${sc})` : t(label); };
 
   return (

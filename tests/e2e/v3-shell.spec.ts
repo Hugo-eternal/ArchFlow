@@ -645,3 +645,58 @@ test('selection bar (V2.10.1 look, 3.46d2): block, wire and task actions above t
   await expect.poll(tasks).toBe(n - 1);
   expect(errors).toEqual([]);
 });
+
+test('context menu (V2.10.1, 3.46d3): canvas actions at the pointer, item actions, keyboard', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const data = () => page.evaluate(() => (window as unknown as { archflow: { data(): { blocks: { id: string; x: number; y: number; w: number; h: number; ports: unknown[] }[]; texts: unknown[] } } }).archflow.data());
+  const canvas = page.locator('svg.af-canvas');
+  const cb = (await canvas.boundingBox())!;
+
+  // empty canvas: "add block here" puts the block near the pointer
+  const at = { x: cb.x + 150, y: cb.y + cb.height - 120 };
+  await page.mouse.click(at.x, at.y, { button: 'right' });
+  const menu = page.getByRole('menu', { name: '畫布' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: '在這裡新增方塊' })).toBeFocused();
+  const before = (await data()).blocks.length;
+  await menu.getByRole('menuitem', { name: '在這裡新增方塊' }).click();
+  await expect(menu).toHaveCount(0);
+  const blocks = (await data()).blocks;
+  expect(blocks).toHaveLength(before + 1);
+  const added = blocks[blocks.length - 1];
+  const el = (await page.locator(`svg.af-canvas [data-block="${added.id}"]`).boundingBox())!;
+  expect(Math.hypot(el.x + el.width / 2 - at.x, el.y + el.height / 2 - at.y)).toBeLessThan(160);
+
+  // Escape closes; a block: selected by the right-click, its own menu
+  await page.mouse.click(at.x, at.y, { button: 'right' });
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  const mcu = page.locator('svg.af-canvas [data-block]').nth(1);
+  const mb = (await mcu.boundingBox())!;
+  await page.mouse.click(mb.x + 30, mb.y + 30, { button: 'right' });
+  const bmenu = page.getByRole('menu', { name: '方塊' });
+  await expect(bmenu).toBeVisible();
+  await expect(page.locator('.af-insp-kind')).toHaveText('方塊');
+  await page.keyboard.press('ArrowDown');
+  await expect(bmenu.getByRole('menuitem', { name: '新增輸入接腳' })).toBeFocused();
+  const ports = (await data()).blocks[1].ports.length;
+  await page.keyboard.press('Enter');
+  await expect.poll(async () => (await data()).blocks[1].ports.length).toBe(ports + 1);
+
+  // Shift+F10 opens the selection's menu from the keyboard; delete from it
+  await canvas.focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(bmenu).toBeVisible();
+  const n = (await data()).blocks.length;
+  await bmenu.getByRole('menuitem', { name: '刪除方塊' }).click();
+  await expect.poll(async () => (await data()).blocks.length).toBe(n - 1);
+
+  // the selection bar's "more" has the same entries
+  await page.getByRole('navigation', { name: '專案內容' }).getByRole('button', { name: '感測器' }).click();
+  await page.getByRole('toolbar', { name: '選取項目快捷列' }).getByRole('button', { name: '更多動作' }).click();
+  await expect(page.getByRole('menu', { name: '更多動作' }).getByRole('menuitem')).toHaveText(['編輯名稱F2', '新增輸入接腳', '新增輸出接腳', '新增雙向接腳', '依連線排列接腳', '刪除方塊']);
+  expect(errors).toEqual([]);
+});

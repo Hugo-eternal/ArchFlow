@@ -167,6 +167,8 @@
 .af-menu-item:hover:not(:disabled), .af-menu-item:focus-visible { background: var(--chrome-soft); }
 .af-menu-item:disabled { color: var(--chrome-disabled); cursor: default; }
 .af-menu-kbd { font-family: inherit; font-size: var(--text-xs); color: var(--color-muted); }
+.af-menu-list.af-ctx { position: fixed; width: 236px; min-width: 0; }
+.af-menu-item.is-danger { color: var(--color-danger); }
 .af-menu-sep { height: var(--border-width); margin: var(--space-1) 0; background: var(--chrome-line); }
 
 /* command bar */

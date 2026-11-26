@@ -12,6 +12,7 @@ import { InspectorPane } from './InspectorPane';
 import { ConfirmDialog, ExportDialog, NewDesignDialog, PromptDialog, DesignChooser, defaultChoice } from './Dialogs';
 import { OrganizeDialog } from './OrganizeDialog';
 import { SelectionBar } from './SelectionBar';
+import { ContextMenu } from './ContextMenu';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
 import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
 import { AppBar, CommandButton, LocaleSelect, useLocale } from './AppBar';
@@ -251,6 +252,7 @@ function Workspace({ shell }: { shell: Shell }) {
           <Canvas key={d?.id} shell={shell} />
           <CanvasLegend shell={shell} />
           <SelectionBar shell={shell} />
+          <ContextMenu shell={shell} />
           {hint && <p className="af-empty-hint">{t(hint)}</p>}
         </section>
         <InspectorPane shell={shell} />
