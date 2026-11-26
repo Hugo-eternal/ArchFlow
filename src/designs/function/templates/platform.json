@@ -1,0 +1,663 @@
+{
+ "name": "@i18n:template.function.platform.name",
+ "camera": {
+  "x": -4.448275862068968,
+  "y": 142.76724137931035,
+  "z": 0.743103448275862
+ },
+ "data": {
+  "view": "function",
+  "blocks": [
+   {
+    "id": "x7iyveqqf3",
+    "x": 500,
+    "y": 300,
+    "w": 260,
+    "h": 180,
+    "title": "@i18n:template.function.platform.b0.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b0.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xkj2kybt6n",
+      "name": "DDR",
+      "side": "t",
+      "t": 0.3076923076923077,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xhq00r8k4j",
+      "name": "eMMC",
+      "side": "t",
+      "t": 0.6923076923076923,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xrix7got7b",
+      "name": "CSI",
+      "side": "l",
+      "t": 0.2777777777777778,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xdo7tjfu6b",
+      "name": "ETH",
+      "side": "l",
+      "t": 0.7222222222222222,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xur8i1s3ny",
+      "name": "DSI",
+      "side": "r",
+      "t": 0.2777777777777778,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xq4z9lznjr",
+      "name": "PCIe",
+      "side": "r",
+      "t": 0.7222222222222222,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xpxal8n7tv",
+      "name": "VDD",
+      "side": "b",
+      "t": 0.3076923076923077,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xso30zpedx",
+      "name": "SPI",
+      "side": "b",
+      "t": 0.6923076923076923,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F6FA",
+     "border": "#B4C3D3",
+     "accent": "#2B5C8A",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x1tqjop1nx",
+    "x": 360,
+    "y": 60,
+    "w": 240,
+    "h": 140,
+    "title": "4 GB",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b1.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xg9rvykuk3",
+      "name": "DQ",
+      "side": "b",
+      "t": 0.9166666666666666,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F5F4F9",
+     "border": "#BDB7D2",
+     "accent": "#5B5394",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xfd9brtuwe",
+    "x": 680,
+    "y": 60,
+    "w": 240,
+    "h": 140,
+    "title": "64 GB",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b2.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x5l2xvpx7q",
+      "name": "CMD",
+      "side": "b",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F5F4F9",
+     "border": "#BDB7D2",
+     "accent": "#5B5394",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x6dtgg2xx9",
+    "x": 80,
+    "y": 240,
+    "w": 240,
+    "h": 120,
+    "title": "MIPI CSI-2",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b3.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xski7x3hxw",
+      "name": "CSI",
+      "side": "r",
+      "t": 0.5,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F2F7F9",
+     "border": "#AEC7D2",
+     "accent": "#2A6F8C",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x2d4tha6iv",
+    "x": 80,
+    "y": 440,
+    "w": 240,
+    "h": 120,
+    "title": "100BASE-T1",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b4.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xg4xtw1hn6",
+      "name": "RGMII",
+      "side": "r",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x2it528zfy",
+    "x": 940,
+    "y": 240,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.function.platform.b5.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b5.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x5s0zq1xlk",
+      "name": "DSI",
+      "side": "l",
+      "t": 0.5,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xgz7sxbma0",
+    "x": 940,
+    "y": 440,
+    "w": 240,
+    "h": 120,
+    "title": "Wi-Fi 6 / BT 5",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b6.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x14b3ka2h0",
+      "name": "PCIe",
+      "side": "l",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x179egbmgj",
+    "x": 360,
+    "y": 660,
+    "w": 240,
+    "h": 140,
+    "title": "PMIC",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b7.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xpuhxbusx4",
+      "name": "VOUT",
+      "side": "t",
+      "t": 0.9166666666666666,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x1bywrgrf8",
+    "x": 680,
+    "y": 660,
+    "w": 240,
+    "h": 140,
+    "title": "@i18n:template.function.platform.b8.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b8.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xafritek9c",
+      "name": "SPI",
+      "side": "t",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xgvz6pgtrm",
+      "name": "CAN",
+      "side": "r",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#FAF4F3",
+     "border": "#D5B3AE",
+     "accent": "#A33A32",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xfcqowjimd",
+    "x": 1000,
+    "y": 670,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.function.platform.b9.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.platform.b9.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xxy76vppnk",
+      "name": "CAN",
+      "side": "l",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   }
+  ],
+  "wires": [
+   {
+    "id": "xo2w4iut5u",
+    "a": {
+     "block": "x1tqjop1nx",
+     "port": "xg9rvykuk3"
+    },
+    "b": {
+     "block": "x7iyveqqf3",
+     "port": "xkj2kybt6n"
+    },
+    "name": "LPDDR4",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xifn8llbly",
+    "a": {
+     "block": "xfd9brtuwe",
+     "port": "x5l2xvpx7q"
+    },
+    "b": {
+     "block": "x7iyveqqf3",
+     "port": "xhq00r8k4j"
+    },
+    "name": "eMMC",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x14cdnqxuk",
+    "a": {
+     "block": "x6dtgg2xx9",
+     "port": "xski7x3hxw"
+    },
+    "b": {
+     "block": "x7iyveqqf3",
+     "port": "xrix7got7b"
+    },
+    "name": "CSI-2",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xszhhp74gh",
+    "a": {
+     "block": "x2d4tha6iv",
+     "port": "xg4xtw1hn6"
+    },
+    "b": {
+     "block": "x7iyveqqf3",
+     "port": "xdo7tjfu6b"
+    },
+    "name": "RGMII",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x7yscduond",
+    "a": {
+     "block": "x7iyveqqf3",
+     "port": "xur8i1s3ny"
+    },
+    "b": {
+     "block": "x2it528zfy",
+     "port": "x5s0zq1xlk"
+    },
+    "name": "MIPI DSI",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xfn8hw7u5x",
+    "a": {
+     "block": "x7iyveqqf3",
+     "port": "xq4z9lznjr"
+    },
+    "b": {
+     "block": "xgz7sxbma0",
+     "port": "x14b3ka2h0"
+    },
+    "name": "PCIe",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xba1ginih4",
+    "a": {
+     "block": "x179egbmgj",
+     "port": "xpuhxbusx4"
+    },
+    "b": {
+     "block": "x7iyveqqf3",
+     "port": "xpxal8n7tv"
+    },
+    "name": "VDD_SOC",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xv2b83ypkf",
+    "a": {
+     "block": "x7iyveqqf3",
+     "port": "xso30zpedx"
+    },
+    "b": {
+     "block": "x1bywrgrf8",
+     "port": "xafritek9c"
+    },
+    "name": "SPI",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xk99z5gz4t",
+    "a": {
+     "block": "x1bywrgrf8",
+     "port": "xgvz6pgtrm"
+    },
+    "b": {
+     "block": "xfcqowjimd",
+     "port": "xxy76vppnk"
+    },
+    "name": "CAN-FD",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   }
+  ],
+  "junctions": [],
+  "texts": [
+   {
+    "id": "xd2aupb015",
+    "text": "@i18n:template.function.platform.t0.text",
+    "x": 80,
+    "y": -70,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "x17x8e1vc9",
+    "text": "@i18n:template.function.platform.t1.text",
+    "x": 80,
+    "y": -34,
+    "w": 760,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "frames": [],
+  "grid": {
+   "size": 10,
+   "show": true,
+   "snap": true
+  },
+  "wirePresets": [],
+  "presentationClean": false,
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  },
+  "portLabels": "inside"
+ }
+}

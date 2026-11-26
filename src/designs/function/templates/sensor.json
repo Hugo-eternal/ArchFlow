@@ -1,0 +1,663 @@
+{
+ "name": "@i18n:template.function.sensor.name",
+ "camera": {
+  "x": 119.65000000000005,
+  "y": 217.35625000000002,
+  "z": 0.53875
+ },
+ "data": {
+  "view": "function",
+  "blocks": [
+   {
+    "id": "x2bkodsz0w",
+    "x": 560,
+    "y": 300,
+    "w": 260,
+    "h": 180,
+    "title": "Cortex-M4F",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b0.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x33x0u1onk",
+      "name": "ADC",
+      "side": "l",
+      "t": 0.2777777777777778,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xvyhsfloc2",
+      "name": "I2C",
+      "side": "l",
+      "t": 0.7222222222222222,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x3sppjbwvs",
+      "name": "SPI",
+      "side": "t",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xxfvgt18kv",
+      "name": "UART",
+      "side": "r",
+      "t": 0.2777777777777778,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x96d6ivff1",
+      "name": "GPIO",
+      "side": "r",
+      "t": 0.7222222222222222,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xzkbegyfpa",
+      "name": "VDD",
+      "side": "b",
+      "t": 0.3076923076923077,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xp9l6ou0p4",
+      "name": "CLK",
+      "side": "b",
+      "t": 0.6923076923076923,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F6FA",
+     "border": "#B4C3D3",
+     "accent": "#2B5C8A",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xn942l23xi",
+    "x": 220,
+    "y": 220,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.function.sensor.b1.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b1.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xll48vxju4",
+      "name": "IN",
+      "side": "l",
+      "t": 0.5,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x91slgwb64",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F2F7F9",
+     "border": "#AEC7D2",
+     "accent": "#2A6F8C",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xe6mozfp8k",
+    "x": -120,
+    "y": 220,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.function.sensor.b2.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b2.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xvlj96ahkb",
+      "name": "SIG",
+      "side": "r",
+      "t": 0.5,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xbte44ueny",
+    "x": 220,
+    "y": 440,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.function.sensor.b3.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b3.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xi706aowgd",
+      "name": "I2C",
+      "side": "r",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F2F7F9",
+     "border": "#AEC7D2",
+     "accent": "#2A6F8C",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xj92f8xcri",
+    "x": 560,
+    "y": 60,
+    "w": 260,
+    "h": 140,
+    "title": "@i18n:template.function.sensor.b4.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b4.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xswawyncu5",
+      "name": "SPI",
+      "side": "b",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F5F4F9",
+     "border": "#BDB7D2",
+     "accent": "#5B5394",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xeq1psx2e6",
+    "x": 940,
+    "y": 220,
+    "w": 240,
+    "h": 120,
+    "title": "BLE 5.3",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b5.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x7vnd6ri3q",
+      "name": "UART",
+      "side": "l",
+      "t": 0.5,
+      "type": "io",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xwqxuknjwh",
+      "name": "RF",
+      "side": "r",
+      "t": 0.5,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xw9sf0tgjo",
+    "x": 1280,
+    "y": 220,
+    "w": 200,
+    "h": 120,
+    "title": "2.4 GHz",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b6.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xehlb5kfr5",
+      "name": "RF",
+      "side": "l",
+      "t": 0.5,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xht3060w6q",
+    "x": 940,
+    "y": 440,
+    "w": 240,
+    "h": 120,
+    "title": "RGB LED",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b7.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xfu141n32q",
+      "name": "GPIO",
+      "side": "l",
+      "t": 0.5,
+      "type": "in",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xl3rk4ir15",
+    "x": 400,
+    "y": 660,
+    "w": 240,
+    "h": 140,
+    "title": "@i18n:template.function.sensor.b8.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b8.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x2e20v51x6",
+      "name": "VOUT",
+      "side": "t",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x7fkwxri4y",
+    "x": 720,
+    "y": 660,
+    "w": 240,
+    "h": 140,
+    "title": "32.768 kHz",
+    "subtitle": "",
+    "partNumber": "@i18n:template.function.sensor.b9.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x8tyc1v2ek",
+      "name": "CLK",
+      "side": "t",
+      "t": 0.08333333333333333,
+      "type": "out",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   }
+  ],
+  "wires": [
+   {
+    "id": "x0fwmayatg",
+    "a": {
+     "block": "xe6mozfp8k",
+     "port": "xvlj96ahkb"
+    },
+    "b": {
+     "block": "xn942l23xi",
+     "port": "xll48vxju4"
+    },
+    "name": "SENSE",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xa1ov02ha7",
+    "a": {
+     "block": "xn942l23xi",
+     "port": "x91slgwb64"
+    },
+    "b": {
+     "block": "x2bkodsz0w",
+     "port": "x33x0u1onk"
+    },
+    "name": "AIN",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xfx9j4a2rq",
+    "a": {
+     "block": "xbte44ueny",
+     "port": "xi706aowgd"
+    },
+    "b": {
+     "block": "x2bkodsz0w",
+     "port": "xvyhsfloc2"
+    },
+    "name": "I2C",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xr3kaxiads",
+    "a": {
+     "block": "xj92f8xcri",
+     "port": "xswawyncu5"
+    },
+    "b": {
+     "block": "x2bkodsz0w",
+     "port": "x3sppjbwvs"
+    },
+    "name": "SPI",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x0b8ksqzrj",
+    "a": {
+     "block": "x2bkodsz0w",
+     "port": "xxfvgt18kv"
+    },
+    "b": {
+     "block": "xeq1psx2e6",
+     "port": "x7vnd6ri3q"
+    },
+    "name": "HCI",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xlzpwdl933",
+    "a": {
+     "block": "xeq1psx2e6",
+     "port": "xwqxuknjwh"
+    },
+    "b": {
+     "block": "xw9sf0tgjo",
+     "port": "xehlb5kfr5"
+    },
+    "name": "RF",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xi4q6akmiy",
+    "a": {
+     "block": "x2bkodsz0w",
+     "port": "x96d6ivff1"
+    },
+    "b": {
+     "block": "xht3060w6q",
+     "port": "xfu141n32q"
+    },
+    "name": "PWM",
+    "kind": "signal",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xebxwr7nc8",
+    "a": {
+     "block": "xl3rk4ir15",
+     "port": "x2e20v51x6"
+    },
+    "b": {
+     "block": "x2bkodsz0w",
+     "port": "xzkbegyfpa"
+    },
+    "name": "1V8",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xntyzvd9fm",
+    "a": {
+     "block": "x7fkwxri4y",
+     "port": "x8tyc1v2ek"
+    },
+    "b": {
+     "block": "x2bkodsz0w",
+     "port": "xp9l6ou0p4"
+    },
+    "name": "LFCLK",
+    "kind": "clock",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   }
+  ],
+  "junctions": [],
+  "texts": [
+   {
+    "id": "xgpsy2pdd6",
+    "text": "@i18n:template.function.sensor.t0.text",
+    "x": -120,
+    "y": -70,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "x1q2ukrywi",
+    "text": "@i18n:template.function.sensor.t1.text",
+    "x": -120,
+    "y": -34,
+    "w": 760,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "frames": [],
+  "grid": {
+   "size": 10,
+   "show": true,
+   "snap": true
+  },
+  "wirePresets": [],
+  "presentationClean": false,
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  },
+  "portLabels": "inside"
+ }
+}

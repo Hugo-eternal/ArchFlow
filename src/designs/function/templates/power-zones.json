@@ -1,0 +1,722 @@
+{
+ "name": "@i18n:template.power.zones.name",
+ "camera": {
+  "x": 143.4102564102564,
+  "y": 234.41666666666666,
+  "z": 0.5525641025641026
+ },
+ "data": {
+  "view": "power",
+  "blocks": [
+   {
+    "id": "x65xqpp9kv",
+    "x": -160,
+    "y": 300,
+    "w": 220,
+    "h": 120,
+    "title": "PD 20 V",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b0.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xvrub5rx4m",
+      "name": "VBUS",
+      "side": "r",
+      "t": 0.6666666666666666,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "20",
+      "show": true
+     },
+     "current": {
+      "value": "3",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "source"
+   },
+   {
+    "id": "x6pe5mc6e0",
+    "x": 140,
+    "y": 300,
+    "w": 240,
+    "h": 160,
+    "title": "Buck-boost",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b1.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xxt2pjwluf",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xws5xg2e0i",
+      "name": "BAT",
+      "side": "b",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xjwuzgd80j",
+      "name": "SYS",
+      "side": "r",
+      "t": 0.4375,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "8.4",
+      "show": true
+     },
+     "efficiency": {
+      "value": "94",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xttb5uqedk",
+    "x": 140,
+    "y": 560,
+    "w": 240,
+    "h": 160,
+    "title": "2S 7.4 V",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b2.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xa2sgmnwce",
+      "name": "BAT",
+      "side": "t",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F4F5F7",
+     "border": "#BCC4CD",
+     "accent": "#5B6876",
+     "text": "#2A3542",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "7.4",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xldhhhm6we",
+    "x": 480,
+    "y": 300,
+    "w": 240,
+    "h": 140,
+    "title": "@i18n:template.power.zones.b3.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b3.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xhguldl1hv",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xc6wlh6d4z",
+      "name": "A",
+      "side": "r",
+      "t": 0.21428571428571427,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x7bwpcmtlm",
+      "name": "B",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x7ws4fk2k2",
+      "name": "C",
+      "side": "r",
+      "t": 0.7857142857142857,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "7.4",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xy39f8ntzd",
+    "x": 820,
+    "y": 60,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b4.title",
+    "subtitle": "",
+    "partNumber": "LDO 1.8 V",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xszrxgpht6",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xg0xhi71hi",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "1.8",
+      "show": true
+     },
+     "current": {
+      "value": "0.2",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xsj8wuax1e",
+    "x": 820,
+    "y": 300,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b5.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b5.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x9rpohnyvd",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5833333333333334,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "xwh1a4p1sl",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "3.3",
+      "show": true
+     },
+     "current": {
+      "value": "1",
+      "show": true
+     },
+     "efficiency": {
+      "value": "91",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xjb37804r9",
+    "x": 820,
+    "y": 540,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b6.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b6.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xqcbcjyo28",
+      "name": "VIN",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     },
+     {
+      "id": "x9l3uhcuo7",
+      "name": "OUT",
+      "side": "r",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F9F6F0",
+     "border": "#D3C19F",
+     "accent": "#9A6A26",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {
+     "voltage": {
+      "value": "18",
+      "show": true
+     },
+     "current": {
+      "value": "0.3",
+      "show": true
+     }
+    },
+    "titleAlign": "center-center",
+    "role": "converter"
+   },
+   {
+    "id": "xnr5uwt8je",
+    "x": 1160,
+    "y": 60,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b7.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b7.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x6kr0miha9",
+      "name": "VDD",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F2F7F9",
+     "border": "#AEC7D2",
+     "accent": "#2A6F8C",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "x2moqbtaha",
+    "x": 1160,
+    "y": 300,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b8.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b8.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "x8cb2osobq",
+      "name": "VDD",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F6FA",
+     "border": "#B4C3D3",
+     "accent": "#2B5C8A",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   },
+   {
+    "id": "xqgfb6b13f",
+    "x": 1160,
+    "y": 540,
+    "w": 240,
+    "h": 120,
+    "title": "@i18n:template.power.zones.b9.title",
+    "subtitle": "",
+    "partNumber": "@i18n:template.power.zones.b9.partNumber",
+    "ref": "",
+    "ports": [
+     {
+      "id": "xxmsew35pf",
+      "name": "VDD",
+      "side": "l",
+      "t": 0.5,
+      "type": "power",
+      "label": "inside",
+      "locked": false
+     }
+    ],
+    "style": {
+     "fill": "#F3F7F5",
+     "border": "#AFC7BE",
+     "accent": "#2E6E62",
+     "text": "#1C2733",
+     "titleSize": 20
+    },
+    "sizing": "auto",
+    "showTitle": true,
+    "locked": false,
+    "metrics": {},
+    "titleAlign": "center-center",
+    "role": "load"
+   }
+  ],
+  "wires": [
+   {
+    "id": "xe14rqttgr",
+    "a": {
+     "block": "x65xqpp9kv",
+     "port": "xvrub5rx4m"
+    },
+    "b": {
+     "block": "x6pe5mc6e0",
+     "port": "xxt2pjwluf"
+    },
+    "name": "VBUS",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x6v4h6qr59",
+    "a": {
+     "block": "x6pe5mc6e0",
+     "port": "xws5xg2e0i"
+    },
+    "b": {
+     "block": "xttb5uqedk",
+     "port": "xa2sgmnwce"
+    },
+    "name": "VBAT",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xrssfv10bi",
+    "a": {
+     "block": "x6pe5mc6e0",
+     "port": "xjwuzgd80j"
+    },
+    "b": {
+     "block": "xldhhhm6we",
+     "port": "xhguldl1hv"
+    },
+    "name": "VSYS",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x99grywrna",
+    "a": {
+     "block": "xldhhhm6we",
+     "port": "xc6wlh6d4z"
+    },
+    "b": {
+     "block": "xy39f8ntzd",
+     "port": "xszrxgpht6"
+    },
+    "name": "DOM_A",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "x3uzel4pj6",
+    "a": {
+     "block": "xldhhhm6we",
+     "port": "x7bwpcmtlm"
+    },
+    "b": {
+     "block": "xsj8wuax1e",
+     "port": "x9rpohnyvd"
+    },
+    "name": "DOM_B",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xignljs0sd",
+    "a": {
+     "block": "xldhhhm6we",
+     "port": "x7ws4fk2k2"
+    },
+    "b": {
+     "block": "xjb37804r9",
+     "port": "xqcbcjyo28"
+    },
+    "name": "DOM_C",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xa11ty1p1q",
+    "a": {
+     "block": "xy39f8ntzd",
+     "port": "xg0xhi71hi"
+    },
+    "b": {
+     "block": "xnr5uwt8je",
+     "port": "x6kr0miha9"
+    },
+    "name": "1V8_A",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xpylszsq4m",
+    "a": {
+     "block": "xsj8wuax1e",
+     "port": "xwh1a4p1sl"
+    },
+    "b": {
+     "block": "x2moqbtaha",
+     "port": "x8cb2osobq"
+    },
+    "name": "3V3",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   },
+   {
+    "id": "xidngod16c",
+    "a": {
+     "block": "xjb37804r9",
+     "port": "x9l3uhcuo7"
+    },
+    "b": {
+     "block": "xqgfb6b13f",
+     "port": "xxmsew35pf"
+    },
+    "name": "18V",
+    "kind": "power",
+    "line": {
+     "color": "#334e70",
+     "width": 2.2,
+     "dash": "solid",
+     "arrow": false
+    },
+    "locked": false
+   }
+  ],
+  "junctions": [],
+  "texts": [
+   {
+    "id": "xk9fg0awni",
+    "text": "@i18n:template.power.zones.t0.text",
+    "x": -160,
+    "y": -70,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "xkhvjtfbj2",
+    "text": "@i18n:template.power.zones.t1.text",
+    "x": -160,
+    "y": -34,
+    "w": 760,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "frames": [],
+  "grid": {
+   "size": 10,
+   "show": true,
+   "snap": true
+  },
+  "wirePresets": [],
+  "presentationClean": false,
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  },
+  "portLabels": "inside"
+ }
+}

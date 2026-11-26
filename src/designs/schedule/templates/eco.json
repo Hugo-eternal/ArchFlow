@@ -1,0 +1,317 @@
+{
+ "name": "@i18n:template.schedule.eco.name",
+ "camera": {
+  "x": 3.620289855072464,
+  "y": 280.91130434782605,
+  "z": 0.5344927536231884
+ },
+ "anchor": "2026-03-11",
+ "data": {
+  "tasks": [
+   {
+    "id": "x6c231fr2q",
+    "title": "@i18n:template.schedule.eco.task0.title",
+    "ref": "T01",
+    "note": "@i18n:template.schedule.eco.task0.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-02",
+     "end": "2026-03-03"
+    },
+    "status": "done",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x1dki8kgpm",
+    "title": "@i18n:template.schedule.eco.task1.title",
+    "ref": "T02",
+    "note": "@i18n:template.schedule.eco.task1.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-04",
+     "end": "2026-03-10"
+    },
+    "status": "done",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xe5tqjvw6i",
+    "title": "@i18n:template.schedule.eco.task2.title",
+    "ref": "T03",
+    "note": "@i18n:template.schedule.eco.task2.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-11",
+     "end": "2026-03-12"
+    },
+    "status": "doing",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x72drbk9ww",
+    "title": "@i18n:template.schedule.eco.task3.title",
+    "ref": "T04",
+    "note": "@i18n:template.schedule.eco.task3.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-13",
+     "end": "2026-03-26"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xofwbp9o89",
+    "title": "@i18n:template.schedule.eco.task4.title",
+    "ref": "T05",
+    "note": "@i18n:template.schedule.eco.task4.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-27",
+     "end": "2026-04-09"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x35x90xzui",
+    "title": "@i18n:template.schedule.eco.task5.title",
+    "ref": "T06",
+    "note": "@i18n:template.schedule.eco.task5.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-10",
+     "end": "2026-04-16"
+    },
+    "status": "todo",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xizv27yvv8",
+    "title": "@i18n:template.schedule.eco.task6.title",
+    "ref": "T07",
+    "note": "@i18n:template.schedule.eco.task6.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-13",
+     "end": "2026-03-20"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xxz9ys4a14",
+    "title": "@i18n:template.schedule.eco.task7.title",
+    "ref": "T08",
+    "note": "@i18n:template.schedule.eco.task7.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-23",
+     "end": "2026-03-27"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#5B5394"
+   }
+  ],
+  "links": [
+   {
+    "id": "xf1lcjwcdx",
+    "from": "x6c231fr2q",
+    "to": "x1dki8kgpm",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "x0ibyui2pw",
+    "from": "x1dki8kgpm",
+    "to": "xe5tqjvw6i",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "x57t8nbrbu",
+    "from": "xe5tqjvw6i",
+    "to": "x72drbk9ww",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xvxaczyb2r",
+    "from": "x72drbk9ww",
+    "to": "xofwbp9o89",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xgjc3qmw5a",
+    "from": "xofwbp9o89",
+    "to": "x35x90xzui",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xthsptqvn5",
+    "from": "xe5tqjvw6i",
+    "to": "xizv27yvv8",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xvs5ht8zb9",
+    "from": "xizv27yvv8",
+    "to": "xxz9ys4a14",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#5B5394"
+   }
+  ],
+  "texts": [
+   {
+    "id": "xeioqvwn4h",
+    "text": "@i18n:template.schedule.eco.t0.text",
+    "x": 70,
+    "y": -90,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "xckvqt84kg",
+    "text": "@i18n:template.schedule.eco.t1.text",
+    "x": 70,
+    "y": -52,
+    "w": 900,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "rules": {
+   "endpoint": "start",
+   "count": "difference"
+  },
+  "appearance": {
+   "theme": "blue",
+   "title": 16,
+   "body": 12,
+   "time": 12
+  },
+  "snap": {
+   "enabled": true,
+   "range": 12
+  },
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  }
+ }
+}

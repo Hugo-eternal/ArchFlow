@@ -1,0 +1,449 @@
+{
+ "name": "@i18n:template.schedule.product.name",
+ "camera": {
+  "x": 8.930283224400874,
+  "y": 268.56906318082787,
+  "z": 0.4017429193899782
+ },
+ "anchor": "2026-03-03",
+ "data": {
+  "tasks": [
+   {
+    "id": "x31pxfxd8l",
+    "title": "@i18n:template.schedule.product.task0.title",
+    "ref": "T01",
+    "note": "@i18n:template.schedule.product.task0.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-01-05",
+     "end": "2026-01-16"
+    },
+    "status": "done",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xs22swrni1",
+    "title": "@i18n:template.schedule.product.task1.title",
+    "ref": "T02",
+    "note": "@i18n:template.schedule.product.task1.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-01-19",
+     "end": "2026-02-06"
+    },
+    "status": "done",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x0mlba93kb",
+    "title": "@i18n:template.schedule.product.task2.title",
+    "ref": "T03",
+    "note": "@i18n:template.schedule.product.task2.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-02-09",
+     "end": "2026-03-06"
+    },
+    "status": "doing",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xhgeb5yqxd",
+    "title": "@i18n:template.schedule.product.task3.title",
+    "ref": "T04",
+    "note": "@i18n:template.schedule.product.task3.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-09",
+     "end": "2026-03-27"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x4np7aeacq",
+    "title": "@i18n:template.schedule.product.task4.title",
+    "ref": "T05",
+    "note": "@i18n:template.schedule.product.task4.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-30",
+     "end": "2026-04-17"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x8t3fjhko5",
+    "title": "@i18n:template.schedule.product.task5.title",
+    "ref": "T06",
+    "note": "@i18n:template.schedule.product.task5.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-20",
+     "end": "2026-04-24"
+    },
+    "status": "todo",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xbumtbm5pd",
+    "title": "@i18n:template.schedule.product.task6.title",
+    "ref": "T07",
+    "note": "@i18n:template.schedule.product.task6.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-27",
+     "end": "2026-05-22"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "x9a3bgyuz7",
+    "title": "@i18n:template.schedule.product.task7.title",
+    "ref": "T08",
+    "note": "@i18n:template.schedule.product.task7.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-05-25",
+     "end": "2026-05-29"
+    },
+    "status": "todo",
+    "milestone": true,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    }
+   },
+   {
+    "id": "xffc5a7qfp",
+    "title": "@i18n:template.schedule.product.task8.title",
+    "ref": "T09",
+    "note": "@i18n:template.schedule.product.task8.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-02-09",
+     "end": "2026-02-27"
+    },
+    "status": "done",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xkqyqu9sif",
+    "title": "@i18n:template.schedule.product.task9.title",
+    "ref": "T10",
+    "note": "@i18n:template.schedule.product.task9.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-03-02",
+     "end": "2026-04-03"
+    },
+    "status": "doing",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xayd32gywd",
+    "title": "@i18n:template.schedule.product.task10.title",
+    "ref": "T11",
+    "note": "@i18n:template.schedule.product.task10.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-06",
+     "end": "2026-04-24"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xoys4s51jx",
+    "title": "@i18n:template.schedule.product.task11.title",
+    "ref": "T12",
+    "note": "@i18n:template.schedule.product.task11.note",
+    "side": "top",
+    "time": {
+     "type": "range",
+     "start": "2026-04-20",
+     "end": "2026-05-15"
+    },
+    "status": "todo",
+    "milestone": false,
+    "offset": {
+     "card": {
+      "x": 0,
+      "y": 0
+     },
+     "axis": {
+      "x": 0,
+      "y": 0
+     }
+    },
+    "branchColor": "#9A6A26"
+   }
+  ],
+  "links": [
+   {
+    "id": "xsimnvft4u",
+    "from": "x31pxfxd8l",
+    "to": "xs22swrni1",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "x09ud188vs",
+    "from": "xs22swrni1",
+    "to": "x0mlba93kb",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "x4pgndsfwa",
+    "from": "x0mlba93kb",
+    "to": "xhgeb5yqxd",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xewm83pzh5",
+    "from": "xhgeb5yqxd",
+    "to": "x4np7aeacq",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xnpmmowtdf",
+    "from": "x4np7aeacq",
+    "to": "x8t3fjhko5",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xzei3ulwci",
+    "from": "x8t3fjhko5",
+    "to": "xbumtbm5pd",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xf4kdecb9y",
+    "from": "xbumtbm5pd",
+    "to": "x9a3bgyuz7",
+    "days": {
+     "mode": "auto"
+    }
+   },
+   {
+    "id": "xw8ws8b295",
+    "from": "xs22swrni1",
+    "to": "xffc5a7qfp",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xjyo7rdh9w",
+    "from": "xffc5a7qfp",
+    "to": "xkqyqu9sif",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "x7abkwzknf",
+    "from": "xkqyqu9sif",
+    "to": "xayd32gywd",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#5B5394"
+   },
+   {
+    "id": "xhnowmd4u7",
+    "from": "x4np7aeacq",
+    "to": "xoys4s51jx",
+    "days": {
+     "mode": "auto"
+    },
+    "branchColor": "#9A6A26"
+   }
+  ],
+  "texts": [
+   {
+    "id": "xnmo3fvg2y",
+    "text": "@i18n:template.schedule.product.t0.text",
+    "x": 70,
+    "y": -90,
+    "w": 520,
+    "size": 18,
+    "color": "#14202C",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   },
+   {
+    "id": "xcqtufyacu",
+    "text": "@i18n:template.schedule.product.t1.text",
+    "x": 70,
+    "y": -52,
+    "w": 900,
+    "size": 11,
+    "color": "#5F6C77",
+    "bold": false,
+    "italic": false,
+    "align": "left",
+    "background": "transparent"
+   }
+  ],
+  "rules": {
+   "endpoint": "start",
+   "count": "difference"
+  },
+  "appearance": {
+   "theme": "blue",
+   "title": 16,
+   "body": 12,
+   "time": 12
+  },
+  "snap": {
+   "enabled": true,
+   "range": 12
+  },
+  "theme": {
+   "latinFont": "Source Han Sans TC",
+   "cjkFont": "Source Han Sans TC",
+   "title": 20,
+   "subtitle": 13,
+   "label": 13,
+   "metric": 13
+  }
+ }
+}

@@ -17,8 +17,10 @@ import { scheduleLayer } from './render';
 import { estimateWidth, textLayout, textsLayer } from '../../render/texts';
 import { h } from '../../render/vnode';
 import starter from './templates/starter.json';
+import product from './templates/product.json';
+import eco from './templates/eco.json';
 
-const TEMPLATES = { starter } as const;
+const TEMPLATES = { starter, product, eco } as const;
 
 export function emptySchedule(): ScheduleData {
   return { tasks: [], links: [], texts: [], rules: { endpoint: 'start', count: 'difference' }, appearance: {}, snap: { enabled: true, range: 12 } };
@@ -85,7 +87,8 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
   type: 'schedule',
   label: 'design.type.schedule',
   schema: DATA_SCHEMAS.schedule,
-  templates: [{ id: 'starter', label: 'template.schedule.starter.label' }],
+  // V2 af16 PLANS: simple, product development, engineering change
+  templates: [{ id: 'starter', label: 'template.schedule.starter.label' }, { id: 'product', label: 'template.schedule.product.name' }, { id: 'eco', label: 'template.schedule.eco.name' }],
   editor: 'canvas',
   create({ template } = {}) {
     if (!template) return { name: '', data: emptySchedule() };

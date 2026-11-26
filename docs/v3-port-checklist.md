@@ -397,8 +397,8 @@
 | L3012 text boxes | 文字框字級、顏色、粗斜體 | ☑ | inspector 文字框欄位（3.21） |
 | L3385–L3417 schedule persistence / checks / canvas / task | 任務狀態、里程碑、衝突與逾期標示 | ☑ | `schedule/dates.issues`、`schedule/render`、`schedule/fields`（3.28–3.29） |
 | L3430 schedule overview | 時程總覽：總天數與起訖、狀態進度條與圖例、有問題的任務清單（點選前往）、一鍵順延 | ☐ | **缺口 → 3.43h**：V3 只有任務 / 連線數與「一鍵順延」（3.43b） |
-| L3452 schedule templates | 三個時程範本：簡單（規劃→發行）、產品開發時程（含韌體 / 法規分支）、工程變更流程 | ☐ | **缺口 → 3.43g**：V3 只有簡單範本 |
-| L3328–L3369 function / power templates（LIB） | 每種方塊圖三個範本：入門 + 兩個 10 模組範例；電源三個：入門 + 兩個 9 節點範例 | ☐ | **缺口 → 3.43g**：V3 只有入門方塊圖與入門電源樹 |
+| L3452 schedule templates | 三個時程範本：簡單（規劃→發行）、產品開發時程（含韌體 / 法規分支）、工程變更流程 | ☑ | `schedule/templates/product.json`、`eco.json`（3.43g） |
+| L3328–L3369 function / power templates（LIB） | 每種方塊圖三個範本：入門 + 兩個 10 模組範例；電源三個：入門 + 兩個 9 節點範例 | ☑ | `function/templates/platform.json`、`sensor.json`、`power-car.json`、`power-zones.json`（3.43g） |
 | L3566–L3602 | 新任務預設、接續插入、順延衝突 | ☑ | 3.43b |
 | L3609–L3681 | 畫布上雙擊直接改名稱 / 日期 / 說明、Enter / F2 改名、Tab 新增任務、雙擊方塊文字行內改名、雙擊線路標籤改名 | ✂ | V3 在屬性面板編輯（3.43b / 3.43d2 已記錄為差異；SVG 畫布沒有 contentEditable，需要另做浮動輸入框，若要可另排） |
 | L3681 workflow order, duration, quick fixes | 欄位順序、工期、設定日期 | ☑ | 3.43b |

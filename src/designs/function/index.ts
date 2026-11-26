@@ -31,10 +31,14 @@ import { contentBounds } from '../../export/svg';
 import { estimateWidth } from '../../render/texts';
 import starter from './templates/starter.json';
 import powerStarter from './templates/power-starter.json';
+import platform from './templates/platform.json';
+import sensor from './templates/sensor.json';
+import powerCar from './templates/power-car.json';
+import powerZones from './templates/power-zones.json';
 
 // "power-starter": V2's power example (createWorkspaceProject('power'), "Starter power tree"),
 // extracted from V2.10.1 like `starter` and opened in the power view (data.view, 3.27c).
-const TEMPLATES = { starter, 'power-starter': powerStarter } as const;
+const TEMPLATES = { starter, platform, sensor, 'power-starter': powerStarter, 'power-car': powerCar, 'power-zones': powerZones } as const;
 type F = FieldSpec<BlockDiagram, ItemRef>;
 
 const blockOf = (d: BlockDiagram, s: ItemRef): Block => {
@@ -200,7 +204,11 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   type: 'function',
   label: 'design.type.function',
   schema: DATA_SCHEMAS.function,
-  templates: [{ id: 'starter', label: 'template.function.starter.name' }, { id: 'power-starter', label: 'template.power.starter.label' }],
+  // V2 start screen: a starter and two full examples per kind (LIB function_s / function0 / function1, current_s / current0 / current1)
+  templates: [
+    { id: 'starter', label: 'template.function.starter.name' }, { id: 'platform', label: 'template.function.platform.name' }, { id: 'sensor', label: 'template.function.sensor.name' },
+    { id: 'power-starter', label: 'template.power.starter.label' }, { id: 'power-car', label: 'template.power.car.name' }, { id: 'power-zones', label: 'template.power.zones.name' },
+  ],
   editor: 'canvas',
   blockDiagram: true,
   create({ template } = {}) {
