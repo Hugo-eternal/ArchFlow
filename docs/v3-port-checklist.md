@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 1　☑ 251　✂ 54　⤳ 21
+合計 327 層：☐ 0　☑ 252　✂ 54　⤳ 21
 
 ## core / interaction
 
@@ -39,7 +39,7 @@
 | `removeSelection` | 505 |  | script#1 |  | ☑ | `model/diagram.remove`（3.12）：方塊、接腳、線、接點、文字框、外框一次處理 |
 | `removeSelection` | 674 |  | script#1 |  | ☑ | 被 L772 取代的舊規則（見下一列） |
 | `removeSelection` | 772 |  | script#1 | Delete a middle task without blocking browser dialogs; preserve descendants and reconnect. | ☑ | `schedule/edit.removeItems`：後續任務接回上一個任務（3.43b） |
-| `finish` | 4209 |  | af15-ux2 | pressing near a lead end starts a wire, not a move: the lead dots are small | ☐ | **缺口 → 3.43e**：從零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V3 只能接腳對接腳） |
+| `finish` | 4209 |  | af15-ux2 | pressing near a lead end starts a wire, not a move: the lead dots are small | ☑ | `model/part-wiring`（connectToBody / freeLead / nearestWirePoint / tapWire）+ `Gestures.dropOnBody`（3.43e） |
 | `finish` | 4569 |  | af15-ux2 | ---------- snap onto a frame edge after a move ---------- | ☑ | 3.26b `DesignModule.afterMove` → `snapConnectorsToFrames`（Gestures `adjustMove`） |
 | `updateExplorer` | 763 |  | script#1 | Export uses the same palette and typography as the editor, including moved axis points. | ✂ | Project Explorer 的方塊 / 任務清單：由指令面板「前往項目」取代（3.40） |
 | `updateExplorer` | 775 |  | script#1 | Rebind the toolbar too: older handlers retained a previous remove function. | ✂ | 同上 |

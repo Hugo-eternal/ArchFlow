@@ -106,7 +106,7 @@
 - [x] 3.43c `designs/function` / `inspector`：方塊尺寸與名稱——自由尺寸開關與精確寬高（V2.9 L10587）、無名稱方塊開關（`showTitle`，V2.9 L10565）、文字隨方塊縮放（V2.10 L10627）、每方塊字級（V2.7 L10399）（L3）
 - [x] 3.43d `interaction` / `model`：線路路徑手動編輯——選取線段的平移把手（L1552–L1562）、轉角把手（L2141）、Shift 拖曳接腳沿方塊邊移動（L1553 / V1 project）（L3）
 - [x] 3.43d2 `render` / `inspector` / `interaction`：線路標籤手動標記的拖曳 / 旋轉與屬性欄位（L1802 / L1805 / L1885）、標籤與相鄰同名接腳去重（L3099 dedupeLabels）、新方塊沿用多數方塊的名稱位置與編號規則（L3097 adopt）（L3）
-- [ ] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
+- [x] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
 - [ ] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4）
@@ -122,8 +122,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43d2 完成；移植清單剩 1 列缺口（3.43e）
-- **下一步**：3.43e 零件端點連線（V2 af15-ux2 `finish` L4209 起：從零件（afSym）的端點拖線放到一般方塊本體上 → `addBlockPin` 在最近的邊新增接腳並連線（失敗則移除新接腳、還原）；從零件端點放到線上 → `tapWire` 在線上新增分支接點（junction）再連到它；兩者都要通過繞線驗證）。V3：`interaction/gestures.ts` 的 `wire` 狀態與 `up()`、`updateWirePreview`、`model/diagram.addPort` / `addJunction` / `connect`、`core/grid.portAt`。V2 的 `freeLead` / `nearestWire` / `blockAt` 先讀原始碼。完成後做 3.43 的最後檢查（表中沒有 ☐，並依 3.43b 交接的提醒，讀 V2 非覆寫的功能區塊確認沒有漏掉的功能）。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43a–3.43e 完成，移植清單 ☐ 0
+- **下一步**：3.43 最後檢查（L3）。移植清單已無 ☐；還要做 3.43b 交接提到的補查：移植清單只追蹤「覆寫鏈」，V2 中**不是覆寫**的功能區塊（以 `/* ---------- … ---------- */`、`/* ---------------- … ---------------- */` 標題標示，集中在 legacy L2884–L3720 的 af15 / af16 區塊與 L3720 之後的 af15-ux2 / v2.x 區塊）不會出現在清單裡。逐一列出這些區塊標題（`grep -n "/\* -\{4,\}" legacy/app.zh-Hant.html`），對每個區塊判斷 V3 是否已有、刻意不做（寫理由）或缺少；結果寫成 `docs/v3-port-checklist.md` 新的一節「非覆寫功能區塊」。若發現缺少且屬於使用者會用到的功能，先寫進清單並排新步驟，不要在 3.43 內一次做完。完成後 3.43 才勾選。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -256,10 +256,11 @@
 - 方塊尺寸 3.43c：`model/diagram`：`BLOCK_SIZE`（一般 120 × 60、步距 10；自由尺寸最小 20、逐 px；格線開啟時以格距）、`resizeBlock(d, id, w, h, { scaleText, theme })`（文字依寬高較小的比例縮放：名稱 12–48 px、其他 8–32 px）、`applyFontsToAll`、`scaleBlockFonts`。`core/prefs.ts`（`archflow:scaleText`，預設開）。`inspector/common` 方塊「尺寸與字級」群組（零件 / 連接器不顯示）：顯示主名稱、自由尺寸、寬、高、縮放時文字等比例（custom，含說明）、名稱 / 副標 / 接腳 / 數值字級（pt）、套用到全部方塊。`render/blocks`：`resizable` 選項畫右下角把手 `.af-block-handle`；接腳名稱 font-size 用 `block.font.label` 或 `theme.label`（V2 --diagram-label-size；範本 theme.label 13 → 接腳字比之前的 11 px 大，與 V2 相同）。`interaction/gestures`：`blockResize` 狀態（`BLOCK_HANDLE` 12 px），`GestureHost.scaleText`。字型對話框加「整張圖文字比例 −10% / +10% / +25%」。未移植：V2.7「緊湊化此方塊」（依 DOM 量測縮到剛好包住文字），以及匯出對話框的 16:9 投影片字級資訊。
 - 線路路徑 3.43d：`src/model/route-edit.ts`——`moveSegment(ps, index, delta, jog)`（端點段保留接腳、先拉出 jog（格線開啟時一格，否則 20）再轉彎）、`moveCorner(ps, index, q)`（V2 cornerPath）、`setManualPath`（存完整路徑 + `routing: 'manual'`）、`slidePort`（`core/grid.portAt` 最近邊、清掉該接腳線路的手動路徑）。`interaction/gestures`：選取單一未鎖定線路時，`wireHandles(id)` 的轉角 / 線段中點（`BLOCK_HANDLE` 12 px）開始 `path` 狀態；路徑以 `routeWire` 驗證——**手動路徑不合法時 router 會退回自動繞線**，所以要比對回傳路徑與手動路徑相同才算有效；無效時預覽 `invalidPath`（紅色虛線），放開時以 `ModelError('route-invalid')` 拒絕（i18n `canvas.refused.route-invalid`）。Shift 拖曳接腳 → `slide` 狀態（零件 / 連接器 / 鎖定不行）。Canvas overlay 畫 `.af-segment-handle` / `.af-corner-handle`。
 - 線路標註 3.43d2：`model/route-edit.setLabelMark`（角度存 0–359；null 回到自動）；`render/wires`：`labelPosition` 回傳 angle、標籤 `transform: rotate(...)` 與 `data-wire-label`、`labelBox`、`duplicates()`（V2 dedupeLabels：標籤文字（不分大小寫、去空白）等於 14 px 內的接腳名稱時不畫；接腳名稱框由 `render/blocks.pinLabelBoxes` / `pinLabelAt` 估算）。`interaction/gestures`：`labelAt`（依角度反轉後測框）、`label` 狀態（拖曳 → mark、點一下只選線）；選取線路的把手判斷順序：畫出的把手框（6 px）→ 標籤 → 24 px 擴大範圍。`inspector/common` 線路「線路名稱／數值標註」群組（`markOf`：mark 或自動位置，routes 以 WeakMap 快取）。`model/diagram.adoptNewBlock`（`block.add`）。未移植：V2 按 R 旋轉已聚焦的標註（R 在 V3 是零件旋轉的快捷鍵），以及雙擊標籤行內改名。
+- 零件連線 3.43e：`src/model/part-wiring.ts`——`blockAt`（6 px 邊距、上層優先）、`freeLead`（未用的端點優先，再取最近）、`connectToBody(d, from, target, p)`（任一端是零件時：目標是零件 → 它的空端點；一般方塊 → 最近的邊新增接腳，電源 / 接地符號時接腳名稱為 VCC 值 / GND、類型 power / gnd、名稱隱藏、線路為 power；`growForPorts`）、`nearestWirePoint`（12 px、對齊格距、離線段端點至少一格）、`tapWire`（新增接點「TAP n」，原線保留前半段並取消箭頭與手動路徑，後半段為複本）。`Gestures.dropOnBody`：拉線放開時沒有對到接腳才走這條路；新路徑（或拆線後所有路徑）必須有效，否則以 `route-invalid` 拒絕。V2 拖曳時對目標方塊加亮（af24-target）未移植。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.43d2：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 57 檔 465 項（含 golden）、Playwright 36 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3（3.43e：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 58 檔 470 項、Playwright 37 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

@@ -401,3 +401,24 @@ test('wire label marks (3.43d2): drag a label, turn it in the panel, back to aut
   await expect.poll(mark).toBeNull();
   expect(errors).toEqual([]);
 });
+
+test('wiring a part quickly (3.43e): drag a resistor lead onto a block body', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await page.getByLabel('插入零件').selectOption({ label: '電阻' });
+  const before = (await data(page)).wires.length;
+  const ports = async () => (await page.evaluate(() => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): { blocks: { ports: unknown[] }[] } } }).archflow.data().blocks.map(b => b.ports.length)))) as number[]);
+  const pins = await ports();
+  const lead = page.locator('svg.af-canvas .af-part .af-port-dot').first();
+  const l = (await lead.boundingBox())!;
+  const mcu = (await page.locator('svg.af-canvas [data-block] .af-block-body').nth(1).boundingBox())!;
+  await page.mouse.move(l.x + l.width / 2, l.y + l.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(mcu.x + mcu.width / 2, mcu.y + mcu.height / 2 - 20, { steps: 6 });
+  await page.mouse.up();
+  await expect.poll(async () => (await data(page)).wires.length).toBe(before + 1);
+  expect((await ports())[1]).toBe(pins[1] + 1);
+  expect(errors).toEqual([]);
+});

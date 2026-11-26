@@ -19,7 +19,8 @@ import type { BlockDiagram, Camera, WireEnd } from '../io/schema-types';
 import type { ItemRef } from '../model/types';
 import type { Point } from '../core/geometry';
 import type { Store } from '../core/store';
-import { routeWire, type Route } from '../router/full-path';
+import { routeAll, routeWire, type Route } from '../router/full-path';
+import { blockAt, connectToBody, nearestWirePoint, tapWire } from '../model/part-wiring';
 import { simplify } from '../core/geometry';
 import type { Measure } from '../render/texts';
 import { panBy, toWorld, wheelFactor, zoomAt } from '../core/camera';
@@ -100,6 +101,39 @@ export class Gestures {
     const first = items[0];
     this.host.store.select(first && first.kind !== 'port' ? { kind: first.kind, id: first.id } as never : null);
     this.host.changed?.();
+  }
+
+  /**
+   * A wire from a pin dropped on no pin (V2 af15-ux2 finish): onto a block's body when a part is
+   * involved (a new pin, or the part's free lead), or a part's lead onto a wire (a junction).
+   * The new route must be valid, else nothing changes and the user is told why.
+   */
+  private dropOnBody(from: WireEnd, at: Point): void {
+    if (!('block' in from)) return;
+    const d = this.data(), src = d.blocks.find(b => b.id === from.block);
+    if (!src) return;
+    const refuse = (id: string) => this.host.refused?.({ ok: false, error: new ModelError('route-invalid', id) });
+    let next: BlockDiagram | null = null, wire = '';
+    const target = blockAt(d, at, src.id);
+    if (target) {
+      const r = connectToBody(d, from, target.id, at);
+      if (!r) return;
+      if (!routeWire(r.data.wires.find(w => w.id === r.wire)!, r.data).valid) { refuse(r.wire); return; }
+      next = r.data; wire = r.wire;
+    } else if (src.part) {
+      const g = d.grid?.snap ? gridSize(d.grid) : 10;
+      const hit = nearestWirePoint(d, this.host.routes(), at, 12 / this.host.camera().z, g, src.id);
+      if (!hit) return;
+      const tap = tapWire(d, hit.wire, hit.at);
+      const c = connect(tap.data, from, { junction: tap.junction }, { line: { arrow: false } });
+      if (![...routeAll(c.data).values()].every(r => r.valid)) { refuse(hit.wire); return; }
+      next = c.data; wire = c.id;
+    }
+    if (!next) return;
+    const out = next;
+    const r = commitEdit(this.host.store, () => out);
+    if (!r.ok) { this.host.refused?.(r); return; }
+    if (this.data().wires.some(w => w.id === wire)) this.select([{ kind: 'wire', id: wire }]);
   }
 
   /** The wire label under a point (its drawn box, turned with its angle), top-most first. */
@@ -341,7 +375,7 @@ export class Gestures {
         break;
       }
       case 'wire': {
-        if (!s.target) break;
+        if (!s.target) { this.dropOnBody(s.from, s.to); break; }
         let id = '';
         const r = commitEdit(this.host.store, d => { const c = connect(d, s.from, s.target!.end); id = c.id; return c.data; });
         if (!r.ok) this.host.refused?.(r);
