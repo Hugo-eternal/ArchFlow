@@ -24,6 +24,18 @@
 [data-role="converter"] { --block-accent: var(--role-converter); }
 [data-role="distribution"] { --block-accent: var(--role-distribution); }
 [data-role="load"] { --block-accent: var(--role-load); }
+/* power view voltage legend in exports (designs/function/power.ts legendNode; 3.29b d) */
+.af-legend-box { fill: var(--color-surface); stroke: var(--color-rule); stroke-width: 1px; }
+.af-legend-title { fill: var(--color-text); font-family: var(--font-ui); font-weight: 600; }
+.af-legend-text { fill: var(--color-text); font-family: var(--font-ui); }
+.af-legend-swatch { fill: none; stroke-width: 4px; stroke-linecap: round; }
+.af-legend-swatch.af-rail-unknown { stroke: var(--rail-unknown); }
+.af-legend-swatch.af-rail-negative { stroke: var(--rail-negative); }
+.af-legend-swatch.af-rail-core { stroke: var(--rail-core); }
+.af-legend-swatch.af-rail-io { stroke: var(--rail-io); }
+.af-legend-swatch.af-rail-logic { stroke: var(--rail-logic); }
+.af-legend-swatch.af-rail-mid { stroke: var(--rail-mid); }
+.af-legend-swatch.af-rail-high { stroke: var(--rail-high); }
 /* power view: blocks unrelated to power are faded (render/blocks faded; 3.29b c) */
 .af-block.is-faded { opacity: var(--block-faded-opacity); }
 /* power view: downstream load vs rating (designs/function/power.ts loadWarning; 3.29b a) */

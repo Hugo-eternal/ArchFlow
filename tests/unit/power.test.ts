@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { setLocale } from '../../src/core/i18n';
+import { setLocale, t } from '../../src/core/i18n';
 import { Store } from '../../src/core/store';
 import * as m from '../../src/model/diagram';
 import { estimateWidth } from '../../src/render/texts';
@@ -16,7 +16,7 @@ import { exportSvg } from '../../src/export/svg';
 import { routeAll } from '../../src/router/full-path';
 import { wiresLayer } from '../../src/render/wires';
 import { functionDesign } from '../../src/designs/function';
-import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, unrelatedToPower, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
+import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, wireRail, wireVoltage, unrelatedToPower, voltageLegend, legendNode, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
 import type { BlockDiagram } from '../../src/io/schema-types';
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -164,6 +164,25 @@ describe('blocks unrelated to power are faded in the power view (3.29b c)', () =
     const src = exportSvg(d, { blockFaded: functionDesign.blockFaded }).source;
     expect(src.match(/opacity="0\.4"/g)).toHaveLength(2);
     expect(exportSvg({ ...d, view: 'function' }, { blockFaded: functionDesign.blockFaded }).source).not.toMatch(/opacity="0\.4"/);
+  });
+});
+
+describe('voltage legend (3.29b d)', () => {
+  it('the voltages in use, highest first, with their colour band; none in the function view', () => {
+    const d = goldenPower();
+    expect(voltageLegend(d).map(i => `${i.text}:${i.band}`)).toEqual(['12V:high', '5V:mid', '3.3V:logic', '-12V:negative']);
+    expect(voltageLegend({ ...d, view: 'function' })).toEqual([]);
+    expect(functionDesign.legend!(d)!.items[0]).toEqual({ swatch: 'af-rail-high', text: '12V' });
+    expect(functionDesign.legend!({ ...d, view: 'function' })).toBeNull();
+  });
+
+  it('exported under the drawing, inside the export bounds', () => {
+    const d = goldenPower();
+    const e = exportSvg(d, { extras: functionDesign.exportExtras, decorate: functionDesign.decorate, footer: functionDesign.blockFooter });
+    expect(e.source).toContain(`>${t('power.legend.title')}<`);
+    const lg = legendNode(voltageLegend(d), 0, 0, estimateWidth)!;
+    expect(e.viewBox[1] + e.viewBox[3]).toBeGreaterThan(Math.max(...d.blocks.map(b => b.y + b.h)) + lg.box.h);
+    expect(exportSvg({ ...d, view: 'function' }, { extras: functionDesign.exportExtras }).source).not.toContain(t('power.legend.title'));
   });
 });
 

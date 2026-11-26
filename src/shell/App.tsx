@@ -135,6 +135,22 @@ function ViewSwitch({ shell }: { shell: Shell }) {
   );
 }
 
+/** A design's legend as a fixed overlay in the canvas corner (power view: colour ↔ voltage). */
+function CanvasLegend({ shell }: { shell: Shell }) {
+  const m = shell.module;
+  if (!shell.isBlockDiagram || !m?.legend) return null;
+  const legend = m.legend(shell.data());
+  if (!legend) return null;
+  return (
+    <aside className="af-canvas-legend" aria-label={t(legend.title)}>
+      <h3>{t(legend.title)}</h3>
+      <ul>
+        {legend.items.map(i => <li key={i.text}><span className={`af-swatch ${i.swatch}`} aria-hidden="true" /><span>{i.text}</span></li>)}
+      </ul>
+    </aside>
+  );
+}
+
 function DesignList({ shell }: { shell: Shell }) {
   const s = shell.store;
   return (
@@ -200,6 +216,7 @@ function Workspace({ shell }: { shell: Shell }) {
         <section className="af-stage" aria-label={d?.name}>
           <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />
+          <CanvasLegend shell={shell} />
         </section>
         <InspectorPane shell={shell} />
       </div>

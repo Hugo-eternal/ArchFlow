@@ -345,3 +345,46 @@ export function unrelatedToPower(b: Block, d: BlockDiagram): boolean {
   if (b.ports.some(p => POWER_PORTS.has(p.type))) return false;
   return !d.wires.some(w => w.kind === 'power' && [w.a, w.b].some(e => 'block' in e && e.block === b.id));
 }
+
+// ---------------------------------------------------------------- voltage legend (3.29b d, plan §2.2.2)
+
+export interface LegendItem { band: string; text: string; volts: number }
+
+/** The voltages in use in the power view (power wires and block figures), highest first, with their colour band. */
+export function voltageLegend(d: BlockDiagram): LegendItem[] {
+  if (d.view !== 'power') return [];
+  const seen = new Map<string, LegendItem>();
+  const add = (raw: string) => {
+    const v = normRail(raw);
+    if (!v || seen.has(v)) return;
+    const volts = Number(v.replace(/V$/, ''));
+    seen.set(v, { band: railBand(v), text: v, volts: Number.isFinite(volts) ? volts : -Infinity });
+  };
+  for (const w of d.wires) if (w.kind === 'power') add(wireVoltage(w, d));
+  for (const b of d.blocks) add(b.metrics.voltage?.value ?? '');
+  return [...seen.values()].sort((a, b) => b.volts - a.volts);
+}
+
+export const LEGEND = { gap: 24, pad: 10, row: 20, swatch: 22, title: 12, text: 12 } as const;
+
+/** The legend as a drawing at (x, y) — for exports (the canvas shows it as a fixed overlay). */
+export function legendNode(items: readonly LegendItem[], x: number, y: number, measure: Measure): { node: VNode; box: { x: number; y: number; w: number; h: number } } | null {
+  if (!items.length) return null;
+  const title = t('power.legend.title');
+  const w = Math.max(measure(title, LEGEND.title, true, false), ...items.map(i => LEGEND.swatch + 8 + measure(i.text, LEGEND.text, false, false))) + LEGEND.pad * 2;
+  const height = LEGEND.pad * 2 + LEGEND.row * (items.length + 1);
+  return {
+    box: { x, y, w, h: height },
+    node: h('g', { class: 'af-legend' }, [
+      h('rect', { class: 'af-legend-box', x: r2(x), y: r2(y), width: r2(w), height: r2(height), rx: 6 }),
+      h('text', { class: 'af-legend-title', x: r2(x + LEGEND.pad), y: r2(y + LEGEND.pad + LEGEND.row / 2), 'dominant-baseline': 'central', style: `font-size:${LEGEND.title}px` }, title),
+      ...items.flatMap((it, i) => {
+        const cy = y + LEGEND.pad + LEGEND.row * (i + 1.5);
+        return [
+          h('path', { class: `af-legend-swatch af-rail-${it.band}`, d: `M${r2(x + LEGEND.pad)},${r2(cy)}H${r2(x + LEGEND.pad + LEGEND.swatch)}` }),
+          h('text', { class: 'af-legend-text', x: r2(x + LEGEND.pad + LEGEND.swatch + 8), y: r2(cy), 'dominant-baseline': 'central', style: `font-size:${LEGEND.text}px` }, it.text),
+        ];
+      }),
+    ]),
+  };
+}

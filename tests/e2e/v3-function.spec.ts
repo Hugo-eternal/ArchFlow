@@ -239,6 +239,8 @@ test('function: the starter power tree template opens in the power view', async 
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('svg.af-canvas .af-metrics')).toHaveCount(5);
   await expect(page.locator('svg.af-canvas [data-role="source"]')).toHaveCount(1);
+  // the voltage legend overlay (3.29b d)
+  await expect(page.getByRole('complementary', { name: '電壓顏色' })).toContainText('12V');
   // the first design keeps its own view
   await page.getByRole('button', { name: /入門方塊圖/ }).click();
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '功能檢視' })).toHaveAttribute('aria-pressed', 'true');

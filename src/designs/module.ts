@@ -59,6 +59,8 @@ export interface DesignModule<D = Design['data']> {
   blockDiagram?: true;
   /** Extra drawing on a block (part symbols, connector pins …), used by render/blocks `decorate`. */
   decorate?(b: Block, d: BlockDiagram): VNode | null;
+  /** A legend shown as a fixed overlay in a canvas corner (power view: colour ↔ voltage, 3.29b). */
+  legend?(d: BlockDiagram): { title: MessageKey; items: { swatch: string; text: string }[] } | null;
   /** Blocks drawn faded (power view: unrelated to power, 3.29b). */
   blockFaded?(b: Block, d: BlockDiagram): boolean;
   /** Colour band of a wire without its own colour (power view: rail by voltage, 3.29b). */

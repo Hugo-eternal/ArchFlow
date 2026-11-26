@@ -396,5 +396,6 @@
   "schedule.task.branchTitle": "分支任務",
   "schedule.task.newTitle": "新任務",
   "schedule.arranged": "已重新排列全部圓點與任務框。",
-  "schedule.canvas.label": "專案時程：點選任務或連線編輯，拖曳任務框或圓點調整位置"
+  "schedule.canvas.label": "專案時程：點選任務或連線編輯，拖曳任務框或圓點調整位置",
+  "power.legend.title": "電壓顏色"
 }

@@ -26,7 +26,8 @@ import {
   snapConnectorsToFrames, updateConnector, type ConnKind,
 } from './connector';
 import { insertLcd, lcdOrigin } from './lcd';
-import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields, unrelatedToPower, wireRail } from './power';
+import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields, unrelatedToPower, wireRail, voltageLegend, legendNode, LEGEND } from './power';
+import { contentBounds } from '../../export/svg';
 import { estimateWidth } from '../../render/texts';
 import starter from './templates/starter.json';
 import powerStarter from './templates/power-starter.json';
@@ -209,10 +210,18 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   },
   commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
-  exportExtras: ({ data, measure }) => ({
-    bounds: data.blocks.flatMap(b => {
+  legend: d => {
+    const items = voltageLegend(d);
+    return items.length ? { title: 'power.legend.title', items: items.map(i => ({ swatch: `af-rail-${i.band}`, text: i.text })) } : null;
+  },
+  exportExtras: ({ data, routes, measure }) => {
+    const bounds = data.blocks.flatMap(b => {
       const load = loadBadgeBox(b, data, estimateWidth);
       return [...decorationBounds(b, measure), ...connectorBounds(b), ...(load ? [load, { x: b.x - 5, y: b.y - 5, w: b.w + 10, h: b.h + 10 }] : [])];
-    }),
-  }),
+    });
+    // the voltage legend under the drawing, left-aligned (power view)
+    const c = contentBounds(data, routes, measure, bounds);
+    const legend = c ? legendNode(voltageLegend(data), c.x, c.y + c.h + LEGEND.gap, measure) : null;
+    return { bounds: legend ? [...bounds, legend.box] : bounds, above: legend ? [legend.node] : [] };
+  },
 };

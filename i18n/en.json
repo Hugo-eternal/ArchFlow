@@ -396,5 +396,6 @@
   "schedule.task.branchTitle": "Branch task",
   "schedule.task.newTitle": "New task",
   "schedule.arranged": "All points and cards are back in place.",
-  "schedule.canvas.label": "Project schedule: select a task or line to edit, drag a card or point to move it"
+  "schedule.canvas.label": "Project schedule: select a task or line to edit, drag a card or point to move it",
+  "power.legend.title": "Voltage colours"
 }

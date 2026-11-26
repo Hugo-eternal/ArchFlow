@@ -195,3 +195,22 @@
   padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm);
   background: var(--color-surface); color: var(--color-danger); border: var(--border-width) solid var(--color-danger);
 }
+
+/* canvas legend overlay (DesignModule.legend; power view colour ↔ voltage, 3.29b d) */
+.af-canvas-legend {
+  position: absolute; left: var(--space-3); bottom: var(--space-3); z-index: 1; margin: 0;
+  padding: var(--space-2) var(--space-3); min-width: 0;
+  background: var(--color-surface); border: var(--border-width) solid var(--color-rule-2); border-radius: var(--radius-md); box-shadow: var(--shadow-1);
+  font-size: var(--text-sm); color: var(--color-text); pointer-events: none;
+}
+.af-canvas-legend h3 { margin: 0 0 var(--space-1); font-size: var(--text-sm); font-weight: 600; }
+.af-canvas-legend ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.af-canvas-legend li { display: flex; align-items: center; gap: var(--space-2); }
+.af-canvas-legend .af-swatch { width: 22px; height: 4px; border-radius: 2px; background: var(--rail-unknown); }
+.af-canvas-legend .af-swatch.af-rail-unknown { background: var(--rail-unknown); }
+.af-canvas-legend .af-swatch.af-rail-negative { background: var(--rail-negative); }
+.af-canvas-legend .af-swatch.af-rail-core { background: var(--rail-core); }
+.af-canvas-legend .af-swatch.af-rail-io { background: var(--rail-io); }
+.af-canvas-legend .af-swatch.af-rail-logic { background: var(--rail-logic); }
+.af-canvas-legend .af-swatch.af-rail-mid { background: var(--rail-mid); }
+.af-canvas-legend .af-swatch.af-rail-high { background: var(--rail-high); }
