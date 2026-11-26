@@ -476,5 +476,8 @@
   "tool.edid.long": "Enter the panel timing to build a 256-byte EDID; export .bin, .hex, a C array or Python flashing code.",
   "tool.hex.name": "Hex/Bin Editor & Compare",
   "tool.hex.desc": "View, edit and compare .bin / .hex",
-  "tool.hex.long": "Open a .bin or Intel HEX file: check addresses and checksums, edit bytes, or compare two files."
+  "tool.hex.long": "Open a .bin or Intel HEX file: check addresses and checksums, edit bytes, or compare two files.",
+  "tool.pattern.name": "Pattern Generator",
+  "tool.pattern.desc": "Panel test patterns",
+  "tool.pattern.long": "92 test patterns with editable pattern code; download BMPs or play them full screen from a showcase tray."
 }

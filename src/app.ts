@@ -10,6 +10,7 @@ import { ToolRegistry } from './tools/module';
 import { bomTool } from './tools/bom';
 import { edidTool } from './tools/edid';
 import { hexTool } from './tools/hex';
+import { patternTool } from './tools/pattern';
 
 export function createRegistry(): DesignRegistry {
   const r = new DesignRegistry();
@@ -25,6 +26,7 @@ export function createTools(): ToolRegistry {
   r.register(bomTool);
   r.register(edidTool);
   r.register(hexTool);
+  r.register(patternTool);
   return r;
 }
 

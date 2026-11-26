@@ -86,7 +86,7 @@
 - [x] 3.32 `tools/bom`（實際跑 L3：工具框架改到 shell）
 - [x] 3.33 `tools/edid`（L2）
 - [x] 3.34 `tools/hex`（L2）
-- [ ] 3.35 `tools/pattern`（L2）
+- [x] 3.35 `tools/pattern`（L2）
 ### 3I 自動整理
 - [ ] 3.36 `layout/` 呼叫圖：以 `v4Generate` 為入口列出實際用到的函式（L0）
 - [ ] 3.37 `layout/` autoArrange（L3）
@@ -112,8 +112,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3H 工具進行中（3.32 BOM ✓、3.33 EDID ✓、3.34 Hex ✓）
-- **下一步**：3.35 `tools/pattern`（L2）：照 3.33——`src/tools/pattern/index.ts`（`vendor/tools/pattern.html?raw` 原樣，host `afPgHost`，`allow: 'clipboard-read *; clipboard-write *; fullscreen *; window-management *'`、`allowFullscreen: true`，同 V2）、i18n `tool.pattern.name / desc / long`（V2：Pattern Generator /「產生面板測試圖樣」/ long 在 V2 shell L10374 `yu` 的 pg 項，取完整文字「92 種測試圖樣與可編輯的圖樣程式碼，下載 BMP，或放進展示區全螢幕播放。」等，請先從 legacy 讀出兩語系原文）、`createTools` 註冊、`tools.test` 與 `v3-tools.spec` 各一項（期待文字「尺寸」）。完成後 3H 結束，接著 3I 自動整理（`docs/v3-progress.md` 3.36 起）。
+- **目前階段**：階段 3（模組化重構）——3H 工具全部完成（BOM / EDID / Hex / Pattern）；接著 3I 自動整理
+- **下一步**：3.36 `layout/` 呼叫圖（L0，只寫文件）：plan §3 R7——自動整理（RC4）演算法複雜，以 V2 的 `v4Generate` 為入口，列出實際用到的函式（含被覆寫鏈取代的版本，參考 `node scripts/audit/find-overrides.mjs` 與 audit §1），寫成文件（例如 `docs/v3-layout-callgraph.md`：每個函式的 legacy 行號、作用、依賴、是否為覆寫後的最終版本、預計放在 V3 哪個檔案），作為 3.37 autoArrange、3.38 整理預覽的移植清單。既有 V2 測試 `tests/unit/core.arrange.test.js` 可看出目前鎖定的整理行為。注意 V3 的方塊圖資料模型與 V2 不同（`model/diagram`、`router/*`），呼叫圖要標出每個 V2 依賴在 V3 的對應。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -229,10 +229,11 @@
 - 工具框架與 BOM（3.32）：`src/tools/module.ts`（`ToolModule { id, label, description, long, srcdoc(lang), host, allow?, allowFullscreen? }`、`ToolRegistry`）、`src/tools/bom/index.ts`（`vendor/rsi-bom` 以 `?raw` 組 srcdoc，同 V2 `Z4`，host `afRsiHost`）；`app.ts` `createTools()`，`new Shell(designs, tools)`（tools 選填，預設空）。殼層：`Shell.tool` / `openedTools` / `openTool` / `closeTool`，命令 `tool.open.<id>`（群組 `tools`）；`shell/embedded.ts` `installToolHosts`（`{ lang, close, toast }`，同 V2）。`App.tsx`：`ToolsSection`（啟動畫面「小工具」磚塊，V2 af2-tools-home）、`ToolsMenu`（工作區工具列下拉選單）、`ToolDialog`（全畫面遮罩 + role=dialog，開過的工具 iframe 保留、只顯示目前的；關閉：工具自己的 host.close、「關閉」按鈕、Esc（焦點在 iframe 外時）、點遮罩）；工具開啟時殼層快捷鍵停用。移除啟動畫面過時的「後續步驟接上」說明（`start.moreTypesLater`）。測試：`tests/unit/tools.test.ts`、`tests/e2e/v3-tools.spec.ts`。
 - EDID（3.33）：`src/tools/edid/index.ts`——`vendor/tools/edid.html` 原樣當 srcdoc（完整頁面；語言由 host.lang 決定），host `afEdidHost`；`createTools` 註冊；測試：`tools.test`、`v3-tools.spec`。
 - Hex（3.34）：`src/tools/hex/index.ts`——`vendor/tools/hex.html` 原樣，host `afHexHost`；E2E 載入 .bin 後顯示位元組。
+- Pattern（3.35）：`src/tools/pattern/index.ts`——`vendor/tools/pattern.html` 原樣，host `afPgHost`，iframe `allow` 含 clipboard / fullscreen / window-management 與 `allowFullscreen`（同 V2）。3H 工具全部完成：`createTools` 依序註冊 bom、edid、hex、pattern。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2（3.34：模組標註、i18n、vendor、產物檢查（dist 1.59 MB）、`tools.test`（5 項）、`v3-tools.spec`（3 項）通過）。前一步 3.33：L2（模組標註、i18n、token、vendor、產物檢查（dist 1.53 MB）、`tools.test`（4 項）、`v3-tools.spec`（2 項）、冒煙 E2E 通過）。
+- **最後通過的驗證層級**：L2（3.35：模組標註、i18n、vendor、產物檢查（dist 1.83 MB）、`tools.test`（6 項）、`v3-tools.spec`（4 項）通過）。前一步 3.34：L2（模組標註、i18n、vendor、產物檢查（dist 1.59 MB）、`tools.test`（5 項）、`v3-tools.spec`（3 項）通過）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

@@ -476,5 +476,8 @@
   "tool.edid.long": "填入面板時序產生 256 bytes EDID，匯出 .bin、.hex、C 陣列或 Python 燒錄程式碼。",
   "tool.hex.name": "Hex/Bin Editor & Compare",
   "tool.hex.desc": "檢視、編輯、比對 .bin／.hex",
-  "tool.hex.long": "開啟 .bin 或 Intel HEX：查看位址與校驗、直接改位元組，或比對兩個檔案的差異。"
+  "tool.hex.long": "開啟 .bin 或 Intel HEX：查看位址與校驗、直接改位元組，或比對兩個檔案的差異。",
+  "tool.pattern.name": "Pattern Generator",
+  "tool.pattern.desc": "產生面板測試圖樣",
+  "tool.pattern.long": "92 種測試圖樣與可編輯的圖樣程式碼，下載 BMP，或放進展示區全螢幕播放。"
 }

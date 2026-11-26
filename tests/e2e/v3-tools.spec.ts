@@ -1,4 +1,4 @@
-// module: tools:bom, tools:edid, tools:hex — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
+// module: tools:bom, tools:edid, tools:hex, tools:pattern — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
 // from the workspace tools menu, shows its page, and closes through its host object (the V2
 // vendor interface), the close button or Escape; its frame stays mounted, hidden.
 import { test, expect } from '@playwright/test';
@@ -63,5 +63,19 @@ test('Hex/Bin Editor & Compare opens, loads a binary file and shows its bytes, c
   await expect(hex.locator('body')).toContainText(/DE\s*AD\s*BE\s*EF/i, { timeout: 10000 });
   await page.evaluate(() => (window as unknown as { afHexHost: { close(): void } }).afHexHost.close());
   await expect(page.locator('iframe.af-tool-frame[title="Hex/Bin Editor & Compare"]')).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('Pattern Generator opens, shows its page and closes through its host', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: /^Pattern Generator/ }).click();
+  const frame = page.locator('iframe.af-tool-frame[title="Pattern Generator"]');
+  await expect(frame).toBeVisible();
+  await expect(frame).toHaveAttribute('allow', /fullscreen/);
+  await expect(page.frameLocator('iframe.af-tool-frame[title="Pattern Generator"]').locator('body')).toContainText('尺寸', { timeout: 15000 });
+  await page.evaluate(() => (window as unknown as { afPgHost: { close(): void } }).afPgHost.close());
+  await expect(frame).toBeHidden();
   expect(errors).toEqual([]);
 });
