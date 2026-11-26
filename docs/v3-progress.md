@@ -126,8 +126,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.44 完成；剩 3.45 版本號
-- **下一步**：3.45 版本號統一為 V3.0.0（L4）。`src/version.ts` 的 `APP_VERSION` 由 `'3.0.0-dev'` 改為 `'3.0.0'`；`package.json` version；檢查其他出現版本字樣的地方（`grep -rn "3\.0\.0\|2\.10\.1\|V2\.10" src i18n package.json README* docs/*.md`，文件中描述 V2 的不要改）；`CHANGELOG.md` 標題「V3.0.0（開發中）」改為正式；`dead-code.test` 的版本檢查（`/^3\.0\.0/`）。L4 = L3 + 遷移測試（`io/migrate` 仍空，`io.project-file` / `io.schema` 測試）+ 產物檢查 + **人工驗收**：請使用者實際開 `dist/ArchFlow.html` 驗收（列出清單：3.13 / 3.14 留下的「開 V2 檔顯示不支援舊版格式」、3.38 的自動整理、以及 3.39–3.43 新增的主要功能）。`index.html`（V2 發佈檔）是否改由 V3 取代，屬發版決定——先問使用者，不要自行覆蓋。
+- **目前階段**：階段 3（模組化重構）——3.45 版本號已改為 3.0.0（`src/version.ts`、`package.json` / `package-lock.json`、`CHANGELOG.md` 標題），L4 自動部分全數通過；**等使用者人工驗收與發佈決定後才勾選 3.45**
+- **下一步**：(1) 使用者照驗收清單開 `dist/ArchFlow.html` 實測，回報問題就修（每個修正一個 commit）；(2) 使用者決定 `index.html`（目前仍是 V2.10.1 發佈檔、由 `tools/pack.mjs` 產生）是否改由 V3 取代、`legacy/` 與 `tools/pack.mjs` 是否保留——**不要自行覆蓋 index.html**；(3) 兩者完成後勾選 3.45、更新 CHANGELOG（若有修正），進入階段 4（`docs/v3-prompts.md` 階段 4：CLAUDE.md、skills、classify-change、CI）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -268,7 +268,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.44：模組標註、i18n、token、css、vendor、型別、建置、產物檢查；V3 Vitest 47 檔 411 項、V3 Playwright 29 項（對 dist）；V2 對照組 Vitest 14 檔 76 項、Playwright 10 項，全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L4 自動部分（3.45：模組標註、i18n、token、css、vendor、型別、建置（dist 1.98 MB，版本 3.0.0）、產物檢查（無外部請求）、遷移 / 存開檔測試（io.* 29 項；`io/migrate` 仍為空框架、schemaVersion 3）、Vitest 47 檔 411 項、Playwright 29 項（對 dist）全數通過）。**人工驗收待使用者**（清單見對話；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

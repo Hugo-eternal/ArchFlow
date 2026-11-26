@@ -1,7 +1,7 @@
 {
   "name": "archflow",
   "private": true,
-  "version": "2.10.1",
+  "version": "3.0.0",
   "type": "module",
   "description": "ArchFlow — offline architecture design workbench (single HTML file)",
   "scripts": {
