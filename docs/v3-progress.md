@@ -88,7 +88,7 @@
 - [x] 3.34 `tools/hex`（L2）
 - [x] 3.35 `tools/pattern`（L2）
 ### 3I 自動整理
-- [ ] 3.36 `layout/` 呼叫圖：以 `v4Generate` 為入口列出實際用到的函式（L0）
+- [x] 3.36 `layout/` 呼叫圖：以 `v4Generate` 為入口列出實際用到的函式（L0）
 - [ ] 3.37 `layout/` autoArrange（L3）
 - [ ] 3.38 `layout/` 整理預覽（RC4）（L3）
 ### 3J 完整殼層
@@ -112,8 +112,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3H 工具全部完成（BOM / EDID / Hex / Pattern）；接著 3I 自動整理
-- **下一步**：3.36 `layout/` 呼叫圖（L0，只寫文件）：plan §3 R7——自動整理（RC4）演算法複雜，以 V2 的 `v4Generate` 為入口，列出實際用到的函式（含被覆寫鏈取代的版本，參考 `node scripts/audit/find-overrides.mjs` 與 audit §1），寫成文件（例如 `docs/v3-layout-callgraph.md`：每個函式的 legacy 行號、作用、依賴、是否為覆寫後的最終版本、預計放在 V3 哪個檔案），作為 3.37 autoArrange、3.38 整理預覽的移植清單。既有 V2 測試 `tests/unit/core.arrange.test.js` 可看出目前鎖定的整理行為。注意 V3 的方塊圖資料模型與 V2 不同（`model/diagram`、`router/*`），呼叫圖要標出每個 V2 依賴在 V3 的對應。
+- **目前階段**：階段 3（模組化重構）——3I 自動整理：3.36 呼叫圖完成（`docs/v3-layout-callgraph.md`）
+- **下一步**：3.37 `layout/` autoArrange（L3）。照 `docs/v3-layout-callgraph.md` §2 的檔案分配移植運算部分（metrics / geometry / route / place / labels / candidate，共約 40 KB 的 V2 原始碼），入口做成純函式（例如 `organize(data, { mode: 'routes' | 'layout', ids?, budgetMs? })` → `{ base, candidates, best }`）。**先做 golden**（§4）：在 V2 引擎對 golden function / power 與打亂座標的圖跑 `uiCandidate`（各 kind）與 `v4Refine`，把方塊座標、paths、metrics 存快照，再讓 V3 對同一份 V3 資料產生相同結果（座標容差 0.5）。`roFind` 與 V3 `router/find-path` 不同，要獨立移植。量很大，可再拆成 3.37a（metrics + geometry + route，以 routes 模式 golden 驗證）與 3.37b（place + labels + candidate + refine，layout 模式），拆分時更新本清單。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -230,10 +230,11 @@
 - EDID（3.33）：`src/tools/edid/index.ts`——`vendor/tools/edid.html` 原樣當 srcdoc（完整頁面；語言由 host.lang 決定），host `afEdidHost`；`createTools` 註冊；測試：`tools.test`、`v3-tools.spec`。
 - Hex（3.34）：`src/tools/hex/index.ts`——`vendor/tools/hex.html` 原樣，host `afHexHost`；E2E 載入 .bin 後顯示位元組。
 - Pattern（3.35）：`src/tools/pattern/index.ts`——`vendor/tools/pattern.html` 原樣，host `afPgHost`，iframe `allow` 含 clipboard / fullscreen / window-management 與 `allowFullscreen`（同 V2）。3H 工具全部完成：`createTools` 依序註冊 bom、edid、hex、pattern。
+- 自動整理呼叫圖（3.36）：`docs/v3-layout-callgraph.md`（流程、62 個引擎函式的行號 / 大小 / 作用 / V3 落點、覆寫鏈、外部依賴對照、要鎖定的行為）；產生腳本 `scripts/audit/layout-callgraph.mjs`（從 `v4Generate` 等入口沿引擎前綴展開，解析 `const X=Y;` 覆寫別名；`--json`）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L2（3.35：模組標註、i18n、vendor、產物檢查（dist 1.83 MB）、`tools.test`（6 項）、`v3-tools.spec`（4 項）通過）。前一步 3.34：L2（模組標註、i18n、vendor、產物檢查（dist 1.59 MB）、`tools.test`（5 項）、`v3-tools.spec`（3 項）通過）。
+- **最後通過的驗證層級**：L0（3.36：只改文件與稽核腳本；`node scripts/audit/layout-callgraph.mjs` 可執行，模組標註未受影響；專案沒有文件 lint / 連結檢查指令）。前一步 3.35：L2（模組標註、i18n、vendor、產物檢查（dist 1.83 MB）、`tools.test`（6 項）、`v3-tools.spec`（4 項）通過）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦
