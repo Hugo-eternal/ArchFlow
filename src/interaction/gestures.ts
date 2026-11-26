@@ -25,6 +25,8 @@ import type { Measure } from '../render/texts';
 import { panBy, toWorld, wheelFactor, zoomAt } from '../core/camera';
 import { gridSize, portPoint, snapIfOn } from '../core/grid';
 import { connect, frameMembers, moveItems, resizeBlock, updateFrame, FRAME } from '../model/diagram';
+import { moveCorner, moveSegment, setManualPath, slidePort, JOG } from '../model/route-edit';
+import { ModelError } from '../model/types';
 
 /** Screen px around a selected frame's corner that start a resize. */
 export const FRAME_HANDLE = 8;
@@ -37,7 +39,8 @@ export interface PointerIn { x: number; y: number; button?: number; shift?: bool
 
 export type Preview =
   | { kind: 'wire'; from: Point; to: Point; target: Point | null }
-  | { kind: 'box'; rect: Rect };
+  | { kind: 'box'; rect: Rect }
+  | { kind: 'invalidPath'; points: Point[] };
 
 export interface GestureHost {
   store: Store;
@@ -67,6 +70,8 @@ type State =
   | { kind: 'move'; start: Point; ids: string[]; anchor: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'resize'; frame: string; corner: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'blockResize'; block: string; start: Point; before: BlockDiagram; draft: BlockDiagram }
+  | { kind: 'path'; wire: string; ps: Point[]; index: number; corner: boolean; start: Point; before: BlockDiagram; draft: BlockDiagram; valid: boolean }
+  | { kind: 'slide'; block: string; port: string; before: BlockDiagram; draft: BlockDiagram }
   | { kind: 'wire'; from: WireEnd; at: Point; to: Point; target: { end: WireEnd; at: Point } | null };
 
 const same = (a: ItemRef, b: ItemRef) => a.kind === b.kind && a.id === b.id && (a.kind !== 'port' || (b.kind === 'port' && a.block === b.block));
@@ -82,7 +87,8 @@ export class Gestures {
 
   /** The diagram to draw: the moving draft during a move, else the store's data. */
   draft(): BlockDiagram {
-    return this.state.kind === 'move' || this.state.kind === 'resize' || this.state.kind === 'blockResize' ? this.state.draft : this.data();
+    const s = this.state;
+    return s.kind === 'move' || s.kind === 'resize' || s.kind === 'blockResize' || s.kind === 'path' || s.kind === 'slide' ? s.draft : this.data();
   }
 
   isSelected(ref: Pick<ItemRef, 'kind' | 'id'>): boolean { return this.selection.some(s => s.kind === ref.kind && s.id === ref.id); }
@@ -92,6 +98,16 @@ export class Gestures {
     const first = items[0];
     this.host.store.select(first && first.kind !== 'port' ? { kind: first.kind, id: first.id } as never : null);
     this.host.changed?.();
+  }
+
+  /** The path of a wire as drawn, its corner points (bends) and segment midpoints (handles). */
+  wireHandles(id: string): { points: Point[]; corners: Point[]; segments: Point[] } {
+    const points = simplify(this.host.routes().get(id)?.ps ?? []);
+    return {
+      points,
+      corners: points.slice(1, -1),
+      segments: points.slice(1).map((p, i) => ({ x: (points[i].x + p.x) / 2, y: (points[i].y + p.y) / 2 })),
+    };
   }
 
   // ---------------------------------------------------------------- pointer
@@ -120,7 +136,27 @@ export class Gestures {
         return;
       }
     }
+    // the corners and segments of the one selected wire (V2 rc48 corner handles, grid segment drag)
+    const wsel = this.selection.length === 1 && this.selection[0].kind === 'wire' ? d.wires.find(w => w.id === this.selection[0].id) : undefined;
+    if (wsel && !wsel.locked && !ev.shift) {
+      const ps = this.wireHandles(wsel.id);
+      const tol = BLOCK_HANDLE / cam.z, near = (p: Point) => Math.abs(world.x - p.x) <= tol && Math.abs(world.y - p.y) <= tol;
+      const corner = ps.corners.findIndex(near), segment = corner < 0 ? ps.segments.findIndex(near) : -1;
+      if (corner >= 0 || segment >= 0) {
+        this.state = { kind: 'path', wire: wsel.id, ps: ps.points, index: corner >= 0 ? corner + 1 : segment, corner: corner >= 0, start: world, before: d, draft: d, valid: true };
+        return;
+      }
+    }
     const item = hitTest(d, world, { zoom: cam.z, routes: this.host.routes(), measure: this.host.measure });
+    // Shift-drag a pin: slide it along the block edge (V2 project / gg port drag)
+    if (item?.kind === 'port' && ev.shift) {
+      const b = d.blocks.find(x => x.id === item.block)!, p = b.ports.find(x => x.id === item.id)!;
+      if (!b.locked && !p.locked && !b.part && !b.connector) {
+        this.select([{ kind: 'block', id: b.id }]);
+        this.state = { kind: 'slide', block: b.id, port: p.id, before: d, draft: d };
+        return;
+      }
+    }
     if (!item) {
       if (ev.shift) this.state = { kind: 'box', start: world, additive: true, base: [...this.selection] };
       else this.state = { kind: 'pan', start: ev, camera: cam };
@@ -181,6 +217,32 @@ export class Gestures {
         s.to = world;
         this.updateWirePreview();
         return;
+      case 'path': {
+        const g = s.before.grid?.snap ? gridSize(s.before.grid) : 1;
+        const S = (v: number) => Math.round(v / g) * g;
+        let next: Point[] | null;
+        if (s.corner) next = moveCorner(s.ps, s.index, { x: S(world.x), y: S(world.y) });
+        else {
+          const a = s.ps[s.index], b = s.ps[s.index + 1], hz = Math.abs(a.y - b.y) < 1e-6;
+          next = moveSegment(s.ps, s.index, S(hz ? world.y - s.start.y : world.x - s.start.x), g > 1 ? g : JOG);
+        }
+        if (!next) return;
+        const draft = setManualPath(s.before, s.wire, next);
+        const w = draft.wires.find(x => x.id === s.wire)!;
+        // an invalid hand path falls back to auto-routing (router/full-path): it must come back unchanged
+        const r = routeWire(w, draft);
+        s.valid = r.valid && JSON.stringify(simplify(r.ps)) === JSON.stringify(simplify(next));
+        s.draft = s.valid ? draft : s.before;
+        this.preview = s.valid ? null : { kind: 'invalidPath', points: next };
+        this.host.changed?.();
+        return;
+      }
+      case 'slide': {
+        const g = s.before.grid?.snap ? gridSize(s.before.grid) : 1;
+        s.draft = slidePort(s.before, s.block, s.port, world, g);
+        this.host.changed?.();
+        return;
+      }
       case 'blockResize': {
         const b = s.before.blocks.find(x => x.id === s.block)!;
         s.draft = resizeBlock(s.before, s.block, b.w + world.x - s.start.x, b.h + world.y - s.start.y, { scaleText: this.host.scaleText?.() ?? false, theme: s.before.theme });
@@ -215,8 +277,16 @@ export class Gestures {
         if (s.shift) this.select(this.isSelected(s.item) ? this.selection.filter(i => !same(i, s.item)) : [...this.selection, s.item]);
         else this.select([s.item]);
         break;
+      case 'path': {
+        // V2: "the target intersects a block or creates an invalid route" — nothing changes
+        if (!s.valid) { this.host.refused?.({ ok: false, error: new ModelError('route-invalid', s.wire) }); break; }
+        const r = commitEdit(this.host.store, () => s.draft);
+        if (!r.ok) this.host.refused?.(r);
+        break;
+      }
       case 'resize':
       case 'blockResize':
+      case 'slide':
       case 'move': {
         const out = s.kind === 'move' && this.host.adjustMove ? this.host.adjustMove(s.draft, s.ids) : s.draft;
         const r = commitEdit(this.host.store, () => out);

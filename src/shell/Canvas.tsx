@@ -21,9 +21,24 @@ const pointer = (svg: SVGSVGElement, e: { clientX: number; clientY: number; butt
   return { x: e.clientX - r.left, y: e.clientY - r.top, button: e.button, shift: e.shiftKey, mod: e.metaKey || e.ctrlKey, alt: e.altKey };
 };
 
+/** Handles of the one selected, unlocked wire: corners (move a bend) and segment midpoints (move a segment). */
+function wireHandles(shell: Shell): VNode | null {
+  const sel = shell.gestures.selection;
+  if (sel.length !== 1 || sel[0].kind !== 'wire') return null;
+  const w = shell.data().wires.find(x => x.id === sel[0].id);
+  if (!w || w.locked) return null;
+  const hs = shell.gestures.wireHandles(w.id);
+  const box = (p: { x: number; y: number }, cls: string, title: string) => h('rect', { class: cls, x: r2(p.x - 5), y: r2(p.y - 5), width: 10, height: 10, rx: 2 }, [h('title', {}, title)]);
+  return h('g', { class: 'af-wire-handles' }, [
+    ...hs.segments.map(p => box(p, 'af-segment-handle', t('canvas.segmentHandle'))),
+    ...hs.corners.map(p => box(p, 'af-corner-handle', t('canvas.cornerHandle'))),
+  ]);
+}
+
 function overlay(shell: Shell): VNode | null {
   const p = shell.gestures.preview;
-  if (!p) return null;
+  if (!p) return wireHandles(shell);
+  if (p.kind === 'invalidPath') return h('path', { class: 'af-path-invalid', d: 'M' + p.points.map(q => `${r2(q.x)},${r2(q.y)}`).join(' L') });
   if (p.kind === 'box') return h('rect', { class: 'af-box-select', x: r2(p.rect.x), y: r2(p.rect.y), width: r2(p.rect.w), height: r2(p.rect.h) });
   return h('g', { class: 'af-wire-preview' }, [
     h('path', { d: `M${r2(p.from.x)},${r2(p.from.y)} L${r2(p.to.x)},${r2(p.to.y)}` }),

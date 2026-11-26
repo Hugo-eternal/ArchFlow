@@ -51,6 +51,7 @@ export function refusalText(r: Refusal): string {
   const code = r.error instanceof GridError || r.error instanceof ModelError ? r.error.code : '';
   const known: Record<string, MessageKey> = {
     'locked-block': 'canvas.refused.locked-block', 'locked-port': 'canvas.refused.locked-port', 'locked-wire': 'canvas.refused.locked-wire',
+    'route-invalid': 'canvas.refused.route-invalid',
   };
   const reason: MessageKey = known[code] ?? (code.startsWith('limit') ? 'canvas.refused.limit' : 'canvas.refused.other');
   return t('canvas.refused', { reason: t(reason) });

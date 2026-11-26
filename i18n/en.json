@@ -634,5 +634,8 @@
   "fonts.scale": "Scale all text:",
   "fonts.scaledUp": "All text enlarged by {pct}% (undo available)",
   "fonts.scaledDown": "All text reduced by {pct}% (undo available)",
-  "inspector.block.scaleTextHint": "When you drag the corner, name, subtitle, pin and value sizes change by the same ratio; this setting is kept in this browser."
+  "inspector.block.scaleTextHint": "When you drag the corner, name, subtitle, pin and value sizes change by the same ratio; this setting is kept in this browser.",
+  "canvas.refused.route-invalid": "the target crosses a block or makes an invalid route",
+  "canvas.segmentHandle": "Drag to move this segment",
+  "canvas.cornerHandle": "Drag to move this corner"
 }

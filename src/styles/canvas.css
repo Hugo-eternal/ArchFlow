@@ -178,6 +178,10 @@
 .af-frame-selection { fill: none; stroke: var(--selection-stroke); stroke-width: 1.5px; stroke-dasharray: 4 3; pointer-events: none; }
 .af-frame-handle, .af-block-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; }
 .af-block-handle { cursor: nwse-resize; }
+.af-segment-handle, .af-corner-handle { fill: var(--color-surface); stroke: var(--selection-stroke); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+.af-corner-handle { cursor: move; }
+.af-segment-handle { cursor: grab; }
+.af-path-invalid { fill: none; stroke: var(--color-danger); stroke-width: 2px; stroke-dasharray: 6 4; }
 
 /* connectors (designs/function/connector.ts; V2 .af41-*) */
 .af-conn-glyph { stroke-width: 1.6px; }

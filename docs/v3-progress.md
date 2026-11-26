@@ -104,7 +104,8 @@
 - [x] 3.43a 移植清單逐列分類（☑ 寫 V3 位置、✂ 寫不移植原因）、audit §4 刪除項目以測試確認未移植（`tests/unit/dead-code.test.ts`）；找出的 16 列功能缺口排入 3.43b–3.43e（L0 + 新測試）
 - [x] 3.43b `designs/schedule`：編輯語意補齊——「接續任務」插在選取任務之後（V2 L3583）、刪除中間任務接回後續（L772）、新任務預設日期與不重複名稱（af16 fillDefaults L3567）、沿用分支顏色（L800）；順便評估 af16 的「順延衝突」（fixConflicts L3604）與畫布上直接改名（startRename）（L2）
 - [x] 3.43c `designs/function` / `inspector`：方塊尺寸與名稱——自由尺寸開關與精確寬高（V2.9 L10587）、無名稱方塊開關（`showTitle`，V2.9 L10565）、文字隨方塊縮放（V2.10 L10627）、每方塊字級（V2.7 L10399）（L3）
-- [ ] 3.43d `interaction` / `render`：線路編輯——選取線段的平移把手（L1562）、轉角把手與雙擊插入直角（L2141）、標籤手動標記的拖曳 / 旋轉與屬性欄位（L1802 / L1805 / L1885）、標籤與相鄰同名接腳去重（L3099）、新方塊沿用多數方塊的名稱位置與編號規則（adopt，L3097）（L3）
+- [x] 3.43d `interaction` / `model`：線路路徑手動編輯——選取線段的平移把手（L1552–L1562）、轉角把手（L2141）、Shift 拖曳接腳沿方塊邊移動（L1553 / V1 project）（L3）
+- [ ] 3.43d2 `render` / `inspector` / `interaction`：線路標籤手動標記的拖曳 / 旋轉與屬性欄位（L1802 / L1805 / L1885）、標籤與相鄰同名接腳去重（L3099 dedupeLabels）、新方塊沿用多數方塊的名稱位置與編號規則（L3097 adopt）（L3）
 - [ ] 3.43e `interaction`：零件端點拖到方塊本體自動新增接腳並連線、拖到線上新增分支點（V2 finish L4209）（L3）
 - [ ] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
@@ -121,8 +122,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43c 完成；移植清單剩 8 列缺口（3.43d、3.43e）
-- **下一步**：3.43d 線路編輯。V2：選取線段的平移把手（L1562 ggOldDraw → 線段把手 / 拖曳，搜 `ggSegment` 或 `segment` 把手）、轉角把手 L2141 `appendCornerHandles` 與雙擊插入直角（搜 `dblclick` 與 `insertBend`）、標籤手動標記 L1802 `v4DecorateMarks` / L1805 inspector 位置與角度 / L1885 `mSyncInspector`、標籤去重 L3099 `dedupeLabels`、新方塊 adopt L3097。V3：`wire.route`（轉折點或完整路徑）、`wire.label.mark`（schema 已有 x / y / angle？先查 `io/schema-types` Wire label）、`interaction/gestures.ts`、`render/wires.ts`。這一步較大，可視情況拆成 3.43d-1（線段 / 轉角 / 雙擊）與 3.43d-2（標記、去重、adopt）。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.43d 完成；移植清單剩 6 列缺口（3.43d2、3.43e）
+- **下一步**：3.43d2。V2：`v4DecorateMarks`（L1802 起，搜 `function v4DecorateMarks` / `v4Mark` / `v4LabelPosition`）、inspector L1805（位置 / 角度欄位）、L1885 `mSyncInspector`、L3099 `dedupeLabels`（線路標籤文字與其 14 px 內的同名接腳名稱重疊時隱藏）、L3097 `adopt`（新方塊：多數方塊有編號才保留 R1 類編號、名稱位置沿用多數）。V3：`wire.label.mark`（先查 schema-types 的欄位：x / y / angle?）、`render/wires.labelPosition`、`interaction/hit`（標籤命中）、`inspector/common` wire 欄位。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -253,10 +254,11 @@
 - 移植清單 3.43a：`docs/v3-port-checklist.md` 現為 ☐ 16（全部是缺口，備註「缺口 → 3.43x」）／☑ 236／✂ 54／⤳ 21；`node scripts/audit/port-checklist.mjs` 重新產生不會改動手動狀態（已驗證）。主要 ✂ 理由：Project Explorer 清單 → 指令面板「前往項目」；換語系的工作階段快照 → 3.41 不重新載入；行內天數編輯器 → 屬性面板；「以範本取代目前設計」→ 改為新增設計；範本建構 / 量測對齊 → 範本 JSON 已是 V2 產出結果；接點鎖定 → 3.11 決定。已知差異：V2 格線開啟時「依連線排列接腳」只做正規化（L1564），V3 一律排列（CHANGELOG）。`tests/unit/dead-code.test.ts`：audit §4 的廢止功能（標題、both 類型、V1 雙工作區、version 4、舊版轉接、本地化推論、en tidy、版本字樣改寫、RC2 / RC3 對話框、點擊隱藏元素、review 欄位、單一版本常數）在 src/ 程式碼（去掉註解後）中都不存在。
 - 時程 3.43b：`schedule/dates` 新增 `iso` / `weekday`（週末改週一）/ `spanOf` / `durationOf`；`schedule/edit`：`appendTask(d, title, parent?, { now })` 回傳 `inserted`（選取任務原本只有一個後續時插入）、新任務預設日期（上一個任務結束後的工作日起、長度同上一個或 5 天）、不重複名稱（「新任務 2」）、沿用分支色（任務與連線）；`addBranch` 同樣套用；`removeItems` 刪除任務時後續接回上一個任務（V2 L772）；`setDefaultRange`、`setDuration`、`conflictsBelow`、`shiftConflicts(d, from?)`（V2 af16 fixConflicts：從 from 的上一個任務往下，或所有起點）。屬性面板：「＋ 設定日期區間」、可編輯的「工期（含首尾）」、任務的「順延後續任務」與總覽的「一鍵順延」（`af-field-action`）；命令 `schedule.fixConflicts`。與 V2 不同：V2 新增分支時只對第一個新任務套用預設值（主線後續），V3 兩個都套用；名稱保留「主線後續任務」「分支任務」而非一律「新任務」。
 - 方塊尺寸 3.43c：`model/diagram`：`BLOCK_SIZE`（一般 120 × 60、步距 10；自由尺寸最小 20、逐 px；格線開啟時以格距）、`resizeBlock(d, id, w, h, { scaleText, theme })`（文字依寬高較小的比例縮放：名稱 12–48 px、其他 8–32 px）、`applyFontsToAll`、`scaleBlockFonts`。`core/prefs.ts`（`archflow:scaleText`，預設開）。`inspector/common` 方塊「尺寸與字級」群組（零件 / 連接器不顯示）：顯示主名稱、自由尺寸、寬、高、縮放時文字等比例（custom，含說明）、名稱 / 副標 / 接腳 / 數值字級（pt）、套用到全部方塊。`render/blocks`：`resizable` 選項畫右下角把手 `.af-block-handle`；接腳名稱 font-size 用 `block.font.label` 或 `theme.label`（V2 --diagram-label-size；範本 theme.label 13 → 接腳字比之前的 11 px 大，與 V2 相同）。`interaction/gestures`：`blockResize` 狀態（`BLOCK_HANDLE` 12 px），`GestureHost.scaleText`。字型對話框加「整張圖文字比例 −10% / +10% / +25%」。未移植：V2.7「緊湊化此方塊」（依 DOM 量測縮到剛好包住文字），以及匯出對話框的 16:9 投影片字級資訊。
+- 線路路徑 3.43d：`src/model/route-edit.ts`——`moveSegment(ps, index, delta, jog)`（端點段保留接腳、先拉出 jog（格線開啟時一格，否則 20）再轉彎）、`moveCorner(ps, index, q)`（V2 cornerPath）、`setManualPath`（存完整路徑 + `routing: 'manual'`）、`slidePort`（`core/grid.portAt` 最近邊、清掉該接腳線路的手動路徑）。`interaction/gestures`：選取單一未鎖定線路時，`wireHandles(id)` 的轉角 / 線段中點（`BLOCK_HANDLE` 12 px）開始 `path` 狀態；路徑以 `routeWire` 驗證——**手動路徑不合法時 router 會退回自動繞線**，所以要比對回傳路徑與手動路徑相同才算有效；無效時預覽 `invalidPath`（紅色虛線），放開時以 `ModelError('route-invalid')` 拒絕（i18n `canvas.refused.route-invalid`）。Shift 拖曳接腳 → `slide` 狀態（零件 / 連接器 / 鎖定不行）。Canvas overlay 畫 `.af-segment-handle` / `.af-corner-handle`。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.43c：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 55 檔 453 項（含 golden）、Playwright 34 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3（3.43d：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 56 檔 460 項、Playwright 35 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

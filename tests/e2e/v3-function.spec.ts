@@ -333,3 +333,47 @@ test('block size and text (3.43c): width field, corner drag with text scaling, h
   await expect(page.locator(`svg.af-canvas [data-block="${b.id}"] .af-block-title`)).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+test('wire path editing (3.43d): segment and corner handles, Shift-drag a pin', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const wires = () => page.evaluate(() => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): { wires: { id: string; route?: { x: number; y: number }[]; routing?: string }[] } } }).archflow.data().wires)));
+
+  // select the vertical power wire (3V3) by clicking it
+  const w = (await wires())[2];
+  const path = page.locator(`svg.af-canvas [data-wire="${w.id}"] path`).first();
+  const box = (await path.boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  const handles = page.locator('svg.af-canvas .af-segment-handle');
+  await expect(handles).toHaveCount(1);
+  const h = (await handles.first().boundingBox())!;
+  await page.mouse.move(h.x + h.width / 2, h.y + h.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(h.x + 60, h.y + h.height / 2, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(async () => (await wires())[2].routing).toBe('manual');
+  // now there are corners
+  await expect(page.locator('svg.af-canvas .af-corner-handle')).not.toHaveCount(0);
+  await page.getByRole('button', { name: '復原' }).click();
+  await expect.poll(async () => (await wires())[2].routing).toBeUndefined();
+
+  // Shift-drag a pin of the MCU to its bottom edge
+  const d = await page.evaluate(() => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): unknown; camera: unknown } }).archflow.data())));
+  const mcu = (d as { blocks: { id: string; x: number; y: number; w: number; h: number; ports: { id: string; side: string; t: number }[] }[] }).blocks[1];
+  const port = page.locator(`svg.af-canvas [data-block="${mcu.id}"] .af-port[data-side="l"] .af-port-dot`).first();
+  const pb = (await port.boundingBox())!;
+  const body = (await page.locator(`svg.af-canvas [data-block="${mcu.id}"] .af-block-body`).boundingBox())!;
+  await page.keyboard.down('Shift');
+  await page.mouse.move(pb.x + pb.width / 2, pb.y + pb.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(body.x + body.width * 0.3, body.y + body.height - 2, { steps: 5 });
+  await page.mouse.up();
+  await page.keyboard.up('Shift');
+  const after = await page.evaluate(id => (window as unknown as { archflow: { data(): { blocks: { id: string; ports: { side: string }[] }[] } } }).archflow.data().blocks.find(b => b.id === id)!.ports.map(p => p.side), mcu.id);
+  const count = (sides: string[], x: string) => sides.filter(v => v === x).length;
+  expect(count(after, 'l')).toBe(count(mcu.ports.map(p => p.side), 'l') - 1);
+  expect(count(after, 'b')).toBe(count(mcu.ports.map(p => p.side), 'b') + 1);
+  expect(errors).toEqual([]);
+});

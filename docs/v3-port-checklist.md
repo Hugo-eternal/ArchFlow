@@ -6,7 +6,7 @@
 
 狀態：☐ 待移植　☑ 已移植　✂ 刻意刪除　⤳ 已被後層取代（不移植）
 
-合計 327 層：☐ 8　☑ 244　✂ 54　⤳ 21
+合計 327 層：☐ 6　☑ 246　✂ 54　⤳ 21
 
 ## core / interaction
 
@@ -156,8 +156,8 @@
 | `inspector` | 1406 |  | script#2 | 線條樣式（ux）面板與選取範圍同步 | ☑ | 3.21 `InspectorPanel.sync()`（store 變更後同步） |
 | `inspector` | 1463 |  | script#2 | 非時程的連線改用 p13 線條面板（不呼叫 base） | ☑ | 3.21 `wireFields()` 線條格式群組 |
 | `inspector` | 1565 |  | script#2 | 格線啟用時加入格線相關欄位 | ☑ | 格線欄位：「對齊／格線」對話框（3.41b） |
-| `inspector` | 1805 |  | script#2 | 連線加「手動標記」位置 / 角度 | ☐ | **缺口 → 3.43d**：線路標籤「手動標記」的位置 / 角度欄位（`wire.label.mark` 已存檔、render 已用，缺編輯介面） |
-| `inspector` | 1885 |  | script#2 | 同步標記面板（mSyncInspector） | ☐ | **缺口 → 3.43d**：同上（標記面板同步） |
+| `inspector` | 1805 |  | script#2 | 連線加「手動標記」位置 / 角度 | ☐ | **缺口 → 3.43d2**：線路標籤「手動標記」的位置 / 角度欄位（`wire.label.mark` 已存檔、render 已用，缺編輯介面） |
+| `inspector` | 1885 |  | script#2 | 同步標記面板（mSyncInspector） | ☐ | **缺口 → 3.43d2**：同上（標記面板同步） |
 | `inspector` | 1929 |  | script#2 | RC4.10：「重新繞線」按鈕留在標記設定外 | ☑ | 線路「重新繞線」：命令 `wire.reroute`（3.39） |
 | `inspector` | 1951 |  | script#3 | 面板分組（可收合群組、全部展開 / 收折） | ☑ | 可收合群組：`FieldSpec` group（3.21） |
 | `inspector` | 1998 |  | script#4 | 電源設計：電源欄位分組 | ☑ | 3.27b `designs/function/power.ts` `powerBlockFields`（`inView('power')` 群組「電源設定」） |
@@ -304,7 +304,7 @@
 | `render` | 2199 |  | script#9 | 時程文字對齊 | ☑ | 時程文字框：`render/texts`（3.19） |
 | `render` | 2248 |  | schedule-release-patch | 時程樣式（microtask） | ☑ | 時程樣式：`schedule/render`（3.28） |
 | `render` | 2311 |  | persistence-v25-js | persistence v25：microtask 中補回設計設定 | ☑ | 設計設定存在檔案：`io/schema`（3.13） |
-| `render` | 3097 |  | af15-ux2 | V1.5：新方塊採用樣式、連線標籤去重（rAF） | ☐ | **缺口 → 3.43d**：新方塊沿用多數方塊的名稱位置 / 編號規則（adopt），線路標籤與相鄰同名接腳重複時隱藏（dedupeLabels） |
+| `render` | 3097 |  | af15-ux2 | V1.5：新方塊採用樣式、連線標籤去重（rAF） | ☐ | **缺口 → 3.43d2**：新方塊沿用多數方塊的名稱位置 / 編號規則（adopt），線路標籤與相鄰同名接腳重複時隱藏（dedupeLabels） |
 | `render` | 3234 |  | af15-ux2 | 接腳裝飾 | ☑ | 接腳裝飾（名稱 inside / outside）：`render/blocks`（3.18） |
 | `render` | 3506 |  | af15-ux2 | 時程裝飾、分支顏色（setTimeout 0） | ☑ | 時程裝飾、分支色：`schedule/render`（3.28 / 3.29） |
 | `render` | 3707 |  | af15-ux2 | 提示 | ☑ | 提示：見 `scheduleChrome` L3708 |
@@ -354,13 +354,13 @@
 | `drawEdges` | 1212 |  | script#2 | 成本式最短正交繞線的快取重置 | ☑ | 繞線快取：`Shell.routesFor`（3.20） |
 | `drawEdges` | 1400 |  | script#2 | 新連線套用預設線條格式 | ☑ | 線條格式（顏色 / 寬 / 虛線 8 5、點線 2 4）→ `render/wires`（3.19） |
 | `drawEdges` | 1465 |  | script#2 | p13：連線標籤位置 | ☑ | `render/wires.labelPosition` + `.af-wire-label` 樣式（字級 14、粗 500、白色描邊，3.19） |
-| `drawEdges` | 1562 |  | script#2 | 格線：同步幾何、選取線段把手 | ☐ | **缺口 → 3.43d**：選取線段的拖曳把手（平移整段線） |
+| `drawEdges` | 1562 |  | script#2 | 格線：同步幾何、選取線段把手 | ☑ | 選取線路的線段把手：拖曳平移整段（端點段先拉出一小段）`model/route-edit.moveSegment` + `Gestures` path（3.43d） |
 | `drawEdges` | 1656 |  | script#2 | RC：同步多選狀態 | ☑ | 多選同步：Canvas 依 `gestures.selection` 重畫（3.20） |
 | `drawEdges` | 1738 |  | script#2 | 統一標籤的引線 | ☑ | 統一標籤：`wire.label.auto` + `render/wires.labelPosition`（3.38） |
-| `drawEdges` | 1802 |  | script#2 | 手動標記裝飾 | ☐ | **缺口 → 3.43d**：手動標記的拖曳 / 旋轉 |
-| `drawEdges` | 2141 |  | script#7 | 轉角拖曳把手 | ☐ | **缺口 → 3.43d**：轉角拖曳把手、雙擊線段插入直角 |
+| `drawEdges` | 1802 |  | script#2 | 手動標記裝飾 | ☐ | **缺口 → 3.43d2**：手動標記的拖曳 / 旋轉 |
+| `drawEdges` | 2141 |  | script#7 | 轉角拖曳把手 | ☑ | 轉角把手 `moveCorner`（3.43d）。「雙擊線段插入直角」只在 V1 說明文字中，V2 實際生效的雙擊是行內改名（L3753），不移植 |
 | `drawEdges` | 2249 |  | schedule-release-patch | 時程樣式（microtask） | ☑ | 時程線條樣式：`schedule/render`（3.29） |
-| `drawEdges` | 3099 |  | af15-ux2 | 標籤去重（同步 + rAF） | ☐ | **缺口 → 3.43d**：見 `render` L3097（標籤去重） |
+| `drawEdges` | 3099 |  | af15-ux2 | 標籤去重（同步 + rAF） | ☐ | **缺口 → 3.43d2**：見 `render` L3097（標籤去重） |
 | `drawEdges` | 3235 |  | af15-ux2 | 接腳裝飾 | ☑ | 接腳裝飾：`render/blocks`（3.18） |
 | `drawEdges` | 3507 |  | af15-ux2 | 時程裝飾、分支顏色（setTimeout） | ☑ | 時程裝飾：`schedule/render`（3.28） |
 | `drawEdges` | 10481 |  | af-v280-ux | V2.8 接腳名稱位置 | ☑ | 接腳名稱位置：`render/blocks`（3.18） |

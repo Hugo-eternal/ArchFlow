@@ -27,7 +27,7 @@ export const isPortEnd = (e: WireEnd): e is { block: string; port: string } => '
 
 /** Thrown by model functions for a refused edit; `code` maps to an i18n message in the shell. */
 export class ModelError extends Error {
-  constructor(readonly code: 'limit-blocks' | 'limit-wires' | 'limit-ports' | 'missing' | 'same-end', readonly id = '') {
+  constructor(readonly code: 'limit-blocks' | 'limit-wires' | 'limit-ports' | 'missing' | 'same-end' | 'route-invalid', readonly id = '') {
     super(`${code}${id ? ': ' + id : ''}`);
     this.name = 'ModelError';
   }
