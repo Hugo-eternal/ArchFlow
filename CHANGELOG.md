@@ -114,3 +114,4 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 - 「檢視 › 版面與字體…」（V2 #designDialog）：英文字體（5 種）、中文字體（3 種）與 IC 型號 / 副標 / 接腳標籤 / 量測值字級（pt，範圍同 V2 cleanTheme）；套用、回復預設都是一步復原。**修正**：V3 之前存了 `theme` 的字型但畫布與匯出沒有使用，現在方塊文字依 V2 fontStack 使用（字體需安裝在電腦上，否則用內建字體）。（`tests/unit/model.arrange.test.ts`、`tests/e2e/v3-shell.spec.ts`「layout settings」）
 - 「編輯 › 依連線排列接腳」（V2 方塊屬性的 afArrangeSelectedIO）：輸入到左、輸出到右，每側依連線另一端的位置排序、避開鎖定接腳，結果與 V2 `afArrangeIO` 原始碼逐一相同（測試直接執行 V2 原始碼比對）。
 - V2 對照表的 `chineseFont` / `englishFont` 合併為一個命令 `theme.fonts`（同一個對話框）。對照表中所有非 null 的命令都已註冊。
+- 已知差異（3.43a 盤點時發現）：V2 在格線開啟時，「依連線排列接腳」實際只做格線正規化（覆寫層 L1564），不會重新排序接腳；V3 一律依連線排列，再由格線正規化。
