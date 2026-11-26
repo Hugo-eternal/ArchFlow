@@ -11,7 +11,7 @@ const DIST = path.resolve(HERE, '../../dist/ArchFlow.html');
 test.use({ locale: 'zh-TW' });
 test.skip(!fs.existsSync(DIST), 'run `npm run build` first');
 
-test('RSI BOM Converter: start screen tile, workspace menu, closes three ways', async ({ page }) => {
+test('RSI BOM Converter: start screen tile, workspace palette, closes three ways', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
@@ -27,18 +27,18 @@ test('RSI BOM Converter: start screen tile, workspace menu, closes three ways', 
   await expect(frame).toHaveCount(1);
   await expect(page.getByRole('heading', { level: 1, name: 'ArchFlow' })).toBeVisible();
 
-  // from the workspace tools menu; Escape and the close button
+  // from the workspace: the command palette (the V2.10.1 workspace has no tools menu); Escape and the close button
   await page.getByRole('button', { name: '建立專案' }).click();
-  await page.getByRole('button', { name: '小工具' }).click();
-  await page.getByRole('menuitem', { name: 'RSI BOM Converter' }).click();
+  const open = async () => {
+    await page.keyboard.press('Control+k');
+    await page.getByRole('combobox', { name: '搜尋' }).fill('RSI BOM');
+    await page.keyboard.press('Enter');
+  };
+  await open();
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  // keyboard: ArrowDown opens the menu on its first item (RSI BOM Converter), Enter runs it
-  await page.getByRole('button', { name: '小工具' }).focus();
-  await page.keyboard.press('ArrowDown');
-  await expect(page.getByRole('menuitem', { name: 'RSI BOM Converter' })).toBeFocused();
-  await page.keyboard.press('Enter');
+  await open();
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: '關閉' }).click();
   await expect(dialog).toBeHidden();

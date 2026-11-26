@@ -38,7 +38,7 @@ test('function: starter template, then a blank design, then save', async ({ page
   await expect(page.getByRole('button', { name: /空白/ })).toHaveAttribute('aria-current', 'page');
   expect((await data(page)).blocks).toHaveLength(0);
 
-  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
   const file = JSON.parse(fs.readFileSync(await save.path(), 'utf8'));
   expect(file.designs.map((x: { type: string; name: string }) => `${x.type}:${x.name}`)).toEqual(['function:入門方塊圖', 'function:空白']);
   expect(file.designs[0].data.blocks).toHaveLength(4);
@@ -51,8 +51,10 @@ test('function: insert parts from the toolbar, edit a supply and voltage badges,
   await page.goto('file://' + DIST);
   await page.getByRole('button', { name: '建立專案' }).click();
 
-  await page.getByLabel('插入零件').selectOption({ label: '電阻' });
-  await page.getByLabel('插入零件').selectOption({ label: '電源符號' });
+  await page.getByRole('button', { name: '插入零件' }).click();
+  await page.getByRole('menuitem', { name: '電阻', exact: true }).click();
+  await page.getByRole('button', { name: '插入零件' }).click();
+  await page.getByRole('menuitem', { name: '電源符號', exact: true }).click();
   await expect(page.locator('svg.af-canvas .af-part-glyph')).toHaveCount(2);
   // the supply is selected: change its voltage in the panel
   const volt = page.getByRole('complementary', { name: '屬性' }).getByLabel('電壓', { exact: true });
@@ -88,7 +90,7 @@ test('function: frame around the selection, rename and recolour it, move it with
   await page.getByRole('button', { name: '建立專案' }).click();
   type W = { archflow: { data(): { blocks: { id: string; x: number; y: number }[]; frames: { x: number; y: number; title: string; color: string }[] }; gestures: { select(x: unknown[]): void }; camera: { x: number; y: number; z: number } } };
   await page.evaluate(() => { const s = (window as unknown as W).archflow; s.gestures.select(s.data().blocks.slice(1, 3).map(b => ({ kind: 'block', id: b.id }))); });
-  await page.getByRole('button', { name: '新增區域框' }).click();
+  await page.getByRole('button', { name: '區域框' }).click();
   const panel = page.getByRole('complementary', { name: '屬性' });
   await panel.getByLabel('區域框名稱').fill('主控板');
   await panel.getByLabel('區域框名稱').press('Enter');
@@ -119,7 +121,8 @@ test('function: LCD module template and connector settings', async ({ page }) =>
   await page.goto('file://' + DIST);
   await page.getByRole('radio', { name: '空白設計' }).check();
   await page.getByRole('button', { name: '建立專案' }).click();
-  await page.getByLabel('插入零件').selectOption({ label: 'LCD 模組' });
+  await page.getByRole('button', { name: '插入零件' }).click();
+  await page.getByRole('menuitem', { name: 'LCD 模組', exact: true }).click();
   await expect(page.getByRole('status').first()).toContainText('已加入 LCD 模組範本');
   let d = await data(page);
   expect(d.blocks).toHaveLength(8);
@@ -162,7 +165,7 @@ test('function: switch between the function and power views (button, Shift+V), s
   const signal = (await data(page)).wires.filter(w => (w as { kind: string }).kind !== 'power').length;
   expect(signal).toBeGreaterThan(0);
   await expect(page.locator('svg.af-canvas .af-wire-group.is-muted')).toHaveCount(signal);
-  await expect(page.locator('.af-unsaved')).toBeVisible();
+  await expect(page.locator('.af-save-state[data-state="dirty"]')).toBeVisible();
   await expect(page.getByRole('button', { name: '復原' })).toBeDisabled();
 
   // Shift+V on the canvas goes back
@@ -181,7 +184,7 @@ test('function: switch between the function and power views (button, Shift+V), s
   expect(fs.readFileSync(await svg.path(), 'utf8')).not.toMatch(/opacity="0\.35"/);
 
   // saved with the file
-  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
   expect(JSON.parse(fs.readFileSync(await save.path(), 'utf8')).designs[0].data.view).toBe('power');
   expect(errors).toEqual([]);
 });
@@ -202,7 +205,8 @@ test('function: power view — power settings in the panel, metric strip on the 
   await page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' }).click();
   // the insert menu follows the view (3.29b e)
   await expect(page.getByLabel('插入零件')).toHaveCount(0);
-  await page.getByLabel('插入電源方塊').selectOption({ label: '負載' });
+  await page.getByRole('button', { name: '插入電源方塊' }).click();
+  await page.getByRole('menuitem', { name: '負載', exact: true }).click();
   expect((await data(page)).blocks.at(-1)).toMatchObject({ partNumber: '負載' });
   await page.getByRole('button', { name: '復原' }).click();
   await select(3);
@@ -258,11 +262,11 @@ test('organize (3.38): nothing to apply on a tidy diagram; routes mode keeps blo
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
   await page.getByRole('button', { name: '建立專案' }).click();
-  const dialog = page.getByRole('dialog', { name: '自動整理' });
+  const dialog = page.getByRole('dialog', { name: '整理預覽' });
   const apply = dialog.getByRole('button', { name: '套用' });
 
   // the starter template is tidy: no candidate can be applied
-  await page.getByRole('button', { name: '自動整理' }).click();
+  await page.getByRole('button', { name: '整理預覽' }).click();
   await expect(apply).toBeDisabled();
   await dialog.getByRole('button', { name: '取消' }).click();
 
@@ -270,7 +274,7 @@ test('organize (3.38): nothing to apply on a tidy diagram; routes mode keeps blo
   await page.evaluate(() => { const s = (window as unknown as { archflow: { edit(f: (d: { blocks: { x: number; y: number }[]; wires: { route?: unknown }[] }) => unknown): void } }).archflow; s.edit(d => ({ ...d, blocks: d.blocks.map((b, i) => ({ ...b, x: [700, 60, 720, 80][i], y: [400, 420, 40, 60][i] })), wires: d.wires.map(w => ({ ...w, route: undefined })) })); });
   const before = await data(page) as unknown as { blocks: { x: number; y: number }[]; wires: { route?: unknown }[] };
 
-  await page.getByRole('button', { name: '自動整理' }).click();
+  await page.getByRole('button', { name: '整理預覽' }).click();
   await expect(dialog.getByText('可套用').first()).toBeVisible();
   await expect(apply).toBeEnabled();
   await apply.click();
@@ -282,7 +286,7 @@ test('organize (3.38): nothing to apply on a tidy diagram; routes mode keeps blo
   expect((await data(page) as unknown as { wires: { route?: unknown }[] }).wires.some(w => w.route)).toBe(false);
 
   // rearrange blocks: the layered candidate
-  await page.getByRole('button', { name: '自動整理' }).click();
+  await page.getByRole('button', { name: '整理預覽' }).click();
   await dialog.getByRole('radio', { name: '重新排列方塊' }).check();
   await dialog.getByRole('radio', { name: '依連接關係分層' }).check();
   await expect(apply).toBeEnabled();
@@ -407,7 +411,8 @@ test('wiring a part quickly (3.43e): drag a resistor lead onto a block body', as
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
   await page.getByRole('button', { name: '建立專案' }).click();
-  await page.getByLabel('插入零件').selectOption({ label: '電阻' });
+  await page.getByRole('button', { name: '插入零件' }).click();
+  await page.getByRole('menuitem', { name: '電阻', exact: true }).click();
   const before = (await data(page)).wires.length;
   const ports = async () => (await page.evaluate(() => JSON.parse(JSON.stringify((window as unknown as { archflow: { data(): { blocks: { ports: unknown[] }[] } } }).archflow.data().blocks.map(b => b.ports.length)))) as number[]);
   const pins = await ports();

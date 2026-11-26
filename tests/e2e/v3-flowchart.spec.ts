@@ -27,18 +27,19 @@ test('flowchart: template in the vendor editor, edits saved, undo through the sh
   const frame = page.frameLocator('iframe[title="流程圖編輯器"]');
   await expect(frame.getByText('上電開始').first()).toBeVisible();
   await expect(page.locator('.af-statusbar')).toContainText('16 個圖形');
-  await expect(page.locator('.af-unsaved')).toHaveCount(0);
+  await expect(page.locator('.af-save-state[data-state="dirty"]')).toHaveCount(0);
   const n = await nodes(page);
 
   // add a shape from the editor's palette
   await frame.getByRole('button', { name: /^處理/ }).first().click();
   await expect.poll(() => nodes(page)).toBe(n + 1);
-  await expect(page.locator('.af-unsaved')).toBeVisible();
+  await expect(page.locator('.af-save-state[data-state="dirty"]')).toBeVisible();
 
-  await page.getByRole('button', { name: '復原' }).click();
+  await page.locator('.af-brand').click();
+  await page.keyboard.press('Control+z');
   await expect.poll(() => nodes(page)).toBe(n);
 
-  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
   const file = JSON.parse(fs.readFileSync(await save.path(), 'utf8'));
   expect(file.designs[0]).toMatchObject({ type: 'flowchart', name: 'LCD 面板上電流程' });
   expect(file.designs[0].data.nodes).toHaveLength(n);

@@ -219,8 +219,8 @@ function Workspace({ shell }: { shell: Shell }) {
   return (
     <div className="af-shell">
       <AppBar shell={shell} />
-      <div className="af-body">
-        <DesignList shell={shell} />
+      <div className={`af-body${shell.explorerOpen ? '' : ' no-explorer'}`}>
+        {shell.explorerOpen && <DesignList shell={shell} />}
         <section className="af-stage" aria-label={d?.name}>
           <ViewSwitch shell={shell} />
           <Canvas key={d?.id} shell={shell} />

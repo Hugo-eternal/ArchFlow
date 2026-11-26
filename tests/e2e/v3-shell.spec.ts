@@ -100,7 +100,7 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   expect((await model(page)).blocks).toHaveLength(2);
 
   // save
-  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
   expect(await lastDownload(page)).toBe('主機板.archflow.json');
   const saved = JSON.parse(fs.readFileSync(await save.path(), 'utf8'));
   expect(saved).toMatchObject({ schemaVersion: 3, project: { name: '主機板' } });
@@ -119,8 +119,7 @@ test('build a small function diagram in the V3 shell', async ({ page }) => {
   expect(source).not.toContain('var(');
 
   // reopen the saved file from a new project
-  await page.getByRole('button', { name: '檔案', exact: true }).click();
-  await page.getByRole('menuitem', { name: '新專案' }).click();
+  await page.getByRole('button', { name: '新建', exact: true }).click();
   await expect(page.getByRole('button', { name: '建立專案' })).toBeVisible();
   const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByRole('button', { name: '開啟 JSON 專案' }).click()]);
   await chooser.setFiles(await save.path());
@@ -209,7 +208,7 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   const links = () => page.evaluate(() => { const a = (window as unknown as { archflow: { store: { data(id: string): { links: { from: string; to: string }[] }; activeDesignId: string } } }).archflow.store; return a.data(a.activeDesignId).links.map(l => `${l.from}>${l.to}`).sort(); });
   const before = await links();
   await card.click();
-  await page.getByRole('button', { name: '新增任務' }).click();
+  await page.getByRole('button', { name: '接續任務' }).click();
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n + 1);
   await expect(page.locator('.af-toast').last()).toContainText('後續任務接在它之後');
   await expect(panel.getByLabel('工期（含首尾）')).toBeVisible();
@@ -233,66 +232,73 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   expect(errors).toEqual([]);
 });
 
-test('app bar and command bar (3.39): one row each, menus by keyboard, rename, duplicate, back from the start screen', async ({ page }) => {
+test('app bar and command bar (V2.10.1 look, 3.46a): one row each, design menu by keyboard, rename in place, duplicate, back from the start screen', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   for (const width of [1440, 1300, 1024]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('file://' + DIST);
     await page.getByRole('button', { name: '建立專案' }).click();
-    for (const sel of ['header.af-appbar', '.af-cmdbar']) {
-      const h = await page.locator(sel).evaluate(e => e.getBoundingClientRect().height);
-      expect(h, `${sel} at ${width}px`).toBeLessThanOrEqual(60); // one row: a 44 px button + padding + border
-    }
+    expect(await page.locator('header.af-appbar').evaluate(e => e.getBoundingClientRect().height)).toBe(50);
+    expect(await page.locator('.af-cmdbar').evaluate(e => e.getBoundingClientRect().height)).toBe(44);
     // the page itself never scrolls sideways
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
   await page.screenshot({ path: path.resolve(HERE, '../../test-results/v3-appbar-1024.png') });
+  await page.setViewportSize({ width: 1440, height: 900 });
 
-  // keyboard: ArrowDown opens on the first item, ArrowUp wraps to the last enabled, Escape returns focus
-  const file = page.getByRole('button', { name: '檔案', exact: true });
-  await file.focus();
+  // the app bar: brand and version, save state, language, actions
+  const bar = page.locator('header.af-appbar');
+  await expect(bar.locator('.af-ver')).toHaveText(/^V\d+\.\d+\.\d+/);
+  await expect(bar.getByRole('radiogroup', { name: '介面語言' }).getByRole('radio', { name: '中' })).toHaveAttribute('aria-checked', 'true');
+  for (const name of ['新建', '開啟', '匯出', '儲存']) await expect(bar.getByRole('button', { name, exact: true })).toBeVisible();
+  await expect(bar.locator('.af-save-state')).toHaveAttribute('data-state', 'saved');
+
+  // the design menu: ArrowDown opens on the first item, Escape returns focus, a click outside closes it
+  const trigger = page.getByRole('button', { name: '切換或管理設計' });
+  await trigger.focus();
   await page.keyboard.press('ArrowDown');
-  const menu = page.getByRole('menu', { name: '檔案' });
+  const menu = page.getByRole('menu', { name: '切換或管理設計' });
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole('menuitem', { name: '新專案' })).toBeFocused();
-  await page.keyboard.press('ArrowUp');
-  await expect(menu.getByRole('menuitem', { name: '匯出' })).toBeFocused();
+  await expect(menu.getByRole('menuitemradio', { name: '入門方塊圖' })).toBeFocused();
+  await expect(menu.getByRole('menuitemradio', { name: '入門方塊圖' })).toHaveAttribute('aria-checked', 'true');
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
-  await expect(file).toBeFocused();
-  // a click outside closes it
-  await file.click();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
   await expect(menu).toBeVisible();
   await page.locator('svg.af-canvas').click({ position: { x: 20, y: 20 } });
   await expect(menu).toBeHidden();
 
-  // rename the project from its name in the app bar
-  await page.locator('.af-project-name').click();
-  await page.getByRole('dialog').getByRole('textbox').fill('電源板');
-  await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
-  await expect(page.locator('.af-project-name')).toHaveText('電源板');
-  await expect(page.locator('.af-unsaved')).toBeVisible();
+  // rename the project in place
+  const name = page.getByRole('textbox', { name: '專案名稱' });
+  await name.fill('電源板');
+  await name.press('Enter');
+  await expect(name).toHaveValue('電源板');
+  await expect(bar.locator('.af-save-state')).toHaveAttribute('data-state', 'dirty');
 
-  // duplicate the design from the design menu
-  await page.getByRole('button', { name: '設計', exact: true }).click();
-  await page.getByRole('menuitem', { name: '複製設計' }).click();
-  await expect(page.getByRole('navigation', { name: '設計清單' }).getByRole('button', { name: /副本/ })).toHaveCount(1);
+  // duplicate the design from the design menu; the menu lists both and switches
+  await trigger.click();
+  await menu.getByRole('menuitem', { name: '複製設計' }).click();
+  await expect(trigger).toContainText('副本');
+  await trigger.click();
+  await menu.getByRole('menuitemradio', { name: '入門方塊圖', exact: true }).click();
+  await expect(trigger).toContainText('入門方塊圖');
+  await expect(trigger.locator('.af-count')).toHaveText('2');
 
   // the command bar follows the design type: a schedule has its own commands, no block insert
   await page.getByRole('button', { name: '新增設計' }).click();
   await page.getByRole('dialog').getByRole('radio', { name: '專案時程' }).check();
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
-  const bar = page.getByRole('toolbar', { name: '工具列' });
-  await expect(bar.getByRole('button', { name: '新增任務' })).toBeVisible();
-  await expect(bar.getByRole('button', { name: '新增方塊' })).toHaveCount(0);
+  const tools = page.getByRole('toolbar', { name: '工具列' });
+  await expect(tools.getByRole('button', { name: '接續任務' })).toBeVisible();
+  await expect(tools.getByRole('button', { name: '新增方塊' })).toHaveCount(0);
 
   // back from the start screen without losing the project
-  await page.getByRole('button', { name: '檔案', exact: true }).click();
-  await page.getByRole('menuitem', { name: '新專案' }).click();
+  await page.getByRole('button', { name: '新建', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
   await page.getByRole('button', { name: '返回目前專案' }).click();
-  await expect(page.locator('.af-project-name')).toHaveText('電源板');
+  await expect(name).toHaveValue('電源板');
   expect(errors).toEqual([]);
 });
 
@@ -370,15 +376,13 @@ test('status bar, notifications, empty hint and language switch without reload (
   await expect(bar).toContainText('未儲存');
 
   // a notification can be closed, and closes by itself
-  await page.getByRole('button', { name: '檔案', exact: true }).click();
-  await page.getByRole('menuitem', { name: '儲存' }).click();
+  await page.getByRole('button', { name: '儲存', exact: true }).click();
   const toast = page.locator('.af-toast').filter({ hasText: '已儲存' });
   await expect(toast).toHaveAttribute('role', 'status');
   await toast.getByRole('button', { name: '關閉通知' }).click();
   await expect(toast).toHaveCount(0);
   await page.getByRole('button', { name: '新增方塊' }).click();
-  await page.getByRole('button', { name: '檔案', exact: true }).click();
-  await page.getByRole('menuitem', { name: '儲存' }).click();
+  await page.getByRole('button', { name: '儲存', exact: true }).click();
   await expect(page.locator('.af-toast')).toHaveCount(1);
   await expect(page.locator('.af-toast')).toHaveCount(0, { timeout: 6000 });
 
@@ -389,9 +393,9 @@ test('status bar, notifications, empty hint and language switch without reload (
   await page.getByRole('dialog').getByRole('button', { name: '確定' }).click();
   await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: '新增電源軌' }).first()).toBeVisible();
   await page.evaluate(() => { (window as unknown as { marker: number }).marker = 1; });
-  await page.getByLabel('介面語言').selectOption('en');
+  await page.getByRole('radiogroup', { name: '介面語言' }).getByRole('radio', { name: 'EN' }).click();
   expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
-  await expect(page.getByRole('button', { name: 'File', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
   await expect(page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: 'Add rail' }).first()).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Designs' }).getByRole('button')).toHaveCount(5);
   await expect(bar).toContainText('Unsaved');
@@ -400,14 +404,15 @@ test('status bar, notifications, empty hint and language switch without reload (
   const n = await rails();
   await page.frameLocator('iframe.af-embedded-frame').getByRole('button', { name: 'Add rail' }).first().click();
   await expect.poll(rails).toBe(n + 1);
-  // a tool opened now is in English too
-  await page.getByRole('button', { name: 'Tools', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Pattern Generator' }).click();
+  // a tool opened now is in English too (focus is in the frame: open the palette from the app bar)
+  await page.getByRole('button', { name: /Search commands/ }).click();
+  await page.getByRole('combobox', { name: 'Search' }).fill('Pattern');
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Pattern Generator' })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins from the edit menu', async ({ page }) => {
+test('layout settings (3.41b): grid & align dialog, fonts dialog, arrange pins from the palette', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('file://' + DIST);
@@ -417,9 +422,8 @@ test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins f
   // align / grid: select all blocks, align them in a row (one undo step)
   await page.locator('svg.af-canvas').click({ position: { x: 10, y: 10 } });
   await page.keyboard.press('Control+a');
-  await page.getByRole('button', { name: '檢視', exact: true }).click();
-  await page.getByRole('menuitem', { name: '對齊／格線…' }).click();
-  const dlg = page.getByRole('dialog', { name: '對齊／格線…' });
+  await page.getByRole('button', { name: '格線與對齊' }).click();
+  const dlg = page.getByRole('dialog', { name: '格線與對齊' });
   await expect(dlg).toContainText('以第一個選取的方塊為準');
   await dlg.getByRole('button', { name: '水平對齊' }).click();
   await expect(page.locator('.af-toast').last()).toContainText('已對齊選取方塊');
@@ -437,9 +441,8 @@ test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins f
   await expect.poll(async () => (await data()).grid.show).toBe(true);
 
   // fonts: validation in pt, apply, the blocks use the font, reset
-  await page.getByRole('button', { name: '檢視', exact: true }).click();
-  await page.getByRole('menuitem', { name: '版面與字體…' }).click();
-  const fonts = page.getByRole('dialog', { name: '版面與字體…' });
+  await page.getByRole('button', { name: '版面與字體' }).click();
+  const fonts = page.getByRole('dialog', { name: '版面與字體' });
   await fonts.getByLabel('英文字體').selectOption('Arial');
   await fonts.getByLabel('IC 型號字級（pt）').fill('99');
   await expect(fonts.getByText('請輸入 9–36')).toBeVisible();
@@ -450,15 +453,15 @@ test('layout settings (3.41b): align / grid dialog, fonts dialog, arrange pins f
   expect((await data()).theme).toMatchObject({ latinFont: 'Arial', title: 32 });
   const family = await page.locator('svg.af-canvas .af-block text').first().evaluate(e => getComputedStyle(e).fontFamily);
   expect(family).toMatch(/^"?Arial/);
-  await page.getByRole('button', { name: '檢視', exact: true }).click();
-  await page.getByRole('menuitem', { name: '版面與字體…' }).click();
+  await page.getByRole('button', { name: '版面與字體' }).click();
   await fonts.getByRole('button', { name: '回復預設' }).click();
   expect((await data()).theme).toBeUndefined();
 
   // arrange pins: one block selected
   await page.locator('svg.af-canvas [data-block]').first().click();
-  await page.getByRole('button', { name: '編輯', exact: true }).click();
-  await page.getByRole('menuitem', { name: '依連線排列接腳' }).click();
+  await page.keyboard.press('Control+k');
+  await page.getByRole('combobox', { name: '搜尋' }).fill('依連線排列接腳');
+  await page.keyboard.press('Enter');
   await expect(page.locator('.af-toast').last()).toContainText('已依連線排列接腳');
   expect(errors).toEqual([]);
 });

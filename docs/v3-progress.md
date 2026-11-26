@@ -113,8 +113,8 @@
 - [x] 3.43i `designs/function`：零件數值——自動補單位、常用值清單（V2 L4267 normValue）（L2）
 - [x] 3.43 移植清單全部勾選（3.43b–e 完成後表中沒有 ☐）；確認刪除項目（audit §4）都未移植（L3）
 - [x] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
-- [ ] 3.46a `shell`：V2.10.1 外觀——圖示集（取自 V2 bundle 用到的圖示）、按鈕元件、app bar（logo、版本標籤、專案名 / 設計下拉、搜尋框、未儲存標示、中／EN、新建／開啟／匯出／儲存／說明）（L3）
-- [ ] 3.46b `shell`：V2.10.1 命令列（側欄切換、新增方塊、元件庫、區域框、新增文字、復原／重做、整理預覽、重新配線、格線與對齊｜版面與字體、範本、適合畫面、屬性面板切換；時程等其他設計各自的命令列）（L3）
+- [x] 3.46a `shell`：V2.10.1 外觀——圖示集（取自 V2 bundle 用到的圖示）、按鈕元件、app bar（logo、版本標籤、專案名 / 設計下拉、搜尋框、未儲存標示、中／EN、新建／開啟／匯出／儲存／說明）（L3）
+- [x] 3.46b `shell`：V2.10.1 命令列（側欄切換、新增方塊、元件庫、區域框、新增文字、復原／重做、整理預覽、重新配線、格線與對齊｜版面與字體、範本、適合畫面、屬性面板切換；時程等其他設計各自的命令列）（L3）
 - [ ] 3.46c `shell`：左側「專案內容」（搜尋、依類型分組的方塊／分支接點清單、時程任務清單；點選即選取並置中），設計管理移到 app bar 的設計下拉（L3）
 - [ ] 3.46d `shell` / `inspector`：屬性面板標頭（圖示、類別、名稱、收合）與 V2 群組樣式、未選取時的「圖面設定」；選取時的浮動工具列（名稱／輸入／輸出／顏色／刪除／更多）（L3）
 - [ ] 3.46e `shell`：畫布周邊——縮放控制（−／比例／＋）、上手提示卡（可關閉、記住）、狀態列（設計類型圖示、統計、訊息、作者）（L3）
@@ -134,7 +134,7 @@
 
 ## 交接
 - **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
-- **下一步**：3.46a。基準截圖在 `docs/v2-screens/`（start / workspace / block-selected，1440 × 900，zh-TW；之後各步驟補拍需要的畫面：在 Chromium 開 `index.html`，`frame({ name: 'app' })` 內按 V2 的「建立專案」）。V2 殼層的 CSS 在 legacy L4664–L5130（`af2-*`：app bar 50 px、cmdbar 44 px、menus、sheets、toasts、start），React 元件在 L5563 / L5766 的 bundle（圖示為內嵌 SVG path，`(0,ct.jsx)(Tn,…)` 這類元件；先列出 V2 用到的圖示名稱與 path，存成 `src/shell/icons.tsx`，註明來源與授權——V2 的圖示若來自 Lucide（ISC），在 THIRD_PARTY 註明）。顏色沿用 `tokens.css`（3.4 已依 V2 色票建立），缺的 token 補上。每一步以同尺寸截圖與 `docs/v2-screens` 並排比對，在交接記錄剩餘差異。
+- **下一步**：3.46c（左側「專案內容」）。3.46a 與 3.46b 合為一個 commit（app bar 與命令列共用圖示、按鈕元件與 token，分開會讓中間狀態的 E2E 無法通過）。3.46a/b 完成內容：`src/shell/icons.tsx`（45 個 Lucide 圖示，取自 V2 實際渲染的 DOM，ISC 授權見 `THIRD_PARTY.md`）；app bar 50 px（logo、`V3.0.0`、專案名可直接改名、設計下拉＝切換／新增／範本／複製／改名／刪除、搜尋鈕開指令面板、儲存狀態、中／EN、新建／開啟／匯出／儲存／說明）；命令列 44 px（方塊圖與時程各自一列，寬度 ≤ 1080 px 只剩圖示；嵌入式設計——電源時序、流程圖——沒有殼層命令列，跟 V2 一樣用編輯器自己的工具列，復原仍可用 Ctrl+Z）；強調色改為 V2 的 `#2B5C8A`，新增 chrome / tooltip / logo token（亮暗兩版）。截圖比對（1440 × 900）：app bar 與命令列的高度、順序、圖示、文字與 V2 一致；剩餘差異——左側仍是 V3 的設計清單（3.46c）、屬性面板標頭（3.46d）、縮放／提示卡／狀態列（3.46e）、啟動畫面（3.46f）。基準截圖在 `docs/v2-screens/`（start / workspace / block-selected；補拍：在 Chromium 開 `index.html`，`frame({ name: 'app' })` 內按「建立專案」）。V2 殼層 CSS 在 legacy L4664–L5130（`af2-*`）。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -275,7 +275,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L4 自動部分（3.45：模組標註、i18n、token、css、vendor、型別、建置（dist 1.98 MB，版本 3.0.0）、產物檢查（無外部請求）、遷移 / 存開檔測試（io.* 29 項；`io/migrate` 仍為空框架、schemaVersion 3）、Vitest 47 檔 411 項、Playwright 29 項（對 dist）全數通過）。**人工驗收待使用者**（清單見對話；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46a/b：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 411 項、Playwright V3 29 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

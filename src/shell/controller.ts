@@ -70,6 +70,8 @@ export class Shell {
   toasts: Toast[] = [];
   dialog: Dialog = null;
   inspectorOpen = true;
+  /** The project contents panel on the left (V2 "project contents"). */
+  explorerOpen = true;
   viewport: Viewport = { w: 800, h: 600 };
   measure: Measure = estimateWidth;
   /** Fit the view once the canvas knows its size (new design from a template, opened file). */
@@ -435,6 +437,7 @@ export function shellCommands(): Command<Shell>[] {
       id: 'view.mode.toggle', label: 'view.mode.toggle', group: 'view', shortcut: 'Shift+V', enabled: s => hasProject(s) && s.isBlockDiagram && !s.gestures.busy,
       run: s => s.setView(s.view === 'power' ? 'function' : 'power'),
     },
+    { id: 'view.toggleExplorer', label: 'cmd.toggleExplorer', group: 'view', enabled: hasProject, run: s => { s.explorerOpen = !s.explorerOpen; s.ui.emit(); } },
     { id: 'view.toggleInspector', label: 'cmd.toggleInspector', group: 'view', enabled: hasProject, run: s => { s.inspectorOpen = !s.inspectorOpen; s.ui.emit(); } },
     { id: 'export.open', label: 'cmd.exportOpen', group: 'project', shortcut: 'Mod+E', enabled: s => hasProject(s) && (s.isBlockDiagram || !!s.module?.canvas || !!s.embeddedHistory()?.openExport),
       // an embedded editor has its own export dialog (V2 openExport)

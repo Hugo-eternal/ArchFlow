@@ -27,22 +27,21 @@ test('sequence: template in the vendor editor, edits saved, undo through the she
   const frame = page.frameLocator('iframe[title="上電時序編輯器"]');
   await expect(frame.getByText('VBAT（KL30）').first()).toBeVisible();
   await expect(page.locator('.af-statusbar')).toContainText('全部上電完成於');
-  await expect(page.locator('.af-unsaved')).toHaveCount(0);
+  await expect(page.locator('.af-save-state[data-state="dirty"]')).toHaveCount(0);
   const n = await rails(page);
   expect(n).toBe(12);
 
   // an edit inside the editor comes back to the project
   await frame.getByRole('button', { name: '新增電源軌' }).first().click();
   await expect.poll(() => rails(page)).toBe(n + 1);
-  await expect(page.locator('.af-unsaved')).toBeVisible();
+  await expect(page.locator('.af-save-state[data-state="dirty"]')).toBeVisible();
 
-  // the shell's undo is the editor's undo
-  const undo = page.getByRole('button', { name: '復原' });
-  await expect(undo).toBeEnabled();
-  await undo.click();
+  // the shell's undo (Ctrl+Z outside the frame) is the editor's undo
+  await page.locator('.af-brand').click();
+  await page.keyboard.press('Control+z');
   await expect.poll(() => rails(page)).toBe(n);
 
-  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存' }).click()]);
+  const [save] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存', exact: true }).click()]);
   const file = JSON.parse(fs.readFileSync(await save.path(), 'utf8'));
   expect(file.designs[0]).toMatchObject({ type: 'sequence', name: '車用顯示控制器' });
   expect(file.designs[0].data.rails).toHaveLength(n);

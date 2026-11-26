@@ -27,9 +27,29 @@
   --color-on-ink-2: #9FB0BF;
 
   /* accents */
-  --color-accent: #1D5C99;       /* "trace" blue: primary actions, focus, selection */
-  --color-accent-hover: #174C80;
-  --color-accent-tint: #E6EEF7;
+  --color-accent: #2B5C8A;       /* "trace" blue: primary actions, focus, selection (V2.0.2 --af-trace) */
+  --color-accent-hover: #234D75;
+  --color-accent-tint: #EAF0F6;
+
+  /* V2.10.1 light chrome (V2.0.2 "quiet light chrome", legacy L5030) */
+  --chrome: #FFFFFF;
+  --chrome-line: #E3E7EB;
+  --chrome-soft: #F3F5F7;
+  --chrome-text-2: #4A5765;
+  --chrome-icon: #6B7785;
+  --chrome-slash: #C5CDD5;
+  --chrome-hint: #97A2AD;
+  --chrome-disabled: #A7B1B8;
+  --chrome-disabled-icon: #BCC5CB;
+  --led-saved: #3E9B6E;
+  --led-dirty: #B7832F;
+  --dirty-text: #7A5418;
+  --tip-bg: #14202C;
+  --tip-text: #FFFFFF;
+  --logo-bg: #14202C;
+  --logo-a: #EDF1F4;
+  --logo-b: #C7832F;
+  --logo-dot: #F0C18C;
   --color-copper: #C7832F;       /* brand highlight */
   --color-copper-tint: #F3E3CF;
   --color-success: #2F7D5B;
@@ -298,6 +318,20 @@
     --color-accent: #6FA8E0;
     --color-accent-hover: #8DBBE8;
     --color-accent-tint: #1C3247;
+    --chrome: #17212B;
+    --chrome-line: #2A3846;
+    --chrome-soft: #1F2B37;
+    --chrome-text-2: #C3CED8;
+    --chrome-icon: #9FB0BF;
+    --chrome-slash: #4A5C6D;
+    --chrome-hint: #7F8E9C;
+    --chrome-disabled: #66737F;
+    --chrome-disabled-icon: #56636F;
+    --led-saved: #5CC495;
+    --led-dirty: #E0A85A;
+    --dirty-text: #F1D3AC;
+    --tip-bg: #E9EEF2;
+    --tip-text: #14202C;
     --color-on-accent: #0B1117;
     --color-toast: #E3E9EE;
     --color-on-toast: #0B1117;
@@ -392,6 +426,20 @@
   --color-accent: #6FA8E0;
   --color-accent-hover: #8DBBE8;
   --color-accent-tint: #1C3247;
+  --chrome: #17212B;
+  --chrome-line: #2A3846;
+  --chrome-soft: #1F2B37;
+  --chrome-text-2: #C3CED8;
+  --chrome-icon: #9FB0BF;
+  --chrome-slash: #4A5C6D;
+  --chrome-hint: #7F8E9C;
+  --chrome-disabled: #66737F;
+  --chrome-disabled-icon: #56636F;
+  --led-saved: #5CC495;
+  --led-dirty: #E0A85A;
+  --dirty-text: #F1D3AC;
+  --tip-bg: #E9EEF2;
+  --tip-text: #14202C;
   --color-on-accent: #0B1117;
   --color-toast: #E3E9EE;
   --color-on-toast: #0B1117;
