@@ -100,7 +100,7 @@
 - [x] 3.41 `shell`：Tools 中心、狀態列、提示、語系切換（不重新載入）（L3）
 - [x] 3.41b `designs/function`：版面設定——對齊 / 格線（V2 workspaceManage 面板）、版面與字體（V2 #chineseFont / #englishFont 與字級）、依連線排列接腳（V2 afArrangeSelectedIO）（L3；改到 render 字型時加跑 golden）
 ### 3K 收尾
-- [ ] 3.42 CSS 整併：移除重複規則與多餘 `!important`（L1）
+- [x] 3.42 CSS 整併：移除重複規則與多餘 `!important`（L1；改到 package.json，實際跑 L3 + 產物檢查）
 - [ ] 3.43 移植清單全部勾選；確認刪除項目（audit §4）都未移植（L3）
 - [ ] 3.44 全部 unit / golden / E2E 對 `dist/ArchFlow.html` 通過；行為修正寫入 `CHANGELOG.md`（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4）
@@ -116,8 +116,8 @@
 - [ ] 4.8 更新 `docs/code-map` 對應 V3 模組結構（L0）
 
 ## 交接
-- **目前階段**：階段 3（模組化重構）——3J 完整殼層全部完成（3.39–3.41b）；接著 3K 收尾
-- **下一步**：3.42 CSS 整併：移除重複規則與多餘 `!important`（L1）。先讀 `docs/v3-prompts.md` 該步的要求。殼層已註冊 V2 對照表所有非 null 的命令（`shell.controller.test`「registers every V3 command …」）。
+- **目前階段**：階段 3（模組化重構）——3K 收尾：3.42 完成
+- **下一步**：3.43 移植清單全部勾選；確認刪除項目（audit §4）都未移植（L3）。`docs/v3-port-checklist.md`（327 層，3.8 產生；`node scripts/audit/port-checklist.mjs` 重新產生時保留手動狀態），逐模組把已完成的列改 ☑、確定不移植的改 ✂ 並寫理由；audit §4 的刪除項目（隱藏 V1 按鈕、只為舊檔相容的程式等）在 `src/` 中確認不存在。另：`src/shell/embedded.ts` 的 vendor host `palette` / `shortcuts` 仍是空實作（3.30 時 V3 還沒有指令面板）——現在可接到 `palette.open` / `help.open`，順便處理或記為已知差異。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
@@ -244,10 +244,11 @@
 - 殼層 3.40：`src/shell/palette.ts`（`paletteItems(shell)`：recent / cmd / design / item 四段，隱藏需要參數或無意義的命令（`palette.open`、`design.switch`、`project.create`、`selection.nudge*`）與停用的命令；`filterPalette` 每個字都要出現；最近使用存在 `Shell.recentCommands`（`rememberCommand`，5 個，不存檔））、`src/shell/shortcuts.ts`（`shortcutLabel`：所有快捷鍵以「 / 」串接；`shortcutSections`：依命令 group 分節、同名命令併成一列）、`src/shell/PaletteDialog.tsx`（`PaletteDialog`：combobox + listbox、`aria-activedescendant`、上下鍵 / PageUp / PageDown / Ctrl+Home / Ctrl+End、Enter、Esc、點外面關閉、焦點回原處；`HelpDialog`：用法說明 + 快捷鍵表）。`DesignModule.findItems?(d)` → `FindItem { id, label, hint, at, select }`（function：方塊，料號優先；schedule：任務，提示為 T01…），`Shell.reveal(item)` 選取並 `centreOn`。命令：`palette.open`（Mod+K，需要專案）、`help.open`（Mod+?）。`formatShortcut` 方向鍵改為箭頭、Escape 改為 Esc。
 - 殼層 3.41：狀態列（`App.tsx` Workspace footer：設計類型、`DesignModule.stats?(d)`、無法繞通、vendor 狀態、`af-spacer`、已儲存 / 未儲存、縮放）；通知 `Shell.toasts`（`notify` 同時設 `message`（測試與啟動畫面仍讀它）並推入 toasts，最多 `TOAST_MAX` 3、`dismissToast(id)`；`newProject` / 開檔成功時清空；`Toasts` 元件負責計時 3.2 s / 6 s）；`DesignModule.emptyHint?(d)` → `.af-empty-hint`；語系切換：`EmbeddedFrame` 的 srcdoc 依 `useLocale()` 重算、iframe `key={lang}`（重新 `setFrame`），`ToolDialog` 的文件快取 key 改為 `id:lang`。新 token `--color-toast` / `--color-on-toast`（深色模式 ink 與 on-accent 同色，不能共用）。V2 對照表 `stats` 改為 null（狀態列文字，不是命令）。修正 `inspector/common.blockInspector`：store 切到非方塊圖時不讀 `blocks`。
 - 版面設定 3.41b：`src/model/arrange.ts`（`alignable` / `alignBlocks(d, ids, axis)`（V2 uxAlign）、`arrangePorts(d, block, 'LR'|'TB')`（V2 afArrangeIO orient=true；`tests/unit/model.arrange.test.ts` 直接以 `new Function` 執行 V2 原始碼比對））、`src/render/theme.ts`（`LATIN_FONTS` / `CJK_FONTS` / `DEFAULT_THEME` / `THEME_LIMITS`（px）/ `cleanTheme` / `fontStack` / `pxToPt` / `ptToPx`）；`render/blocks.blocksLayer` 有 theme 時在 `g.af-blocks` 設 `--block-font`（token 預設 `var(--font-ui)`，`.af-block text` 讀它；匯出經 inline-style 取 computed font-family）。`src/shell/LayoutDialogs.tsx`（`AlignGridDialog`、`FontsDialog`：數字欄 `step="any"`，範圍自己驗證——原生 step 0.5 會擋下範本的 9.75 pt）。命令 `design.manage`、`theme.fonts`、`layout.alignHorizontal` / `layout.alignVertical`、`layout.arrangeSelectedPorts`（group `layout`）；V2 對照表 chineseFont / englishFont → `theme.fonts`。
+- CSS 3.42：V3 的 CSS 本來就沒有 `!important`（只有 V2 有）。新增 `scripts/check-css.mjs`（`npm run check:css`，已加入 `test:all`）：擋 `!important`、同一 @-context 中同一選擇器重複設定同一屬性（前一個是死的）、src/ 沒有任何檔案提到的 `af-*` class（以前綴動態組成的 class 視為有用）。清掉的：`.af-start-note`（未使用）、`.af-rail-unknown .af-rail-bolt` 的 fill 被後面 `fill: none` 蓋掉——保留實際生效的 `fill: none`，從前面的群組選擇器移除（畫面不變）。
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.41b：模組標註、i18n、token、vendor、型別、建置、產物檢查、Vitest 53 檔 432 項（含 golden）、Playwright 33 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
+- **最後通過的驗證層級**：L3 + 產物檢查（3.42：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 53 檔 432 項（含 golden / SVG 快照）、Playwright 33 項（`--workers=1`）全數通過）。3.38 的人工驗收仍待使用者確認（開 `dist/ArchFlow.html`，拖亂方塊後「自動整理」→ 套用 → 復原；存檔再開啟，整理後的標籤位置保留）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

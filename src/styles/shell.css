@@ -50,7 +50,7 @@
 }
 .af-start-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .af-start-head h1 { margin: 0; font-size: var(--text-2xl); color: var(--color-ink); }
-.af-start-tagline, .af-start-note, .af-start-version { color: var(--color-muted); font-size: var(--text-sm); }
+.af-start-tagline, .af-start-version { color: var(--color-muted); font-size: var(--text-sm); }
 .af-start-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .af-locale select {
   min-height: var(--touch-target);

@@ -135,7 +135,7 @@
   stroke-linejoin: round;
 }
 .af-part-value { fill: var(--part-label); font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
-.af-part-value.af-rail-unknown, .af-rail-unknown .af-rail-text, .af-rail-unknown .af-rail-bolt { fill: var(--rail-unknown); }
+.af-part-value.af-rail-unknown, .af-rail-unknown .af-rail-text { fill: var(--rail-unknown); }
 .af-part-value.af-rail-negative, .af-rail-negative .af-rail-text { fill: var(--rail-negative); }
 .af-part-value.af-rail-core, .af-rail-core .af-rail-text { fill: var(--rail-core); }
 .af-part-value.af-rail-io, .af-rail-io .af-rail-text { fill: var(--rail-io); }
@@ -151,7 +151,6 @@
 .af-rail-mid .af-rail-pill, .af-rail-mid .af-rail-bolt { stroke: var(--rail-mid); }
 .af-rail-high .af-rail-pill, .af-rail-high .af-rail-bolt { stroke: var(--rail-high); }
 .af-rail-bolt { fill: none; stroke-width: 1.9px; stroke-linecap: round; stroke-linejoin: round; }
-.af-rail-unknown .af-rail-bolt { fill: none; }
 .af-rail-text { font-family: var(--font-ui); font-size: 12px; font-weight: 600; }
 
 /* area frames (render/frames.ts) */
