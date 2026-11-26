@@ -79,6 +79,7 @@
 - [x] 3.27c `designs/function`「入門電源樹 / Starter power tree」範本（V2 引擎產生並轉成 V3，`data.view: 'power'`，加到 `functionDesign.templates`；新增設計對話框選它時以電源檢視開啟）；golden power 在電源檢視下完整 `compareSvg` 比對 V2 匯出（方塊標題位置含量測帶）；角色配色（使用者決定新增）（L2）（實際跑 L3：改到 render / styles）
 - [x] 3.28 `designs/schedule`：時間軸版面與渲染（實際跑 L3：改到 shell / designs/module / styles）
 - [ ] 3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（L2）
+- [ ] 3.29b `designs/function` 方塊圖兩種檢視的 UI/UX 優化（L2；若改到 render / styles 共用檔則跑 L3）
 - [ ] 3.30 `designs/sequence` vendor 轉接（L2）
 - [ ] 3.31 `designs/flowchart` vendor 轉接（L2）
 ### 3H 工具
@@ -113,6 +114,7 @@
 ## 交接
 - **目前階段**：階段 3（模組化重構）——階段 1、2 已全部完成；3.28（時程版面與繪製）已完成
 - **下一步**：3.29 `designs/schedule`：任務 / 間隔編輯、外觀、匯出（L2，但會改到 shell / export，跑 L3）。要做：(1) 畫布互動——點卡片 / 軸點 / 連線選取（`Store.Selection` 已有 `task` / `link`），拖曳卡片改 `offset.card`、拖曳軸點改 `offset.axis`（V2 L690、L723：吸附 `snap.range`、Shift 鎖軸、Alt 停用吸附、Esc 取消），方向鍵微調；目前 `DrawingCanvas`（`src/shell/Canvas.tsx`）只會平移 / 縮放；(2) 屬性面板：任務欄位（名稱、說明、上 / 下、時間類型與日期、狀態、里程碑）、連線天數（自動 / 手動）、新增後續 / 分支 / 刪除（V2 graphAppend / graphBranch L661–L662，最多 100 個任務），規則（端點、含頭尾）；(3) 外觀：`appearance` 的 theme（blue / mint / slate / amber，V2 L780–L783 的四組顏色，改成 `--sched-*` 主題 token，用 `data-sched-theme` 切換）、字級 title / body / time、自訂 engineering 顏色 / 圓角 / 框線（inline 自訂屬性覆蓋，同方塊），並補上 `scheduleSchema.appearance` 的形狀（移植清單 validateDiagram 798 / 817 / 850）；`branchColor` 已在 render 套到卡片；(4) 匯出：`exportSvg` 目前只接受方塊圖，要讓匯出對話框支援 `module.canvas`（drawing + bounds），golden schedule 匯出與 V2 比對（`schedule.layout.test` 已比對過繪製元素位置）。另外：時程設計中「匯出」主要按鈕停用時樣式不明顯（`.af-button.is-primary:disabled`），一併修。
+- **已排入**：3.29b 已排入，範圍見 plan §2.2.2。
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。現有測試全部對 `legacy/`（V2）執行，直到 3.44 改為對 `dist/`。
   - en 版在約 L2361 之後行號比 zh-Hant 多約 8 行（en 獨有 `v147-en-text-tidy`）。
@@ -236,9 +238,11 @@
   - 統一搜尋與最近使用（零件、命令）。
   - 快捷鍵：F2 改名、Ctrl+D 複製、方向鍵微調（方向鍵移動已在 3.20 完成）。切換檢視的 Shift+V 在 3.27a 就做。
 - **P3**
+  - 依電源樹自動排列的衍生版面（plan §2.2.2 延後項）。
+  - 每種檢視各自的方塊座標（需改存檔格式，plan §2.2.2 延後項）。
   - 角色配色圖例。
   - 超過額定的 ⚠ 徽章與狀態列警示統計。
-  - 電源預算面板（只計算、不存檔）。
+  - 電源預算總覽面板（只計算、不存檔；plan §2.2.2 延後項）。
 - **通用**：WCAG AA、可用鍵盤完整操作、tooltip、小螢幕收合面板。
 - 群組框（預留 `groups`）、一鍵配色（預留 `style.color`）、標籤拖曳偏移（預留 `wire.labelOffset`）。
 
