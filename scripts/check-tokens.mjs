@@ -57,6 +57,8 @@ const PAIRS = [
   ['--sched-ink', '--sched-card', 4.5], ['--sched-muted', '--sched-card', 4.5], ['--sched-ink', '--sched-badge', 4.5],
   ['--sched-on-status', '--sched-doing', 4.5], ['--sched-on-status', '--sched-done', 4.5], ['--sched-issue', '--sched-issue-tint', 4.5],
   ['--sched-accent', '--color-board', 3], ['--sched-line', '--color-board', 3], ['--sched-border', '--sched-card', 3],
+  ['--load-ink', '--load-badge', 4.5], ['--load-near-ink', '--load-near-tint', 4.5], ['--load-over-ink', '--load-over-tint', 4.5],
+  ['--load-near', '--color-board', 3], ['--load-over', '--color-board', 3],
   ['--metric-key', '--metric-strip', 4.5], ['--metric-value', '--metric-strip', 4.5], ['--metric-unit', '--metric-strip', 4.5], ['--metric-empty', '--metric-strip', 4.5],
   ['--conn-num', '--color-surface', 4.5], ['--conn-name-both', '--color-board', 4.5],
   ...['unknown', 'negative', 'core', 'io', 'logic', 'mid', 'high'].map(b => [`--rail-${b}`, '--rail-surface', 4.5]),

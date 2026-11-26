@@ -26,7 +26,8 @@ import {
   snapConnectorsToFrames, updateConnector, type ConnKind,
 } from './connector';
 import { insertLcd, lcdOrigin } from './lcd';
-import { metricStrip, powerBlockFields, powerWireFields } from './power';
+import { loadBadgeBox, loadWarning, metricStrip, powerBlockFields, powerWireFields } from './power';
+import { estimateWidth } from '../../render/texts';
 import starter from './templates/starter.json';
 import powerStarter from './templates/power-starter.json';
 
@@ -192,9 +193,9 @@ export const functionDesign: DesignModule<BlockDiagram> = {
     const out = localize(tpl) as unknown as { name: string; camera: { x: number; y: number; z: number }; data: BlockDiagram };
     return { name: out.name, data: out.data, camera: out.camera };
   },
-  decorate(b) {
-    const sym = b.connector ? connectorNode(b) : partNode(b), badges = badgesNode(b);
-    return sym || badges ? h('g', { class: 'af-decor' }, [sym, badges]) : null;
+  decorate(b, d) {
+    const sym = b.connector ? connectorNode(b) : partNode(b), badges = badgesNode(b), warn = loadWarning(b, d, estimateWidth);
+    return sym || badges || warn ? h('g', { class: 'af-decor' }, [warn, sym, badges]) : null;
   },
   blockFooter: metricStrip,
   inspectorFields(sel, d) {
@@ -206,5 +207,10 @@ export const functionDesign: DesignModule<BlockDiagram> = {
   },
   commands: [...PARTS.map(p => insertCommand(p.kind)), ...CONN_KINDS.map(connectorCommand), lcdCommand, rotateCommand],
   afterMove: (d, ids) => snapConnectorsToFrames(d, ids, d.grid.snap ? gridSize(d.grid) : 10),
-  exportExtras: ({ data, measure }) => ({ bounds: data.blocks.flatMap(b => [...decorationBounds(b, measure), ...connectorBounds(b)]) }),
+  exportExtras: ({ data, measure }) => ({
+    bounds: data.blocks.flatMap(b => {
+      const load = loadBadgeBox(b, data, estimateWidth);
+      return [...decorationBounds(b, measure), ...connectorBounds(b), ...(load ? [load, { x: b.x - 5, y: b.y - 5, w: b.w + 10, h: b.h + 10 }] : [])];
+    }),
+  }),
 };

@@ -96,6 +96,16 @@
   --role-converter: #9A6A26;
   --role-distribution: #6B4FA0;
   --role-load: #2E6E62;
+  /* power view load warnings (3.29b a): near ≥ 85 % (copper, dashed), over > 100 % (red, solid) */
+  --load-badge: #FFFFFF;
+  --load-badge-rule: #C9D2DA;
+  --load-ink: #2A3A4B;
+  --load-near: #A8661F;
+  --load-near-tint: #FBF0E1;
+  --load-near-ink: #7A4B12;
+  --load-over: #B4362B;
+  --load-over-tint: #FCECEB;
+  --load-over-ink: #8E2A21;
   /* schedule timeline (3.28; V2 scheduleThemes.blue "engineering blue", af16 status colours) */
   --sched-card: #F8FAFC;
   --sched-border: #64748B;
@@ -240,6 +250,15 @@
     --role-converter: #D9A55E;
     --role-distribution: #B49BE0;
     --role-load: #6FC2AE;
+    --load-badge: #18222C;
+    --load-badge-rule: #34424F;
+    --load-ink: #DCE6F0;
+    --load-near: #D9A55E;
+    --load-near-tint: #33281A;
+    --load-near-ink: #F0C890;
+    --load-over: #E07A70;
+    --load-over-tint: #3A2222;
+    --load-over-ink: #F4B9B3;
     --sched-card: #1A2531;
     --sched-border: #8796A8;
     --sched-ink: #E2E9F0;
@@ -323,6 +342,15 @@
   --role-converter: #D9A55E;
   --role-distribution: #B49BE0;
   --role-load: #6FC2AE;
+  --load-badge: #18222C;
+  --load-badge-rule: #34424F;
+  --load-ink: #DCE6F0;
+  --load-near: #D9A55E;
+  --load-near-tint: #33281A;
+  --load-near-ink: #F0C890;
+  --load-over: #E07A70;
+  --load-over-tint: #3A2222;
+  --load-over-ink: #F4B9B3;
   --sched-card: #1A2531;
   --sched-border: #8796A8;
   --sched-ink: #E2E9F0;

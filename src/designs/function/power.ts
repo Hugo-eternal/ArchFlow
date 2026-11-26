@@ -277,3 +277,38 @@ export function powerWireFields(): F[] {
     ],
   } as F)];
 }
+
+// ---------------------------------------------------------------- canvas warnings (3.29b a, plan §2.2.2)
+
+/** Load badge geometry: under the block's bottom-left corner. */
+export const LOAD_BADGE = { gap: 6, height: 20, padX: 7, font: 11 } as const;
+
+/** Text of a block's load badge: "⚠ Downstream ≈ 2.3 A of 2 A (115%)" — icon and words, not colour alone. */
+export function loadBadgeText(l: NonNullable<ReturnType<typeof load>>): string {
+  const body = l.rating ? t('power.demandOf', { need: amps(l.need), rating: amps(l.rating) }) : t('power.demandOnly', { need: amps(l.need) });
+  const icon = l.level === 'ok' ? '' : '⚠ ';
+  return `${icon}${body}${l.pct !== null ? ` (${l.pct}%)` : ''}`;
+}
+
+/** Box of a block's load badge (for bounds and placement), or null when it has none. */
+export function loadBadgeBox(b: Block, d: BlockDiagram, measure: Measure): { x: number; y: number; w: number; h: number; text: string; level: 'ok' | 'near' | 'over' } | null {
+  if (d.view !== 'power' || b.part || b.connector) return null;
+  const l = load(d, b.id);
+  if (!l) return null;
+  const text = loadBadgeText(l);
+  return { x: b.x, y: b.y + b.h + LOAD_BADGE.gap, w: measure(text, LOAD_BADGE.font, true, false) + LOAD_BADGE.padX * 2, h: LOAD_BADGE.height, text, level: l.level };
+}
+
+/**
+ * Power-view warnings on a block (drawn on the canvas and in exports): a "near" (≥ 85 %) or
+ * "over" (> 100 %) outline around the block, and the load badge under it.
+ */
+export function loadWarning(b: Block, d: BlockDiagram, measure: Measure): VNode | null {
+  const box = loadBadgeBox(b, d, measure);
+  if (!box) return null;
+  return h('g', { class: `af-load is-${box.level}`, 'data-load': b.id }, [
+    box.level === 'ok' ? null : h('rect', { class: 'af-load-outline', x: r2(b.x - 5), y: r2(b.y - 5), width: r2(b.w + 10), height: r2(b.h + 10), rx: 10 }),
+    h('rect', { class: 'af-load-badge', x: r2(box.x), y: r2(box.y), width: r2(box.w), height: box.h, rx: 4 }),
+    h('text', { class: 'af-load-text', x: r2(box.x + LOAD_BADGE.padX), y: r2(box.y + box.h / 2), 'dominant-baseline': 'central', style: `font-size:${LOAD_BADGE.font}px` }, box.text),
+  ]);
+}

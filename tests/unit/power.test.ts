@@ -14,7 +14,7 @@ import { blockInspector } from '../../src/inspector/common';
 import { fieldKeys } from '../../src/inspector/panel';
 import { exportSvg } from '../../src/export/svg';
 import { functionDesign } from '../../src/designs/function';
-import { amps, demand, load, metricStrip, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
+import { amps, demand, load, loadBadgeBox, loadWarning, metricStrip, metricText, powerBlockFields, powerWireFields, shownValue, storedValue } from '../../src/designs/function/power';
 import type { BlockDiagram } from '../../src/io/schema-types';
 
 const ROOT = path.resolve(__dirname, '../..');
@@ -91,6 +91,38 @@ describe('power view export vs V2.10.1 (golden power)', () => {
       expect(at(b.partNumber, c => c.central && Math.abs(c.y - (Number(e.y) - 0.38 * Number(e['font-size']))) <= 1.5), b.partNumber).toBe(true);
     }
     for (const k of ['電壓', '電流', '效率']) expect(v3.filter(c => c.text === k)).toHaveLength(v2.filter(e => e.text === k).length);
+  });
+});
+
+describe('load warnings (3.29b a, plan §2.2.2)', () => {
+  const withRating = (d: BlockDiagram, id: string, value: string): BlockDiagram =>
+    ({ ...d, blocks: d.blocks.map(b => (b.id === id ? { ...b, metrics: { ...b.metrics, current: { value, show: true } } } : b)) });
+  it('upstream blocks get a demand / rating badge; ≥ 85 % near, > 100 % over, with an icon and the percentage', () => {
+    const d = goldenPower(), src = d.blocks.find(b => b.role === 'source')!;
+    const ok = loadWarning(src, d, estimateWidth)!;
+    expect(String(ok.attrs.class)).toBe('af-load is-ok');
+    expect(find(ok, x => x.tag === 'text')[0].text).toBe('下游需求 ≈ 926 mA / 額定 3 A (31%)');
+    expect(find(ok, x => x.attrs.class === 'af-load-outline')).toHaveLength(0);
+    const near = withRating(d, src.id, '1.05'), over = withRating(d, src.id, '0.5');
+    const n = loadWarning(near.blocks.find(b => b.id === src.id)!, near, estimateWidth)!;
+    expect(String(n.attrs.class)).toBe('af-load is-near');
+    expect(find(n, x => x.tag === 'text')[0].text).toMatch(/^\u26a0 .*\(88%\)$/);
+    const o = loadWarning(over.blocks.find(b => b.id === src.id)!, over, estimateWidth)!;
+    expect(String(o.attrs.class)).toBe('af-load is-over');
+    expect(find(o, x => x.attrs.class === 'af-load-outline')).toHaveLength(1);
+    // loads feed nothing: no badge; the function view shows none
+    expect(loadWarning(d.blocks.find(b => b.role === 'load')!, d, estimateWidth)).toBeNull();
+    expect(loadWarning(src, { ...d, view: 'function' }, estimateWidth)).toBeNull();
+  });
+
+  it('is exported, and the export grows to hold the badge', () => {
+    const d = goldenPower(), src = d.blocks.find(b => b.role === 'source')!;
+    const opts = { footer: functionDesign.blockFooter, decorate: functionDesign.decorate, extras: functionDesign.exportExtras };
+    const e = exportSvg(d, opts);
+    expect(e.source).toContain('下游需求 ≈ 926 mA');
+    const box = loadBadgeBox(src, d, estimateWidth)!;
+    expect(e.viewBox[1] + e.viewBox[3]).toBeGreaterThanOrEqual(box.y + box.h);
+    expect(exportSvg(d, { ...opts, view: 'function' }).source).not.toContain('下游需求');
   });
 });
 
