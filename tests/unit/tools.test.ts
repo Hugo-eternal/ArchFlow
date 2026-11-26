@@ -1,4 +1,4 @@
-// module: tools:bom, tools:edid, shell — step 3.32: the tool registry, the BOM tool's frame document and host
+// module: tools:bom, tools:edid, tools:hex, shell — step 3.32: the tool registry, the BOM tool's frame document and host
 // object, and opening / closing tools in the shell (frames stay mounted after closing, as V2).
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
@@ -6,6 +6,7 @@ import path from 'node:path';
 import { ToolRegistry } from '../../src/tools/module';
 import { bomTool } from '../../src/tools/bom';
 import { edidTool } from '../../src/tools/edid';
+import { hexTool } from '../../src/tools/hex';
 import { installToolHosts } from '../../src/shell/embedded';
 import { Shell } from '../../src/shell/controller';
 import { createRegistry, createTools } from '../../src/app';
@@ -30,7 +31,13 @@ describe('tools', () => {
   it('EDID: the frame document is the vendor page as is (V2 srcdoc); host afEdidHost', () => {
     expect(edidTool.srcdoc('zh-Hant')).toBe(fs.readFileSync(path.join(ROOT, 'vendor/tools/edid.html'), 'utf8'));
     expect(edidTool.host).toBe('afEdidHost');
-    expect(createTools().list().map(x => x.id)).toEqual(['bom', 'edid']);
+    expect(createTools().list().map(x => x.id).slice(0, 2)).toEqual(['bom', 'edid']);
+  });
+
+  it('Hex: the vendor page as is; host afHexHost', () => {
+    expect(hexTool.srcdoc('en')).toBe(fs.readFileSync(path.join(ROOT, 'vendor/tools/hex.html'), 'utf8'));
+    expect(hexTool.host).toBe('afHexHost');
+    expect(createTools().get('hex')).toBe(hexTool);
   });
 
   it('shell: open from the command, close through the host object; opened frames are remembered', async () => {

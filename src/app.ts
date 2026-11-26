@@ -9,6 +9,7 @@ import { flowchartDesign } from './designs/flowchart';
 import { ToolRegistry } from './tools/module';
 import { bomTool } from './tools/bom';
 import { edidTool } from './tools/edid';
+import { hexTool } from './tools/hex';
 
 export function createRegistry(): DesignRegistry {
   const r = new DesignRegistry();
@@ -23,6 +24,7 @@ export function createTools(): ToolRegistry {
   const r = new ToolRegistry();
   r.register(bomTool);
   r.register(edidTool);
+  r.register(hexTool);
   return r;
 }
 

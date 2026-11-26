@@ -473,5 +473,8 @@
   "tool.bom.long": "Upload a BOM Excel file, classify parts by part number and download it in the RSI format.",
   "tool.edid.name": "EDID Generator",
   "tool.edid.desc": "Build an EDID from panel timing",
-  "tool.edid.long": "Enter the panel timing to build a 256-byte EDID; export .bin, .hex, a C array or Python flashing code."
+  "tool.edid.long": "Enter the panel timing to build a 256-byte EDID; export .bin, .hex, a C array or Python flashing code.",
+  "tool.hex.name": "Hex/Bin Editor & Compare",
+  "tool.hex.desc": "View, edit and compare .bin / .hex",
+  "tool.hex.long": "Open a .bin or Intel HEX file: check addresses and checksums, edit bytes, or compare two files."
 }

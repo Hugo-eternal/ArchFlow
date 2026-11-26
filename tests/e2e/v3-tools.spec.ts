@@ -1,4 +1,4 @@
-// module: tools:bom, tools:edid — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
+// module: tools:bom, tools:edid, tools:hex — V3 shell (dist/ArchFlow.html): the BOM tool opens from the start screen and
 // from the workspace tools menu, shows its page, and closes through its host object (the V2
 // vendor interface), the close button or Escape; its frame stays mounted, hidden.
 import { test, expect } from '@playwright/test';
@@ -49,5 +49,19 @@ test('EDID Generator opens from the start screen, shows its page and closes thro
   await expect(page.frameLocator('iframe.af-tool-frame[title="EDID Generator"]').locator('body')).toContainText('產生 EDID 基本區塊', { timeout: 15000 });
   await page.evaluate(() => (window as unknown as { afEdidHost: { close(): void } }).afEdidHost.close());
   await expect(frame).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('Hex/Bin Editor & Compare opens, loads a binary file and shows its bytes, closes through its host', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: /^Hex\/Bin Editor & Compare/ }).click();
+  const hex = page.frameLocator('iframe.af-tool-frame[title="Hex/Bin Editor & Compare"]');
+  await expect(hex.locator('body')).toContainText('支援的格式', { timeout: 15000 });
+  await hex.locator('input[type=file]').first().setInputFiles({ name: 'sample.bin', mimeType: 'application/octet-stream', buffer: Buffer.from([0xde, 0xad, 0xbe, 0xef, 0x00, 0x01, 0x02, 0x03]) });
+  await expect(hex.locator('body')).toContainText(/DE\s*AD\s*BE\s*EF/i, { timeout: 10000 });
+  await page.evaluate(() => (window as unknown as { afHexHost: { close(): void } }).afHexHost.close());
+  await expect(page.locator('iframe.af-tool-frame[title="Hex/Bin Editor & Compare"]')).toBeHidden();
   expect(errors).toEqual([]);
 });
