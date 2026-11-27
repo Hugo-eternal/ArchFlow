@@ -198,3 +198,7 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 ### 屬性面板：方塊照 V2 分組（3.46h）
 - 方塊屬性分成「基本資料」與「輸入／輸出」。新增 V2 的接腳表：在方塊上直接改接腳名稱、類型（點類型標籤切換）、所在的邊、名稱位置，新增輸入／輸出／雙向接腳、刪除接腳，或一次設定全部接腳的名稱位置（V3 先前要個別選取接腳才能改）。（`tests/unit/model.diagram.test.ts`「port side from the port table」、`tests/e2e/v3-shell.spec.ts`「block properties grouped as V2.10.1 (3.46h)」）
 
+### 時程：磁吸按鈕與屬性／外觀分頁（3.46i）
+- 時程命令列照 V2.10.1 顯示「磁吸 12 px」，點開設定圓點吸附（啟用、範圍）；「順延衝突」改從指令面板或屬性面板使用。
+- 屬性面板分成「屬性」「外觀」兩個分頁，配色與字級在「外觀」。（`tests/e2e/v3-shell.spec.ts`「schedule as V2.10.1 (3.46i)」、`tests/unit/schedule.edit.test.ts`）
+

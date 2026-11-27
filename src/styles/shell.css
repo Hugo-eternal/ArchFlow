@@ -647,3 +647,9 @@
   margin: var(--space-2) 0; padding: var(--space-3); border: var(--border-width) solid var(--color-rule); border-radius: var(--radius-md);
   color: var(--color-ink); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
+.af-settings-list { margin: 0; padding-left: 1.2em; font-size: var(--text-sm); color: var(--color-muted); line-height: 1.7; }
+/* V2 .inspector-tabs (schedule): Properties / Appearance */
+.af-insp-tabs { display: flex; gap: 4px; margin: 12px 0 4px; padding: 4px; border-radius: 9px; background: var(--chrome-soft); }
+.af-insp-tabs button { flex: 1; min-height: 32px; border: 0; border-radius: 6px; background: transparent; color: var(--color-muted); font: var(--weight-medium) 13px var(--font-ui); cursor: pointer; }
+.af-insp-tabs button[aria-selected="true"] { background: var(--color-surface); color: var(--color-accent); box-shadow: var(--shadow-1); }
+.af-insp-tabs button:focus-visible { outline: var(--focus-ring); outline-offset: 1px; }

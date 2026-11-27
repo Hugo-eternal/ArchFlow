@@ -136,12 +136,12 @@ export function MenuButton({ shell, label, entries, className, buttonClass, trig
 }
 
 /** A command bar tool (V2 af2-tool): icon and label, tooltip with the shortcut, disabled with its command. */
-export function Tool({ shell, id, icon, label, primary, iconOnly, pressed, arg }: {
-  shell: Shell; id: string; icon: IconName; label?: MessageKey; primary?: boolean; iconOnly?: boolean; pressed?: boolean; arg?: unknown;
+export function Tool({ shell, id, icon, label, text: shown, primary, iconOnly, pressed, arg }: {
+  shell: Shell; id: string; icon: IconName; label?: MessageKey; text?: string; primary?: boolean; iconOnly?: boolean; pressed?: boolean; arg?: unknown;
 }) {
   const cmd = shell.registry.get(id);
   if (!cmd) return null;
-  const sc = shortcutText(shell, id), text = t(label ?? cmd.label);
+  const sc = shortcutText(shell, id), text = shown ?? t(label ?? cmd.label);
   return (
     <button type="button" className={`af-tool${primary ? ' is-primary' : ''}${iconOnly ? ' is-icon' : ''}${pressed !== undefined ? ' is-toggle' : ''}`}
       disabled={!shell.enabled(id)} aria-pressed={pressed} aria-label={iconOnly ? text : undefined} aria-keyshortcuts={sc || undefined}
@@ -153,6 +153,13 @@ export function Tool({ shell, id, icon, label, primary, iconOnly, pressed, arg }
 }
 
 const Sep = () => <span className="af-cmd-sep" aria-hidden="true" />;
+
+/** V2 "Snap 12 px": the schedule's point snapping at a glance; opens its settings. */
+function SnapTool({ shell }: { shell: Shell }) {
+  const snap = (shell.store.data(shell.store.activeDesignId) as { snap?: { enabled: boolean; range: number } }).snap;
+  const on = !!snap?.enabled && snap.range > 0;
+  return <Tool shell={shell} id="schedule.snap" icon="magnet" text={on ? t('schedule.snap.button', { range: snap!.range }) : t('schedule.snap.off')} />;
+}
 
 /** Library of parts / power blocks (V2 "parts library"): a menu of the design's insert commands, a heading per group. */
 function Library({ shell }: { shell: Shell }) {
@@ -194,7 +201,7 @@ function CommandBar({ shell }: { shell: Shell }) {
       <Sep />
       {schedule ? <>
         <Tool shell={shell} id="schedule.autoArrange" icon="alignBars" />
-        <Tool shell={shell} id="schedule.fixConflicts" icon="magnet" />
+        <SnapTool shell={shell} />
       </> : <>
         <Tool shell={shell} id="layout.arrangePreview" icon="wand" />
         <Tool shell={shell} id="wire.reroute" icon="route" />

@@ -164,7 +164,9 @@ export interface CanvasDrawing<D> {
   /** Does the selected item still exist (after undo)? */
   exists?(data: D, sel: CanvasSelection): boolean;
   /** Properties panel: fields for a selection, or for the whole design (kind 'design'). */
-  fields?(sel: CanvasSelection, data: D): FieldSpec<D, CanvasSelection>[];
+  /** Tabs over the properties panel (V2 schedule: Properties / Appearance); the first is the default. */
+  tabs?: readonly { id: string; label: MessageKey }[];
+  fields?(sel: CanvasSelection, data: D, tab?: string): FieldSpec<D, CanvasSelection>[];
   /** Message for an edit the design refused (a limit, a loop), or null for an unexpected error. */
   refusal?(error: unknown): MessageKey | null;
 }

@@ -132,6 +132,7 @@ export const scheduleDesign: DesignModule<ScheduleData> = {
     nudge: (d, sel, dx, dy) => (sel.kind === 'task' ? nudge(d, sel.id, dx, dy) : d),
     remove: (d, sel) => (sel.kind === 'task' || sel.kind === 'link' ? removeItems(d, [{ kind: sel.kind, id: sel.id }]) : d),
     exists: (d, sel) => (sel.kind === 'task' ? d.tasks.some(x => x.id === sel.id) : sel.kind === 'link' ? d.links.some(x => x.id === sel.id) : true),
+    tabs: [{ id: 'props', label: 'schedule.tab.props' }, { id: 'look', label: 'schedule.tab.look' }],
     fields: scheduleFields,
     refusal: e => (e instanceof ScheduleEditError || e instanceof ScheduleError ? `schedule.error.${e.code}` as MessageKey : null),
   },

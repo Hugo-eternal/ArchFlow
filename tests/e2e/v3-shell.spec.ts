@@ -221,8 +221,9 @@ test('schedule editing: select and rename a task, drag its card (one undo step),
   await expect(page.locator('svg.af-canvas .af-sched-card')).toHaveCount(n);
   expect((await links()).length).toBe(before.length);
 
-  // theme (nothing selected)
+  // theme (nothing selected): the appearance tab (V2.10.1, 3.46i)
   await page.keyboard.press('Escape');
+  await panel.getByRole('tab', { name: '外觀' }).click();
   await panel.getByRole('radio', { name: '系統青' }).check();
   await expect(page.locator('svg.af-canvas .af-schedule')).toHaveAttribute('data-sched-theme', 'mint');
 
@@ -801,3 +802,35 @@ test('block properties grouped as V2.10.1 (3.46h): basics, the pin table', async
   await expect.poll(async () => new Set((await mcu()).map(p => p.label))).toEqual(new Set(['hidden']));
   expect(errors).toEqual([]);
 });
+
+test('schedule as V2.10.1 (3.46i): snap button and settings, properties / appearance tabs', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('radio', { name: /^專案時程設計/ }).click();
+  await page.getByRole('button', { name: '建立專案' }).click();
+  const tools = page.getByRole('toolbar', { name: '工具列' });
+  const snap = tools.getByRole('button', { name: '磁吸 12 px' });
+  await snap.click();
+  const dlg = page.getByRole('dialog', { name: '圓點磁吸設定' });
+  await dlg.getByRole('spinbutton').fill('20');
+  await expect(tools.getByRole('button', { name: '磁吸 20 px' })).toBeVisible();
+  await dlg.getByRole('checkbox').uncheck();
+  await expect(tools.getByRole('button', { name: '磁吸 關' })).toBeVisible();
+  await dlg.getByRole('button', { name: '完成' }).click();
+  await expect(dlg).toHaveCount(0);
+  const snapData = () => page.evaluate(() => (window as unknown as { archflow: { data(): { snap: unknown } } }).archflow.data().snap);
+  expect(await snapData()).toEqual({ enabled: false, range: 20 });
+  // tabs: properties (overview, rules), appearance (theme, sizes); arrow keys
+  const panel = page.getByRole('complementary', { name: '屬性' });
+  const props = panel.getByRole('tab', { name: '屬性' });
+  await expect(props).toHaveAttribute('aria-selected', 'true');
+  await expect(panel.getByRole('region', { name: '時程總覽' })).toBeVisible();
+  await props.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(panel.getByRole('tab', { name: '外觀' })).toHaveAttribute('aria-selected', 'true');
+  await expect(panel.getByRole('radio', { name: '系統青' })).toBeVisible();
+  await expect(panel.getByRole('region', { name: '時程總覽' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+

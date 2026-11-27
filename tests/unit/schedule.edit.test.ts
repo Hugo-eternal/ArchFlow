@@ -194,7 +194,9 @@ describe('panel and shell', () => {
     const linkSel = { kind: 'link', id: d.links[1].id };
     expect(fieldKeys(scheduleFields(linkSel, d), d, linkSel)).toEqual(['mode', 'days', 'linkColor']);
     const none = { kind: 'design', id: '' };
-    expect(fieldKeys(scheduleFields(none, d), d, none)).toEqual(['endpoint', 'count', 'theme', 'size-title', 'size-body', 'size-time', 'snapOn', 'snapRange']);
+    expect(fieldKeys(scheduleFields(none, d), d, none)).toEqual(['endpoint', 'count']);
+    // V2 "appearance" tab (3.46i); snapping moved to the command bar's snap button
+    expect(fieldKeys(scheduleFields(none, d, 'look'), d, none)).toEqual(['theme', 'size-title', 'size-body', 'size-time']);
   });
 
   it('commands: add task / branch / re-arrange, one undo step each; refusals are shown', async () => {

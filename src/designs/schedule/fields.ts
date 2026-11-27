@@ -240,7 +240,6 @@ const overview: F = {
 };
 
 function designFields(): F[] {
-  const isCustom = (d: ScheduleData) => !!d.appearance.engineering;
   return [
     { ...overview, visible: (d: ScheduleData) => d.tasks.length > 0 },
     note('count', d => t('schedule.summary', { tasks: d.tasks.length, links: d.links.length, max: MAX_TASKS })),
@@ -251,6 +250,13 @@ function designFields(): F[] {
         { kind: 'segmented', key: 'count', label: 'schedule.rules.count', options: opts('schedule.count', ['difference', 'inclusive'] as const), get: d => d.rules.count, set: (d, _s, v) => ({ ...d, rules: { ...d.rules, count: v as 'difference' | 'inclusive' } }) },
       ],
     },
+  ];
+}
+
+/** V2 "Design appearance" tab: look and sizes (snapping moved to the command bar's snap button). */
+function lookFields(): F[] {
+  const isCustom = (d: ScheduleData) => !!d.appearance.engineering;
+  return [
     {
       kind: 'group', key: 'appearance', label: 'schedule.group.appearance', open: true, fields: [
         {
@@ -263,17 +269,12 @@ function designFields(): F[] {
           .map(f => ({ ...f, visible: (d: ScheduleData) => isCustom(d) }) as F),
       ],
     },
-    {
-      kind: 'group', key: 'snap', label: 'schedule.group.snap', fields: [
-        { kind: 'toggle', key: 'snapOn', label: 'schedule.snap.enabled', hint: 'schedule.snap.hint', get: d => d.snap.enabled, set: (d, _s, v) => ({ ...d, snap: { ...d.snap, enabled: v } }) },
-        { kind: 'number', key: 'snapRange', label: 'schedule.snap.range', unit: 'px', min: 0, max: 50, step: 1, visible: d => d.snap.enabled, get: d => d.snap.range, set: (d, _s, v) => ({ ...d, snap: { ...d.snap, range: Math.round(v) } }) },
-      ],
-    },
   ];
 }
 
-/** Panel fields for the current selection (kind 'design' = nothing selected). */
-export function scheduleFields(sel: CanvasSelection, d: ScheduleData): F[] {
+/** Panel fields for the current selection (kind 'design' = nothing selected); tab 'look' = the appearance tab. */
+export function scheduleFields(sel: CanvasSelection, d: ScheduleData, tab?: string): F[] {
+  if (tab === 'look') return lookFields();
   if (sel.kind === 'task') return taskFields(d, sel);
   if (sel.kind === 'link') return linkFields();
   return designFields();

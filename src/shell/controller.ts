@@ -37,6 +37,7 @@ export type Dialog =
   | { kind: 'palette' }
   | { kind: 'alignGrid' }
   | { kind: 'fonts' }
+  | { kind: 'scheduleSnap' }
   | { kind: 'help' }
   | { kind: 'newDesign' }
   | { kind: 'prompt'; title: MessageKey; label: MessageKey; value: string; ok: (value: string) => void }
@@ -539,6 +540,8 @@ export function shellCommands(): Command<Shell>[] {
     },
     // V2 "Align / Grid" panel (#workspaceManage) and "Layout and fonts" dialog (#chineseFont / #englishFont)
     { id: 'design.manage', shortcut: 'G', label: 'cmd.alignGrid', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'alignGrid' }) },
+    // V2 #scheduleSnapSettingsBtn: the point-snapping popover of a schedule
+    { id: 'schedule.snap', label: 'cmd.scheduleSnap', group: 'layout', enabled: s => hasProject(s) && s.store.activeDesign?.type === 'schedule', run: s => s.openDialog({ kind: 'scheduleSnap' }) },
     { id: 'theme.fonts', label: 'cmd.fonts', group: 'layout', enabled: s => hasProject(s) && s.isBlockDiagram, run: s => s.openDialog({ kind: 'fonts' }) },
     ...(['horizontal', 'vertical'] as AlignAxis[]).map((axis): Command<Shell> => ({
       id: axis === 'horizontal' ? 'layout.alignHorizontal' : 'layout.alignVertical', label: axis === 'horizontal' ? 'cmd.alignHorizontal' : 'cmd.alignVertical', group: 'layout',

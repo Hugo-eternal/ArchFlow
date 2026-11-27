@@ -1,6 +1,6 @@
 // Properties panel frame: inspector/common.blockInspector inside an <aside>. The panel itself
 // is plain DOM (built in one pass, inspector/panel.ts); React only owns the frame.
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { t } from '../core/i18n';
 import { blockInspector, type BlockInspector } from '../inspector/common';
 import { InspectorPanel } from '../inspector/panel';
@@ -70,15 +70,20 @@ function DrawingInspector({ shell }: { shell: Shell }) {
   useVersion(shell.ui);
   useVersion(shell.store);
   const designId = shell.store.activeDesignId;
+  const tabs = shell.module?.canvas?.tabs ?? [];
+  // V2 schedule panel tabs: Properties / Appearance (the tab is kept while the selection changes)
+  const [tab, setTab] = useState(tabs[0]?.id ?? '');
+  const tabRef = useRef(tab);
+  tabRef.current = tab;
   const data = () => shell.store.data(shell.store.activeDesignId);
   const current = (): CanvasSelection => shell.item ?? { kind: 'design', id: '' };
   /** Show the fields of the current selection (rebuild), or just refresh the values. */
   const refresh = (p: InspectorPanel<Design['data'], CanvasSelection>) => {
-    const sel = current(), key = `${sel.kind}:${sel.id}`;
+    const sel = current(), key = `${tabRef.current}|${sel.kind}:${sel.id}`;
     if (key === shown.current) { p.sync(); return; }
     shown.current = key;
     const fields = shell.module?.canvas?.fields;
-    p.show(fields ? fields(sel, data()) : [], sel);
+    p.show(fields ? fields(sel, data(), tabRef.current || undefined) : [], sel);
   };
 
   useEffect(() => {
@@ -98,9 +103,29 @@ function DrawingInspector({ shell }: { shell: Shell }) {
   }, [shell, designId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sel = current();
-  useEffect(() => { if (panel.current) refresh(panel.current); }, [`${sel.kind}:${sel.id}`]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (panel.current) refresh(panel.current); }, [`${sel.kind}:${sel.id}`, tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <div ref={ref} />;
+  const onTabKey = (e: React.KeyboardEvent, i: number) => {
+    const n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!n) return;
+    e.preventDefault();
+    const next = tabs[(i + n + tabs.length) % tabs.length];
+    setTab(next.id);
+    (e.currentTarget.parentElement?.querySelector(`[data-tab="${next.id}"]`) as HTMLElement | null)?.focus();
+  };
+  return (
+    <>
+      {tabs.length > 0 && (
+        <div className="af-insp-tabs" role="tablist" aria-label={t('schedule.tabs')}>
+          {tabs.map((x, i) => (
+            <button key={x.id} type="button" role="tab" data-tab={x.id} id={`af-insp-tab-${x.id}`} aria-selected={tab === x.id} aria-controls="af-insp-tabpanel"
+              tabIndex={tab === x.id ? 0 : -1} onClick={() => setTab(x.id)} onKeyDown={e => onTabKey(e, i)}>{t(x.label)}</button>
+          ))}
+        </div>
+      )}
+      <div ref={ref} id={tabs.length ? 'af-insp-tabpanel' : undefined} role={tabs.length ? 'tabpanel' : undefined} aria-labelledby={tabs.length ? `af-insp-tab-${tab}` : undefined} />
+    </>
+  );
 }
 
 export function InspectorPane({ shell }: { shell: Shell }) {

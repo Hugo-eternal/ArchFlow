@@ -959,5 +959,18 @@
   "inspector.side.r": "Right",
   "inspector.side.t": "Top",
   "inspector.side.b": "Bottom",
-  "inspector.ports.hint": "Click the IN / OUT tag to change a pin’s type; each pin has its own name position."
+  "inspector.ports.hint": "Click the IN / OUT tag to change a pin’s type; each pin has its own name position.",
+  "schedule.tab.props": "Properties",
+  "schedule.tab.look": "Appearance",
+  "schedule.tabs": "Panel tabs",
+  "cmd.scheduleSnap": "Snap settings",
+  "schedule.snap.button": "Snap {range} px",
+  "schedule.snap.off": "Snap off",
+  "schedule.snap.title": "Point snapping",
+  "schedule.snap.dragHints": "While dragging",
+  "schedule.snap.h1": "A light blue guide shows where a point snaps",
+  "schedule.snap.h2": "Shift: keep to horizontal or vertical",
+  "schedule.snap.h3": "Alt: no snapping for now",
+  "schedule.snap.rangeNote": "Range 0–50 px; 0 px turns snapping off.",
+  "schedule.snap.done": "Done"
 }

@@ -10,7 +10,7 @@ import { checks, gridSize, GRID_MAX, GRID_MIN, GRID_STEP } from '../core/grid';
 import { alignable } from '../model/arrange';
 import { scaleBlockFonts } from '../model/diagram';
 import { CJK_FONTS, cleanTheme, fontStack, LATIN_FONTS, ptToPx, pxToPt, THEME_LIMITS, type ThemeSize } from '../render/theme';
-import type { BlockDiagram, Theme } from '../io/schema-types';
+import type { BlockDiagram, ScheduleData, Theme } from '../io/schema-types';
 import type { Shell } from './controller';
 import { Modal } from './Dialogs';
 import { CommandButton } from './AppBar';
@@ -146,3 +146,36 @@ export function FontsDialog({ shell }: { shell: Shell }) {
     </Modal>
   );
 }
+
+/** V2 schedule snap popover (#scheduleSnapSettingsBtn): point snapping on / off and its range, one undo step each. */
+export function ScheduleSnapDialog({ shell }: { shell: Shell }) {
+  const d = shell.store.data(shell.store.activeDesignId) as ScheduleData;
+  const set = (patch: Partial<ScheduleData['snap']>) => shell.editDesign(x => ({ ...(x as ScheduleData), snap: { ...(x as ScheduleData).snap, ...patch } }));
+  return (
+    <Modal title="schedule.snap.title" onClose={() => shell.closeDialog()}>
+      <section className="af-settings-group">
+        <label className="af-check">
+          <input type="checkbox" checked={d.snap.enabled} onChange={e => set({ enabled: e.target.checked })} /> {t('schedule.snap.enabled')}
+        </label>
+        <label className="af-form-field af-inline">
+          <span>{t('schedule.snap.range')}</span>
+          <span className="af-settings-row">
+            <input type="number" min={0} max={50} step={1} value={d.snap.range} disabled={!d.snap.enabled}
+              onChange={e => { const v = Number(e.target.value); if (Number.isFinite(v)) set({ range: Math.max(0, Math.min(50, Math.round(v))) }); }} /> px
+          </span>
+        </label>
+        <p className="af-settings-note">{t('schedule.snap.rangeNote')}</p>
+      </section>
+      <section className="af-settings-group" aria-labelledby="af-snap-hints">
+        <h3 id="af-snap-hints">{t('schedule.snap.dragHints')}</h3>
+        <ul className="af-settings-list">
+          <li>{t('schedule.snap.h1')}</li><li>{t('schedule.snap.h2')}</li><li>{t('schedule.snap.h3')}</li>
+        </ul>
+      </section>
+      <div className="af-modal-actions">
+        <button type="button" className="af-button is-primary" onClick={() => shell.closeDialog()}>{t('schedule.snap.done')}</button>
+      </div>
+    </Modal>
+  );
+}
+

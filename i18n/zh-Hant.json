@@ -959,5 +959,18 @@
   "inspector.side.r": "右",
   "inspector.side.t": "上",
   "inspector.side.b": "下",
-  "inspector.ports.hint": "點 IN／OUT 標籤切換接腳類型；每個接腳可分別設定名稱位置。"
+  "inspector.ports.hint": "點 IN／OUT 標籤切換接腳類型；每個接腳可分別設定名稱位置。",
+  "schedule.tab.props": "屬性",
+  "schedule.tab.look": "外觀",
+  "schedule.tabs": "屬性面板分頁",
+  "cmd.scheduleSnap": "磁吸設定",
+  "schedule.snap.button": "磁吸 {range} px",
+  "schedule.snap.off": "磁吸 關",
+  "schedule.snap.title": "圓點磁吸設定",
+  "schedule.snap.dragHints": "拖曳提示",
+  "schedule.snap.h1": "吸附時顯示淡藍色對齊線",
+  "schedule.snap.h2": "Shift：鎖定水平或垂直方向",
+  "schedule.snap.h3": "Alt：暫時停用吸附",
+  "schedule.snap.rangeNote": "範圍 0～50 px；0 px 等同關閉吸附。",
+  "schedule.snap.done": "完成"
 }

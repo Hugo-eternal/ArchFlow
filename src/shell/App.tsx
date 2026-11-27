@@ -14,7 +14,7 @@ import { OrganizeDialog } from './OrganizeDialog';
 import { SelectionBar } from './SelectionBar';
 import { ContextMenu } from './ContextMenu';
 import { HelpDialog, PaletteDialog } from './PaletteDialog';
-import { AlignGridDialog, FontsDialog } from './LayoutDialogs';
+import { AlignGridDialog, FontsDialog, ScheduleSnapDialog } from './LayoutDialogs';
 import { StartScreen } from './StartScreen';
 import { AppBar, designKind, shortcutText, useLocale } from './AppBar';
 import { gridSize } from '../core/grid';
@@ -298,6 +298,7 @@ export function App({ shell }: { shell: Shell }) {
       {dlg?.kind === 'palette' && <PaletteDialog shell={shell} />}
       {dlg?.kind === 'help' && <HelpDialog shell={shell} />}
       {dlg?.kind === 'alignGrid' && shell.isBlockDiagram && <AlignGridDialog shell={shell} />}
+      {dlg?.kind === 'scheduleSnap' && shell.store.activeDesign?.type === 'schedule' && <ScheduleSnapDialog shell={shell} />}
       {dlg?.kind === 'fonts' && shell.isBlockDiagram && <FontsDialog shell={shell} />}
       <ToolDialog shell={shell} />
     </>
