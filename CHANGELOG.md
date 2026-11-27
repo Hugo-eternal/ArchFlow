@@ -202,3 +202,6 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 - 時程命令列照 V2.10.1 顯示「磁吸 12 px」，點開設定圓點吸附（啟用、範圍）；「順延衝突」改從指令面板或屬性面板使用。
 - 屬性面板分成「屬性」「外觀」兩個分頁，配色與字級在「外觀」。（`tests/e2e/v3-shell.spec.ts`「schedule as V2.10.1 (3.46i)」、`tests/unit/schedule.edit.test.ts`）
 
+### 啟動畫面背景動畫（3.46j）
+- 加回 V2.10.1 啟動畫面背景緩慢飄動的工程圖示動畫；系統設定「減少動態效果」時只顯示靜止畫面。（`tests/e2e/v3-shell.spec.ts`「start screen background animation」）
+

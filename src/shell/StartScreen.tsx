@@ -12,6 +12,7 @@ import { APP_VERSION } from '../version';
 import type { Shell, DesignChoice } from './controller';
 import { CommandButton, LangSwitch, Logo } from './AppBar';
 import { Icon, type IconName } from './icons';
+import { StartFx } from './StartFx';
 
 /** A card of step 2: a design type, or a variant of one (V2's power architecture). */
 interface StartKind { id: string; type: DesignType; icon: IconName; templates: readonly string[]; variant?: string }
@@ -121,6 +122,7 @@ export function StartScreen({ shell }: { shell: Shell }) {
         <button type="button" className="af-btn ghost" onClick={() => shell.pickFile()}><Icon name="folderOpen" /><span>{t('start.open')}</span></button>
       </header>
       <div className="af-start-body">
+        <StartFx />
         <form className="af-start-form" onSubmit={e => { e.preventDefault(); void shell.run('project.create', { name, choice }); }}>
           <h1>{t('start.title')}</h1>
           <p className="af-start-intro">{t('start.intro')}</p>

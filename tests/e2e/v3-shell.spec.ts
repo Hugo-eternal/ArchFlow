@@ -834,3 +834,17 @@ test('schedule as V2.10.1 (3.46i): snap button and settings, properties / appear
   expect(errors).toEqual([]);
 });
 
+
+test('start screen background animation (V2 af2-start-fx, 3.46j): drifting glyphs, gone in the workspace', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  const fx = page.locator('canvas.af-start-fx');
+  await expect(fx).toHaveAttribute('aria-hidden', 'true');
+  const frame = () => fx.evaluate(c => (c as HTMLCanvasElement).toDataURL());
+  const a = await frame();
+  await expect.poll(frame, { timeout: 3000 }).not.toBe(a);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await expect(fx).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

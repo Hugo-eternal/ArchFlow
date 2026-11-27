@@ -43,6 +43,8 @@
   --chrome-disabled-icon: #BCC5CB;
   --led-saved: #3E9B6E;
   --side-panel: #FAFBFA;      /* project contents panel (V2 .navigator) */
+  --fx-line: #7C8FA3;          /* start screen drifting glyphs (V2 Q4) */
+  --fx-accent: #4F79A6;
   --canvas-paper: #FAFBFA;     /* block / schedule canvas (V2 --af-paper) */
   --grid-minor: #E4ECF1;       /* V2 gg-grid #D1DFE8 at 0.65 px: drawn 1 px wide here, so lighter */
   --grid-major: #CCD9E3;       /* … and #B7CAD7 at 0.9 px every 5 cells */
@@ -355,6 +357,8 @@
     --chrome-disabled-icon: #56636F;
     --led-saved: #5CC495;
     --side-panel: #18222B;
+    --fx-line: #5D7084;
+    --fx-accent: #6E97C2;
     --canvas-paper: #121A21;
     --grid-minor: #1F2C38;
     --grid-major: #2C3D4D;
@@ -481,6 +485,8 @@
   --chrome-disabled-icon: #56636F;
   --led-saved: #5CC495;
   --side-panel: #18222B;
+  --fx-line: #5D7084;
+  --fx-accent: #6E97C2;
   --canvas-paper: #121A21;
   --grid-minor: #1F2C38;
   --grid-major: #2C3D4D;

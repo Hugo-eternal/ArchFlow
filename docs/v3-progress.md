@@ -126,6 +126,7 @@
 - [x] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
 - [x] 3.46h `inspector`：方塊屬性照 V2 分組——「基本資料」（名稱／型號、副標題、元件代號）、「輸入／輸出」（接點清單：類型徽章、名稱、邊、名稱位置；＋輸入／＋輸出／＋雙向；全部的名稱位置）、其他群組在後（L3）
 - [x] 3.46i `designs/schedule` / `shell`：時程照 V2——命令列「磁吸 12 px」、屬性面板「屬性／外觀」兩個分頁（L3）
+- [x] 3.46j `shell`：啟動畫面背景動畫（使用者要求加回）：`src/shell/StartFx.tsx` 移植 V2 `Q4`／`.af2-start-fx`——三層深度的工程圖示（波形、元件、電路板、流程圖片段，V2 的路徑、比例、速度、透明度）由左往右緩慢飄移並上下擺動，約 30 fps、左右邊緣淡入淡出、密度每 30000 px² 一個；`prefers-reduced-motion` 時只畫一張靜止畫面；頁面隱藏時停止；顏色改用 token `--fx-line` / `--fx-accent`（亮暗兩版）（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4；版本號已改，等 3.46 完成後人工驗收與發佈決定）
 
 ## 階段 4：Skill、CI、修改層級驗證
@@ -140,7 +141,7 @@
 
 ## 交接
 - **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
-- **下一步**：3.46 系列完成；剩 **3.45 人工驗收與發佈決定（等使用者）**，以及使用者尚未回覆的「單鍵快捷鍵要不要改成 V2（A 新增方塊、P 整理預覽、L 元件庫、M 區域框；時程 A 接續、B 分支）」。3.46i 完成：時程命令列以「磁吸 12 px」（關閉時「磁吸 關」，新指令 `schedule.snap` 開 `ScheduleSnapDialog`：啟用、範圍 0–50 px、拖曳提示）取代「順延衝突」（仍在指令面板與屬性面板）；屬性面板「屬性／外觀」兩個分頁（`CanvasDrawing.tabs` + `fields(sel, data, tab)`；外觀分頁＝配色與字級，磁吸不再放在面板；分頁用方向鍵切換，選取改變時保留分頁）。3.46 剩餘差異（不再排步驟，除非使用者要求）：新專案的儲存狀態（V3 保留「已儲存」）、嵌入式設計狀態列「目前設計：…」、啟動畫面背景動畫、`<img>` 內 SVG 用不到內嵌字型。
+- **下一步**：3.46 系列完成；剩 **3.45 人工驗收與發佈決定（等使用者）**，以及使用者尚未回覆的「單鍵快捷鍵要不要改成 V2（A 新增方塊、P 整理預覽、L 元件庫、M 區域框；時程 A 接續、B 分支）」。3.46i 完成：時程命令列以「磁吸 12 px」（關閉時「磁吸 關」，新指令 `schedule.snap` 開 `ScheduleSnapDialog`：啟用、範圍 0–50 px、拖曳提示）取代「順延衝突」（仍在指令面板與屬性面板）；屬性面板「屬性／外觀」兩個分頁（`CanvasDrawing.tabs` + `fields(sel, data, tab)`；外觀分頁＝配色與字級，磁吸不再放在面板；分頁用方向鍵切換，選取改變時保留分頁）。3.46 剩餘差異（不再排步驟，除非使用者要求）：新專案的儲存狀態（V3 保留「已儲存」）、嵌入式設計狀態列「目前設計：…」、`<img>` 內 SVG 用不到內嵌字型。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -281,7 +282,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.46i：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 416 項、Playwright V3 37 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46j：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 416 項、Playwright V3 38 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦
