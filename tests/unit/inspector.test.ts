@@ -57,7 +57,7 @@ describe('panel construction', () => {
     const s = setup();
     s.insp.show({ kind: 'block', id: 'A' });
     const keys = [...s.root.querySelectorAll('[data-field]')].map(e => (e as HTMLElement).dataset.field);
-    expect(keys).toEqual(['title', 'partNumber', 'ref', 'subtitle', 'titleAlign', 'fill', 'border', 'textColor',
+    expect(keys).toEqual(['partNumber', 'title', 'ref', 'subtitle', 'titleAlign', 'portList', 'fill', 'border', 'textColor',
       'showTitle', 'free', 'w', 'h', 'scaleText', 'titleSize', 'font-subtitle', 'font-label', 'font-metric', 'fontsToAll', 'locked']);
     for (const c of s.root.querySelectorAll('input:not([type=radio]), textarea, select')) {
       const label = s.root.querySelector(`label[for="${c.id}"]`) ?? c.closest('label');
@@ -283,7 +283,7 @@ describe('field specs', () => {
     expect(parseValue(num, '')).toEqual({ ok: false, error: 'inspector.error.number' });
     expect(parseValue(num, 'abc')).toEqual({ ok: false, error: 'inspector.error.number' });
     expect(parseValue(num, '0.1')).toEqual({ ok: false, error: 'inspector.error.range' });
-    const align = blockFields().find(f => f.key === 'titleAlign')!;
+    const [align] = flatten(blockFields(), s.data(), { kind: 'block', id: 'A' }).filter(f => f.key === 'titleAlign');
     expect(parseValue(align as never, 'nowhere')).toEqual({ ok: false, error: 'inspector.error.option' });
   });
 

@@ -124,7 +124,7 @@
 - [x] 3.46f `shell`：啟動畫面照 V2.10.1——左右分欄、步驟編號、設計類型卡（圖示＋說明）、範本／空白分段、範本卡、右側預覽與小工具卡、頂部語言與工具連結（L3）
 - [x] 3.46d5 `shell` / `vendor`：內嵌字型（使用者要求字體跟 V2 一樣的根本原因）：V2 發佈檔 `index.html` 第 3 行 `AF_FONT_CSS` 內嵌思源黑體 TC 子集（regular 100–549、bold 550–900，woff2 data URL），插入 app 與上電時序／流程圖／BOM 的 frame；V3 先前沒有，未安裝思源黑體的電腦會改用微軟正黑體。`scripts/extract-vendor.mjs` 一併抽出為 `vendor/fonts/source-han-sans-tc.css`（manifest 記來源 index.html L3，`check:vendor` 會驗證），`src/styles/fonts.ts`（`installFonts` 放進 app、`FONT_CSS` 放進三個 frame 的 srcdoc、`fontsReady` 在量測文字前等字型，最多 3 秒），授權寫入 THIRD_PARTY.md（SIL OFL 1.1）。dist 7.8 MB（V2 index.html 13 MB）。已知：啟動畫面預覽是 `<img>` 裡的 SVG，用不到網頁字型（與匯出 PNG 相同限制）（L3）
 - [x] 3.46g 逐畫面比對 V2.10.1 截圖（`docs/v2-screens/`）：方塊圖、電源檢視、時程、電源時序、流程圖、小工具、對話框；列出剩餘差異並修正或記錄（L3）
-- [ ] 3.46h `inspector`：方塊屬性照 V2 分組——「基本資料」（名稱／型號、副標題、元件代號）、「輸入／輸出」（接點清單：類型徽章、名稱、邊、名稱位置；＋輸入／＋輸出／＋雙向；全部的名稱位置）、其他群組在後（L3）
+- [x] 3.46h `inspector`：方塊屬性照 V2 分組——「基本資料」（名稱／型號、副標題、元件代號）、「輸入／輸出」（接點清單：類型徽章、名稱、邊、名稱位置；＋輸入／＋輸出／＋雙向；全部的名稱位置）、其他群組在後（L3）
 - [ ] 3.46i `designs/schedule` / `shell`：時程照 V2——命令列「磁吸 12 px」、屬性面板「屬性／外觀」兩個分頁（L3）
 - [ ] 3.45 版本號統一為 V3.0.0（L4；版本號已改，等 3.46 完成後人工驗收與發佈決定）
 
@@ -140,7 +140,7 @@
 
 ## 交接
 - **目前階段**：階段 3——使用者決定：**V3 殼層照 V2.10.1 的介面重做**（保留 V3 功能與程式，版面與外觀以 V2.10.1 為準），排成 3.46a–3.46g，完成後才做 3.45 的人工驗收與發佈。版本號已改為 3.0.0（3.45 自動部分）。
-- **下一步**：3.46h（方塊屬性照 V2 分組）。3.46g 完成：補拍 V2 基準 `docs/v2-screens/{power,schedule,sequence,flowchart}.png`（1440 × 900，已關閉提示卡），與 V3 同尺寸逐畫面比對後修正：範本建立的設計名稱（V3 先前用範本內部名稱，入門電源樹變成「分散式電源架構」、入門時程變成「產品開發流程」；改用範本標籤，啟動畫面用 V2 卡片名稱）、預設專案名「新專案」、建立後狀態列訊息「專案已建立。…」、畫布底色 V2 `--af-paper` 與格線（每格細線、每 5 格粗線，隨縮放）、畫布左下操作提示（方塊圖：拖曳空白平移 · Shift 拖曳框選 · 格距；時程：拖曳畫布移動視野／滾輪縮放；電壓圖例上移避開）、狀態列類型名稱與圖示依 V2（功能方塊／電源架構（電源檢視）／專案時程／上電時序／流程圖；app bar 設計圖示也依檢視）、時程統計改「N 個任務 · M 條連線」。上電時序、流程圖畫面與 V2 一致（同一份 vendor）。剩餘差異：(1) 方塊屬性分組 → 3.46h；(2) 時程命令列「磁吸」與屬性／外觀分頁（V3 是「順延衝突」與群組）→ 3.46i；(3) V2 單鍵 A／P／L／M 與時程 A／B（V3：B 新增方塊、P 新增接腳）——**等使用者決定**；(4) 新專案 V2 一建立就顯示「未儲存的變更」，V3 顯示「已儲存」（V3 較合理，保留）；(5) 嵌入式設計狀態列 V2 顯示「目前設計：…」，V3 顯示建立訊息；(6) 啟動畫面背景動畫 `af2-start-fx` 未做；(7) 啟動畫面預覽與匯出 PNG 的 SVG 在 `<img>` 中用不到內嵌字型。
+- **下一步**：3.46i（時程：命令列「磁吸 12 px」、屬性面板「屬性／外觀」分頁）。3.46h 完成：方塊屬性照 V2 分組——「基本資料」（型號／料號在前，再來簡短功能名稱、元件代號、副標、標題位置）、「輸入／輸出」（`inspector/common.ts` `portsField`：統計「N 輸入 N 輸出 N 雙向 N 電源」；每個接腳一列：類型徽章（點一下換下一種類型）、名稱、邊（左右上下，`model/diagram.setPortSide`：重新分配舊邊與新邊、必要時加大方塊、清掉該接腳線路的手動路徑）、刪除；下一行名稱位置框內／框外／隱藏；＋輸入／＋輸出／＋雙向；全部接腳的名稱位置）。零件與連接器不顯示接腳表。其餘群組（外觀、尺寸與字級、鎖定、電壓標示…）在後。另修正 `tests/unit/schedule.edit.test.ts` 一個跟今天日期有關的測試（`appendTask` 以今天為起日，換日後失敗；改為先清掉第一個任務日期再用固定日期）。剩餘差異同 3.46g 記錄。
 - **已排入**：（3.29b 已完成，範圍見 plan §2.2.2。）
 - **已知問題**：
   - **目錄（3.1 起）**：V2.10.1 原始碼在 `legacy/app.zh-Hant.html`、`legacy/app.en.html`（`index.html` 仍是 V2 發佈檔，`node tools/pack.mjs` / `unpack.mjs` 對應 `legacy/`）；`src/` 是 V3 原始碼，`npm run build` 產出 `dist/ArchFlow.html`（不提交，`.gitignore`）。audit / code-map 的行號仍指 `legacy/` 檔案。（3.44 起）V3 測試對 `src/` 與 `dist/`；只描述 V2 的測試在 `tests/legacy`（`npm run test:legacy` / `test:legacy:e2e`），見 `tests/README.md`。
@@ -281,7 +281,7 @@
 - **工具**：`.claude/skills/ui-ux-pro-max`（UI/UX 規則，階段 3 用）；`node scripts/audit/find-overrides.mjs`（覆寫鏈）；`node scripts/audit/dump-project-shape.mjs`（存檔欄位實測）；`node scripts/audit/diff-locales.mjs`（語系結構差異）。
 - **指令**：`npm test`（Vitest，`tests/unit`、`tests/golden`）；`npm run test:e2e`（Playwright，已帶 `--trace off`）。測試檔第一行以 `// module: <x>` 標註所屬模組。
 - 2.2：jsdom 載入 V2 引擎會卡住（90 秒逾時，引擎依賴版面量測與計時器補丁），測試輔助 `tests/helpers/load-app.js` 改在 Vitest 中啟動預裝 Chromium：`const app = await openApp(); await app.eval(fn, ...args); await app.createProject(type); await app.close();`。單元測試也因此需要瀏覽器，每個檔案約 +1 秒。
-- **最後通過的驗證層級**：L3（3.46g：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 415 項、Playwright V3 35 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
+- **最後通過的驗證層級**：L3（3.46h：模組標註、i18n、token、css、vendor、型別、建置、產物檢查、Vitest 416 項、Playwright V3 36 項全數通過）。3.45 的 L4 自動部分先前已通過；**人工驗收待使用者**（3.46 完成後；含 3.38 自動整理、3.13 / 3.14 開 V2 檔顯示不支援舊版格式）。
 - **記憶體**：雲端 session 的記憶體上限下，`npm run test:all` 的 Playwright 多 worker 可能讓頁面因 OOM 當掉（3.11 時 BOM 工具測試 `Page crashed`）。遇到時改跑 `npx playwright test --trace off --workers=1` 確認。
 
 ### V3.0.0 之後的待辦

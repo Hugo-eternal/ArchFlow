@@ -7,7 +7,7 @@
 // format panel L1463, text controls L2219–L2303.
 import type { Block, BlockDiagram, BlockStyle, BlockView, LineFormat, Port, TextBox, TitleAlign, Wire } from '../model/types';
 import { LIMITS, type ItemRef } from '../model/types';
-import { applyFontsToAll, blockOf, BLOCK_SIZE, fitFrame, resizeBlock, portOf, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
+import { addPort, applyFontsToAll, blockOf, BLOCK_SIZE, fitFrame, remove, resizeBlock, portOf, setPortSide, updateBlock, updateFrame, updatePort, updateText, updateWire, wireOf, FRAME } from '../model/diagram';
 import { FILE_LIMITS } from '../io/schema';
 import { commitEdit } from '../interaction/commit';
 import { scaleTextOn, setScaleText } from '../core/prefs';
@@ -81,16 +81,23 @@ export function inView<F extends BlockField>(view: BlockView, field: F): F {
 }
 
 export function blockFields(): BlockField[] {
+  const ordinary = (d: BlockDiagram, sel: ItemRef) => { const b = block(d, sel); return !b.part && !b.connector; };
   return [
-    { kind: 'text', key: 'title', label: 'inspector.block.title', maxLength: LIMITS.text, get: (d, s) => block(d, s).title, set: setBlock('title') },
-    { kind: 'text', key: 'partNumber', label: 'inspector.block.partNumber', maxLength: NAME_MAX, get: (d, s) => block(d, s).partNumber, set: setBlock('partNumber') },
-    { kind: 'text', key: 'ref', label: 'inspector.block.ref', maxLength: NAME_MAX, get: (d, s) => block(d, s).ref, set: setBlock('ref') },
-    { kind: 'textarea', key: 'subtitle', label: 'inspector.block.subtitle', maxLength: LIMITS.text, rows: 2, get: (d, s) => block(d, s).subtitle, set: setBlock('subtitle') },
+    // V2.10.1 groups: "basic" (name / part number first), then "inputs / outputs", then the rest
     {
-      kind: 'select', key: 'titleAlign', label: 'inspector.block.titleAlign', options: opts('inspector.align', TITLE_ALIGNS),
-      get: (d, s) => block(d, s).titleAlign ?? 'center-center',
-      set: (d, s, v) => updateBlock(d, s.id, { titleAlign: v as TitleAlign }),
+      kind: 'group', key: 'basic', label: 'inspector.group.basic', fields: [
+        { kind: 'text', key: 'partNumber', label: 'inspector.block.partNumber', maxLength: NAME_MAX, get: (d, s) => block(d, s).partNumber, set: setBlock('partNumber') },
+        { kind: 'text', key: 'title', label: 'inspector.block.title', maxLength: LIMITS.text, get: (d, s) => block(d, s).title, set: setBlock('title') },
+        { kind: 'text', key: 'ref', label: 'inspector.block.ref', maxLength: NAME_MAX, get: (d, s) => block(d, s).ref, set: setBlock('ref') },
+        { kind: 'textarea', key: 'subtitle', label: 'inspector.block.subtitle', maxLength: LIMITS.text, rows: 2, get: (d, s) => block(d, s).subtitle, set: setBlock('subtitle') },
+        {
+          kind: 'select', key: 'titleAlign', label: 'inspector.block.titleAlign', options: opts('inspector.align', TITLE_ALIGNS),
+          get: (d, s) => block(d, s).titleAlign ?? 'center-center',
+          set: (d, s, v) => updateBlock(d, s.id, { titleAlign: v as TitleAlign }),
+        },
+      ],
     },
+    { kind: 'group', key: 'ports', label: 'inspector.group.ports', visible: ordinary, fields: [portsField()] },
     {
       kind: 'group', key: 'style', label: 'inspector.group.style', fields: [
         { kind: 'color', key: 'fill', label: 'inspector.style.fill', emptyLabel: 'inspector.color.default', fallback: FALLBACK.fill, get: (d, s) => block(d, s).style.fill ?? '', set: setStyle('fill') },
@@ -101,6 +108,93 @@ export function blockFields(): BlockField[] {
     sizeGroup(),
     { kind: 'toggle', key: 'locked', label: 'inspector.locked', get: (d, s) => block(d, s).locked, set: setBlock('locked') },
   ];
+}
+
+const PORT_SIDES = ['l', 'r', 't', 'b'] as const;
+const TYPE_BADGE: Record<string, string> = { in: 'IN', out: 'OUT', io: 'I/O', power: 'PWR', gnd: 'GND' };
+
+/**
+ * The block's pins as V2's port table (L3047 / V1.5 af15-ports): a row per pin — type badge
+ * (click: next type), name, side, delete — and its name position; counts, add input / output /
+ * bidirectional, and one name position for all pins.
+ */
+function portsField(): BlockField {
+  return {
+    kind: 'custom', key: 'portList', label: 'inspector.group.ports',
+    render: ({ doc, data, sel, apply, id }) => {
+      const b = block(data, sel);
+      const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+        const e = doc.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e;
+      };
+      // a button keeps the focus inside the list, which stops the panel from redrawing it: let go first
+      const act = (btn: HTMLButtonElement, edit: (d: BlockDiagram) => BlockDiagram) => btn.addEventListener('click', () => { btn.blur(); apply(edit); });
+      const segmented = (name: string, label: string, value: string | null, set: (v: Port['label']) => void) => {
+        const g = el('div', 'af-port-seg'); g.setAttribute('role', 'radiogroup'); g.setAttribute('aria-label', label);
+        for (const m of PORT_LABELS) {
+          const r = el('button', '', t(`inspector.portLabel.${m}` as MessageKey)) as HTMLButtonElement;
+          r.type = 'button'; r.setAttribute('role', 'radio'); r.setAttribute('aria-checked', String(value === m)); r.name = name;
+          r.addEventListener('click', () => { r.blur(); set(m); });
+          g.append(r);
+        }
+        return g;
+      };
+      const wrap = el('div', 'af-ports');
+      const count = (types: string[]) => b.ports.filter(p => types.includes(p.type)).length;
+      wrap.append(el('p', 'af-ports-count', t('inspector.ports.count', { in: count(['in']), out: count(['out']), io: count(['io']), power: count(['power', 'gnd']) })));
+      const list = el('div', 'af-ports-list');
+      b.ports.forEach((p, i) => {
+        const row = el('div', 'af-port-row');
+        const badge = el('button', `af-port-badge is-${p.type}`, TYPE_BADGE[p.type] ?? p.type.toUpperCase()) as HTMLButtonElement;
+        badge.type = 'button';
+        badge.setAttribute('aria-label', t('inspector.ports.type', { name: p.name, type: t(`inspector.portType.${p.type}` as MessageKey) }));
+        const next = PORT_TYPES[(PORT_TYPES.indexOf(p.type as typeof PORT_TYPES[number]) + 1) % PORT_TYPES.length];
+        act(badge, d => updatePort(d, b.id, p.id, { type: next }));
+        const name = el('input', 'af-port-name') as HTMLInputElement;
+        name.value = p.name; name.maxLength = NAME_MAX; name.id = `${id}-${i}`;
+        name.setAttribute('aria-describedby', `${id}-hint`);
+        const nameLabel = el('label', 'af-visually-hidden', t('inspector.ports.name', { n: i + 1 })) as HTMLLabelElement;
+        nameLabel.htmlFor = name.id;
+        name.addEventListener('change', () => { if (name.value !== p.name) apply(d => updatePort(d, b.id, p.id, { name: name.value })); });
+        name.addEventListener('keydown', e => { if (e.key === 'Enter') name.blur(); });
+        const side = el('select', 'af-port-side') as HTMLSelectElement;
+        side.id = `${id}-${i}-side`;
+        side.setAttribute('aria-describedby', `${id}-hint`);
+        const sideLabel = el('label', 'af-visually-hidden', t('inspector.ports.side', { name: p.name })) as HTMLLabelElement;
+        sideLabel.htmlFor = side.id;
+        for (const sd of PORT_SIDES) { const o = el('option', '', t(`inspector.side.${sd}` as MessageKey)) as HTMLOptionElement; o.value = sd; o.selected = p.side === sd; side.append(o); }
+        side.addEventListener('change', () => apply(d => setPortSide(d, b.id, p.id, side.value as Port['side'])));
+        const del = el('button', 'af-port-del', '\u00d7') as HTMLButtonElement;
+        del.type = 'button'; del.setAttribute('aria-label', t('inspector.ports.delete', { name: p.name }));
+        act(del, d => remove(d, [{ kind: 'port', block: b.id, id: p.id }]));
+        const labelRow = el('div', 'af-port-pos');
+        labelRow.append(el('span', 'af-port-pos-title', t('inspector.ports.nameShort')),
+          segmented(`${id}-l${i}`, t('inspector.ports.labelOf', { name: p.name }), p.label, v => apply(d => updatePort(d, b.id, p.id, { label: v }))));
+        row.append(nameLabel, sideLabel, badge, name, side, del, labelRow);
+        list.append(row);
+      });
+      wrap.append(list);
+      const adds = el('div', 'af-ports-add');
+      for (const [type, key] of [['in', 'inspector.ports.addIn'], ['out', 'inspector.ports.addOut'], ['io', 'inspector.ports.addIo']] as const) {
+        const btn = el('button', 'af-field-action', t(key)) as HTMLButtonElement;
+        btn.type = 'button';
+        act(btn, d => addPort(d, b.id, type).data);
+        adds.append(btn);
+      }
+      wrap.append(adds);
+      const hint = el('p', 'af-field-hint', t('inspector.ports.hint'));
+      hint.id = `${id}-hint`;
+      wrap.append(hint);
+      if (b.ports.length) {
+        const modes = new Set(b.ports.map(p => p.label));
+        const all = el('div', 'af-port-pos is-all');
+        all.append(el('span', 'af-port-pos-title', t('inspector.ports.all')),
+          segmented(`${id}-all`, t('inspector.ports.allLabel'), modes.size === 1 ? [...modes][0] : null,
+            v => apply(d => b.ports.reduce((x, p) => updatePort(x, b.id, p.id, { label: v }), d))));
+        wrap.append(all);
+      }
+      return wrap;
+    },
+  };
 }
 
 /** px → pt, to half a point (V2 PT); pt → px. */

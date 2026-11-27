@@ -92,6 +92,8 @@ describe('tasks and links', () => {
     const now = Date.UTC(2026, 10, 26) / 864e5;
     let d = chain(3);
     const [a, b, c] = d.tasks.map(x => x.id);
+    // appendTask dates new tasks from today: clear the first one so the fixed `now` decides (the test failed on other days)
+    d = { ...d, tasks: d.tasks.map(x => (x.id === a ? { ...x, time: { type: 'none' } } : x)) };
     d = setDefaultRange(d, a, now);
     expect(d.tasks[0].time).toEqual({ type: 'range', start: '2026-11-26', end: '2026-11-30' });
     d = setDuration(d, a, 10);

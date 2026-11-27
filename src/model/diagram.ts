@@ -159,6 +159,25 @@ export function updatePort(d: BlockDiagram, blockId: string, portId: string, pat
   return data;
 }
 
+/**
+ * Move a port to another side of its block (V2 port table "side" select): both sides are spread
+ * again, the block grows if needed, and manual routes of the port's wires are dropped.
+ */
+export function setPortSide(d: BlockDiagram, blockId: string, portId: string, side: Side): BlockDiagram {
+  const data = clone(d), b = blockOf(data, blockId), p = portOf(data, blockId, portId);
+  if (!b || !p) throw new ModelError('missing', portId);
+  if (p.side === side) return d;
+  const from = p.side;
+  p.side = side;
+  spreadPorts(b, from);
+  spreadPorts(b, side);
+  growForPorts(b, data.grid?.snap === true);
+  for (const w of data.wires) {
+    if (!w.locked && [w.a, w.b].some(e => 'block' in e && e.block === blockId && e.port === portId)) { delete w.route; delete w.routing; }
+  }
+  return data;
+}
+
 // ------------------------------------------------------------------ wires and junctions
 
 export interface WireOptions { name?: string; kind?: string; line?: Partial<LineFormat>; route?: Point[] }

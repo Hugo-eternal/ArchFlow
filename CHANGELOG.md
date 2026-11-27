@@ -195,3 +195,6 @@ V3 重構期間的**有意行為修正**記在這裡（CLAUDE.md：除非是有�
 - 畫布底色與格線改回 V2（每格細線、每 5 格粗線）；左下加回操作提示。
 - 狀態列的設計類型照 V2 稱呼：功能方塊／電源架構（方塊圖的電源檢視）／專案時程／上電時序／流程圖；時程統計改為「N 個任務 · M 條連線」。（`tests/unit/shell.status.test.ts`、`tests/e2e/v3-shell.spec.ts`、`tests/e2e/v3-function.spec.ts`）
 
+### 屬性面板：方塊照 V2 分組（3.46h）
+- 方塊屬性分成「基本資料」與「輸入／輸出」。新增 V2 的接腳表：在方塊上直接改接腳名稱、類型（點類型標籤切換）、所在的邊、名稱位置，新增輸入／輸出／雙向接腳、刪除接腳，或一次設定全部接腳的名稱位置（V3 先前要個別選取接腳才能改）。（`tests/unit/model.diagram.test.ts`「port side from the port table」、`tests/e2e/v3-shell.spec.ts`「block properties grouped as V2.10.1 (3.46h)」）
+

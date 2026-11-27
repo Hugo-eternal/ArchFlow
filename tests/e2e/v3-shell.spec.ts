@@ -347,7 +347,7 @@ test('command palette and help (3.40): Ctrl+K, search, keyboard, go to a block; 
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowUp');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('complementary', { name: '屬性' }).getByRole('textbox').first()).toHaveValue('MCU'); // the block shown as 微控制器 (part number)
+  await expect(page.getByRole('complementary', { name: '屬性' }).getByLabel('簡短功能名稱')).toHaveValue('MCU'); // the block shown as 微控制器 (part number)
 
   // Ctrl+? opens help with the shortcuts list
   await page.locator('svg.af-canvas').click({ position: { x: 10, y: 10 } });
@@ -765,5 +765,39 @@ test('start screen (V2.10.1 look, 3.46f): five kinds, templates or blank, previe
   await page.getByRole('button', { name: '建立專案' }).click();
   await expect(page.getByRole('group', { name: '檢視' }).getByRole('button', { name: '電源檢視' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.af-statusbar')).toContainText('0 個方塊');
+  expect(errors).toEqual([]);
+});
+
+test('block properties grouped as V2.10.1 (3.46h): basics, the pin table', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('file://' + DIST);
+  await page.getByRole('button', { name: '建立專案' }).click();
+  await page.getByRole('navigation', { name: '專案內容' }).getByRole('button', { name: '微控制器' }).click();
+  const pane = page.getByRole('complementary', { name: '屬性' });
+  await expect(pane.locator('details[data-group="basic"] > summary')).toHaveText('基本資料');
+  const ports = pane.locator('details[data-group="ports"]');
+  await expect(ports.locator('summary')).toHaveText('輸入／輸出');
+  await expect(ports.locator('.af-ports-count')).toHaveText('1 輸入　0 輸出　1 雙向　1 電源');
+  const mcu = () => page.evaluate(() => (window as unknown as { archflow: { data(): { blocks: { partNumber: string; ports: { name: string; type: string; side: string; label: string }[] }[] } } }).archflow.data().blocks.find(b => b.partNumber === '微控制器')!.ports);
+  // rename, change side, change type, name position
+  await ports.getByLabel('第 1 個接腳名稱').fill('SENSE_IN');
+  await ports.getByLabel('第 1 個接腳名稱').press('Enter');
+  await expect.poll(async () => (await mcu())[0].name).toBe('SENSE_IN');
+  await ports.getByLabel('SENSE_IN 的位置').selectOption('t');
+  await expect.poll(async () => (await mcu())[0].side).toBe('t');
+  await ports.getByRole('button', { name: /SENSE_IN 的類型/ }).click();
+  await expect.poll(async () => (await mcu())[0].type).toBe('out');
+  await ports.getByRole('radiogroup', { name: 'SENSE_IN 名稱位置' }).getByRole('radio', { name: '框外' }).click();
+  await expect.poll(async () => (await mcu())[0].label).toBe('outside');
+  // add and delete
+  const n = (await mcu()).length;
+  await ports.getByRole('button', { name: '＋ 輸入' }).click();
+  await expect.poll(async () => (await mcu()).length).toBe(n + 1);
+  await ports.getByRole('button', { name: '刪除接腳 SENSE_IN' }).click();
+  await expect.poll(async () => (await mcu()).map(p => p.name)).not.toContain('SENSE_IN');
+  // all pins at once
+  await ports.getByRole('radiogroup', { name: '全部接腳的名稱位置' }).getByRole('radio', { name: '隱藏' }).click();
+  await expect.poll(async () => new Set((await mcu()).map(p => p.label))).toEqual(new Set(['hidden']));
   expect(errors).toEqual([]);
 });

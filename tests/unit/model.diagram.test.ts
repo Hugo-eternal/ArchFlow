@@ -208,3 +208,21 @@ describe('drawing-wide pin name position (V2 afPinLabels, 3.46d)', () => {
     expect(m.portLabelMode(m.setPortLabelMode(d, 'inside'))).toBe('inside');
   });
 });
+
+describe('port side from the port table (3.46h)', () => {
+  it('moves the port, spreads the old and new side, drops manual routes of its wires, input unchanged', () => {
+    let d = m.emptyDiagram();
+    d = m.addBlock(d, m.makeBlock(d, { x: 0, y: 0 })).data;
+    d = m.addBlock(d, m.makeBlock(d, { x: 400, y: 0 })).data;
+    const [a, b] = d.blocks;
+    d = m.connect(d, { block: a.id, port: a.ports[1].id }, { block: b.id, port: b.ports[0].id }, { route: [{ x: 200, y: 50 }, { x: 400, y: 25 }] }).data;
+    d = m.updateWire(d, d.wires[0].id, { routing: 'manual' });
+    const out = m.setPortSide(d, a.id, a.ports[1].id, 'b');
+    expect(d.blocks[0].ports[1].side).toBe('r');
+    const pa = out.blocks[0].ports;
+    expect(pa[1]).toMatchObject({ side: 'b', t: 0.5 });
+    expect(pa[0]).toMatchObject({ side: 'l', t: 0.25 }); // other sides untouched
+    expect(out.wires[0].route).toBeUndefined();
+    expect(m.setPortSide(out, a.id, a.ports[1].id, 'b')).toBe(out);
+  });
+});
