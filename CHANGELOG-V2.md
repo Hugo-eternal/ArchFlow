@@ -14,3 +14,8 @@
 - **V2.10.1**：`cleanTexts`（L495）只保留 id、文字、位置、寬、字級、顏色、粗體、斜體，文字框的 `align`、`background`、`font`、`padding` 重新開檔後消失；時程設計的驗證（L605）回傳 `texts: []` 且沒有 `theme`，**時程的文字框全部消失、字型主題被清除**。
 - **現在**：`cleanTexts` 保留 `align`（left／center／right）、`background`（`transparent` 或 `#rrggbb`）、`font`（1–80 個英數、空白、`.-_` 字元）、`padding`（限制在 0–40）；不合法的值丟棄（使用預設外觀）。時程驗證改用 `cleanTexts(raw.texts)` 與 `cleanTheme(raw.theme)`。
 - **測試**：`io.roundtrip` 的 `KNOWN_LOSS` 改為全部空集合；新增功能與時程的文字框欄位驗證測試；`layout` golden 的電源與 scrambled 快照多出文字框的 `align`／`background`（重新開檔後保留）。
+
+### B3 開檔失敗時說明原因
+- **V2.10.1**：超過 8 MB、不是 JSON、或不是專案物件的檔案，外層 loader（L2332）一律只顯示「載入失敗，原專案已保留。」，內層的「檔案超過 8 MB」訊息永遠看不到。
+- **現在**：外層 loader 依原因顯示「檔案超過 8 MB」「檔案不是有效的 JSON」「檔案不是 ArchFlow 專案」，並註明原專案已保留（中英兩版）。內容驗證失敗時仍由內層顯示原本的原因。
+- **測試**：`io.validate` 的 8 MB 測試改為檢查專屬訊息，新增「不是 JSON」「不是專案」與英文版 8 MB 測試。

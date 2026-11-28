@@ -82,9 +82,31 @@ describe('project file size guard', () => {
     const before = await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)));
     const message = new Promise(resolve => app.page.once('dialog', async d => { const m = d.message(); await d.dismiss(); resolve(m); }));
     await app.page.setInputFiles('#file', { name: 'big.json', mimeType: 'application/json', buffer: Buffer.alloc(8_000_001, 32) });
-    // QUIRK: the outer loader (archflow-known-fixes) replaces the specific "larger than 8 MB"
-    // text (L563) with a generic message.
-    expect(await message).toBe('載入失敗，原專案已保留。');
+    // v2-fix B3: V2.10.1's outer loader (L2332) showed only the generic '載入失敗，原專案已保留。'
+    expect(await message).toBe('載入失敗：檔案超過 8 MB。原專案已保留。');
     expect(await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)))).toBe(before);
+  });
+
+  for (const [name, body, text] of [
+    ['not JSON', '{ not json', '載入失敗：檔案不是有效的 JSON。原專案已保留。'],
+    ['JSON that is not a project', '42', '載入失敗：檔案不是 ArchFlow 專案。原專案已保留。'],
+  ]) {
+    it(`says why a file is refused: ${name}`, async () => {
+      const before = await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)));
+      const message = new Promise(resolve => app.page.once('dialog', async d => { const m = d.message(); await d.dismiss(); resolve(m); }));
+      await app.page.setInputFiles('#file', { name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from(body) });
+      expect(await message).toBe(text);
+      expect(await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)))).toBe(before);
+    });
+  }
+
+  it('English: the 8 MB message names the reason', async () => {
+    const en = await openApp({ locale: 'en' });
+    try {
+      await en.createProject('function');
+      const message = new Promise(resolve => en.page.once('dialog', async d => { const m = d.message(); await d.dismiss(); resolve(m); }));
+      await en.page.setInputFiles('#file', { name: 'big.json', mimeType: 'application/json', buffer: Buffer.alloc(8_000_001, 32) });
+      expect(await message).toBe('Load failed: the file is larger than 8 MB. The current project was preserved.');
+    } finally { await en.close(); }
   });
 });

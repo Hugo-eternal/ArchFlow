@@ -263,7 +263,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [x] O3 「不再新增包覆層」規則寫進 `CLAUDE.md`
 - [x] B2 + D9 版本號單一常數，顯示 `V2.11-dev`（第 10 節）
 - [x] B1 存開檔遺失文字框 align／background、時程文字框與 theme
-- [ ] B3 8 MB 專屬錯誤訊息
+- [x] B3 8 MB 專屬錯誤訊息
 - [ ] O5 `batch(fn)` 取代暫換 `commit`（F3 需要）
 - [ ] F1 區域框移動被拒時顯示原因、不再誤報「已移動」
 - [ ] F4 畫完框清除提示
@@ -309,6 +309,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **已完成**：O3 `CLAUDE.md`「修改方式」一節：不新增包覆層、直接改生效的定義；必要的補丁集中在檔案末端 `<script id="v2-fix">`。
 - **已完成**：B2 + D9 `AF_VERSION`（`legacy/app.*.html` L252 開頭）：存檔、畫面、頁面標題都讀它；發版只要改這一處再 `node tools/pack.mjs`。刪掉的層保留空行，行號不變。
 - **已完成**：B1 `cleanTexts`（L495）保留 align／background／font／padding；時程驗證（L605）保留 texts 與 theme；`KNOWN_LOSS` 全空。
-- **下一項**：B3 8 MB 專屬錯誤訊息，之後依清單。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
+- **已完成**：B3 外層 loader（L2332）依原因顯示 8 MB／不是 JSON／不是專案。
+- **下一項**：O5 `batch(fn)` 取代暫換 `commit`（F3 需要），之後依清單。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
 - **尚待使用者決定**：無（F7 的行為確認後再做）。
-- **最後通過的驗證**：基準 `npm run test:legacy`（78 項）與 `npm run test:legacy:e2e`（15 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
+- **最後通過的驗證**：基準 `npm run test:legacy`（81 項）與 `npm run test:legacy:e2e`（15 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
