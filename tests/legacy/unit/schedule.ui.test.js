@@ -37,4 +37,17 @@ describe('schedule appearance command', () => {
     expect(r.h).toBe(true);
     expect(app.errors).toEqual([]);
   });
+
+  // v2-fix B6: V2.10.1 headed the schedule's task list in the project contents "功能方塊"
+  it('the project contents group is headed 任務 for a schedule (and 功能方塊 again for a function design)', async () => {
+    const head = () => app.page.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(document.getElementById('nodeCount').parentElement.firstChild.textContent.trim())))));
+    await app.createProject('schedule');
+    expect(await head()).toBe('任務');
+    await app.createProject('function');
+    expect(await head()).toBe('功能方塊');
+    await app.createProject('power');
+    expect(await head()).toBe('電源方塊');
+    await app.createProject('schedule');
+    expect(await head()).toBe('任務');
+  });
 });

@@ -3870,7 +3870,7 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
   return r;
  };
  function heading(){
-  const head=document.getElementById('nodeCount')?.parentElement;if(head){const tn=[...head.childNodes].find(c=>c.nodeType===3);if(tn){if(!head.dataset.af24)head.dataset.af24=tn.textContent;tn.textContent=isPower()?T('電源方塊 ','Power blocks '):head.dataset.af24}}
+  const head=document.getElementById('nodeCount')?.parentElement;if(head){const tn=[...head.childNodes].find(c=>c.nodeType===3);if(tn){if(!head.dataset.af24)head.dataset.af24=tn.textContent;tn.textContent=isPower()?T('電源方塊 ','Power blocks '):/* B6 */typeof isSchedule==='function'&&isSchedule()?T('任務 ','Tasks '):head.dataset.af24}}
  }
 })();
 
