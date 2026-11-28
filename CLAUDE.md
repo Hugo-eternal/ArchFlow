@@ -9,7 +9,7 @@ V3 重構已暫停，最後狀態在 `v3-refactor` 分支（`docs/v3-progress.md
 3. 從第一個未勾選（`- [ ]`）的項目繼續。若上一項只做了一半（有未提交的變更或測試失敗），先判斷要修完還是還原，並在交接中說明。
 
 ## 每完成一項
-1. 驗證：`npm run test:legacy` 與 `npm run test:legacy:e2e -- --workers=1` 全部通過；修改後 `node tools/pack.mjs` 重新產生 `index.html`。
+1. 驗證：`npm run v2:check`（locale 檢查、`node tools/pack.mjs`、`test:legacy`、`test:legacy:e2e -- --workers=1`）全部通過。
 2. 有新行為就補 `tests/legacy` 的測試；刪死碼前先用測試確認它真的沒有作用。
 3. 在 `docs/v2-fix-plan.md` 勾選該項，更新「進度與交接」：下一項、已知問題、最後通過的驗證。
 4. 行為改變記在 `CHANGELOG-V2.md`（V2 修正專用的變更紀錄）。

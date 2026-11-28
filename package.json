@@ -21,7 +21,8 @@
     "test:modules": "node scripts/check-test-modules.mjs",
     "test:unit": "vitest run",
     "typecheck": "tsc -p tsconfig.json",
-    "unpack": "node tools/unpack.mjs"
+    "unpack": "node tools/unpack.mjs",
+    "v2:check": "node scripts/v2-check.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
