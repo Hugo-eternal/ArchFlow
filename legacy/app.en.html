@@ -968,12 +968,12 @@ const afBoundCreate=createWorkspaceProject;createWorkspaceProject=function(type,
 const afBoundManager=document.querySelector('#designManagerForm').onsubmit;document.querySelector('#designManagerForm').onsubmit=function(ev){if(managerMode==='rename')delete afBindings.designs[activeDesignId];return afBoundManager(ev)};
 function afTranslateState(state,source){if(!state)return;const convert=diagram=>{for(const n of diagram.nodes||[]){const binding=afBindings.nodes[n.id];if(!binding)continue;const old=source[binding.key]?.[binding.index],next=AF[binding.key]?.[binding.index];if(old!==undefined&&next!==undefined&&n[binding.field]===old)n[binding.field]=next}return diagram};convert(state.model||{});for(const key of ['past','future'])state[key]=(state[key]||[]).map(raw=>{try{return JSON.stringify(convert(JSON.parse(raw)))}catch(e){return raw}})}
 function afTranslateDesigns(list,source){for(const d of list||[]){const binding=afBindings.designs[d.id];if(binding){const key=binding.type==='schedule'?'schedule':binding.type==='power'?'power':'variants';const old=source[key]?.[binding.index]?.replace(/^\d+\s*\/\s*/,'');if(d.name===old)d.name=afTemplateName(binding.type,binding.index)}afTranslateState(d.state,source)}}
-function afInferLegacyBindings(list,source){for(const d of list||[]){for(const n of d.state?.model?.nodes||[]){if(afBindings.nodes[n.id])continue;const field=d.type==='schedule'?'title':'partNumber';for(const key of afLabelKeys){const index=source[key]?.indexOf(n[field]);if(index>=0){afBindings.nodes[n.id]={field,key,index};break}}}}}
+
 
 const pending=parent.__afPending;
 if(pending){
  afBindings=clone(pending.afBindings||{nodes:{},designs:{}});
- if(pending.afCatalog){afInferLegacyBindings(pending.designs,pending.afCatalog);afTranslateDesigns(pending.designs,pending.afCatalog)}
+ if(pending.afCatalog)afTranslateDesigns(pending.designs,pending.afCatalog);
  parent.__afPending=null;afVariant=pending.afVariant||0;
  afNameEdited=!!pending.nameEdited;
  const defaults=['New project','\u65b0\u5c08\u6848'];
