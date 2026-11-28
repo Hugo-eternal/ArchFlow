@@ -92,3 +92,7 @@
 ### D23 刪除被取代的 `openScheduleTemplates`（行為不變）
 - L751 的「任務框風格」對話框版本只綁在 `templateButton` 上，而該按鈕與對話框在 L765 就被移除；L769 被 L861 取代且沒有被保存。兩者刪除（L751 改成宣告，L769 留空行）。仍在使用的是 L861（展開「外觀」區塊並捲動過去）。
 - **測試**：新增 `tests/legacy/unit/schedule.ui.test.js`。
+
+### D18 刪除被取代的 `axisLayout`（行為不變）
+- L618 的本體與 L657 的版本都在被保存前就被取代（L685，再於 L722 包一層）。刪除（L618 改成宣告，L657 留空行）。
+- **測試**：`schedule.ui.test.js` 新增直接呼叫 `axisLayout()` 的檢查（graphVersion 3、任務編號）。

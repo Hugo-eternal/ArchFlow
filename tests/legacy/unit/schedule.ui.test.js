@@ -16,4 +16,11 @@ describe('schedule appearance command', () => {
     expect(r).toEqual({ live: true, dialog: false });
     expect(app.errors).toEqual([]);
   });
+
+  // v2-fix D18: axisLayout is now only the L685 version wrapped at L722 (graphVersion 3)
+  it('axisLayout runs the live chain', async () => {
+    const r = await app.eval(() => { axisLayout(); return { graph: model.scheduleGraph, version: model.graphVersion, refs: model.nodes.every(n => /^T\d{2}$/.test(n.ref)) }; });
+    expect(r).toEqual({ graph: true, version: 3, refs: true });
+    expect(app.errors).toEqual([]);
+  });
 });

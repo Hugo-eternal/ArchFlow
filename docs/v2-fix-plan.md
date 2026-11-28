@@ -52,7 +52,7 @@ V2 用「後面的程式再包一層」的方式修改函式，同一個函式�
 | D15 | `inspector` | 599、631、673 的時程分支；797 被 844 回退 | 741 以後 |
 | D16 | `exportSvgDocument` | 606、634、698 的時程分支 | 754、760 |
 | D17 | `scheduleExample` | 620、677 | 925 之後的包覆 |
-| D18 | `axisLayout` | 618、657 | 685＋722 |
+| D18 | `axisLayout` | 618、657（**2026-11-28 已刪**） | 685＋722 |
 | D19 | `autoArrange` | 378 本體、~~1214~~、1647、1736、1771（**2026-11-28 已刪**；1214 不是死層，它是 `rcAutoEngine`） | 1850＋1214 |
 | D20 | `projectData` | 520（被 555 整個取代） | 555 起 |
 | D21 | `workspaceExample` | L602 的時程範例分派層：L907 存了 `afOriginalExample` 卻從未呼叫 | 907 |
@@ -326,8 +326,8 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **D4–D8 完成**（D6 經複查不刪）。
 - **D10–D12 延後**（2026-11-28 分析）：RC1–RC3 的介面與 RC4／殼層仍共用元素與函式：`#uiOpen` 按鈕由 RC2 的 `uiEntry`（L1736）建立而殼層會點它；RC3（L1766–1778）把控制項建在 RC2 的 `#uiDialog` 裡；RC4 呼叫 `uiDraw`、`uiFitView`、`uiView`、`roLocked`、`roGeometry` 等，這些又遞移呼叫其他 RC2 函式。要安全刪除，需要先做完整的遞移依賴表（`scratchpad` 的 refs 分析可再做一次），並補整理預覽的 E2E（開啟、預覽、套用、取消）。建議放到 O2 攤平之前、補好 E2E 後再做。
 - **D19 完成**（見變更紀錄；1214 更正為非死層）。
-- **D23 完成**。分析工具：`python3 scripts/audit/override-chain.py <函式名>`（列出 DEF／SET／CAP 行；另需檢查 `.onclick=函式名` 這類直接引用）。
+- **D23、D18 完成**。分析工具：`python3 scripts/audit/override-chain.py <函式名>`（列出 DEF／SET／CAP 行；另需檢查 `.onclick=函式名` 這類直接引用）。
 - **下一項**：D13–D23 其餘項目（一個函式一個 commit；每項先確認「被取代且沒有被 `const X=函式` 保存」再刪）（每項一個 commit，全部完成後勾選 D4–D8）。
 - **分支**：本輪 session 依系統設定推送到 `claude/lucid-turing-qr3qvw`（從 `v2-fix` 開出，內容是 `v2-fix` 加上本輪提交）；要合併回 `v2-fix` 時請使用者確認。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
 - **尚待使用者決定**：無（F7 的行為確認後再做）。
-- **最後通過的驗證**：基準 `npm run test:legacy`（102 項）與 `npm run test:legacy:e2e`（16 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
+- **最後通過的驗證**：基準 `npm run test:legacy`（103 項）與 `npm run test:legacy:e2e`（16 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
