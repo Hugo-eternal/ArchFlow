@@ -128,3 +128,7 @@
 - **V2.10.1**：功能／電源的差異由 V1 的 `activeWorkspace`（`circuit`／`current`）在 23 行、三個各自的判斷函式（`afFunctionMode`、`isPower`、`isFn`）中分支。
 - **現在**：新增 `designMode()`（L340）：依目前設計的 `type` 回傳 `function`／`power`／`schedule`／`sequence`／`flowchart`；沒有開啟設計時（啟動畫面）沿用 `activeWorkspace`。23 行判斷改呼叫它（`activeWorkspace==='current'` ⇔ `designMode()==='power'`；`'circuit'` ⇔ `!=='power'`，含時程與 React 編輯器設計，與原本相同）。`afFunctionMode`、`isPower`、`isFn` 改為以 `designMode()` 判斷。剩下 16 行 `activeWorkspace` 都是 V1 工作區機制（6.4 表 W 類），M3 處理。
 - **測試**：M1 的 `saved.json`／`panels.json`、SVG 匯出、行為摘要全部不變；新增 `tests/legacy/unit/core.designmode.test.js`（五種設計與舊判斷等價）。
+
+### M3a 移除 V1 工作區分頁（行為不變）
+- 刪除隱藏的 `#tab-circuit`／`#tab-current` 分頁按鈕（L248）、`switchWorkspace` 與其點擊處理（L344–345）、`updateWorkspaceUI` 中的分頁狀態；`body.workspace-current` 與模式標題、說明文字改依 `designMode()`。L466 的 V1 `syncProjectChrome` 一直被 L549 取代，改成宣告；L549 不再隱藏已不存在的分頁。`.workspace-tabs` 容器保留（設計選單在裡面）。
+- `workspaces`／`activeWorkspace` 的狀態同步（L402、405、424、470、474、547、548、550、2332）留到 M3b。
