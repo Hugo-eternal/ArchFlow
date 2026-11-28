@@ -4266,7 +4266,7 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
 
  /* ---------- values: units filled in, common values offered ---------- */
  function normValue(k,v){
-  let s=String(v||'').trim().replace(/(\d)\s*u(?=[FHA]?$|$)/i,'$1µ').replace(/(\d)\s*([kKmM])\s*(ohm|Ω)?$/,(m,d,u)=>d+(u==='K'?'k':u==='m'?'m':u)+'Ω');
+  /* B5: only resistive parts (res, bead) read a bare k / M as ohms; other parts keep the prefix and get their own unit below */ let s=String(v||'').trim().replace(/(\d)\s*u(?=[FHA]?$|$)/i,'$1µ');s=k==='res'||k==='bead'?s.replace(/(\d)\s*([kKmM])\s*(ohm|Ω)?$/,(m,d,u)=>d+(u==='K'?'k':u)+'Ω'):s.replace(/(\d)\s*K$/,'$1k');
   if(!s)return s;
   const unit={res:'Ω',bead:'Ω',cap:'F',capp:'F',ind:'H',fuse:'A',xtal:'Hz',vcc:'V'}[k];
   if(unit&&/^\d+(\.\d+)?\s*[pnµmkKMG]?$/.test(s))s=s.replace(/\s+/g,'')+(k==='xtal'&&/[kKM]$/.test(s)?'Hz':unit);

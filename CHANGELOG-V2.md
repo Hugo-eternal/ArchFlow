@@ -138,3 +138,8 @@
 - **現在**：`workspaces` 刪除，設計狀態只存在 `designs[]`。一併刪除只服務 V1 的死碼：L363 與 L487 的舊開檔程式（L558 取代）、`resetProject` 與 L403 的「新建」處理（L472 取代）、`acceptLoadedProject`（只被舊開檔程式呼叫）、`allowedWorkspace`、L470 的雙工作區 `createWorkspaceProject`（L554 取代）。啟動時的初始模型不變（仍是 V1 範例，只是不再建立兩份工作區）。L10433 的精簡字級改套用到目前設計的模型。`activeWorkspace` 保留為相容別名：殼層 bundle 的 `D.fn()`（L5327，無原始碼）會讀它，只在 `activateDesign` 依設計類型設定。
 - **存檔格式**：不再寫 `cameras` 欄位（各設計自己的 `designs[].camera` 照舊）。
 - **測試**：`layout` golden 的存檔快照少了 `cameras`；其餘 golden（含 M1 的 `saved.json`／`panels.json`）與 E2E 不變。
+
+### B5 零件數值依零件種類補單位
+- **V2.10.1**：`normValue`（L4268）把任何以 k／K／m／M 結尾的數值都補成歐姆：晶振 `32.768k` → `32.768kΩ`、`24M` → `24MΩ`，保險絲 `500m` → `500mΩ`。
+- **現在**：只有電阻與磁珠把 k／M 當成歐姆（`4.7k` → `4.7kΩ`）；其他零件保留前綴、改大寫 K 為 k，再補自己的單位（晶振 `32.768k` → `32.768kHz`、保險絲 `500m` → `500mA`、電容 `100n` → `100nF`、電感 `4.7u` → `4.7µH`）。
+- **測試**：新增 `tests/legacy/unit/parts.values.test.js`（10 種輸入；V2.10.1 上晶振與保險絲 4 項失敗）。
