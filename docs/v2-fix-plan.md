@@ -259,7 +259,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 
 - [x] O8 `npm run v2:check`（locale 檢查、pack、test:legacy、test:legacy:e2e）
 - [x] O6 殼層依賴的 42 個隱藏元素 id 測試
-- [ ] O1 `tools/check-locales.mjs`（中英結構比對，容許 audit §3 的 7 處）
+- [x] O1 `tools/check-locales.mjs`（中英結構比對，容許 audit §3 的 7 處）
 - [ ] O3 「不再新增包覆層」規則寫進 `CLAUDE.md`
 - [ ] B2 + D9 版本號單一常數，顯示 `V2.11-dev`（第 10 節）
 - [ ] B1 存開檔遺失文字框 align／background、時程文字框與 theme
@@ -305,6 +305,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **目前狀態**：`v2-fix` 分支建立（從 `v3-refactor` 的最後提交開出，所以保留 V2 的測試基礎設施 `tests/legacy`、`tools/pack.mjs`、盤點報告，以及暫停中的 V3 程式作為參考）。`CLAUDE.md` 已改為 V2 修正流程，新增 `CHANGELOG-V2.md`。
 - **已完成**：O8 `npm run v2:check`（`scripts/v2-check.mjs`；`--quick` 略過 E2E；`tools/check-locales.mjs` 存在時自動納入）。
 - **已完成**：O6 `tests/legacy/e2e/shell-ids.spec.js`：39 個啟動即存在的 id（中英各測一次），另 3 個依選取產生（選方塊 `afArrangeSelectedIO`；選線 `p13Name`、`m2Reroute`，殼層使用前會先檢查是否存在）。
-- **下一項**：O1 `tools/check-locales.mjs`，之後依清單。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
+- **已完成**：O1 `tools/check-locales.mjs`（`npm run check:locales`，已納入 `v2:check`）：遮蔽文字後比對中英結構，只容許 audit §3.2 的 7 處（以內容規則判斷，不依行號）；B9、D27 完成時要刪掉對應的容許規則。
+- **下一項**：O3 「不再新增包覆層」規則寫進 `CLAUDE.md`，之後依清單。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
 - **尚待使用者決定**：無（F7 的行為確認後再做）。
 - **最後通過的驗證**：基準 `npm run test:legacy`（76 項）與 `npm run test:legacy:e2e`（14 項，含 O6 新增 4 項）全部通過；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。

@@ -22,7 +22,8 @@
     "test:unit": "vitest run",
     "typecheck": "tsc -p tsconfig.json",
     "unpack": "node tools/unpack.mjs",
-    "v2:check": "node scripts/v2-check.mjs"
+    "v2:check": "node scripts/v2-check.mjs",
+    "check:locales": "node tools/check-locales.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
