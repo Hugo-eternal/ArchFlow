@@ -123,3 +123,8 @@
 
 ### D16 刪除不會執行的時程 `exportSvgDocument` 層（行為不變）
 - L606、L634、L676、L697–698 四個時程匯出版本：L754 在時程時自己匯出、不往下呼叫，這些層的時程分支從未執行，非時程時只是原樣往下傳。全部刪除（計畫原列 606、634、698；L676 同理一併刪除）。時程、功能、電源的匯出 golden 不變。
+
+### M2 `designMode()` 單一判斷（行為不變）
+- **V2.10.1**：功能／電源的差異由 V1 的 `activeWorkspace`（`circuit`／`current`）在 23 行、三個各自的判斷函式（`afFunctionMode`、`isPower`、`isFn`）中分支。
+- **現在**：新增 `designMode()`（L340）：依目前設計的 `type` 回傳 `function`／`power`／`schedule`／`sequence`／`flowchart`；沒有開啟設計時（啟動畫面）沿用 `activeWorkspace`。23 行判斷改呼叫它（`activeWorkspace==='current'` ⇔ `designMode()==='power'`；`'circuit'` ⇔ `!=='power'`，含時程與 React 編輯器設計，與原本相同）。`afFunctionMode`、`isPower`、`isFn` 改為以 `designMode()` 判斷。剩下 16 行 `activeWorkspace` 都是 V1 工作區機制（6.4 表 W 類），M3 處理。
+- **測試**：M1 的 `saved.json`／`panels.json`、SVG 匯出、行為摘要全部不變；新增 `tests/legacy/unit/core.designmode.test.js`（五種設計與舊判斷等價）。
