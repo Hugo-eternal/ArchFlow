@@ -20,6 +20,12 @@ V3 重構已暫停，最後狀態在 `v3-refactor` 分支（`docs/v3-progress.md
 - 額度或時間快用完時，優先更新交接並 push。
 - 除非是有意的行為修正（需記錄於 `CHANGELOG-V2.md`），不得為了讓測試通過而修改黃金檔或 `QUIRK:` / `KNOWN_LOSS` 的預期值。
 
+## 修改方式（不再加長覆寫鏈，`docs/v2-fix-plan.md` O3）
+- **不可新增** `const baseX = X; X = function(){…}`（或 `window.X = …`、暫時把函式換成空函式）這類包覆層。V2 的主要函式已被包 11–37 層，再加一層只會更難找到真正生效的地方。
+- 要改行為時，找到**實際生效的那一層**（`docs/v3-audit.md` §1 列出每一層；刪掉死層或攤平後就改那一個定義），直接修改它。
+- 真的只能用補丁時（例如 React 殼層沒有原始碼），集中寫在兩份 `legacy/app.*.html` 檔案末端、`</body>` 前唯一的 `<script id="v2-fix">` 區塊內，用具名函式並註明對應的清單編號（例如 `// F1`）。
+- 中英兩份都要做同樣的修改；`npm run check:locales` 會檢查結構是否一致。
+
 ## V2.10.1 程式注意事項
 - `index.html` 是發佈檔，第 2 行為 base64，不要直接改。修改 `legacy/app.zh-Hant.html` 與 `legacy/app.en.html`（兩份都要改），再執行 `node tools/pack.mjs`；只有新的 `index.html` 時先執行 `node tools/unpack.mjs`。
 - `index.html` 第 3 行是內嵌字型（`AF_FONT_CSS`），不要改。
