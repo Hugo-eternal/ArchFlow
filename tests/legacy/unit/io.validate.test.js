@@ -120,3 +120,21 @@ describe('project file size guard', () => {
     } finally { await en.close(); }
   });
 });
+
+// v2-fix D5: the legacy copper ('amber') schedule theme is no longer turned into a custom style on load
+describe('schedule theme (D5)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); await app.createProject('schedule'); });
+  afterAll(async () => { await app?.close(); });
+
+  it("a schedule with theme 'amber' keeps it and is not converted to a custom style", async () => {
+    const r = await app.eval(() => {
+      const d = clone(projectData().designs[0].diagram);
+      d.scheduleAppearance = { ...d.scheduleAppearance, theme: 'amber' };
+      delete d.customStyleActive; delete d.savedEngineeringStyle; delete d.engineeringStyle;
+      const v = validateDiagram(d);
+      return { theme: v.scheduleAppearance.theme, custom: v.customStyleActive, saved: v.savedEngineeringStyle ?? null };
+    });
+    expect(r).toEqual({ theme: 'amber', custom: false, saved: null });
+  });
+});
