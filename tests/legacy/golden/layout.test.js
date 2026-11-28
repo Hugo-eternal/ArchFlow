@@ -41,7 +41,8 @@ function readPlan() {
 const waitDone = app => app.page.waitForFunction(() => /完成/.test(document.getElementById('v4Status').textContent), null, { timeout: 60000 });
 
 async function capture(app) {
-  const out = { project: await app.eval(() => projectData()) };
+  // applicationVersion is AF_VERSION (checked in io.roundtrip); keep it out of the layout golden
+  const out = { project: await app.eval(() => ({ ...projectData(), applicationVersion: '<AF_VERSION>' })) };
   await app.eval(() => autoArrange());
   await waitDone(app);
   out.routes = await app.eval(readPlan);

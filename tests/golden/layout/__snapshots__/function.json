@@ -1380,7 +1380,7 @@
         "startExamples": "使用專業範本開始"
       }
     },
-    "applicationVersion": "1.8-rc4",
+    "applicationVersion": "<AF_VERSION>",
     "wiringMode": "direct-ports",
     "camera": {
       "x": 106.40366972477065,

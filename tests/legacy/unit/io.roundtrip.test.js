@@ -77,8 +77,17 @@ describe('save → load round trip', () => {
     expect(loaded.activeDesignId).toBe(saved.activeDesignId);
   });
 
-  it('QUIRK: saved applicationVersion is 1.8-rc4, not V2.10.1', async () => {
+  // v2-fix B2/D9: V2.10.1 saved '1.8-rc4' (the last of 8 projectData layers won); now one constant.
+  it('saved applicationVersion and the on-screen version are the single AF_VERSION constant', async () => {
     await app.createProject('function');
-    expect((await app.eval(() => projectData())).applicationVersion).toBe('1.8-rc4');
+    const r = await app.eval(() => ({
+      constant: AF_VERSION,
+      saved: projectData().applicationVersion,
+      shown: [...document.querySelectorAll('.af-brand-version,.af-release-version')].map(e => e.textContent),
+    }));
+    expect(r.constant).toMatch(/^V2\.\d+(\.\d+)?(-dev)?$/);
+    expect(r.saved).toBe(r.constant);
+    expect(r.shown.length).toBeGreaterThan(0);
+    expect(new Set(r.shown)).toEqual(new Set([r.constant]));
   });
 });
