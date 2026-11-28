@@ -109,3 +109,7 @@
 ### D22 刪除被取代的時程與工作區輔助函式（行為不變）
 - `storeWorkspace`（L343→L547）、`allowedWorkspace`（L465→L548）、`scheduleTask`（L578→L619）、`taskHeight`（L617→L721）、`graphBounds`（L656→L689）、`graphAutoFit`（L663、L692→L736）的舊定義都在被保存或呼叫前就被取代，改成宣告／留空行；L665 綁到舊版的 `autoButton.onclick` 一併刪除（L736 會重新綁到現行版本）。
 - **測試**：`schedule.ui.test.js` 新增「輔助函式為現行版本、殼層 `#scheduleAuto` 執行 L736 的自動調整」。
+
+### D13 刪除不會執行的時程 `render` 層（行為不變）
+- L596（第一版時程繪製）與 L609（設 `model.schedule` 後往下呼叫）：時程設計由 L626 自己繪製並直接返回、不會往下呼叫，所以這兩層的時程分支從未執行，非時程時只是原樣往下傳。兩層刪除。
+- **計畫更正**：L626 的時程分支**仍在使用**（L648／L691 以後各層都會往下呼叫到它；以 `axisLayout` 監看實測，`render()` 一次會呼叫它一次），不刪。
