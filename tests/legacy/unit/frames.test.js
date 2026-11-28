@@ -192,3 +192,61 @@ describe('frames do not cut through blocks (F5)', () => {
     expect(app.errors).toEqual([]);
   });
 });
+
+describe('area frame keyboard (F6)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); });
+  afterAll(async () => { await app?.close(); });
+
+  it('the tab is focusable, Enter selects, arrows move the frame with its contents', async () => {
+    await app.createProject('function');
+    const ids = await app.eval(() => [...model.nodes].sort((p, q) => p.x - q.x).map(n => n.id));
+    await app.eval(() => select(null));
+    await frameAround(app, [ids[0]]);
+    await app.eval(() => window.afFrames.select(null));
+    const tab = app.page.locator('#af40-frames .af40-frame[data-id="frT"] .af40-tab');
+    expect(await tab.getAttribute('tabindex')).toBe('0');
+    expect(await tab.getAttribute('aria-label')).toBe('區域框：T');
+    await tab.focus();
+    await app.page.keyboard.press('Enter');
+    expect(await app.eval(() => window.afFrames.selected())).toBe('frT');
+    // focus survives the redraw that selecting causes
+    expect(await app.eval(() => document.activeElement?.closest('.af40-frame')?.dataset.id)).toBe('frT');
+
+    const step = await app.eval(() => Number(model.afGrid?.size) || 10);
+    const before = await app.eval(id => ({ f: { ...model.afFrames[0] }, n: { ...model.nodes.find(n => n.id === id) }, steps: past.length }), ids[0]);
+    await app.page.keyboard.press('ArrowDown');
+    await app.page.waitForTimeout(100);
+    const after = await app.eval(id => ({ f: { ...model.afFrames[0] }, n: { ...model.nodes.find(n => n.id === id) }, steps: past.length }), ids[0]);
+    expect(after.f.y - before.f.y).toBe(step);
+    expect(after.n.y - before.n.y).toBe(step);
+    expect(after.f.x).toBe(before.f.x);
+    expect(after.steps).toBe(before.steps + 1);
+    expect(await notice(app)).toContain('已移動區域框');
+    await app.eval(() => undo());
+    expect(await app.eval(id => model.nodes.find(n => n.id === id).y, ids[0])).toBe(before.n.y);
+    expect(app.errors).toEqual([]);
+  });
+
+  it('an arrow move into another block is refused with the engine reason', async () => {
+    await app.createProject('function');
+    const [a, b] = await app.eval(() => [...model.nodes].sort((p, q) => p.x - q.x).slice(0, 2).map(n => ({ id: n.id, x: n.x, w: n.w })));
+    await app.eval(() => select(null));
+    await frameAround(app, [a.id]);
+    await app.eval(() => window.afFrames.select('frT'));
+    await app.eval(() => document.querySelector('#af40-frames .af40-tab').focus());
+    const gap = b.x - (a.x + a.w);
+    const steps = Math.ceil((gap + 10) / 50);
+    const p0 = await app.eval(() => past.length);
+    let refused = false;
+    for (let i = 0; i < steps + 2 && !refused; i++) {
+      await app.page.keyboard.press('Shift+ArrowRight');
+      refused = (await notice(app)).includes('未套用');
+    }
+    expect(refused).toBe(true);
+    const r = await app.eval(id => { const n = model.nodes.find(x => x.id === id); return n.x; }, a.id);
+    expect(r + a.w).toBeLessThanOrEqual(b.x);
+    expect(await app.eval(() => past.length)).toBeLessThan(p0 + steps + 2);
+    expect(app.errors).toEqual([]);
+  });
+});
