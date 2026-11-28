@@ -23,4 +23,18 @@ describe('schedule appearance command', () => {
     expect(r).toEqual({ graph: true, version: 3, refs: true });
     expect(app.errors).toEqual([]);
   });
+
+  // v2-fix D22: only the live helper versions remain; the shell's #scheduleAuto button runs the L736 auto-fit
+  it('schedule helpers are the live versions and #scheduleAuto runs the current auto-fit', async () => {
+    const r = await app.eval(() => {
+      const fns = { storeWorkspace, allowedWorkspace, scheduleTask, taskHeight, graphBounds, graphAutoFit };
+      const types = Object.fromEntries(Object.entries(fns).map(([k, f]) => [k, typeof f]));
+      document.getElementById('scheduleAuto').click();
+      return { types, notice: document.getElementById('notice').textContent, h: taskHeight(model.nodes[0]) === scheduleMetrics(model.nodes[0]).height };
+    });
+    expect(Object.values(r.types).every(t => t === 'function')).toBe(true);
+    expect(r.notice).toContain('全部圓點與任務框');
+    expect(r.h).toBe(true);
+    expect(app.errors).toEqual([]);
+  });
 });

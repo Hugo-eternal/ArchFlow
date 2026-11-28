@@ -105,3 +105,7 @@
 
 ### D21 刪除未使用的 `workspaceExample` 時程分派層（行為不變）
 - L602 的時程範例分派層在 L906 被存成 `afOriginalExample` 後從未呼叫，L907 的版本自己處理時程範例。兩處刪除。L408 的 V1 本體**保留**：L424 在載入時呼叫它建立初始工作區（複查更正：計畫只列 L602，沒有列 L408，正確）。
+
+### D22 刪除被取代的時程與工作區輔助函式（行為不變）
+- `storeWorkspace`（L343→L547）、`allowedWorkspace`（L465→L548）、`scheduleTask`（L578→L619）、`taskHeight`（L617→L721）、`graphBounds`（L656→L689）、`graphAutoFit`（L663、L692→L736）的舊定義都在被保存或呼叫前就被取代，改成宣告／留空行；L665 綁到舊版的 `autoButton.onclick` 一併刪除（L736 會重新綁到現行版本）。
+- **測試**：`schedule.ui.test.js` 新增「輔助函式為現行版本、殼層 `#scheduleAuto` 執行 L736 的自動調整」。
