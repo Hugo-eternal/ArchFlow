@@ -265,7 +265,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [x] B1 存開檔遺失文字框 align／background、時程文字框與 theme
 - [x] B3 8 MB 專屬錯誤訊息
 - [x] O5 `batch(fn)` 取代暫換 `commit`（F3 需要）
-- [ ] F1 區域框移動被拒時顯示原因、不再誤報「已移動」
+- [x] F1 區域框移動被拒時顯示原因、不再誤報「已移動」
 - [ ] F4 畫完框清除提示
 - [ ] F3 新增區域框一個復原步驟
 - [ ] F2 區域框屬性面板、專案內容分組、快捷列樣式
@@ -311,6 +311,8 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **已完成**：B1 `cleanTexts`（L495）保留 align／background／font／padding；時程驗證（L605）保留 texts 與 theme；`KNOWN_LOSS` 全空。
 - **已完成**：B3 外層 loader（L2332）依原因顯示 8 MB／不是 JSON／不是專案。
 - **已完成**：O5 `batch(fn, mode)`（L288）；新增方塊、自動編排、時程 `oneStep` 改用它。之後要合併復原步驟一律用 `batch`，不要再暫換 `commit`。
-- **下一項**：F1 區域框移動被拒時顯示原因，之後依清單。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
+- **已完成**：F1 區域框 `up()` 只在 commit 記下移動時通知；拖曳中預覽重疊（`.af40-bad`）。
+- **下一項**：F4 畫完框清除提示，之後依清單。
+- **分支**：本輪 session 依系統設定推送到 `claude/lucid-turing-qr3qvw`（從 `v2-fix` 開出，內容是 `v2-fix` 加上本輪提交）；要合併回 `v2-fix` 時請使用者確認。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
 - **尚待使用者決定**：無（F7 的行為確認後再做）。
-- **最後通過的驗證**：基準 `npm run test:legacy`（86 項）與 `npm run test:legacy:e2e`（15 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
+- **最後通過的驗證**：基準 `npm run test:legacy`（88 項）與 `npm run test:legacy:e2e`（15 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。

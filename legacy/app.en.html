@@ -2730,7 +2730,7 @@ dialog button.primary,dialog .primary{background:var(--af-trace)!important;borde
 .af40-frame{position:absolute;box-sizing:border-box;border:1.5px dashed var(--fl);border-radius:10px;pointer-events:none}
 .af40-frame.af40-solid{border-style:solid}
 .af40-frame.af40-fill{border-style:solid;background:var(--ff)}
-.af40-frame.af40-sel{box-shadow:0 0 0 3px rgba(37,99,235,.22)}
+.af40-frame.af40-sel{box-shadow:0 0 0 3px rgba(37,99,235,.22)}.af40-frame.af40-bad{border-color:#c2410c!important;box-shadow:0 0 0 3px rgba(194,65,12,.25)!important}
 .af40-tab{position:absolute;left:16px;top:0;transform:translateY(-50%);height:26px;max-width:calc(100% - 32px);box-sizing:border-box;padding:0 11px;display:flex;align-items:center;border-radius:7px;background:var(--ft);color:var(--fi);border:1px solid var(--fl);font:600 13px/1 inherit;letter-spacing:.01em;white-space:nowrap;pointer-events:auto;cursor:move;user-select:none;touch-action:none}
 .af40-name{overflow:hidden;text-overflow:ellipsis}
 .af40-frame.af40-sel .af40-tab{box-shadow:0 0 0 2px #2563EB}
@@ -4376,9 +4376,9 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
    for(const[e,man]of inE)e.manual=man?man.map(q=>Array.isArray(q)?[q[0]+dx,q[1]+dy]:{...q,x:q.x+dx,y:q.y+dy}):null;
    for(const[e]of partE)e.manual=null;
    for(const el of document.querySelectorAll('#af40-frames .af40-frame')){const g=byId(el.dataset.id);if(g){el.style.left=g.x+'px';el.style.top=g.y+'px'}}
-   drawEdges();place()};
-  const up=()=>{window.removeEventListener('pointermove',move,true);window.removeEventListener('pointerup',up,true);window.removeEventListener('pointercancel',up,true);busy=null;
-   if(dx||dy){render();commit();const k=m.nodes.length;notify(k?T(`已移動區域框與框內 ${k} 個項目。`,`Moved the frame and ${k} item${k>1?'s':''} inside it.`):T('已移動區域框。','Moved the frame.'))}};
+   drawEdges();place();/* F1: same rule as the engine check 'No overlapping blocks' (ggChecks) — warn before release */const movedIds=new Set(orig.nodes.map(([n])=>n.id)),hit=(a,b)=>!(a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y);const bad=orig.nodes.some(([a])=>Number.isFinite(a.w)&&Number.isFinite(a.h)&&model.nodes.some(b=>!movedIds.has(b.id)&&Number.isFinite(b.w)&&Number.isFinite(b.h)&&hit(a,b)));const fel=document.querySelector(`#af40-frames .af40-frame[data-id="${CSS.escape(f.id)}"]`);if(fel)fel.classList.toggle('af40-bad',bad);if(bad){notify(T('放開後框內方塊會與其他方塊重疊，這次移動不會套用。','Releasing here would overlap other blocks; this move will not be applied.'))}};
+  const up=()=>{window.removeEventListener('pointermove',move,true);window.removeEventListener('pointerup',up,true);window.removeEventListener('pointercancel',up,true);busy=null;/* F1: report success only when commit() recorded the move; a refused move keeps the engine's reason */
+   if(dx||dy){const top=past.at(-1);render();commit();if(past.at(-1)===top)return;const k=m.nodes.length;notify(k?T(`已移動區域框與框內 ${k} 個項目。`,`Moved the frame and ${k} item${k>1?'s':''} inside it.`):T('已移動區域框。','Moved the frame.'))}};
   window.addEventListener('pointermove',move,true);window.addEventListener('pointerup',up,true);window.addEventListener('pointercancel',up,true)}
 
  /* ---------- resize from a corner ---------- */
