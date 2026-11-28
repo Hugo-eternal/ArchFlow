@@ -96,7 +96,7 @@ V2 用「後面的程式再包一層」的方式修改函式，同一個函式�
 
 | # | 缺陷 | 位置／證據 | 修正方向 |
 |---|---|---|---|
-| B4 | 時程「含頭尾」天數規則完全沒有作用 | L624 把 `scheduleLabel` 換成 `intervalState(e).label`；測試 `QUIRK: scheduleLabel ignores the inclusive counting rule` | `intervalState` 依 `count: 'inclusive'` 加一天 |
+| B4 | 時程「含頭尾」天數規則完全沒有作用 | L624 把 `scheduleLabel` 換成 `intervalState(e).label`；測試 `QUIRK: scheduleLabel ignores the inclusive counting rule` | **2026-11-28 複查：不是缺陷**。`inclusive` 是已退役的規則：L633 在每次載入時把 `scheduleRules.count` 設回 `difference`，介面也沒有任何地方能設定它，所以使用者不會遇到。只把測試改成記錄目前行為；若要「含頭尾」功能，需另做設定介面（新功能，V2.12） |
 | B5 | 零件數值把所有 k／M 補成 kΩ／MΩ（晶振 `32.768k` 變成 `32.768kΩ`） | `normValue` L4268 | 只對以歐姆計的零件補 Ω，其他零件依單位補（例如晶振補 Hz） |
 | B6 | 時程的「專案內容」分組標題寫成「功能方塊」 | 時程版 `updateExplorer`（L775）沿用 HTML 的「功能方塊」分組標題（L248） | 時程時顯示「任務」 |
 | B7 | 格線關閉時，失效的手動路徑原樣保留並顯示為錯誤；格線開啟時才改回自動繞線 | `fullPath` 與格線層（L1591 前後） | 兩種模式一致：未鎖定的線改回自動繞線 |
@@ -326,7 +326,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [x] M1 功能與電源的存檔、匯出 golden 快照
 - [x] M2 `designMode()` 單一判斷（快照不變）
 - [x] M3 拿掉 V1 工作區（D3）（快照不變）
-- [ ] B4 時程「含頭尾」規則
+- [x] B4 時程「含頭尾」規則（複查：不是缺陷，見 B4 列）
 - [ ] B5 零件數值單位
 - [ ] B6 時程分組標題
 - [ ] B7 失效手動路徑一律改回自動繞線
@@ -361,6 +361,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **M1 完成**：功能／電源 golden 原本已有行為摘要與 SVG 匯出；新增 `saved.json`（存檔 JSON）與 `panels.json`（每個方塊與線路的屬性面板文字），`tests/golden/golden.js` 的 `savedAndPanels()`。M2–M4 必須讓這些快照不變。
 - **M2 完成**：`designMode()`（L340）。`activeWorkspace` 只剩 6.4 表 W 類 16 行：289、292、340、344、346、402、405、422、423、424、470、474、547、548、550、2332。
 - **M3 完成**：分頁 UI（M3a）與 `workspaces` 狀態（M3b）移除；`activeWorkspace` 只剩相容別名（殼層 `D.fn()` 讀它，`activateDesign` 設定）。存檔不再有 `cameras` 欄位。
-- **下一項**：B4 時程「含頭尾」規則，接著 B5–B11，再來 M4（電源接腳模型）。
+- **B4 複查結案**（不是缺陷，見 2. 待修清單 B4 列）。
+- **下一項**：B5 零件數值單位，接著 B6–B11，再來 M4（電源接腳模型）。
 - **工具**：`npm run v2:check`（全部驗證）；`python3 scripts/audit/override-chain.py <函式名>`（DEF／SET／CAP；另需人工檢查 `.onclick=函式名` 等直接引用與載入時呼叫）。**只在 `v2:check` 結束碼為 0 時 commit。**
 - **最後通過的驗證**：`npm run v2:check`：`test:legacy` 112 項、`test:legacy:e2e` 16 項全部通過。

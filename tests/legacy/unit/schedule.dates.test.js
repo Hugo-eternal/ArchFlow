@@ -74,9 +74,10 @@ describe('schedule date calculations', () => {
     });
   });
 
-  // QUIRK: L624 replaces scheduleLabel with `intervalState(e).label`, so the design rule
-  // `count: 'inclusive'` has no effect and an unknown endpoint falls back to the link's own dates.
-  it('QUIRK: scheduleLabel ignores the inclusive counting rule', async () => {
+  // v2-fix B4 (reviewed 2026-11-28): links count days as the date difference. `count: 'inclusive'`
+  // is a retired rule — validation (L633) resets every schedule to 'difference' on load and no UI sets
+  // it — so scheduleLabel (L624 → intervalState) ignores it. An unknown endpoint uses the link's own dates.
+  it('scheduleLabel counts the date difference (the retired inclusive rule has no effect)', async () => {
     const r = await app.eval(() => {
       const [na, nb] = model.nodes;
       Object.assign(na, { timeType: 'range', startDate: '2024-03-01', endDate: '2024-03-05' });
