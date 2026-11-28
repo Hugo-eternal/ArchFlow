@@ -302,33 +302,12 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [ ] 發佈 V2.11.0（人工驗收後）
 
 ### 交接
-- **目前狀態**：`v2-fix` 分支建立（從 `v3-refactor` 的最後提交開出，所以保留 V2 的測試基礎設施 `tests/legacy`、`tools/pack.mjs`、盤點報告，以及暫停中的 V3 程式作為參考）。`CLAUDE.md` 已改為 V2 修正流程，新增 `CHANGELOG-V2.md`。
-- **已完成**：O8 `npm run v2:check`（`scripts/v2-check.mjs`；`--quick` 略過 E2E；`tools/check-locales.mjs` 存在時自動納入）。
-- **已完成**：O6 `tests/legacy/e2e/shell-ids.spec.js`：39 個啟動即存在的 id（中英各測一次），另 3 個依選取產生（選方塊 `afArrangeSelectedIO`；選線 `p13Name`、`m2Reroute`，殼層使用前會先檢查是否存在）。
-- **已完成**：O1 `tools/check-locales.mjs`（`npm run check:locales`，已納入 `v2:check`）：遮蔽文字後比對中英結構，只容許 audit §3.2 的 7 處（以內容規則判斷，不依行號）；B9、D27 完成時要刪掉對應的容許規則。
-- **已完成**：O3 `CLAUDE.md`「修改方式」一節：不新增包覆層、直接改生效的定義；必要的補丁集中在檔案末端 `<script id="v2-fix">`。
-- **已完成**：B2 + D9 `AF_VERSION`（`legacy/app.*.html` L252 開頭）：存檔、畫面、頁面標題都讀它；發版只要改這一處再 `node tools/pack.mjs`。刪掉的層保留空行，行號不變。
-- **已完成**：B1 `cleanTexts`（L495）保留 align／background／font／padding；時程驗證（L605）保留 texts 與 theme；`KNOWN_LOSS` 全空。
-- **已完成**：B3 外層 loader（L2332）依原因顯示 8 MB／不是 JSON／不是專案。
-- **已完成**：O5 `batch(fn, mode)`（L288）；新增方塊、自動編排、時程 `oneStep` 改用它。之後要合併復原步驟一律用 `batch`，不要再暫換 `commit`。
-- **已完成**：F1 區域框 `up()` 只在 commit 記下移動時通知；拖曳中預覽重疊（`.af40-bad`）。
-- **已完成**：F4 `stopDraw(msg)`；畫完／Esc／再按指令都會換掉提示。
-- **已完成**：F3 `rename(id, drawn)` 命名時取代畫框那一步（命名是非同步輸入，無法用 `batch` 包住）。
-- **已完成**：F2 `paintPanel`／`paintNav`（af40 模組內）；殼層標題用 `body.af40-sel-head` 與 `--af40-kind`／`--af40-name` CSS 變數覆寫；`#inspector` 被重建時由 MutationObserver 補回面板。
-- **已完成**：F5 `uncut(f)`（畫完框擴大到不切過方塊）、`frameSelected()`（選取方塊時直接框住）。拖曳角落縮放仍可能切過方塊（未處理，可在 F6 之後評估）。
-- **已完成**：F6 標籤 `tabIndex=0`＋Enter 選取；方向鍵 `nudge()`；重繪保留焦點。
-- **已完成**：F8 匯出標籤由資料計算（`appendFreeTextExport` 的 af40 層）。
-- **F7 待使用者決定**：整理預覽套用時區域框要怎麼處理（框依成員重新貼合／框內成員視為一組／維持不動）。實測時「整理預覽」套用 scrambled 範例後方塊位置沒有改變，行為尚未確認。
-- **D4–D8 進行中**：D4 完成（version 4 檔案改為拒絕並說明原因）；D5 完成（amber 主題不再轉換）。
-- **D6 不刪**：複查後不是舊檔專用（見第 1.1 節 D6 列）。
-- **D7 完成**：刪除 `afInferLegacyBindings`（L971 留空行）。
-- **D8 完成**：整個 `afDirectConnections` 轉換刪除（不只拒絕載入那段）：它也會刪除使用者改名的分支接點。
-- **D4–D8 完成**（D6 經複查不刪）。
-- **D10–D12 延後**（2026-11-28 分析）：RC1–RC3 的介面與 RC4／殼層仍共用元素與函式：`#uiOpen` 按鈕由 RC2 的 `uiEntry`（L1736）建立而殼層會點它；RC3（L1766–1778）把控制項建在 RC2 的 `#uiDialog` 裡；RC4 呼叫 `uiDraw`、`uiFitView`、`uiView`、`roLocked`、`roGeometry` 等，這些又遞移呼叫其他 RC2 函式。要安全刪除，需要先做完整的遞移依賴表（`scratchpad` 的 refs 分析可再做一次），並補整理預覽的 E2E（開啟、預覽、套用、取消）。建議放到 O2 攤平之前、補好 E2E 後再做。
-- **D19 完成**（見變更紀錄；1214 更正為非死層）。
-- **D17–D23 完成**（D19 更正 L1214、D21 保留 L408）。
-- **下一項**：D13–D16（`render`／`drawEdges`／`inspector`／`exportSvgDocument` 被包覆層中的時程分支：這些層有被保存，只能刪層內的時程分支，要逐層確認後面的層在時程時不會呼叫到它）。分析工具：`python3 scripts/audit/override-chain.py <函式名>`（列出 DEF／SET／CAP 行；另需檢查 `.onclick=函式名` 這類直接引用）。
-- **下一項**：D13–D23 其餘項目（一個函式一個 commit；每項先確認「被取代且沒有被 `const X=函式` 保存」再刪）（每項一個 commit，全部完成後勾選 D4–D8）。
-- **分支**：本輪 session 依系統設定推送到 `claude/lucid-turing-qr3qvw`（從 `v2-fix` 開出，內容是 `v2-fix` 加上本輪提交）；要合併回 `v2-fix` 時請使用者確認。決定見第 5 節；區域框實測問題第 8 節；元件庫擴充第 9 節；版本管理第 10 節。
-- **尚待使用者決定**：無（F7 的行為確認後再做）。
-- **最後通過的驗證**：基準 `npm run test:legacy`（105 項）與 `npm run test:legacy:e2e`（16 項）全部通過（`npm run v2:check`）；`node tools/pack.mjs` 產生的 `index.html` 與現行相同。
+- **分支**：本輪工作推送到 `claude/lucid-turing-qr3qvw`（從 `v2-fix` 開出＝`v2-fix`＋本輪提交）。**合併回 `v2-fix` 前要向使用者確認。**
+- **已完成**（細節見 `CHANGELOG-V2.md`）：O8、O6、O1、O3、B2+D9、B1、B3、O5、F1–F6、F8、D4、D5、D7、D8、D17–D23。
+- **重要位置**：版本常數 `AF_VERSION`（L252 開頭）；`batch(fn, mode)`（L288）；區域框模組 af40（約 L4294 起：`paintPanel`／`paintNav`／`uncut`／`frameSelected`／`nudge`）；刪除的程式行都留空行或 `var X=null` 宣告，**行號與 docs 一致**。
+- **複查更正**：D6 不刪（線路引擎在用）；D19 的 L1214 不是死層（`rcAutoEngine`）；D21 的 L408 保留（L424 載入時呼叫）。
+- **延後**：D10–D12（RC1–RC3 介面與 RC4／殼層共用元素與函式；需遞移依賴表＋整理預覽 E2E，建議在 O2 前做）。
+- **尚待使用者決定**：F7（整理預覽套用時區域框：依成員重新貼合／框內成員視為一組／維持不動）。
+- **下一項**：D13–D16（`render`／`drawEdges`／`inspector`／`exportSvgDocument` 中已無作用的時程分支：這些層有被保存，只能刪層內的時程分支，要逐層確認後面的層在時程時不會呼叫到它）。之後依 7.1：M0–M3、B4–B11…
+- **工具**：`npm run v2:check`（全部驗證）；`python3 scripts/audit/override-chain.py <函式名>`（DEF／SET／CAP；另需人工檢查 `.onclick=函式名` 等直接引用與載入時呼叫）。**只在 `v2:check` 結束碼為 0 時 commit。**
+- **最後通過的驗證**：`npm run v2:check`：`test:legacy` 105 項、`test:legacy:e2e` 16 項全部通過。
