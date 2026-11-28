@@ -313,7 +313,9 @@
               "size": 18,
               "color": "#14202C",
               "bold": true,
-              "italic": false
+              "italic": false,
+              "align": "left",
+              "background": "transparent"
             },
             {
               "id": "xvo8jlyn5m",
@@ -324,7 +326,9 @@
               "size": 11,
               "color": "#5F6C77",
               "bold": false,
-              "italic": false
+              "italic": false,
+              "align": "left",
+              "background": "transparent"
             }
           ],
           "afLinePresets": [],

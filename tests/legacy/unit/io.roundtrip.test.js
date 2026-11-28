@@ -29,16 +29,9 @@ function missingFrom(a, b, path = '') {
 // array indexes collapsed so the list does not depend on how many items an example has
 const lost = (a, b) => [...new Set(missingFrom(a, b).map(p => p.replace(/\.\d+(?=\.|$)/g, '[]')))].sort();
 
-// QUIRK (V2.10.1 data loss on reload, found in step 2.5 — V3 must fix and update this table):
-// - free text boxes lose `align` and `background` (function / power)
-// - schedule designs lose ALL free text boxes and their `theme`
-const KNOWN_LOSS = {
-  function: ['.designs[].diagram.texts[].align', '.designs[].diagram.texts[].background'],
-  power: ['.designs[].diagram.texts[].align', '.designs[].diagram.texts[].background'],
-  schedule: ['.designs[].diagram.texts.length', '.designs[].diagram.theme'],
-  sequence: [],
-  flowchart: [],
-};
+// v2-fix B1: V2.10.1 lost text-box `align` / `background` (function / power) and ALL schedule
+// text boxes and the schedule `theme` on reload. Nothing may be lost now.
+const KNOWN_LOSS = { function: [], power: [], schedule: [], sequence: [], flowchart: [] };
 
 describe('save → load round trip', () => {
   let app;
@@ -76,6 +69,29 @@ describe('save → load round trip', () => {
     expect(loaded.designs.map(d => [d.name, d.type])).toEqual(saved.designs.map(d => [d.name, d.type]));
     expect(loaded.activeDesignId).toBe(saved.activeDesignId);
   });
+
+  // v2-fix B1: every text-box style field survives validation, out-of-range values are clamped or dropped
+  for (const type of ['function', 'schedule']) {
+    it(`${type}: text boxes keep align, background, font and padding; invalid values are dropped`, async () => {
+      await app.createProject(type);
+      const r = await app.eval(() => {
+        const d = JSON.parse(JSON.stringify(model));
+        d.texts = [
+          { id: 'tA', text: 'a', x: 1, y: 2, w: 200, size: 14, color: '#112233', bold: true, italic: true, align: 'center', background: '#fff7d6', font: 'Georgia', padding: 12 },
+          { id: 'tB', text: 'b', x: 3, y: 4, align: 'justify', background: 'red;x', font: '<b>', padding: 99 },
+        ];
+        d.theme = { ...defaultTheme, title: 30 };
+        const v = validateDiagram(d);
+        return { texts: v.texts, theme: v.theme };
+      });
+      expect(r.texts[0]).toMatchObject({ align: 'center', background: '#fff7d6', font: 'Georgia', padding: 12, bold: true, italic: true });
+      expect(r.texts[1]).not.toHaveProperty('align');
+      expect(r.texts[1]).not.toHaveProperty('background');
+      expect(r.texts[1]).not.toHaveProperty('font');
+      expect(r.texts[1].padding).toBe(40);
+      expect(r.theme.title).toBe(30);
+    });
+  }
 
   // v2-fix B2/D9: V2.10.1 saved '1.8-rc4' (the last of 8 projectData layers won); now one constant.
   it('saved applicationVersion and the on-screen version are the single AF_VERSION constant', async () => {
