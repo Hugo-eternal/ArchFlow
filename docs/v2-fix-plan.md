@@ -185,9 +185,55 @@ V3 已經做好、而且不影響 V2 介面風格的功能。要帶回需要另�
 | M6 | 「切換檢視」指令：功能方塊 ⇄ 電源架構就地切換（改設計類型、保留全部資料、一個復原步驟），放在設計選單與指令面板（殼層外的補丁層）；新方塊與新線的預設值跟著目前類型 | 切換兩次回到原狀；資料不遺失；E2E 測試 |
 | M7 | 收尾：說明文字、狀態列、匯出檔名依類型統一處理；更新程式地圖與本文件 | 全部測試通過 |
 
-### 6.4 分支盤點表
+### 6.4 分支盤點表（M0，2026-11-28）
 
-（M0 填寫：行號、程式片段、分類、處置。）
+範圍：`legacy/app.zh-Hant.html`，排除殼層 bundle（L5300–10379）；D4–D23 清理後的行號（刪除的行留空，行號不變）。
+數量：`activeWorkspace` 39 行 57 處、`type==='power'` 8 行、`ioConfig` 16 行 27 處、`afFunctionMode()` 8 行、`isFn()` 14 行（另有 `isPower()` L3802）。殼層 bundle 的 `D.fn()`、啟動卡片、設計圖示、`managedDesignType` 選單寫死兩種類型，依方案 A 不動。
+
+分類代號：**W** V1 工作區機制、**J** 判斷函式、**D** 新物件預設值、**F** 屬性面板欄位、**R** 呈現（文字、顏色、標籤）、**E** 匯出、**T** 範本／命名、**P** 接腳模型（`ioConfig` 槽位）、**K** 設計類型本身（保留）。
+
+| 行 | 片段 | 類 | 處置 |
+|---|---|---|---|
+| 289、292 | `typeof activeWorkspace!=='undefined'` 時呼叫 `updateWorkspaceUI`／`updateExplorer` | W | M3：改成直接呼叫或移除守衛 |
+| 340 | `let activeWorkspace='circuit'` | W | M3：移除；需要時由 `designMode()` 推得 |
+| 344 | `switchWorkspace`（分頁切換） | W | M3：刪除（D3） |
+| 346 | `updateWorkspaceUI`：`body.workspace-current`、分頁 active、`#modeTitle`、`#workspaceNote` 文字 | W＋R | M3 刪分頁；`workspace-current` class 改由 `designMode()` 設定（CSS 依賴此 class）；文字 → M7 |
+| 402、405、424 | 新專案／初始化時重設 `workspaces` 與 `activeWorkspace='circuit'` | W | M3 |
+| 422、423 | V1 範例對話框（依工作區選範例與說明） | W＋T | M3：確認殼層「範本」不經過這裡後刪除 |
+| 470、474 | 建立／載入專案：`type==='power'?'current':'circuit'`，`allowedWorkspace` | W | M2／M3：改為設定目前設計並呼叫 `designMode()` |
+| 547、548、550 | `storeWorkspace`／`allowedWorkspace`／`activateDesign` 在設計與工作區之間同步 | W | M3：設計狀態只存在 `designs[]` |
+| 2332 | 開檔失敗還原快照存 `activeWorkspace`／`workspaces` | W | M3：快照只存 `designs`、`activeDesignId` |
+| 1235 | `afFunctionMode=()=>activeWorkspace==='circuit'&&!isSchedule()` | J | M2：改成 `designMode()==='function'` |
+| 3802 | `isPower()` | J | M2：改成 `designMode()==='power'` |
+| 3876 | `isFn()`（零件庫模組） | J | M2：改成 `designMode()==='function'`；M5 放寬為「非時程」 |
+| 314 | 線路面板：電源線多 `currentEdgeFields`；線名提示「電源軌／支路名稱」vs「訊號名稱／匯流排標籤」 | F | M2；M5 視需要讓功能圖也可選顯示 |
+| 1952 | 功能方塊面板補強層（`activeWorkspace!=='circuit'` 時略過） | F | M2 |
+| 1998、2060 | 電源方塊面板（量測、負載）層 | F | M2；M5 |
+| 2951 | `mountPorts`：電源時用槽位式接腳 UI | F＋P | M4：電源改用功能方塊接腳表 |
+| 319 | 新線預設 `kind:'power'`、`arrow:true`（電源） | D | M2；M6 依目前類型 |
+| 327、1913 | 新方塊：電源時 `role:'converter'`、電壓電流欄位、`ioConfig` | D＋P | M2；M4 拿掉 `ioConfig` |
+| 1342 | 新方塊樣式預設色（電源綠、功能藍） | D＋R | M2 |
+| 349 | `edgeLabel`：電源線標籤附電壓／電流 | R | M2；M5 |
+| 353 | 分割線時清除電流（電源） | D | M2 |
+| 368 | 量測預設顯示（電源顯示電壓／電流） | R | M2；M5（功能預設不顯示） |
+| 393、434 | 選取色、預設強調色（電源 `#b45309`、功能 `#1d4ed8`） | R | M2 |
+| 452 | 接腳提示文字「鎖點」vs 接腳名稱 | R＋P | M4（電源也顯示接腳名稱） |
+| 2053 | `appendMetrics`：電源量測帶 | R | M2；M5 |
+| 399 | 匯出檔名 `current-architecture`／`circuit-architecture` | E | M7（＝B15：專案名－設計名） |
+| 549、554 | 設計選單類型名、新設計預設名 | K | 保留 |
+| 966、970 | 範本名稱與翻譯依設計類型 | K | 保留 |
+| 3370、3517、3542 | 範本說明／命名依目前類型（`activeWorkspace==='current'?'power':…`） | T | M2：改用目前設計的 `type` |
+| 1229、1241、1256–1258、1264、1277、1287 | `afFunctionMode()` 守衛：多接腳管理、加接腳、依連線排列、接腳標籤 | P | M2 換判斷；M4 電源也走同一套（守衛改成「非時程」） |
+| 3979–4284（`isFn()` 13 處） | 零件庫：清單、插入、拖放、符號旋轉、線上加分支 | P＋F | M2 換判斷；M5 電源也可用 |
+| 359 | 驗證保留 `ioConfig:cleanIO(...)` | P | M4：存檔時移除（記錄於變更紀錄） |
+| 451、455、456 | `normalizeSlots`、`setIO`、槽位版 `ioSettings` | P | M4：刪除（D26） |
+| 922 | V1 範例設定 `ioConfig` | P | M3／M4（範例若已不可達則隨 M3 刪除） |
+| 1353、1912 | 新增方塊時重設／建立 `ioConfig` | P | M4 |
+| 2926–2927 | `ensureIO`：範本方塊補 `ioConfig` 給接腳管理器 | P | M4：接腳管理器改讀 `ports` 後刪除 |
+| 3348 | 範本套用時 `delete n.ioConfig` | P | M4：刪除後不需要 |
+| 4031、4035、4491、4606、4611 | 零件／連接器／LCD 插入時設定 `ioConfig` | P | M4 |
+
+**M0 結論**：W 類 15 行全部可在 M3 移除（前提是 M2 先讓其他類別改讀 `designMode()`）；P 類 24 行是 M4 的範圍；K 類保留；F／R／D／E／T 類在 M2 只換判斷式，行為不變（M1 快照保護）。
 
 ## 7. 整體維護優化
 
@@ -276,7 +322,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [x] D4–D8 刪除舊檔轉換（使用者決定刪除；記入變更紀錄）
 - [ ] D10–D12 刪除自動整理 RC 死入口（保留計算函式）
 - [x] D13–D23 刪除被後層蓋掉的實作（一個函式一個 commit）
-- [ ] M0 功能／電源分支盤點（6.4 表）
+- [x] M0 功能／電源分支盤點（6.4 表）
 - [ ] M1 功能與電源的存檔、匯出 golden 快照
 - [ ] M2 `designMode()` 單一判斷（快照不變）
 - [ ] M3 拿掉 V1 工作區（D3）（快照不變）
@@ -311,6 +357,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **D13 完成**（L596、L609 刪除；L626 更正為使用中）。
 - **D14 完成**。行內容檢查：`node scripts/audit/statements.mjs <行號…>`。
 - **D13–D23 完成**（D13 保留 L626、D19 保留 L1214、D21 保留 L408：複查後仍在使用）。
-- **下一項**：M0 功能／電源分支盤點（6.4 表），接著 M1–M3、B4–B11（見 7.1）。
+- **M0 完成**（6.4 表）。
+- **下一項**：M1 功能與電源的存檔、匯出 golden 快照，接著 M2–M3、B4–B11（見 7.1）。
 - **工具**：`npm run v2:check`（全部驗證）；`python3 scripts/audit/override-chain.py <函式名>`（DEF／SET／CAP；另需人工檢查 `.onclick=函式名` 等直接引用與載入時呼叫）。**只在 `v2:check` 結束碼為 0 時 commit。**
 - **最後通過的驗證**：`npm run v2:check`：`test:legacy` 104 項、`test:legacy:e2e` 16 項全部通過。
