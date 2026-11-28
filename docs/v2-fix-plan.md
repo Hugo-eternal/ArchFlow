@@ -325,7 +325,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [x] M0 功能／電源分支盤點（6.4 表）
 - [x] M1 功能與電源的存檔、匯出 golden 快照
 - [x] M2 `designMode()` 單一判斷（快照不變）
-- [ ] M3 拿掉 V1 工作區（D3）（快照不變）
+- [x] M3 拿掉 V1 工作區（D3）（快照不變）
 - [ ] B4 時程「含頭尾」規則
 - [ ] B5 零件數值單位
 - [ ] B6 時程分組標題
@@ -360,7 +360,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **M0 完成**（6.4 表）。
 - **M1 完成**：功能／電源 golden 原本已有行為摘要與 SVG 匯出；新增 `saved.json`（存檔 JSON）與 `panels.json`（每個方塊與線路的屬性面板文字），`tests/golden/golden.js` 的 `savedAndPanels()`。M2–M4 必須讓這些快照不變。
 - **M2 完成**：`designMode()`（L340）。`activeWorkspace` 只剩 6.4 表 W 類 16 行：289、292、340、344、346、402、405、422、423、424、470、474、547、548、550、2332。
-- **M3a 完成**：分頁 UI 移除。
-- **下一項**：M3b 移除 `workspaces`／`activeWorkspace` 狀態同步（L402、405、424、470、474、547、548、550、2332；`designMode()` 的備援要改成不依賴 `activeWorkspace`），快照不變；接著 B4–B11。
+- **M3 完成**：分頁 UI（M3a）與 `workspaces` 狀態（M3b）移除；`activeWorkspace` 只剩相容別名（殼層 `D.fn()` 讀它，`activateDesign` 設定）。存檔不再有 `cameras` 欄位。
+- **下一項**：B4 時程「含頭尾」規則，接著 B5–B11，再來 M4（電源接腳模型）。
 - **工具**：`npm run v2:check`（全部驗證）；`python3 scripts/audit/override-chain.py <函式名>`（DEF／SET／CAP；另需人工檢查 `.onclick=函式名` 等直接引用與載入時呼叫）。**只在 `v2:check` 結束碼為 0 時 commit。**
 - **最後通過的驗證**：`npm run v2:check`：`test:legacy` 112 項、`test:legacy:e2e` 16 項全部通過。

@@ -27,7 +27,7 @@ describe('schedule appearance command', () => {
   // v2-fix D22: only the live helper versions remain; the shell's #scheduleAuto button runs the L736 auto-fit
   it('schedule helpers are the live versions and #scheduleAuto runs the current auto-fit', async () => {
     const r = await app.eval(() => {
-      const fns = { storeWorkspace, allowedWorkspace, scheduleTask, taskHeight, graphBounds, graphAutoFit };
+      const fns = { storeWorkspace, scheduleTask, taskHeight, graphBounds, graphAutoFit };
       const types = Object.fromEntries(Object.entries(fns).map(([k, f]) => [k, typeof f]));
       document.getElementById('scheduleAuto').click();
       return { types, notice: document.getElementById('notice').textContent, h: taskHeight(model.nodes[0]) === scheduleMetrics(model.nodes[0]).height };

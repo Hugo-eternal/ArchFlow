@@ -132,3 +132,9 @@
 ### M3a 移除 V1 工作區分頁（行為不變）
 - 刪除隱藏的 `#tab-circuit`／`#tab-current` 分頁按鈕（L248）、`switchWorkspace` 與其點擊處理（L344–345）、`updateWorkspaceUI` 中的分頁狀態；`body.workspace-current` 與模式標題、說明文字改依 `designMode()`。L466 的 V1 `syncProjectChrome` 一直被 L549 取代，改成宣告；L549 不再隱藏已不存在的分頁。`.workspace-tabs` 容器保留（設計選單在裡面）。
 - `workspaces`／`activeWorkspace` 的狀態同步（L402、405、424、470、474、547、548、550、2332）留到 M3b。
+
+### M3b 移除 V1 工作區狀態（`workspaces`）
+- **V2.10.1**：除了 `designs[]` 之外，還有一份 V1 的 `workspaces`（circuit／current）狀態，在切換設計、存檔、開檔失敗還原時同步；存檔會多寫一個 `cameras: {circuit, current}` 欄位（version 4 的遺留，開檔時沒有用到）。
+- **現在**：`workspaces` 刪除，設計狀態只存在 `designs[]`。一併刪除只服務 V1 的死碼：L363 與 L487 的舊開檔程式（L558 取代）、`resetProject` 與 L403 的「新建」處理（L472 取代）、`acceptLoadedProject`（只被舊開檔程式呼叫）、`allowedWorkspace`、L470 的雙工作區 `createWorkspaceProject`（L554 取代）。啟動時的初始模型不變（仍是 V1 範例，只是不再建立兩份工作區）。L10433 的精簡字級改套用到目前設計的模型。`activeWorkspace` 保留為相容別名：殼層 bundle 的 `D.fn()`（L5327，無原始碼）會讀它，只在 `activateDesign` 依設計類型設定。
+- **存檔格式**：不再寫 `cameras` 欄位（各設計自己的 `designs[].camera` 照舊）。
+- **測試**：`layout` golden 的存檔快照少了 `cameras`；其餘 golden（含 M1 的 `saved.json`／`panels.json`）與 E2E 不變。
