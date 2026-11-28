@@ -4,7 +4,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import path from 'node:path';
 import { openApp } from '../../helpers/load-app.js';
-import { loadGolden, svgStructure, diagramSummary, goldenDir, json } from '../../golden/golden.js';
+import { loadGolden, svgStructure, diagramSummary, goldenDir, json, savedAndPanels } from '../../golden/golden.js';
 
 const TYPE = 'power';
 const snap = name => path.join(goldenDir(TYPE), '__snapshots__', name);
@@ -66,5 +66,12 @@ describe('golden: power design', () => {
     const svg = await app.eval(() => exportSvgDocument(false));
     await expect(json({ width: svg.width, height: svg.height, elements: await svgStructure(app, svg.source) })).toMatchFileSnapshot(snap('export.svg.json'));
     await expect(svg.source).toMatchFileSnapshot(snap('export.svg'));
+  });
+
+  // v2-fix M1: baseline for merging the function and power engines (M2–M4)
+  it('saved JSON and the properties panels match the golden', async () => {
+    const { saved, panels } = await savedAndPanels(app);
+    await expect(json(saved)).toMatchFileSnapshot(snap('saved.json'));
+    await expect(json(panels)).toMatchFileSnapshot(snap('panels.json'));
   });
 });

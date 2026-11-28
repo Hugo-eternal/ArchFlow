@@ -323,7 +323,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - [ ] D10–D12 刪除自動整理 RC 死入口（保留計算函式）
 - [x] D13–D23 刪除被後層蓋掉的實作（一個函式一個 commit）
 - [x] M0 功能／電源分支盤點（6.4 表）
-- [ ] M1 功能與電源的存檔、匯出 golden 快照
+- [x] M1 功能與電源的存檔、匯出 golden 快照
 - [ ] M2 `designMode()` 單一判斷（快照不變）
 - [ ] M3 拿掉 V1 工作區（D3）（快照不變）
 - [ ] B4 時程「含頭尾」規則
@@ -358,6 +358,7 @@ V2.10.1 新增一個零件要改**至少 6 個地方，而且中英兩份檔案�
 - **D14 完成**。行內容檢查：`node scripts/audit/statements.mjs <行號…>`。
 - **D13–D23 完成**（D13 保留 L626、D19 保留 L1214、D21 保留 L408：複查後仍在使用）。
 - **M0 完成**（6.4 表）。
-- **下一項**：M1 功能與電源的存檔、匯出 golden 快照，接著 M2–M3、B4–B11（見 7.1）。
+- **M1 完成**：功能／電源 golden 原本已有行為摘要與 SVG 匯出；新增 `saved.json`（存檔 JSON）與 `panels.json`（每個方塊與線路的屬性面板文字），`tests/golden/golden.js` 的 `savedAndPanels()`。M2–M4 必須讓這些快照不變。
+- **下一項**：M2 `designMode()` 單一判斷（依 6.4 表，快照不變），接著 M3、B4–B11。
 - **工具**：`npm run v2:check`（全部驗證）；`python3 scripts/audit/override-chain.py <函式名>`（DEF／SET／CAP；另需人工檢查 `.onclick=函式名` 等直接引用與載入時呼叫）。**只在 `v2:check` 結束碼為 0 時 commit。**
-- **最後通過的驗證**：`npm run v2:check`：`test:legacy` 104 項、`test:legacy:e2e` 16 項全部通過。
+- **最後通過的驗證**：`npm run v2:check`：`test:legacy` 106 項、`test:legacy:e2e` 16 項全部通過。

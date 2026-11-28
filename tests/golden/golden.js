@@ -77,3 +77,24 @@ export function missingFrom(a, b, path = '') {
   if (Array.isArray(a) && a.length !== b.length) return [path + '.length'];
   return Object.keys(a).flatMap(k => missingFrom(a[k], b[k], path + '.' + k));
 }
+
+/**
+ * v2-fix M1: what the user gets back from the engine for the loaded design — the saved project JSON
+ * (applicationVersion and cameras neutralised) and the properties-panel text for every block and wire.
+ * Refactors of the function / power split (M2–M4) must leave both unchanged.
+ */
+export async function savedAndPanels(app) {
+  return app.eval(() => {
+    const saved = projectData();
+    saved.applicationVersion = '<AF_VERSION>';
+    for (const d of saved.designs || []) delete d.camera;
+    delete saved.camera; delete saved.cameras;
+    const panel = sel => { select(sel); return document.getElementById('inspector').innerText.replace(/\s+/g, ' ').trim(); };
+    const panels = {
+      nodes: Object.fromEntries(model.nodes.map(n => [n.id, panel({ type: 'node', id: n.id })])),
+      edges: Object.fromEntries(model.edges.map(e => [e.id, panel({ type: 'edge', id: e.id })])),
+    };
+    select(null);
+    return { saved, panels };
+  });
+}
