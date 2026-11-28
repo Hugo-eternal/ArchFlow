@@ -93,6 +93,31 @@ describe('save → load round trip', () => {
     });
   }
 
+  // v2-fix D8: V2.10.1 converted any junction not named TAPn (e.g. one the user renamed) into
+  // direct wires on reload and deleted the junction
+  it('a renamed junction survives save and reopen', async () => {
+    await app.createProject('function');
+    await app.eval(() => {
+      // one source feeding two inputs through the junction (a real branch)
+      const [e0, e1] = model.edges, j = { id: 'jVbus', name: 'VBUS', x: 0, y: 0 };
+      const at = r => { const n = model.nodes.find(n => n.id === r.node), s = size(n); return { x: n.x + s.w / 2, y: n.y + s.h / 2 }; };
+      const pa = at(e0.a), pb = at(e0.b); j.x = Math.round((pa.x + pb.x) / 20) * 10; j.y = Math.round((pa.y + pb.y) / 20) * 10 + 200;
+      model.junctions.push(j);
+      model.edges = [...model.edges.filter(e => e !== e0 && e !== e1),
+        { ...clone(e0), id: 'eA', b: { junction: j.id }, manual: null },
+        { ...clone(e0), id: 'eB', a: { junction: j.id }, manual: null },
+        { ...clone(e1), id: 'eC', a: { junction: j.id }, manual: null }];
+      render(); commit();
+    });
+    expect(await app.eval(() => model.junctions.map(j => j.name))).toEqual(['VBUS']);
+    const { saved, loaded } = await saveAndReload(app);
+    const d = x => x.designs[0].diagram;
+    expect(d(saved).junctions.map(j => j.name)).toEqual(['VBUS']);
+    expect(d(loaded).junctions.map(j => j.name)).toEqual(['VBUS']);
+    expect(d(loaded).edges.filter(e => e.a.junction === 'jVbus' || e.b.junction === 'jVbus').length).toBe(3);
+    expect(app.errors).toEqual([]);
+  });
+
   // v2-fix B2/D9: V2.10.1 saved '1.8-rc4' (the last of 8 projectData layers won); now one constant.
   it('saved applicationVersion and the on-screen version are the single AF_VERSION constant', async () => {
     await app.createProject('function');

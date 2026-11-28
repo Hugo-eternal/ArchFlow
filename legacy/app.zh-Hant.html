@@ -1304,34 +1304,34 @@ window.ArchFlowLayoutAudit=()=>({nodes:model.nodes.map(n=>({id:n.id,x:n.x,y:n.y,
 afNormalizeSharedBranches=function(){return 0};
 drawBranchCorners=function(){};
 beginCornerBranch=function(){};
-function afDirectConnections(diagram){
- if(!diagram||diagram.schedule||!diagram.junctions?.length||diagram.junctions.every(j=>/^TAP\d*$/.test(j.name||'')))return diagram;
- const junctionIds=new Set(diagram.junctions.map(j=>j.id));
- const incoming=new Map(),outgoing=new Map();
- for(const e of diagram.edges){if(e.b.junction){if(!incoming.has(e.b.junction))incoming.set(e.b.junction,[]);incoming.get(e.b.junction).push(e)}if(e.a.junction){if(!outgoing.has(e.a.junction))outgoing.set(e.a.junction,[]);outgoing.get(e.a.junction).push(e)}}
- const direct=diagram.edges.filter(e=>e.a.node&&e.b.node).map(clone),seen=new Set(direct.map(e=>JSON.stringify([e.a,e.b])));
- for(const first of diagram.edges.filter(e=>e.a.node&&e.b.junction)){
-  const stack=[{id:first.b.junction,path:[first]}],visited=new Set();
-  while(stack.length){const {id,path}=stack.pop();if(visited.has(id))continue;visited.add(id);
-   for(const next of outgoing.get(id)||[]){if(next.b.junction){stack.push({id:next.b.junction,path:[...path,next]});continue}if(!next.b.node)continue;
-    const key=JSON.stringify([first.a,next.b]);if(seen.has(key))continue;seen.add(key);
-    const e={...clone(next),id:uid(),a:clone(first.a),b:clone(next.b),manual:null};
-    if(!e.name)e.name=path.map(x=>x.name).find(Boolean)||'';if(!e.color)e.color=first.color||null;
-    e.afPreviousRoute=path.concat(next).map(x=>({id:x.id,name:x.name||'',voltage:x.voltage||'',current:x.current||''}));
-    delete e.afCleanRoute;direct.push(e);
-   }
-  }
- }
- // Reject an unsupported legacy graph rather than silently dropping a connection.
- const coveredTargets=new Set(direct.map(e=>JSON.stringify(e.b)));
- for(const e of diagram.edges)if(e.a.junction&&e.b.node&&!coveredTargets.has(JSON.stringify(e.b)))throw Error(AF_LOCALE==='en'?'This legacy junction network has no source port. The original file has not been changed.':'\u820a\u5716\u9762\u7684\u5206\u652f\u7db2\u8def\u7f3a\u5c11\u8d77\u9ede\u7aef\u53e3\uff0c\u539f\u6a94\u6848\u672a\u8b8a\u66f4\u3002');
- if(direct.length>400)throw Error('Direct connection limit exceeded');
- diagram.edges=direct;diagram.junctions=[];delete diagram.afNeedsPortAlignment;return diagram;
-}
-const afFreeTemplate=workspaceExample;workspaceExample=function(kind){return afDirectConnections(afFreeTemplate(kind))};
-const afFreeValidate=validateDiagram;validateDiagram=function(raw){return afDirectConnections(afFreeValidate(raw))};
-// History and locale snapshots are migrated without changing task schedules.
-const afFreeActivate=activateDesign;activateDesign=function(id,save=true){const d=designs.find(d=>d.id===id);if(d&&d.type!=='schedule'){afDirectConnections(d.state.model);for(const key of ['past','future'])d.state[key]=(d.state[key]||[]).map(raw=>{try{return JSON.stringify(afDirectConnections(JSON.parse(raw)))}catch(e){return raw}})}return afFreeActivate(id,save)};
+// v2-fix D8: afDirectConnections (V1 junction networks -> direct wires, applied on load, template, design switch, language switch and start-up) removed; junctions are kept as saved.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Choose a selected block, otherwise the most common style in this design.
 function afNewBlockStyle(){
  const selected=selection?.type==='node'?node(selection.id):null;
@@ -1355,10 +1355,10 @@ document.querySelector('#add').onclick=function(ev){
 };
 document.querySelector('#add').title=AF_LOCALE==='en'?'Add a block with the selected block style; otherwise use the current design style.':'\u65b0\u589e\u65b9\u584a\uff1a\u512a\u5148\u6cbf\u7528\u9078\u53d6\u65b9\u584a\u7684\u6a23\u5f0f\uff0c\u672a\u9078\u53d6\u6642\u6cbf\u7528\u76ee\u524d\u8a2d\u8a08\u3002';
 const afFreeChrome=syncProjectChrome;syncProjectChrome=function(){afFreeChrome();if(!isSchedule())document.querySelector('#workspaceNote').textContent=AF_LOCALE==='en'?'Drag between ports to connect. One output can connect to several inputs. Select a line to adjust its route.':'\u62d6\u66f3\u7aef\u53e3\u5373\u53ef\u9023\u7dda\uff1b\u540c\u4e00\u8f38\u51fa\u53ef\u9023\u63a5\u591a\u500b\u8f38\u5165\u3002\u9078\u53d6\u7dda\u8def\u5f8c\u53ef\u8abf\u6574\u8def\u5f91\u3002'};
-const afFreeSession=window.ArchFlowSession;window.ArchFlowSession=function(){const state=afFreeSession();for(const d of state.designs||[])if(d.type!=='schedule')afDirectConnections(d.state.model);return state};
+
 const afFreeData=projectData;projectData=function(){const data=afFreeData();data.wiringMode='direct-ports';return data};
-// Convert the active session if this file is opened via a language switch.
-if(!isSchedule()&&model.junctions?.length){afDirectConnections(model);render();storeWorkspace()}
+
+
 syncProjectChrome();
 
 // Editing tools use the existing model and history, not a parallel document.
