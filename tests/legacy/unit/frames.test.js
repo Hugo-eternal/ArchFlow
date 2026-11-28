@@ -17,6 +17,23 @@ async function frameAround(app, ids) {
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }
 
+/** Drag out a frame on a 300×200 px patch of empty canvas (drawing mode must be on). */
+async function drawFrame(app) {
+  const spot = await app.eval(() => {
+    const v = document.getElementById('view').getBoundingClientRect();
+    const free = (x, y) => { const e = document.elementFromPoint(x, y); return e && document.getElementById('view').contains(e) && !e.closest('.node,.free-text,.zoomtools,.af40-frame,[data-port]'); };
+    for (let y = v.top + 40; y < v.bottom - 240; y += 40)
+      for (let x = v.left + 40; x < v.right - 340; x += 40)
+        if ([[0, 0], [300, 0], [0, 200], [300, 200], [150, 100]].every(([dx, dy]) => free(x + dx, y + dy))) return { x, y };
+    return null;
+  });
+  expect(spot).not.toBeNull();
+  await app.page.mouse.move(spot.x, spot.y);
+  await app.page.mouse.down();
+  await app.page.mouse.move(spot.x + 300, spot.y + 200, { steps: 5 });
+  await app.page.mouse.up();
+}
+
 const notice = app => app.page.locator('#notice').textContent();
 
 describe('area frame move (F1)', () => {
@@ -81,20 +98,7 @@ describe('area frame drawing hint (F4)', () => {
     await app.createProject('function');
     await app.eval(() => window.afFrames.startDraw());
     expect(await notice(app)).toContain(HINT);
-    // a 300×200 px patch of empty canvas (no block, text, tips card or toolbar on its corners)
-    const spot = await app.eval(() => {
-      const v = document.getElementById('view').getBoundingClientRect();
-      const free = (x, y) => { const e = document.elementFromPoint(x, y); return e && document.getElementById('view').contains(e) && !e.closest('.node,.free-text,.zoomtools,.af40-frame,[data-port]'); };
-      for (let y = v.top + 40; y < v.bottom - 240; y += 40)
-        for (let x = v.left + 40; x < v.right - 340; x += 40)
-          if ([[0, 0], [300, 0], [0, 200], [300, 200], [150, 100]].every(([dx, dy]) => free(x + dx, y + dy))) return { x, y };
-      return null;
-    });
-    expect(spot).not.toBeNull();
-    await app.page.mouse.move(spot.x, spot.y);
-    await app.page.mouse.down();
-    await app.page.mouse.move(spot.x + 300, spot.y + 200, { steps: 5 });
-    await app.page.mouse.up();
+    await drawFrame(app);
     await app.page.waitForTimeout(200);
     expect(await app.eval(() => (model.afFrames || []).length)).toBe(1);
     const msg = await notice(app);
@@ -111,4 +115,29 @@ describe('area frame drawing hint (F4)', () => {
     expect(await notice(app)).toBe('已取消畫區域框。');
     expect(await app.eval(() => document.body.classList.contains('af40-drawing'))).toBe(false);
   });
+});
+
+describe('new area frame is one undo step (F3)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); });
+  afterAll(async () => { await app?.close(); });
+
+  for (const [how, key, title] of [['named with Enter', 'Enter', '電源區'], ['naming cancelled with Esc', 'Escape', null]]) {
+    it(`draw + ${how}: one step, and one undo removes the frame`, async () => {
+      await app.createProject('function');
+      const p0 = await app.eval(() => past.length);
+      await app.eval(() => window.afFrames.startDraw());
+      await drawFrame(app);
+      await app.page.waitForTimeout(150);
+      if (title) await app.page.keyboard.type(title);
+      await app.page.keyboard.press(key);
+      await app.page.waitForTimeout(150);
+      const r = await app.eval(() => ({ steps: past.length, frames: (model.afFrames || []).map(f => f.title) }));
+      expect(r.steps).toBe(p0 + 1);
+      expect(r.frames).toEqual([title || '區域 1']);
+      await app.eval(() => undo());
+      expect(await app.eval(() => (model.afFrames || []).length)).toBe(0);
+      expect(app.errors).toEqual([]);
+    });
+  }
 });

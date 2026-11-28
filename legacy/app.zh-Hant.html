@@ -4391,11 +4391,11 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
   if(!boxes.length){notify(T('框內還沒有方塊，先把方塊拖進框裡。','Nothing inside yet. Drag blocks into the frame first.'));return}
   const pad=30,x1=S(Math.min(...boxes.map(b=>b.x))-pad),y1=S(Math.min(...boxes.map(b=>b.y))-pad-10),x2=S(Math.max(...boxes.map(b=>b.x+b.w))+pad),y2=S(Math.max(...boxes.map(b=>b.y+b.h))+pad);
   Object.assign(f,{x:x1,y:y1,w:Math.max(120,x2-x1),h:Math.max(80,y2-y1)});render();commit();notify(T('區域框已貼合框內內容。','The frame now fits its contents.'))}
- function rename(id){const f=byId(id);if(!f)return;if(sel!==id)choose(id);
+ /* F3: `drawn` = the history entry recorded when the frame was drawn; naming it then replaces that entry, so draw + name is one undo step */ function rename(id,drawn){const f=byId(id);if(!f)return;if(sel!==id)choose(id);
   const tab=document.querySelector(`.af40-frame[data-id="${CSS.escape(id)}"] .af40-tab`);if(!tab)return;const name=tab.querySelector('.af40-name');
   const inp=document.createElement('input');inp.className='af40-input';inp.value=f.title||'';inp.maxLength=80;inp.setAttribute('aria-label',T('區域框名稱','Frame name'));inp.size=Math.max(6,inp.value.length+2);
   inp.addEventListener('input',()=>inp.size=Math.max(6,inp.value.length+2));
-  let done=false;const finish=save=>{if(done)return;done=true;const v=inp.value.trim();if(save&&v&&v!==f.title){f.title=v;render();commit()}else drawFrames()};
+  let done=false;const finish=save=>{if(done)return;done=true;const v=inp.value.trim();if(save&&v&&v!==f.title){f.title=v;render();commit();if(drawn&&past.length>1&&past.at(-1)!==drawn&&past.at(-2)===drawn)past.splice(past.length-2,1)}else drawFrames()};
   inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();finish(true)}else if(e.key==='Escape'){e.preventDefault();finish(false)}});
   inp.addEventListener('blur',()=>finish(true));inp.addEventListener('pointerdown',e=>e.stopPropagation());
   name.replaceWith(inp);inp.focus();inp.select()}
@@ -4410,7 +4410,7 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
   const up=()=>{window.removeEventListener('pointermove',move,true);window.removeEventListener('pointerup',up,true);stopDraw();
    if(!r||r.w<60||r.h<40)r={x:S(p0.x),y:S(p0.y),w:400,h:260};
    const n=frames().length+1,f={id:fid(),title:T('區域 ','Area ')+n,x:r.x,y:r.y,w:Math.max(120,r.w),h:Math.max(80,r.h),style:'dash',color:'teal'};
-   frames().push(f);sel=f.id;render();commit();notify(T('已新增區域框；輸入名稱後按 Enter。','Frame added; type its name and press Enter.'));rename(f.id)};
+   frames().push(f);sel=f.id;render();commit();notify(T('已新增區域框；輸入名稱後按 Enter。','Frame added; type its name and press Enter.'));rename(f.id,past.at(-1))};
   window.addEventListener('pointermove',move,true);window.addEventListener('pointerup',up,true)},true);
 
  /* ---------- keys ---------- */
