@@ -141,3 +141,54 @@ describe('new area frame is one undo step (F3)', () => {
     });
   }
 });
+
+describe('frames do not cut through blocks (F5)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); });
+  afterAll(async () => { await app?.close(); });
+  // ids of blocks the frame border crosses (partly inside), and of blocks fully inside
+  const cutAndInside = () => app.eval(() => {
+    const f = model.afFrames[0], out = { cut: [], inside: [] };
+    for (const n of model.nodes) {
+      const s = size(n), hit = n.x < f.x + f.w && n.x + s.w > f.x && n.y < f.y + f.h && n.y + s.h > f.y;
+      const inside = n.x >= f.x && n.y >= f.y && n.x + s.w <= f.x + f.w && n.y + s.h <= f.y + f.h;
+      if (inside) out.inside.push(n.id); else if (hit) out.cut.push(n.id);
+    }
+    return out;
+  });
+
+  it('with a block selected, the frame command frames it in one step', async () => {
+    await app.createProject('function');
+    const id = await app.eval(() => { const n = model.nodes[0]; select({ type: 'node', id: n.id }); return n.id; });
+    const p0 = await app.eval(() => past.length);
+    await app.eval(() => window.afFrames.startDraw());
+    await app.page.keyboard.press('Enter');
+    await app.page.waitForTimeout(150);
+    expect(await app.eval(() => ({ n: (model.afFrames || []).length, drawing: window.afFrames.drawing(), sel: window.afFrames.selected() === model.afFrames[0].id })))
+      .toEqual({ n: 1, drawing: false, sel: true });
+    const r = await cutAndInside();
+    expect(r.inside).toContain(id);
+    expect(r.cut).toEqual([]);
+    expect(await app.eval(() => past.length)).toBe(p0 + 1);
+    expect(app.errors).toEqual([]);
+  });
+
+  it('a drawn frame whose border crosses a block grows to include it', async () => {
+    await app.createProject('function');
+    await app.eval(() => select(null));
+    const box = await app.eval(() => { const n = model.nodes[0], r = document.getElementById(n.id).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, id: n.id }; });
+    await app.eval(() => window.afFrames.startDraw());
+    // from above the middle of the block to below-right of it: the left border would cut the block
+    await app.page.mouse.move((box.l + box.r) / 2, box.t - 50);
+    await app.page.mouse.down();
+    await app.page.mouse.move(box.r + 40, box.b + 50, { steps: 5 });
+    await app.page.mouse.up();
+    await app.page.waitForTimeout(150);
+    await app.page.keyboard.press('Enter');
+    const r = await cutAndInside();
+    expect(r.inside).toContain(box.id);
+    expect(r.cut).toEqual([]);
+    expect(await notice(app)).toMatch(/擴大到完整包住 \d+ 個被框線切過的方塊/);
+    expect(app.errors).toEqual([]);
+  });
+});
