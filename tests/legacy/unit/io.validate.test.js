@@ -100,6 +100,16 @@ describe('project file size guard', () => {
     });
   }
 
+  // v2-fix D4: the V1.x two-workspace format (version 4) is no longer converted (user decision 2026-11-27)
+  it('refuses a version 4 project file with a clear message and keeps the open project', async () => {
+    const before = await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)));
+    const v4 = { version: 4, project: { name: 'old', type: 'function' }, active: 'circuit', diagrams: { circuit: { nodes: [], edges: [], junctions: [] } } };
+    const message = new Promise(resolve => { const on = async d => { if (d.type() === 'confirm') { await d.accept(); return; } app.page.off('dialog', on); const m = d.message(); await d.dismiss(); resolve(m); }; app.page.on('dialog', on); });
+    await app.page.setInputFiles('#file', { name: 'v4.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(v4)) });
+    expect(await message).toContain('不支援舊版 version 4 專案檔');
+    expect(await app.eval(() => JSON.stringify(projectData().designs.map(d => d.diagram)))).toBe(before);
+  });
+
   it('English: the 8 MB message names the reason', async () => {
     const en = await openApp({ locale: 'en' });
     try {
