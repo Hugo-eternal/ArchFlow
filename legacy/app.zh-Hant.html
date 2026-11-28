@@ -4402,20 +4402,20 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
 
  /* ---------- draw a new frame ---------- */
  function startDraw(){if(!ok())return;drawing=!drawing;document.body.classList.toggle('af40-drawing',drawing);
-  if(drawing){sel=null;drawFrames();notify(T('在畫布上拖曳畫出區域框；直接點一下則放一個預設大小的框。按 Esc 取消。','Drag on the canvas to draw a frame, or click once for a default size. Press Esc to cancel.'))}}
- function stopDraw(){drawing=false;document.body.classList.remove('af40-drawing');document.getElementById('af40-draft')?.remove()}
+  if(drawing){sel=null;drawFrames();notify(T('在畫布上拖曳畫出區域框；直接點一下則放一個預設大小的框。按 Esc 取消。','Drag on the canvas to draw a frame, or click once for a default size. Press Esc to cancel.'))}else notify(T('已取消畫區域框。','Frame drawing cancelled.'))}
+ /* F4: ending the drawing mode always replaces the drawing hint */ function stopDraw(msg){drawing=false;document.body.classList.remove('af40-drawing');document.getElementById('af40-draft')?.remove();if(msg)notify(msg)}
  document.addEventListener('pointerdown',ev=>{if(!drawing||ev.button!==0)return;const v=document.getElementById('view');if(!v?.contains(ev.target)||ev.target.closest?.('.zoomtools,.af40-bar,.af2-selbar'))return;
   ev.preventDefault();ev.stopPropagation();const p0=point(ev),L=layer();const d=document.createElement('div');d.id='af40-draft';d.className='af40-draft';L.append(d);let r=null;
   const move=e2=>{const p=point(e2);r={x:S(Math.min(p0.x,p.x)),y:S(Math.min(p0.y,p.y)),w:S(Math.abs(p.x-p0.x)),h:S(Math.abs(p.y-p0.y))};d.style.cssText=`left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`};
   const up=()=>{window.removeEventListener('pointermove',move,true);window.removeEventListener('pointerup',up,true);stopDraw();
    if(!r||r.w<60||r.h<40)r={x:S(p0.x),y:S(p0.y),w:400,h:260};
    const n=frames().length+1,f={id:fid(),title:T('區域 ','Area ')+n,x:r.x,y:r.y,w:Math.max(120,r.w),h:Math.max(80,r.h),style:'dash',color:'teal'};
-   frames().push(f);sel=f.id;render();commit();rename(f.id)};
+   frames().push(f);sel=f.id;render();commit();notify(T('已新增區域框；輸入名稱後按 Enter。','Frame added; type its name and press Enter.'));rename(f.id)};
   window.addEventListener('pointermove',move,true);window.addEventListener('pointerup',up,true)},true);
 
  /* ---------- keys ---------- */
  window.addEventListener('keydown',ev=>{const t=ev.target;if(t?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
-  if(ev.key==='Escape'&&(drawing||sel)){if(drawing)stopDraw();sel=null;drawFrames();ev.preventDefault();ev.stopImmediatePropagation();return}
+  if(ev.key==='Escape'&&(drawing||sel)){if(drawing)stopDraw(T('已取消畫區域框。','Frame drawing cancelled.'));sel=null;drawFrames();ev.preventDefault();ev.stopImmediatePropagation();return}
   if(sel&&(ev.key==='Delete'||ev.key==='Backspace')&&!ev.ctrlKey&&!ev.metaKey){ev.preventDefault();ev.stopImmediatePropagation();remove(sel);return}
   if(sel&&ev.key==='F2'){ev.preventDefault();rename(sel)}},true);
  window.addEventListener('dblclick',ev=>{const t=document.elementFromPoint(ev.clientX,ev.clientY);const tab=t?.closest?.('.af40-tab');if(!tab)return;ev.preventDefault();ev.stopImmediatePropagation();const id=tab.closest('.af40-frame')?.dataset.id;if(id&&!tab.querySelector('input'))rename(id)},true);

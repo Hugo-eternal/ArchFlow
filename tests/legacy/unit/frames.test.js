@@ -70,3 +70,45 @@ describe('area frame move (F1)', () => {
     expect(app.errors).toEqual([]);
   });
 });
+
+describe('area frame drawing hint (F4)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); });
+  afterAll(async () => { await app?.close(); });
+  const HINT = '在畫布上拖曳畫出區域框';
+
+  it('drawing a frame replaces the hint', async () => {
+    await app.createProject('function');
+    await app.eval(() => window.afFrames.startDraw());
+    expect(await notice(app)).toContain(HINT);
+    // a 300×200 px patch of empty canvas (no block, text, tips card or toolbar on its corners)
+    const spot = await app.eval(() => {
+      const v = document.getElementById('view').getBoundingClientRect();
+      const free = (x, y) => { const e = document.elementFromPoint(x, y); return e && document.getElementById('view').contains(e) && !e.closest('.node,.free-text,.zoomtools,.af40-frame,[data-port]'); };
+      for (let y = v.top + 40; y < v.bottom - 240; y += 40)
+        for (let x = v.left + 40; x < v.right - 340; x += 40)
+          if ([[0, 0], [300, 0], [0, 200], [300, 200], [150, 100]].every(([dx, dy]) => free(x + dx, y + dy))) return { x, y };
+      return null;
+    });
+    expect(spot).not.toBeNull();
+    await app.page.mouse.move(spot.x, spot.y);
+    await app.page.mouse.down();
+    await app.page.mouse.move(spot.x + 300, spot.y + 200, { steps: 5 });
+    await app.page.mouse.up();
+    await app.page.waitForTimeout(200);
+    expect(await app.eval(() => (model.afFrames || []).length)).toBe(1);
+    const msg = await notice(app);
+    expect(msg).not.toContain(HINT);
+    expect(msg).toContain('已新增區域框');
+  });
+
+  it('Esc and toggling the command off cancel with a message', async () => {
+    await app.createProject('function');
+    await app.eval(() => window.afFrames.startDraw());
+    await app.page.keyboard.press('Escape');
+    expect(await notice(app)).toBe('已取消畫區域框。');
+    await app.eval(() => { window.afFrames.startDraw(); window.afFrames.startDraw(); });
+    expect(await notice(app)).toBe('已取消畫區域框。');
+    expect(await app.eval(() => document.body.classList.contains('af40-drawing'))).toBe(false);
+  });
+});
