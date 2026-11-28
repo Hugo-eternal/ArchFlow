@@ -250,3 +250,37 @@ describe('area frame keyboard (F6)', () => {
     expect(app.errors).toEqual([]);
   });
 });
+
+describe('frame export (F8)', () => {
+  let app;
+  beforeAll(async () => { app = await openApp(); });
+  afterAll(async () => { await app?.close(); });
+  const exportTab = () => app.eval(() => {
+    const doc = new DOMParser().parseFromString(exportSvgDocument(false).source, 'image/svg+xml');
+    const g = doc.querySelector('.af40-export'), rects = g ? [...g.querySelectorAll('rect')] : [], text = g?.querySelector('text');
+    const r = rects[1];
+    return r ? { x: +r.getAttribute('x'), y: +r.getAttribute('y'), w: +r.getAttribute('width'), h: +r.getAttribute('height'), text: text?.textContent } : null;
+  });
+
+  it('the exported name tab matches the on-screen tab', async () => {
+    await app.createProject('function');
+    const screen = await app.eval(() => {
+      const n = model.nodes[0]; model.afFrames = [{ id: 'frT', title: '電源區 Power', x: n.x - 20, y: n.y - 40, w: 300, h: 200 }]; render();
+      const r = document.querySelector('.af40-tab').getBoundingClientRect(), v = document.getElementById('view').getBoundingClientRect();
+      return { x: (r.left - v.left - camera.x) / camera.z, y: (r.top - v.top - camera.y) / camera.z, w: r.width / camera.z, h: r.height / camera.z };
+    });
+    const tab = await exportTab();
+    expect(tab.text).toBe('電源區 Power');
+    for (const k of ['x', 'y', 'w', 'h']) expect(Math.abs(tab[k] - screen[k])).toBeLessThan(1.5);
+  });
+
+  it('a frame that is not on screen still exports its name; long names are shortened', async () => {
+    await app.createProject('function');
+    await app.eval(() => { const n = model.nodes[0]; model.afFrames = [{ id: 'frT', title: '很長的區域框名稱'.repeat(6), x: n.x - 20, y: n.y - 40, w: 200, h: 200 }]; render(); document.getElementById('af40-frames').replaceChildren(); });
+    const tab = await exportTab();
+    expect(tab).not.toBeNull();
+    expect(tab.text.endsWith('…')).toBe(true);
+    expect(tab.w).toBeLessThanOrEqual(200 - 35);
+    expect(app.errors).toEqual([]);
+  });
+});

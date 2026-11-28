@@ -4438,14 +4438,14 @@ body.af40-drawing #view,body.af40-drawing #view *{cursor:crosshair!important}
   return out};
  const baseValidate=validateDiagram;validateDiagram=function(raw,...rest){const c=baseValidate(raw,...rest);try{if(c&&typeof c==='object'){const fr=clean(raw?.afFrames);if(fr.length)c.afFrames=fr;else delete c.afFrames}}catch(e){console.warn('frames validate',e)}return c};
  // exports: frames go first so they sit behind blocks and wires
- const baseFree=appendFreeTextExport;appendFreeTextExport=function(content,bounds,...rest){
+ let exportTabCanvas=null; const baseFree=appendFreeTextExport;appendFreeTextExport=function(content,bounds,...rest){
   try{if(ok()&&(model.afFrames||[]).length){const NS='http://www.w3.org/2000/svg',mk=(tag,at)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);return e};
-   const g=mk('g',{class:'af40-export'}),vr=document.getElementById('view').getBoundingClientRect(),W=r=>({x:(r.left-vr.left-camera.x)/camera.z,y:(r.top-vr.top-camera.y)/camera.z,w:r.width/camera.z,h:r.height/camera.z});
+   const g=mk('g',{class:'af40-export'});
    for(const f of model.afFrames){const c=COLORS[f.color]||COLORS.teal,st=f.style||'dash';
     g.append(mk('rect',{x:f.x,y:f.y,width:f.w,height:f.h,rx:10,fill:st==='fill'?c.line:'none','fill-opacity':st==='fill'?.09:0,stroke:c.line,'stroke-width':1.5,...(st==='dash'?{'stroke-dasharray':'7 5'}:{})}));
     bounds.push({x:f.x,y:f.y,w:f.w,h:f.h});
-    const tab=document.querySelector(`.af40-frame[data-id="${CSS.escape(f.id)}"] .af40-tab`);
-    if(tab){const b=W(tab.getBoundingClientRect());g.append(mk('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:6,fill:c.tab,stroke:c.line,'stroke-width':1}));bounds.push(b);const nm=tab.querySelector('.af40-name');if(nm)svgTextFromElement(nm,g,bounds)}}
+    /* F8: the name tab is computed from the frame data (same geometry as the .af40-tab CSS), so frames that are not on screen still export their name */{const fam=getComputedStyle(document.getElementById('af40-frames')||document.getElementById('world')||document.body).fontFamily,cx=(exportTabCanvas||(exportTabCanvas=document.createElement('canvas'))).getContext('2d');cx.font=`400 13px ${fam}`;try{cx.letterSpacing='0.13px'}catch(e){}const tw=s=>cx.measureText(s).width,maxW=Math.max(30,f.w-35);let label=f.title||T('區域','Area');if(tw(label)+24>maxW){while(label.length>1&&tw(label+'…')+24>maxW)label=label.slice(0,-1);label+='…'}
+     const b={x:f.x+17,y:f.y-12,w:Math.min(maxW,tw(label)+24),h:26};g.append(mk('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:6,fill:c.tab,stroke:c.line,'stroke-width':1}));bounds.push(b);const tx=mk('text',{x:b.x+12,y:b.y+18.25,fill:c.ink,'font-family':fam,'font-size':13,'font-weight':400,'letter-spacing':'0.13px'});tx.textContent=label;g.append(tx)}}
    content.prepend(g)}}catch(err){console.warn('frame export',err)}
   return baseFree(content,bounds,...rest)};
 
